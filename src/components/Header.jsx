@@ -1,17 +1,24 @@
-import { Bars3Icon } from "@heroicons/react/16/solid";
-import { ButtonIcons } from "./Buttons";
+import { Bars3Icon, ChevronLeftIcon } from "@heroicons/react/16/solid";
+import { ButtonIcons, Button } from "./Buttons";
 import { Subheader } from "./SubHeader";
-function Header({ text, hasSubheader, menuItems, icon }) {
+import { NavLink } from "react-router-dom";
+function Header({ text, hasSubheader, menuItems, icon, id, children }) {
   return (
     <div className="fixed w-full ">
-      <div className="flex justify-between bg-neutral-200 px-12 py-4 shadow-sm">
+      <div className="flex justify-between bg-neutral-200 px-4 py-2 shadow-sm md:px-6 md:py-3 xl:px-12 xl:py-4">
+        <div className="inline-flex items-center gap-4">
+          <Button name={'back'} icon={
+            <NavLink to={'/oportunidades'}><ChevronLeftIcon className="w-5"/></NavLink>
+            } hidden_name/>
         <span className="text-xl font-medium text-indigo-500">{text}</span>
+        </div>
+        
         <ButtonIcons icon={<Bars3Icon width={"16px"} />} />
       </div>
       {hasSubheader && (
-        <Subheader name={'Nombre de la oportunidad'} menuItems={menuItems} icon={icon}/>
+        <Subheader name={'Nombre de la oportunidad'} menuItems={menuItems} icon={icon} id={id}/>
       )}
-
+        {children}
     </div>
   );
 }

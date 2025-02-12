@@ -1,0 +1,124 @@
+{"oportunidades": [
+    {
+      "id": "1",
+      "nombre_oportunidad": "Oportunidad A",
+      "cliente": "Cliente 1",
+      "status": "Abierta",
+      "monto_cotizado": 12000,
+      "creador": "Juan Pérez",
+      "alcance": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio distinctio ullam dolorem obcaecati, quod, consectetur doloribus odit ratione rem deleniti sed cum, tenetur voluptatibus quibusdam maiores soluta! Pariatur, quaerat quia."
+    },
+    {
+      "id": "2",
+      "nombre_oportunidad": "Oportunidad B",
+      "cliente": "Cliente 2",
+      "status": "Cerrada",
+      "monto_cotizado": 8000,
+      "creador": "Ana Martínez"
+    },
+    {
+      "id": "3",
+      "nombre_oportunidad": "Oportunidad C",
+      "cliente": "Cliente 3",
+      "status": "Abierta",
+      "monto_cotizado": 15000,
+      "creador": "Carlos Gómez"
+    },
+    {
+      "id": "4",
+      "nombre_oportunidad": "Oportunidad D",
+      "cliente": "Cliente 4",
+      "status": "En negociación",
+      "monto_cotizado": 20000,
+      "creador": "Laura Torres"
+    },
+    {
+      "id": "5",
+      "nombre_oportunidad": "Oportunidad E",
+      "cliente": "Cliente 5",
+      "status": "Cerrada",
+      "monto_cotizado": 9500,
+      "creador": "Mario Sánchez"
+    },
+    {
+      "id": "6",
+      "nombre_oportunidad": "Oportunidad F",
+      "cliente": "Cliente 6",
+      "status": "Abierta",
+      "monto_cotizado": 18000,
+      "creador": "Javier Ruiz"
+    },
+    {
+      "id": "7",
+      "nombre_oportunidad": "Oportunidad G",
+      "cliente": "Cliente 7",
+      "status": "En negociación",
+      "monto_cotizado": 22000,
+      "creador": "Elena García"
+    },
+    {
+      "id": "8",
+      "nombre_oportunidad": "Oportunidad H",
+      "cliente": "Cliente 8",
+      "status": "Cerrada",
+      "monto_cotizado": 13000,
+      "creador": "Ricardo López"
+    },
+    {
+      "id": "9",
+      "nombre_oportunidad": "Oportunidad I",
+      "cliente": "Cliente 9",
+      "status": "Abierta",
+      "monto_cotizado": 25000,
+      "creador": "Patricia Fernández"
+    },
+    {
+      "id": "10",
+      "nombre_oportunidad": "Oportunidad J",
+      "cliente": "Cliente 10",
+      "status": "En negociación",
+      "monto_cotizado": 30000,
+      "creador": "Manuel Romero"
+    },
+    {
+      "id": "11",
+      "nombre_oportunidad": "Oportunidad K",
+      "cliente": "Cliente 11",
+      "status": "Cerrada",
+      "monto_cotizado": 11000,
+      "creador": "Sara Castro"
+    },
+    {
+      "id": "12",
+      "nombre_oportunidad": "Oportunidad L",
+      "cliente": "Cliente 12",
+      "status": "Abierta",
+      "monto_cotizado": 17500,
+      "creador": "Tomás Díaz"
+    },
+    {
+      "id": "13",
+      "nombre_oportunidad": "Oportunidad M",
+      "cliente": "Cliente 13",
+      "status": "En negociación",
+      "monto_cotizado": 23000,
+      "creador": "Marta Sánchez"
+    },
+    {
+      "id": "14",
+      "nombre_oportunidad": "Oportunidad N",
+      "cliente": "Cliente 14",
+      "status": "Cerrada",
+      "monto_cotizado": 14500,
+      "creador": "Luis Pérez"
+    },
+    {
+      "id": "15",
+      "nombre_oportunidad": "Oportunidad O",
+      "cliente": "Cliente 15",
+      "status": "Abierta",
+      "monto_cotizado": 27000,
+      "creador": "Gabriela Herrera"
+    }
+  ]}
+  

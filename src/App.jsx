@@ -8,24 +8,23 @@ import Oportunidad from "./pages/Oportunidad/Oportunidad";
 import Informacion from "./pages/Oportunidad/Informacion";
 import Cotizacion from "./pages/Oportunidad/Cotizacion";
 import Condiciones from "./pages/Oportunidad/Condiciones";
-
+import { Oportunidades } from "./pages/Oportunidad/Oportunidades";
+import { OportunidadProvider } from "./context/Oportunidades/OportunidadContext";
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Layout />,
       children: [
-        /* { path: "/", element: <Home /> },
-        { path: "/crear-oportunidad", element: <CrearOportunidad /> },
-        { path: "/resumen", element: <Resumen /> }, */
+        { path: "/oportunidades", element: <Oportunidades /> },
         {
-          path: "/oportunidad",
+          path: "/oportunidad/:id",
           element: <Oportunidad />,
           children: [
-            { path: "/oportunidad/resumen", element: <Resumen /> },
-            { path: "/oportunidad/informacion", element: <Informacion /> },
-            { path: "/oportunidad/cotizacion", element: <Cotizacion /> },
-            { path: "/oportunidad/condiciones", element: <Condiciones /> },
+            { path: "/oportunidad/:id/resumen", element: <Resumen /> },
+            { path: "/oportunidad/:id/informacion", element: <Informacion /> },
+            { path: "/oportunidad/:id/cotizacion", element: <Cotizacion /> },
+            { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
 
           ],
 
@@ -38,7 +37,9 @@ function App() {
 
   return (
     <ModalContextProvider>
-      <RouterProvider router={router} />
+      <OportunidadProvider>
+        <RouterProvider router={router} />
+      </OportunidadProvider >
     </ModalContextProvider>
   );
 }

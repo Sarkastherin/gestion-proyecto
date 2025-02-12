@@ -41,7 +41,6 @@ export const Cliente = ({ register, setValue, errors }) => {
     <>
       <Label label={"Cliente"} htmlFor={"cliente"} />
       <Input
-        className="mt-1"
         onClick={() => handleModalShow("modalCliente")}
         {...register("cliente", {
           required: {

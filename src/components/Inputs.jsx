@@ -1,9 +1,10 @@
 import React from "react";
+const stylebases = "rounded-md border-gray-200 shadow-xs sm:text-sm disabled:bg-neutral-100";
 export const Label = ({ label, htmlFor }) => {
   return (
     <label
       htmlFor={htmlFor}
-      className="block text-sm font-medium text-neutral-700"
+      className="block text-sm font-medium text-neutral-700 mb-1"
     >
       {" "}
       {label}{" "}
@@ -12,16 +13,7 @@ export const Label = ({ label, htmlFor }) => {
 };
 export const Input = React.forwardRef(
   (
-    {
-      onChange,
-      onBlur,
-      name,
-      placeholder,
-      onClick,
-      type = "text",
-      onInput,
-      className,
-    },
+    { onChange, onBlur, name, placeholder, onClick, type = "text", onInput, readOnly , className},
     ref
   ) => {
     return (
@@ -34,7 +26,8 @@ export const Input = React.forwardRef(
         onClick={onClick}
         type={type}
         onInput={onInput}
-        className={`w-full rounded-md border-neutral-300 shadow-xs sm:text-md ${className}`}
+        readOnly={readOnly}
+        className={`w-full ${stylebases} ${className}`}
       />
     );
   }
@@ -62,7 +55,7 @@ export const Textarea = React.forwardRef(
         rows={rows}
         ref={ref}
         placeholder={placeholder}
-        className={`mt-2 w-full rounded-lg border-neutral-300 align-top shadow-xs sm:text-sm ${className}`}
+        className={`w-full ${stylebases} ${className}`}
       ></textarea>
     );
   }
