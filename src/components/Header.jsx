@@ -2,7 +2,7 @@ import { Bars3Icon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { Button } from "./Buttons";
 import { Subheader } from "./SubHeader";
 import { NavLink } from "react-router-dom";
-function Header({ text, hasSubheader, menuItems, icon, id, children }) {
+function Header({ text, hasSubheader, menuItems, icon, id, name, children }) {
   return (
     <div className="fixed w-full ">
       <div className="flex justify-between bg-neutral-200 px-4 py-2 shadow-sm md:px-6 md:py-3 xl:px-12 xl:py-4">
@@ -20,7 +20,7 @@ function Header({ text, hasSubheader, menuItems, icon, id, children }) {
         />
       </div>
       {hasSubheader && (
-        <Subheader name={'Nombre de la oportunidad'} menuItems={menuItems} icon={icon} id={id}/>
+        <Subheader name={name} menuItems={menuItems} icon={icon} id={id}/>
       )}
         {children}
     </div>

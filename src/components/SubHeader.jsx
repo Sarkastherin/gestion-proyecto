@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 
 export const Subheader = ({ name, menuItems, icon, id }) => {
+  
   const menu = menuItems(id)
   return (
     <div className="px-12 border-b border-neutral-400 pb-2">

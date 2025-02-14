@@ -42,6 +42,7 @@ function Oportunidad() {
         text={"Oportunidades"}
         hasSubheader={true}
         menuItems={menuItems}
+        name={oportunidadData.nombre_oportunidad}
         icon={<BanknotesIcon className="w-5 text-white" />}
       >
         <BoxComponentScrolling title="Creando Oportunidad">

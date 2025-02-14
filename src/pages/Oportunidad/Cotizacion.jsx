@@ -1,9 +1,21 @@
-import Header from "../../components/Header"
-import { BoxComponent } from "../../components/BoxComponent"
+import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import FormularioCotizacion from "../../templates/Oportunidad/FormularioCotizacion";
 export default function Cotizacion() {
- return (
-<>
-<p className="text-red-500 mt-20">Cotización</p>
-</>
- )
+    const { oportunidadData } = useOutletContext();
+    const [isEditable, setIsEditable] = useState(false);
+    const onSubmit = ({allValues, dirtyFields}) => {
+        
+      };
+      const onError = (data) => console.log("Error:", data);
+  return (
+    <>
+      <FormularioCotizacion
+        isEditable={isEditable}
+        defaultValues={oportunidadData}
+        onSubmit={onSubmit}
+        onError={onError}
+      />
+    </>
+  );
 }
