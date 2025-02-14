@@ -111,16 +111,17 @@ export function Oportunidades() {
           </div>
           <div className="inline-flex gap-2">
             <Button
-              name={"Filtrar"}
+              text={"Filtrar"}
               icon={<FunnelIcon className="w-4" />}
               variant={"yellow"}
-              hidden_name
+              hidden_text
             />
 
             <Button
-              name={"Agregar Oportunidad"}
+              text={"Agregar Oportunidad"}
               icon={<PlusIcon className="w-4" />}
               variant={"primary"}
+              onClick={() => navigate(`/nueva-oportunidad`)}
             />
           </div>
         </form>

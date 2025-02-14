@@ -6,7 +6,14 @@
       "status": "Abierta",
       "monto_cotizado": 12000,
       "creador": "Juan Pérez",
-      "alcance": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio distinctio ullam dolorem obcaecati, quod, consectetur doloribus odit ratione rem deleniti sed cum, tenetur voluptatibus quibusdam maiores soluta! Pariatur, quaerat quia."
+      "alcance": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Optio distinctio ullam dolorem obcaecati, quod, consectetur doloribus odit ratione rem deleniti sed cum, tenetur voluptatibus quibusdam maiores soluta! Pariatur, quaerat quia.",
+      "etapas": [
+        {"id_etapa": 1, "etapa": "Etapa 1"},
+        {"id_etapa": 2, "etapa": "Etapa 2"},
+        {"id_etapa": 3, "etapa": "Etapa 3"},
+        {"id_etapa": 4, "etapa": "Etapa 4"}
+      ]
+      
     },
     {
       "id": "2",

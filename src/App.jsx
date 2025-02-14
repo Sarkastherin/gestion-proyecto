@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
-import CrearOportunidad from "./pages/CrearOportunidad";
+import CrearOportunidad from "./pages/Oportunidad/CrearOportunidad";
 import { ModalContextProvider } from "./context/ModalContext";
 import Resumen from "./pages/Oportunidad/Resumen";
 import Oportunidad from "./pages/Oportunidad/Oportunidad";
@@ -17,6 +17,7 @@ function App() {
       element: <Layout />,
       children: [
         { path: "/oportunidades", element: <Oportunidades /> },
+        { path: "/nueva-oportunidad", element: <CrearOportunidad /> },
         {
           path: "/oportunidad/:id",
           element: <Oportunidad />,

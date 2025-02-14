@@ -25,7 +25,7 @@ export const Modal = ({
   return (
     <div
       id={modalId}
-      className={`absolute bottom-0 right-0 w-full min-h-screen bg-gray-800/40 flex items-start justify-center ${
+      className={`absolute top-0 right-0 w-full min-h-screen bg-gray-800/40 flex items-start justify-center z-40 ${
         !show && "hidden"
       }`}
     >
@@ -81,25 +81,7 @@ export const ModalSuccess = ({ title, id }) => {
       title={title}
       icon={<CheckBadgeIcon width={"24px"} />}
     >
-      <p className="mt-4 text-sm text-green-700">
-        Los datos se han guardo exitosamente
-        <br />
-        <strong>
-          Imprime el registro de la Solicitud, y entegalo al responsable de
-          procesar tu pedido
-        </strong>
-      </p>
-      <Button
-        className={"w-full mt-4"}
-        type="button"
-        variant="success"
-        onClick={() => {
-          handleModalClose();
-          navigate("/pdf", { state: { pdfData: data } });
-        }}
-      >
-        Imprimir Solicitud
-      </Button>
+      
     </Modal>
   );
 };

@@ -35,7 +35,7 @@ const NoDataComponent = () => {
     <div className="flex flex-col items-center justify-center text-neutral-700 gap-4 my-6">
       <p className="text-xl font bold">No hay Oportunidades.</p>
       <p>Puede agregar Oportunidades haciendo clic en el botón de abajo</p>
-      <Button name={'Agregar Oportunidad'} icon={<PlusIcon className="w-4" />} variant={'primary'}/>
+      <Button text={'Agregar Oportunidad'} icon={<PlusIcon className="w-4" />} variant={'primary'}/>
     </div>
   );
 };

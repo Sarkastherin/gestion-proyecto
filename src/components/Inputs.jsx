@@ -13,7 +13,7 @@ export const Label = ({ label, htmlFor }) => {
 };
 export const Input = React.forwardRef(
   (
-    { onChange, onBlur, name, placeholder, onClick, type = "text", onInput, readOnly , className},
+    { onChange, onBlur, name, placeholder, onClick, type = "text", onInput, readOnly , className, disabled},
     ref
   ) => {
     return (
@@ -27,6 +27,7 @@ export const Input = React.forwardRef(
         type={type}
         onInput={onInput}
         readOnly={readOnly}
+        disabled={disabled}
         className={`w-full ${stylebases} ${className}`}
       />
     );
@@ -43,6 +44,7 @@ export const Textarea = React.forwardRef(
       onInput,
       className,
       rows = 3,
+      disabled
     },
     ref
   ) => {
@@ -55,6 +57,7 @@ export const Textarea = React.forwardRef(
         rows={rows}
         ref={ref}
         placeholder={placeholder}
+        disabled={disabled}
         className={`w-full ${stylebases} ${className}`}
       ></textarea>
     );

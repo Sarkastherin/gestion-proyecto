@@ -3,12 +3,18 @@ import { Modal } from "./Modal";
 import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
-export const Cliente = ({ register, setValue, errors }) => {
+import { useFormContext } from "react-hook-form";
+export const Cliente = () => {
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [selectClient, setSelectClient] = useState({});
   const { handleModalShow, handleModalClose } = useModal();
+  const {
+      register,
+      formState: { errors },
+      setValue,
+    } = useFormContext();
   const getClientes = async () => {
     try {
       const response = await fetch(
@@ -34,9 +40,10 @@ export const Cliente = ({ register, setValue, errors }) => {
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    setValue("cliente", selectClient.name);
-  }, [selectClient]);
-
+    if (selectClient?.name) {
+      setValue("cliente", selectClient.name, { shouldDirty: true });
+    }
+  }, [selectClient, setValue]);
   return (
     <>
       <Label label={"Cliente"} htmlFor={"cliente"} />
