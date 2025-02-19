@@ -3,6 +3,7 @@ import { Button } from "../../components/Buttons";
 import { useEffect, useState } from "react";
 import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import ButtonEdit from "../../components/Generals/ButtonEdit";
 export default function Informacion() {
   const updates = {}
   const [isEditable, setIsEditable] = useState(false);
@@ -56,16 +57,8 @@ export default function Informacion() {
         onError={onError}
       />
       <div className="absolute bottom-[-70px] left-8">
-        <Button
-          type="button"
-          variant="pink"
-          text="Habilitar edición"
-          icon={<PencilSquareIcon className="w-4" />}
-          hidden_text
-          rounded="full"
-          onClick={() => {
-            setIsEditable(true);
-          }}
+        <ButtonEdit
+          func={() => setIsEditable(true)}
         />
       </div>
     </>

@@ -44,6 +44,7 @@ export default function TableComponent({
   data,
   handleOnRowClick,
   conditionalRowStyles,
+  noDataComponent = <p>No hay datos</p>
 }) {
   return (
     <DataTable
@@ -58,7 +59,7 @@ export default function TableComponent({
       highlightOnHover
       onRowClicked={handleOnRowClick}
       conditionalRowStyles={conditionalRowStyles}
-      noDataComponent={<NoDataComponent />}
+      noDataComponent={noDataComponent}
       theme="default"
     />
   );

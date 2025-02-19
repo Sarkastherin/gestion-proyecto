@@ -1,20 +1,25 @@
-import {Input, TextInvalidate } from "./Inputs";
+import { Label, Input, TextInvalidate } from "./Inputs";
 import { Modal } from "./Modal";
-import { UserGroupIcon } from "@heroicons/react/16/solid";
+import { UserGroupIcon, CurrencyDollarIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
-import { useFormContext } from "react-hook-form";
-export const Cliente = () => {
+import { useFormContext, useForm } from "react-hook-form";
+export const ModalCotizaciones = () => {
   const [search, setSearch] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-  const [clientes, setClientes] = useState([]);
-  const [selectClient, setSelectClient] = useState({});
+  const [selectCotizacion, setSelectCotizacion] = useState({});
   const { handleModalShow, handleModalClose } = useModal();
+  const [filteredData, setFilteredData] = useState([]);
   const {
     register,
     formState: { errors },
     setValue,
   } = useFormContext();
+  /* ;
+  
+  const [clientes, setClientes] = useState([]);
+  
+  
+  
   const getClientes = async () => {
     try {
       const response = await fetch(
@@ -40,38 +45,27 @@ export const Cliente = () => {
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    if (selectClient?.name) {
-      setValue("cliente", selectClient.name, { shouldDirty: true });
+    if (selectCotizacion?.name) {
+      setValue("cliente", selectCotizacion.name, { shouldDirty: true });
     }
-  }, [selectClient, setValue]);
+  }, [selectCotizacion, setValue]); */
   return (
     <>
-      <Input
-        label={"Cliente"}
-        onClick={() => handleModalShow("modalCliente")}
-        {...register("cliente", {
-          required: {
-            value: true,
-            message: "Debe seleccionar un cliente",
-          },
-        })}
-        placeholder="Seleccione un cliente"
-      />
-      {errors.cliente && <TextInvalidate message={errors.cliente.message} />}
-
       <Modal
-        modalId="modalCliente"
-        title={"Buscar Cliente"}
+        modalId="modalCotizaciones"
+        title={"Buscar Cotización"}
         variant="primary"
-        icon={<UserGroupIcon width={"24px"} />}
+        icon={<CurrencyDollarIcon className="w-6" />}
       >
         <div className="mt-4">
-          <p className="mt-1 text-sm text-gray-700">Seleccione un cliente.</p>
+          <p className="my-1 text-sm text-gray-700">Seleccione un cotización.</p>
           <Input
+          label="Buscar Cotización"
+          no_label
             type="search"
-            placeholder="Buscar Cliente"
+            placeholder="Buscar Cotización"
             onInput={(e) => setSearch(e.target.value)}
-            {...register("getCliente", {})}
+            {...register("getCotizaciones", {})}
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
             {filteredData.map((client) => (
@@ -79,7 +73,7 @@ export const Cliente = () => {
                 className="mt-2 text-sm text-gray-600 rounded border border-gray-300 px-4 py-1 cursor-pointer hover:bg-indigo-100"
                 key={client.id}
                 onClick={() => {
-                  setSelectClient(client);
+                  setSelectCotizacion(client);
                   handleModalClose();
                 }}
               >

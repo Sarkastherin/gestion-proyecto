@@ -1,8 +1,9 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { CardToggle } from "../Cards";
-import { Label, Input, TextInvalidate } from "../Inputs";
+import { Input, TextInvalidate } from "../Inputs";
 import { Button } from "../Buttons";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
+import Table from "../Generals/Table";
 import { useEffect } from "react";
 function EtapasOportunidad() {
   const {
@@ -17,52 +18,44 @@ function EtapasOportunidad() {
     control,
     name: "etapas",
   });
-
+  const cells = [
+    { element: "#", w: "w-10" },
+    { element: "Etapas", w: "w-full", flex: 'flex-1' },
+    { element: <TrashIcon className="w-4" />, w: "w-10" }
+  ];
   return (
     <CardToggle title={"Etapas"} className={"mt-8"}>
-      <Label label={"Nueva Etapa"} htmlFor={"addEtapa"} />
-      <div className="overflow-x-auto mt-4">
-        <table className="min-w-full divide-y-2 divide-gray-400 text-sm">
-          <thead className="ltr:text-left rtl:text-right">
-            <tr>
-              <th className="w-10 whitespace-nowrap p-0.5 font-medium text-gray-900 ">
-                #
-              </th>
-              <th className="whitespace-nowrap p-0.5 font-medium text-gray-900">
-                Etapas
-              </th>
-              <th className="w-10 whitespace-nowrap p-0.5 font-medium text-gray-900"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {fields.map((item, index) => (
-              <tr key={`etapas.${index}.id_etapa`}>
-                <th className="whitespace-nowrap p-0.5 text-gray-900">
-                  {index + 1}
-                </th>
-                <td className="whitespace-nowrap p-0.5 text-gray-900">
-                  <Input
-                    type={"text"}
-                    {...register(`etapas.${index}.etapa`, {
-                      required: true,
-                    })}
-                  />
-                </td>
-                <td className="whitespace-nowrap p-0.5 font-medium text-gray-900">
-                  <Button
-                    icon={<TrashIcon className="w-4" />}
-                    variant={"redOutline"}
-                    hidden_text
-                    text="Eliminar Etapa"
-                    onClick={() => {
-                      remove(index)
-                    }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <Table cells={cells}>
+        {fields.map((item, index) => (
+          <tr key={`etapas.${index}.id_etapa`} className="flex px-6 py-2 text-sm text-neutral-700 text-left items-center"
+          >
+            <th className="px-1 w-10">
+              {index + 1}
+            </th>
+            <td className="px-1 w-full">
+              <Input
+                label="etapa"
+                no_label
+                type={"text"}
+                {...register(`etapas.${index}.nombre`, {
+                  required: true,
+                })}
+              />
+            </td>
+            <td className="px-1 w-10 font-medium">
+              <Button
+                icon={<TrashIcon className="w-4" />}
+                variant={"redOutline"}
+                hidden_text
+                text="Eliminar Etapa"
+                onClick={() => {
+                  remove(index);
+                }}
+              />
+            </td>
+          </tr>
+        ))}
+      </Table>
         <div className="flex justify-center mt-4">
           <Button
             className={"min-w-40"}
@@ -70,7 +63,7 @@ function EtapasOportunidad() {
             variant={"success"}
             text="Agregar Etapa"
             onClick={() => {
-              append({ etapa: "", id_etapa:'' });
+              append({ etapa: "", id_etapa: "" });
             }}
           />
         </div>
@@ -79,7 +72,6 @@ function EtapasOportunidad() {
             message={"Debe agregar un nuevo valor al atributo a cambiar"}
           />
         )}
-      </div>
     </CardToggle>
   );
 }

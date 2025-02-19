@@ -1,17 +1,19 @@
-import FormularioCondicion from "../../templates/Oportunidad/FormularioCondiciones";
+import FormularioMargenesGanancias from "../../templates/Oportunidad/FormularioMargenesGanancias";
 import ButtonEdit from "../../components/Generals/ButtonEdit";
 import { useState } from "react";
-export default function Condiciones() {
+import { useOutletContext } from "react-router-dom";
+export default function MargenesGanancias() {
   const [isEditable, setIsEditable] = useState(false);
+  const { oportunidadData } = useOutletContext();
   const onSubmit = ({ allValues, dirtyFields }) => {
     console.log(allValues);
   };
   const onError = (data) => console.log("Error:", data);
   return (
     <>
-      <FormularioCondicion
+      <FormularioMargenesGanancias
         isEditable={isEditable}
-        defaultValues={{}}
+        defaultValues={oportunidadData}
         onSubmit={onSubmit}
         onError={onError}
       />

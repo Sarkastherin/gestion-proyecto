@@ -7,6 +7,8 @@ import {
   PresentationChartBarIcon,
   InboxIcon,
   BanknotesIcon,
+  ReceiptPercentIcon,
+  ExclamationCircleIcon
 } from "@heroicons/react/16/solid";
 import { useParams } from "react-router-dom";
 function Oportunidad() {
@@ -30,9 +32,15 @@ function Oportunidad() {
         icon: <BanknotesIcon className="w-4" />,
       },
       {
-        title: "Condiciones y más",
+        title: "Margenes",
+        href: `/oportunidad/${id}/margenes`,
+        icon: <ReceiptPercentIcon className="w-4" />,
+      },
+      
+      {
+        title: "Condiciones",
         href: `/oportunidad/${id}/condiciones`,
-        icon: <BanknotesIcon className="w-4" />,
+        icon: <ExclamationCircleIcon className="w-4" />,
       },
     ];
   };

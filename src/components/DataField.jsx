@@ -1,4 +1,5 @@
 
+import { Button } from "./Buttons";
 export function DataField({icon, label, value}) {
   return (
     <div className="flex justify-between mb-2 gap-4 text-neutral-700 text-sm">
@@ -12,3 +13,12 @@ export function DataField({icon, label, value}) {
     </div>
   );
 }
+export const NoDataComponent = ({title, text, children}) => {
+  return (
+    <div className="flex flex-col items-center justify-center text-neutral-700 gap-4 my-6">
+      <p className="text-xl font bold">{title}</p>
+      <p>{text}</p>
+      {children}
+    </div>
+  );
+};

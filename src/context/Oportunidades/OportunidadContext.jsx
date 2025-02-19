@@ -8,7 +8,7 @@ export const OportunidadProvider = ({ children }) => {
   };
   const [state, dispatch] = useReducer(OportunidadReducer, initialState);
   const getOportunidades = async () => {
-    fetch("http://localhost:5000/oportunidades")
+    fetch("http://localhost:3000/oportunidades")
       .then((response) => response.json())
       .then((data) => {
         dispatch({ type: "GET_OPORTUNIDADES", payload: data });

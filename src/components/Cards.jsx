@@ -27,7 +27,7 @@ export const CardToggle = ({ className, title, children }) => {
       </div>
       <div
         className={`overflow-hidden transition-all duration-500 ease-in-out ${
-          toggleCard.hidden ? "max-h-0" : "max-h-[500px]"
+          toggleCard.hidden ? "max-h-0" : "max-h-full"
         }`}
       >
         <div className="p-4 sm:p-6">{children}</div>
@@ -37,7 +37,7 @@ export const CardToggle = ({ className, title, children }) => {
 }
 export const Card = ({children, className}) => {
   return (
-    <article className={`rounded-xl border-2 border-gray-100 bg-white py-6 px-8 ${className}`}>
+    <article className={`rounded-lg border border-gray-200 shadow-sm pt-4 bg-white p-4 sm:p-6 ${className}`}>
       {children}
     </article>
   )

@@ -10,6 +10,7 @@ import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
+import { NoDataComponent } from "../../components/DataField";
 
 export function Oportunidades() {
   const { getOportunidades, oportunidades } = useOportunidad();
@@ -104,10 +105,7 @@ export function Oportunidades() {
           className="flex gap-2 mb-4 justify-between"
         >
           <div className="inline-flex gap-2">
-            <Input placeholder={"Cliente"} {...register("clienteQuery")} />
-            <Input placeholder={"Cliente"} {...register("clienteQuery")} />
-            <Input placeholder={"Cliente"} {...register("clienteQuery")} />
-            <Input placeholder={"Cliente"} {...register("clienteQuery")} />
+            <Input label="Filtro" no_label placeholder={"Filtrar"} {...register("clienteQuery")} />
           </div>
           <div className="inline-flex gap-2">
             <Button
@@ -130,6 +128,17 @@ export function Oportunidades() {
           columns={columns}
           handleOnRowClick={openOportunidad}
           conditionalRowStyles={conditionalRowStyles}
+          noDataComponent={
+            <NoDataComponent
+              title={"No hay Oportunidades."}
+              text={
+                "Puede agregar Oportunidades haciendo clic en el botón de abajo"
+              }
+              buttonText={"Agregar Oportunidad"}
+              buttonIcon={<PlusIcon className="w-4" />}
+              buttonVariant={"primary"}
+            />
+          }
         />
       </BoxComponent>
     </>

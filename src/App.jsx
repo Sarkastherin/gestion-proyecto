@@ -10,6 +10,7 @@ import Cotizacion from "./pages/Oportunidad/Cotizacion";
 import Condiciones from "./pages/Oportunidad/Condiciones";
 import { Oportunidades } from "./pages/Oportunidad/Oportunidades";
 import { OportunidadProvider } from "./context/Oportunidades/OportunidadContext";
+import MargenesGanancias from "./pages/Oportunidad/MargenesGanancias";
 function App() {
   const router = createBrowserRouter([
     {
@@ -25,6 +26,7 @@ function App() {
             { path: "/oportunidad/:id/resumen", element: <Resumen /> },
             { path: "/oportunidad/:id/informacion", element: <Informacion /> },
             { path: "/oportunidad/:id/cotizacion", element: <Cotizacion /> },
+            { path: "/oportunidad/:id/margenes", element: <MargenesGanancias /> },
             { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
 
           ],
