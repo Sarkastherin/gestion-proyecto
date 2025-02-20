@@ -1,4 +1,4 @@
-import {Input, TextInvalidate } from "./Inputs";
+import { Input, TextInvalidate } from "./Inputs";
 import { Modal } from "./Modal";
 import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
@@ -18,7 +18,7 @@ export const Cliente = () => {
   const getClientes = async () => {
     try {
       const response = await fetch(
-        "https://fakerapi.it/api/v2/companies?_quantity=20"
+        "https://fakerapi.it/api/v2/companies?_quantity=100"
       );
       const { status, code, data } = await response.json();
       setClientes(data);
@@ -42,6 +42,7 @@ export const Cliente = () => {
   useEffect(() => {
     if (selectClient?.name) {
       setValue("cliente", selectClient.name, { shouldDirty: true });
+      setValue("id_cliente", selectClient.id, { shouldDirty: true });
     }
   }, [selectClient, setValue]);
   return (
@@ -58,7 +59,6 @@ export const Cliente = () => {
         placeholder="Seleccione un cliente"
       />
       {errors.cliente && <TextInvalidate message={errors.cliente.message} />}
-
       <Modal
         modalId="modalCliente"
         title={"Buscar Cliente"}
@@ -68,6 +68,8 @@ export const Cliente = () => {
         <div className="mt-4">
           <p className="mt-1 text-sm text-gray-700">Seleccione un cliente.</p>
           <Input
+            label="Buscar Cliente"
+            no_label
             type="search"
             placeholder="Buscar Cliente"
             onInput={(e) => setSearch(e.target.value)}

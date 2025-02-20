@@ -60,7 +60,7 @@ function EtapasOportunidad() {
           <Button
             className={"min-w-40"}
             icon={<PlusIcon className="w-4" />}
-            variant={"success"}
+            variant={"green"}
             text="Agregar Etapa"
             onClick={() => {
               append({ etapa: "", id_etapa: "" });

@@ -1,10 +1,9 @@
 import {
   XMarkIcon,
-  ArchiveBoxIcon,
-  CheckBadgeIcon,
+  CheckCircleIcon
 } from "@heroicons/react/24/outline";
 import { useModal } from "../context/ModalContext";
-import ReactLoading from "react-loading";
+
 export const Modal = ({
   modalId,
   title,
@@ -17,7 +16,7 @@ export const Modal = ({
     default: "text-gray-800",
     danger: "text-red-700",
     primary: "text-indigo-600",
-    success: "text-green-600",
+    success: {color: 'text-green-500', icon:<CheckCircleIcon className="w-6" />},
     waiting: "text-blue-500",
   };
   const { handleModalClose, activeModal } = useModal();
@@ -31,13 +30,13 @@ export const Modal = ({
     >
       <div
         role="alert"
-        className="rounded-xl border border-gray-100 bg-white px-8 py-6 mt-[100px] max-h-full sm:w-sm md:w-lg"
+        className="rounded-xl border border-gray-100 bg-white px-8 pb-8 pt-6 mt-[100px] max-h-full sm:w-sm md:w-lg"
       >
-        <div className={`flex items-start gap-4 ${variants[variant]}`}>
-          {icon}
+        <div className={`flex items-start gap-1.5 ${variants[variant].color}`}>
+          {variants[variant].icon}
 
           <div className="flex-1">
-            <strong className="block font-medium"> {title} </strong>
+            <strong className="block font-medium text-neutral-700"> {title} </strong>
           </div>
           <button
           title="close button"
@@ -54,34 +53,4 @@ export const Modal = ({
     </div>
   );
 };
-export const ModalLoading = ({ title, id }) => {
-  return (
-    <Modal
-      modalId={id}
-      variant="primary"
-      title={title}
-      icon={<ArchiveBoxIcon width={"24px"} />}
-      disableXButton={true}
-    >
-      <div className="mx-auto mt-4">
-        <ReactLoading
-          type={"spin"}
-          color=""
-          className="mx-auto fill-indigo-500"
-        />
-      </div>
-    </Modal>
-  );
-};
-export const ModalSuccess = ({ title, id }) => {
-  return (
-    <Modal
-      modalId={id}
-      variant="success"
-      title={title}
-      icon={<CheckBadgeIcon width={"24px"} />}
-    >
-      
-    </Modal>
-  );
-};
+

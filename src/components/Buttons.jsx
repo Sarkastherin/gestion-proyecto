@@ -32,12 +32,12 @@ export const Button = React.forwardRef(
         "text-indigo-600 border-indigo-600 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring active:bg-indigo-600",
       secondaryOutline:
         "text-neutral-500 border-neutral-500 hover:bg-neutral-500 hover:text-white focus:outline-none focus:ring active:bg-neutral-500",
-      successOutline:
-        "text-green-600 border-green-600 hover:bg-green-600 hover:text-white focus:outline-none focus:ring active:bg-green-600",
+      greenOutline:
+        "text-green-500 border-green-500 hover:bg-green-500 hover:text-white focus:outline-none focus:ring active:bg-green-500",
       primary:
         "border-indigo-600 bg-indigo-600 text-white hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-600",
-      success:
-        "border-green-600 bg-green-600 text-white hover:bg-transparent hover:text-green-600 focus:outline-none focus:ring active:text-green-500",
+      green:
+        "border-green-500 bg-green-500 text-white hover:bg-transparent hover:text-green-500 focus:outline-none focus:ring active:text-green-500",
       yellow:
         "border-yellow-400 bg-yellow-400 text-gray-700 hover:bg-transparent hover:text-yellow-400 focus:outline-none focus:ring active:text-yellow-400",
       pink: "border-pink-500 bg-pink-500 text-white hover:bg-transparent hover:text-pink-500 focus:outline-none focus:ring active:text-pink-500",

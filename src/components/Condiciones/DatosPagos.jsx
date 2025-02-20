@@ -22,16 +22,17 @@ function DatosPagos() {
     { element: "Metodo de Pago", w: "w-full", flex: "flex-1" },
     { element: <TrashIcon className="w-4.5" />, w: "w-10" },
   ];
-  const formaPago = []
-  const mediosPago = []
+  const formaPago = [];
+  const mediosPago = [];
   return (
     <CardToggle title={"Formas y metodos de pago"}>
       <Table cells={cells}>
         {fields.map((item, index) => (
-          <tr key={index} className={`flex px-6 py-2 text-sm text-neutral-700 text-left `}>
-            <th className="px-1 w-10 flex-none">
-              {index + 1}
-            </th>
+          <tr
+            key={index}
+            className={`flex px-6 py-2 text-sm text-neutral-700 text-left `}
+          >
+            <th className="px-1 w-10 flex-none">{index + 1}</th>
             <td className="px-1 w-full flex-1">
               <Select
                 placeholder={"Seleccione una formas de pago"}
@@ -47,31 +48,18 @@ function DatosPagos() {
               </Select>
             </td>
             <td className="px-1 w-full flex-1">
-              {watch(`formaPago.${index}.forma_pago`) === "Unidad usada" ? (
-                <Input
-                  type={"text"}
-                  placeholder={"Describa la unidad usada"}
-                  {...register(`formaPago.${index}.unidad_usada`, {
-                    required: true,
-                  })}
-                />
-              ) : (
-                <Select
-                  placeholder={"Metodo de Pago"}
-                  {...register(`formaPago.${index}.metodo_pago`, {
-                    required: true,
-                  })}
-                >
-                  {mediosPago.map((item) => (
-                    <option
-                      key={item["descripcion"]}
-                      value={item["descripcion"]}
-                    >
-                      {item["descripcion"]}
-                    </option>
-                  ))}
-                </Select>
-              )}
+              <Select
+                placeholder={"Metodo de Pago"}
+                {...register(`formaPago.${index}.metodo_pago`, {
+                  required: true,
+                })}
+              >
+                {mediosPago.map((item) => (
+                  <option key={item["descripcion"]} value={item["descripcion"]}>
+                    {item["descripcion"]}
+                  </option>
+                ))}
+              </Select>
             </td>
             <td className="px-1 w-10 flex-none">
               <Button
@@ -91,7 +79,7 @@ function DatosPagos() {
         <Button
           className={"min-w-40"}
           icon={<PlusIcon className="w-4" />}
-          variant={"success"}
+          variant={"green"}
           text="Agregar Etapa"
           onClick={() =>
             append({
