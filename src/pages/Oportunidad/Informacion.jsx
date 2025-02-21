@@ -1,8 +1,6 @@
 import { useOutletContext } from "react-router-dom";
-import { Button } from "../../components/Buttons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
-import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import ButtonEdit from "../../components/Generals/ButtonEdit";
 export default function Informacion() {
   const updates = {}
