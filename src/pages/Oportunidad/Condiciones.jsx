@@ -1,7 +1,9 @@
 import FormularioCondicion from "../../templates/Oportunidad/FormularioCondiciones";
 import ButtonEdit from "../../components/Generals/ButtonEdit";
 import { useState } from "react";
+import { useOutletContext } from "react-router-dom";
 export default function Condiciones() {
+  const { oportunidadData } = useOutletContext();
   const [isEditable, setIsEditable] = useState(false);
   const onSubmit = ({ allValues, dirtyFields }) => {
     console.log(allValues);
@@ -11,7 +13,7 @@ export default function Condiciones() {
     <>
       <FormularioCondicion
         isEditable={isEditable}
-        defaultValues={{}}
+        defaultValues={oportunidadData}
         onSubmit={onSubmit}
         onError={onError}
       />

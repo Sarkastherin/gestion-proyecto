@@ -25,10 +25,17 @@ export const Select = React.forwardRef(
       disabled,
       className,
       children,
+      label ="falta label",
+      no_label
     },
     ref
   ) => {
     return (
+      <div className="w-full">
+        <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
+          {" "}
+          {label}{" "}
+        </label>
       <select
         onChange={onChange}
         onBlur={onBlur}
@@ -45,6 +52,7 @@ export const Select = React.forwardRef(
         </option>
         {children}
       </select>
+      </div>
     );
   }
 );
@@ -68,8 +76,8 @@ export const Input = React.forwardRef(
     ref
   ) => {
     return (
-      <div>
-        <label htmlFor={name} className={`block text-sm font-medium text-red-700 mb-1 ${no_label && 'sr-only'}`}>
+      <div className="w-full">
+        <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
           {" "}
           {label}{" "}
         </label>
@@ -110,8 +118,8 @@ export const Textarea = React.forwardRef(
     ref
   ) => {
     return (
-      <div>
-        <label htmlFor={name} className={`block text-sm font-medium text-red-700 mb-1 ${no_label && 'sr-only'}`}>
+      <div className={`w-full ${className}`}>
+        <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
           {" "}
           {label}{" "}
         </label>
@@ -124,7 +132,7 @@ export const Textarea = React.forwardRef(
         ref={ref}
         placeholder={placeholder}
         disabled={disabled}
-        className={`w-full field-sizing-content ${stylebases} ${className}`}
+        className={`w-full field-sizing-content ${stylebases}`}
       ></textarea></div>
     );
   }

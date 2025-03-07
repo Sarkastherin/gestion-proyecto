@@ -1,19 +1,20 @@
 import { Outlet } from "react-router-dom";
 import Header from "../../components/Header";
-import {
-  BoxComponentScrolling,
-} from "../../components/BoxComponent";
+import { BoxComponentScrolling } from "../../components/BoxComponent";
 import {
   PresentationChartBarIcon,
   InboxIcon,
   BanknotesIcon,
   ReceiptPercentIcon,
-  ExclamationCircleIcon
+  ExclamationCircleIcon,
 } from "@heroicons/react/16/solid";
 import { useParams } from "react-router-dom";
+import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
+import { useEffect } from "react";
 function Oportunidad() {
   const { id } = useParams();
-  const oportunidadData = JSON.parse(localStorage.getItem("oportunidadData")) || {};
+  const oportunidadData =
+    JSON.parse(localStorage.getItem("oportunidadData")) || {};
   const menuItems = () => {
     return [
       {
@@ -36,7 +37,7 @@ function Oportunidad() {
         href: `/oportunidad/${id}/margenes`,
         icon: <ReceiptPercentIcon className="w-4" />,
       },
-      
+
       {
         title: "Condiciones",
         href: `/oportunidad/${id}/condiciones`,
@@ -50,11 +51,11 @@ function Oportunidad() {
         text={"Oportunidades"}
         hasSubheader={true}
         menuItems={menuItems}
-        name={oportunidadData.nombre_oportunidad}
+        name={oportunidadData.nombre}
         icon={<BanknotesIcon className="w-5 text-white" />}
       >
         <BoxComponentScrolling title="Creando Oportunidad">
-          <Outlet context={{ oportunidadData }}/>
+          <Outlet context={{ oportunidadData }} />
         </BoxComponentScrolling>
       </Header>
     </>

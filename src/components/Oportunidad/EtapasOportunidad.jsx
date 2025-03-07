@@ -4,14 +4,10 @@ import { Input, TextInvalidate } from "../Inputs";
 import { Button } from "../Buttons";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import Table from "../Generals/Table";
-import { useEffect } from "react";
 function EtapasOportunidad() {
   const {
     register,
     formState: { errors },
-    getValues,
-    setValue,
-    watch,
     control,
   } = useFormContext();
   const { fields, append, remove } = useFieldArray({

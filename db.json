@@ -2,7 +2,7 @@
   "oportunidades": [
     {
       "id": "1",
-      "nombre_oportunidad": "Oportunidad A",
+      "nombre": "Oportunidad A",
       "cliente": "Mosciski, Murray and Schiller",
       "status": "Abierta",
       "monto_cotizado": 12000,
@@ -344,7 +344,7 @@
     },
     {
       "id": "2",
-      "nombre_oportunidad": "Oportunidad B",
+      "nombre": "Oportunidad B",
       "cliente": "Cliente 2",
       "status": "Cerrada",
       "monto_cotizado": 8000,
@@ -352,7 +352,7 @@
     },
     {
       "id": "3",
-      "nombre_oportunidad": "Oportunidad C",
+      "nombre": "Oportunidad C",
       "cliente": "Cliente 3",
       "status": "Abierta",
       "monto_cotizado": 15000,
@@ -360,7 +360,7 @@
     },
     {
       "id": "4",
-      "nombre_oportunidad": "Oportunidad D",
+      "nombre": "Oportunidad D",
       "cliente": "Cliente 4",
       "status": "En negociación",
       "monto_cotizado": 20000,
@@ -368,7 +368,7 @@
     },
     {
       "id": "5",
-      "nombre_oportunidad": "Oportunidad E",
+      "nombre": "Oportunidad E",
       "cliente": "Cliente 5",
       "status": "Cerrada",
       "monto_cotizado": 9500,
@@ -376,7 +376,7 @@
     },
     {
       "id": "6",
-      "nombre_oportunidad": "Oportunidad F",
+      "nombre": "Oportunidad F",
       "cliente": "Cliente 6",
       "status": "Abierta",
       "monto_cotizado": 18000,
@@ -384,7 +384,7 @@
     },
     {
       "id": "7",
-      "nombre_oportunidad": "Oportunidad G",
+      "nombre": "Oportunidad G",
       "cliente": "Cliente 7",
       "status": "En negociación",
       "monto_cotizado": 22000,
@@ -392,7 +392,7 @@
     },
     {
       "id": "8",
-      "nombre_oportunidad": "Oportunidad H",
+      "nombre": "Oportunidad H",
       "cliente": "Cliente 8",
       "status": "Cerrada",
       "monto_cotizado": 13000,
@@ -400,7 +400,7 @@
     },
     {
       "id": "9",
-      "nombre_oportunidad": "Oportunidad I",
+      "nombre": "Oportunidad I",
       "cliente": "Cliente 9",
       "status": "Abierta",
       "monto_cotizado": 25000,
@@ -408,7 +408,7 @@
     },
     {
       "id": "10",
-      "nombre_oportunidad": "Oportunidad J",
+      "nombre": "Oportunidad J",
       "cliente": "Cliente 10",
       "status": "En negociación",
       "monto_cotizado": 30000,
@@ -416,7 +416,7 @@
     },
     {
       "id": "11",
-      "nombre_oportunidad": "Oportunidad K",
+      "nombre": "Oportunidad K",
       "cliente": "Cliente 11",
       "status": "Cerrada",
       "monto_cotizado": 11000,
@@ -424,7 +424,7 @@
     },
     {
       "id": "12",
-      "nombre_oportunidad": "Oportunidad L",
+      "nombre": "Oportunidad L",
       "cliente": "Cliente 12",
       "status": "Abierta",
       "monto_cotizado": 17500,
@@ -432,7 +432,7 @@
     },
     {
       "id": "13",
-      "nombre_oportunidad": "Oportunidad M",
+      "nombre": "Oportunidad M",
       "cliente": "Cliente 13",
       "status": "En negociación",
       "monto_cotizado": 23000,
@@ -440,7 +440,7 @@
     },
     {
       "id": "14",
-      "nombre_oportunidad": "Oportunidad N",
+      "nombre": "Oportunidad N",
       "cliente": "Cliente 14",
       "status": "Cerrada",
       "monto_cotizado": 14500,
@@ -448,7 +448,7 @@
     },
     {
       "id": "12345",
-      "nombre_oportunidad": "Oportunidad O",
+      "nombre": "Oportunidad O",
       "cliente": "Cliente 15",
       "status": "Abierta",
       "monto_cotizado": 27000,

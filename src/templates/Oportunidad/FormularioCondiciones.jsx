@@ -2,13 +2,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Footer } from "../../components/Footer";
 import { Button } from "../../components/Buttons";
 import DatosPagos from "../../components/Condiciones/DatosPagos";
-function FormularioCondicion(
+function FormularioCondicion({
   defaultValues,
   isEditable,
   children,
   onSubmit,
-  onError
-) {
+  onError,
+}) {
   const methods = useForm({
     defaultValues: defaultValues || {},
   });
@@ -21,6 +21,7 @@ function FormularioCondicion(
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
+  console.log(defaultValues);
   return (
     <FormProvider {...methods}>
       <form
@@ -29,11 +30,6 @@ function FormularioCondicion(
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <ul>
-            <li>Fecha de vigencia</li>
-            <li>Terminos y Condiciones (texto lago)</li>
-            <li>Formas de pago</li>
-          </ul>
           <DatosPagos />
           <Footer>
             {children}

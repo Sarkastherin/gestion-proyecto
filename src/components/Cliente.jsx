@@ -4,10 +4,12 @@ import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
+import { useClientes } from "../context/ClientContext";
 export const Cliente = () => {
+  const {clientes, getClientes} = useClientes();
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [clientes, setClientes] = useState([]);
+  //const [clientes, setClientes] = useState([]);
   const [selectClient, setSelectClient] = useState({});
   const { handleModalShow, handleModalClose } = useModal();
   const {
@@ -15,7 +17,7 @@ export const Cliente = () => {
     formState: { errors },
     setValue,
   } = useFormContext();
-  const getClientes = async () => {
+  /* const getClientes = async () => {
     try {
       const response = await fetch(
         "https://fakerapi.it/api/v2/companies?_quantity=100"
@@ -26,9 +28,9 @@ export const Cliente = () => {
     } catch (error) {
       console.error("Error:", error);
     }
-  };
+  }; */
   useEffect(() => {
-    getClientes();
+    setFilteredData(clientes);
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -41,8 +43,8 @@ export const Cliente = () => {
   }, [search]);
   useEffect(() => {
     if (selectClient?.name) {
-      setValue("cliente", selectClient.name, { shouldDirty: true });
-      setValue("id_cliente", selectClient.id, { shouldDirty: true });
+      setValue("cliente", selectClient, { shouldDirty: true });
+      setValue("cliente.name", selectClient.name, { shouldDirty: true });
     }
   }, [selectClient, setValue]);
   return (
@@ -50,7 +52,7 @@ export const Cliente = () => {
       <Input
         label={"Cliente"}
         onClick={() => handleModalShow("modalCliente")}
-        {...register("cliente", {
+        {...register("cliente.name", {
           required: {
             value: true,
             message: "Debe seleccionar un cliente",

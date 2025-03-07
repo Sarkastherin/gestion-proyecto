@@ -3,6 +3,7 @@ import { Seccion } from "../../components/Cotizacion/Seccion";
 import { Footer } from "../../components/Footer";
 import { Button } from "../../components/Buttons";
 import { ModalCotizaciones } from "../../components/ModalCotizaciones";
+import { useOutletContext } from "react-router-dom";
 
 function FormularioCotizacion({
   defaultValues,
@@ -11,6 +12,7 @@ function FormularioCotizacion({
   onSubmit,
   onError,
 }) {
+  const { oportunidadData } = useOutletContext();
   const methods = useForm({
     defaultValues: defaultValues || {},
   });
@@ -24,6 +26,7 @@ function FormularioCotizacion({
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
+  console.log(defaultValues);
   return (
     <FormProvider {...methods}>
       <form
@@ -32,7 +35,7 @@ function FormularioCotizacion({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Seccion etapas={defaultValues?.etapas}/>
+          <Seccion etapas={oportunidadData?.etapas}/>
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">

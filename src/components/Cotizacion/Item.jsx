@@ -15,7 +15,8 @@ export const Item = ({ tipo, seccionIndex }) => {
     if (fields.length === 0 && tipo != "") {
       append(
         {
-          material: "",
+          id_material: "",
+          descripcion_material: "",
           mano_obra: "",
           actividad: "",
           item: "",
@@ -71,11 +72,11 @@ export const Item = ({ tipo, seccionIndex }) => {
                   type="text"
                   placeholder="Descripción"
                   {...register(
-                    `secciones.${seccionIndex}.items.${index}.material`
+                    `secciones.${seccionIndex}.items.${index}.descripcion_material`
                   )}
                 />
               )}
-              {tipo === "Mano de obra" && (
+              {tipo === "Mano de Obra" && (
                 <Input
                 label = "Operario"
                 no_label

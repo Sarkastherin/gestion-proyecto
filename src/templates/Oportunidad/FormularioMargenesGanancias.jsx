@@ -25,7 +25,7 @@ function FormularioMargenesGanancias({
   };
   const getTotals = () => {
     const totales = {};
-    defaultValues.secciones.forEach((etapa) => {
+    defaultValues.secciones?.forEach((etapa) => {
       const tipo = etapa.tipo;
       const total = etapa.items.reduce(
         (sum, item) => sum + parseFloat(item.costo_total),

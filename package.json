@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@supabase/supabase-js": "^2.49.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/vite": "^4.0.3",
     "flowbite": "^3.1.2",
+    "json-server": "^1.0.0-beta.3",
     "react": "^18.3.1",
     "react-currency-input-field": "^3.9.0",
     "react-data-table-component": "^7.6.2",

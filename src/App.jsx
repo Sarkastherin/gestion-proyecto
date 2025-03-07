@@ -1,49 +1,66 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/Layout";
-import Home from "./pages/Home";
-import CrearOportunidad from "./pages/Oportunidad/CrearOportunidad";
+/* Contextos */
+import { AuthProvider } from "./context/AuthContext";
 import { ModalContextProvider } from "./context/ModalContext";
-import Resumen from "./pages/Oportunidad/Resumen";
+import { OportunidadProvider } from "./context/Oportunidades/OportunidadContext";
+import { ClienteContextProvider } from "./context/ClientContext";
+import { CotizacionProvider } from "./context/Cotizaciones/CotizacionesContext";
+/* Pages */
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import { Oportunidades } from "./pages/Oportunidad/Oportunidades";
+import CrearOportunidad from "./pages/Oportunidad/CrearOportunidad";
+/* Oporttunidad */
 import Oportunidad from "./pages/Oportunidad/Oportunidad";
+import Resumen from "./pages/Oportunidad/Resumen";
 import Informacion from "./pages/Oportunidad/Informacion";
 import Cotizacion from "./pages/Oportunidad/Cotizacion";
-import Condiciones from "./pages/Oportunidad/Condiciones";
-import { Oportunidades } from "./pages/Oportunidad/Oportunidades";
-import { OportunidadProvider } from "./context/Oportunidades/OportunidadContext";
 import MargenesGanancias from "./pages/Oportunidad/MargenesGanancias";
+import Condiciones from "./pages/Oportunidad/Condiciones";
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <Layout />,
       children: [
+        { path: "/", element: <Home /> },
         { path: "/oportunidades", element: <Oportunidades /> },
         { path: "/nueva-oportunidad", element: <CrearOportunidad /> },
         {
           path: "/oportunidad/:id",
-          element: <Oportunidad />,
+          element: (
+            <CotizacionProvider>
+              <Oportunidad />
+            </CotizacionProvider>
+          ),
           children: [
             { path: "/oportunidad/:id/resumen", element: <Resumen /> },
             { path: "/oportunidad/:id/informacion", element: <Informacion /> },
             { path: "/oportunidad/:id/cotizacion", element: <Cotizacion /> },
-            { path: "/oportunidad/:id/margenes", element: <MargenesGanancias /> },
+            {
+              path: "/oportunidad/:id/margenes",
+              element: <MargenesGanancias />,
+            },
             { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
-
           ],
-
         },
       ],
     },
-
+    { path: "/login", element: <Login /> },
     { path: "*", element: <h1>Error</h1> },
   ]);
 
   return (
-    <ModalContextProvider>
-      <OportunidadProvider>
-        <RouterProvider router={router} />
-      </OportunidadProvider >
-    </ModalContextProvider>
+    <AuthProvider>
+      <ClienteContextProvider>
+        <ModalContextProvider>
+          <OportunidadProvider>
+            <RouterProvider router={router} />
+          </OportunidadProvider>
+        </ModalContextProvider>
+      </ClienteContextProvider>
+    </AuthProvider>
   );
 }
 

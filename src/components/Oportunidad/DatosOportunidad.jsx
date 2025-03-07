@@ -7,7 +7,6 @@ function DatosOportunidad() {
   const {
     register,
     formState: { errors },
-    setValue,
   } = useFormContext();
   return (
     <CardToggle title={"Datos de la Oportunidad"}>
@@ -15,7 +14,7 @@ function DatosOportunidad() {
         <div className="w-full">
           <Input
             label={"Nombre del proyecto"}
-            {...register("nombre_oportunidad", {
+            {...register("nombre", {
               required: {
                 value: true,
                 message: "Debe ingresar el nombre de la oportunidad",
@@ -23,8 +22,8 @@ function DatosOportunidad() {
             })}
             placeholder="Nombre del proyecto"
           />
-          {errors.nombre_oportunidad && (
-            <TextInvalidate message={errors.nombre_oportunidad.message} />
+          {errors.nombre && (
+            <TextInvalidate message={errors.nombre.message} />
           )}
         </div>
         <div className="w-full sm:mt-1.5">

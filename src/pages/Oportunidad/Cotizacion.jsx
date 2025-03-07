@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import FormularioCotizacion from "../../templates/Oportunidad/FormularioCotizacion";
 import { NoDataComponent } from "../../components/DataField";
@@ -6,7 +6,9 @@ import { PlusIcon, DocumentDuplicateIcon, PencilSquareIcon } from "@heroicons/re
 import { Button } from "../../components/Buttons";
 import { useModal } from "../../context/ModalContext";
 import ButtonEdit from "../../components/Generals/ButtonEdit";
+import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 export default function Cotizacion() {
+  const {getDetalleCotizacion, detalleCotizacion} = useCotizacion();
   const { handleModalShow, handleModalClose } = useModal();
   const { oportunidadData } = useOutletContext();
   const [isEditable, setIsEditable] = useState(false);
@@ -24,13 +26,14 @@ export default function Cotizacion() {
     setShowForm(true);
     setIsEditable(true);
   }
+  useEffect(() => {getDetalleCotizacion(oportunidadData.id_cotizacion)}, [])
   return (
     <>
-      {data.secciones || showForm ? (
+      {detalleCotizacion || showForm ? (
         <>
         <FormularioCotizacion
           isEditable={isEditable}
-          defaultValues={data}
+          defaultValues={detalleCotizacion}
           onSubmit={onSubmit}
           onError={onError}
         />

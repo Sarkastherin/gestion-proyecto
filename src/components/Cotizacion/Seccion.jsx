@@ -36,11 +36,11 @@ export const Seccion = ({ etapas }) => {
   return (
     <>
       {fields.map((field, index) => (
+        
         <div
           key={field.id}
           className="rounded-lg border border-neutral-400/70 shadow-sm bg-white overflow-hidden mb-4"
         >
-          
           {/* Encabezado de la Sección */}
           <div
             className="flex justify-between items-center gap-2 font-medium cursor-pointer px-5 py-2 text-sm bg-neutral-300 hover:bg-indigo-500/30 hover:text-white"
@@ -68,6 +68,7 @@ export const Seccion = ({ etapas }) => {
           >
             <div className="flex justify-start items-center gap-2 p-5 bg-indigo-100/80 border-b border-indigo-200">
               <Select
+              label="Etapa"
                 placeholder="Seleccione una Etapa"
                 {...register(`secciones.${index}.id_etapa`)}
               >
@@ -78,13 +79,14 @@ export const Seccion = ({ etapas }) => {
                 ))}
               </Select>
               <Select
+              label="Tipo de Cotización"
                 placeholder="Tipo de Cotización"
                 {...register(`secciones.${index}.tipo`)}
                 disabled={!!watch(`secciones.${index}.tipo`)}
               >
                 <option value="Materiales">Materiales</option>
-                <option value="Mano de obra">Mano de obra</option>
-                <option value="Subcontratos">Subcontratos</option>
+                <option value="Mano de Obra">Mano de Obra</option>
+                <option value="Subcontrato">Subcontratos</option>
                 <option value="Otros">Otros</option>
               </Select>
             </div>

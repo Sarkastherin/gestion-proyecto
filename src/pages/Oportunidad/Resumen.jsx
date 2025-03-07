@@ -3,18 +3,18 @@ import { Card } from "../../components/Cards";
 import { useOutletContext } from "react-router-dom";
 export default function Resumen() {
   const { oportunidadData } = useOutletContext();
+  console.log("oportunidad: ",oportunidadData)
   return (
     <>
-      <div>
+      <div className="flex flex-col gap-4">
         <Card>
           <DataField
             label={"Nombre de Oportunidad"}
-            value={oportunidadData?.nombre_oportunidad}
+            value={oportunidadData?.nombre}
           />
-          <DataField label={"Cliente"} value={oportunidadData?.cliente} />
+          <DataField label={"Cliente"} value={oportunidadData?.cliente.name} />
           <DataField label={"Alcance"} value={oportunidadData?.alcance} />
-        </Card>
-        
+        </Card>        
       </div>
     </>
   );

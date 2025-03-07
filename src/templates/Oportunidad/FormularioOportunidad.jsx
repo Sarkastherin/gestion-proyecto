@@ -1,4 +1,4 @@
-import { useForm, FormProvider, useFormState } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import DatosOportunidad from "../../components/Oportunidad/DatosOportunidad";
 import EtapasOportunidad from "../../components/Oportunidad/EtapasOportunidad";
 import { Footer } from "../../components/Footer";
@@ -26,6 +26,7 @@ function FormularioOportunidad({
     const allValues = getValues(); 
     return {allValues, dirtyFields};
   }
+  console.log(defaultValues);
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(() => {onSubmit(getUpdateValues())}, onError)}>
