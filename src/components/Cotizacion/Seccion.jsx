@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import Badge from "../Generals/Badge";
 
 export const Seccion = ({ etapas }) => {
+  console.log(etapas)
   const { register, control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -48,7 +49,7 @@ export const Seccion = ({ etapas }) => {
           >
             <div className="flex items-center gap-2">
               <ChevronDoubleDownIcon className="w-5" />
-              {`${field.nombre_etapa} - Tipo:`} <Badge text={field.tipo} variant={'purple'}/>
+              {`${field.id_etapa}: ${etapas.find(e => e.id_etapa===field.id_etapa).nombre} - Tipo:`} <Badge text={field.tipo} variant={'purple'}/>
             </div>
             <Button
               text="Eliminar Sección"

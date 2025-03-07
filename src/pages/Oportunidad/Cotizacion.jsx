@@ -26,7 +26,9 @@ export default function Cotizacion() {
     setShowForm(true);
     setIsEditable(true);
   }
-  useEffect(() => {getDetalleCotizacion(oportunidadData.id_cotizacion)}, [])
+  useEffect(() => {
+    getDetalleCotizacion(oportunidadData.id_cotizacion)
+  }, [])
   return (
     <>
       {detalleCotizacion || showForm ? (
