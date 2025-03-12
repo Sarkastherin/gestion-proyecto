@@ -24,7 +24,7 @@ export const Item = ({ tipo, seccionIndex }) => {
           observaciones: "",
           cantidad: "",
           costo_unitario: "",
-          total: "0",
+          costo_total: "0",
         },
         { shouldFocus: false }
       );
@@ -34,14 +34,15 @@ export const Item = ({ tipo, seccionIndex }) => {
     const quantity =
       parseFloat(watch(`secciones.${seccionIndex}.items.${index}.cantidad`)) ||
       0;
-    const costo_unitario = parseFloat(value) || 0;
+    const costo_unitario = value || "0";
+    console.log(costo_unitario);
     setValue(
       `secciones.${seccionIndex}.items.${index}.costo_unitario`,
       costo_unitario
     );
     setValue(
       `secciones.${seccionIndex}.items.${index}.costo_total`,
-      quantity * costo_unitario.toFixed(2)
+      (quantity * costo_unitario)
     );
   };
   const cells = [
@@ -66,8 +67,8 @@ export const Item = ({ tipo, seccionIndex }) => {
             <td className="w-full flex-1 px-1">
               {tipo === "Materiales" && (
                 <Input
-                label = "Descripción"
-                no_label
+                  label="Descripción"
+                  no_label
                   className="mb-1.5"
                   type="text"
                   placeholder="Descripción"
@@ -78,8 +79,8 @@ export const Item = ({ tipo, seccionIndex }) => {
               )}
               {tipo === "Mano de Obra" && (
                 <Input
-                label = "Operario"
-                no_label
+                  label="Operario"
+                  no_label
                   className="mb-1.5"
                   type="text"
                   placeholder="Operario"
@@ -90,8 +91,8 @@ export const Item = ({ tipo, seccionIndex }) => {
               )}
               {tipo === "Subcontratos" && (
                 <Input
-                label = "Actividad"
-                no_label
+                  label="Actividad"
+                  no_label
                   className="mb-1.5"
                   type="text"
                   placeholder="Actividad"
@@ -102,8 +103,8 @@ export const Item = ({ tipo, seccionIndex }) => {
               )}
               {tipo === "Otros" && (
                 <Input
-                label = "Otros"
-                no_label
+                  label="Otros"
+                  no_label
                   className="mb-1.5"
                   type="text"
                   placeholder="..."
@@ -111,8 +112,8 @@ export const Item = ({ tipo, seccionIndex }) => {
                 />
               )}
               <Textarea
-              label = "Indicaciones"
-              no_label
+                label="Indicaciones"
+                no_label
                 placeholder="Indicaciones"
                 rows="2"
                 {...register(
@@ -120,8 +121,8 @@ export const Item = ({ tipo, seccionIndex }) => {
                 )}
               />
               <Textarea
-              label = "Observaciones"
-              no_label
+                label="Observaciones"
+                no_label
                 placeholder="Observaciones"
                 rows="2"
                 {...register(
@@ -131,8 +132,8 @@ export const Item = ({ tipo, seccionIndex }) => {
             </td>
             <td className="w-30 flex-none px-1">
               <Input
-              label = "Cantidad"
-              no_label
+                label="Cantidad"
+                no_label
                 type="number"
                 {...register(
                   `secciones.${seccionIndex}.items.${index}.cantidad`
@@ -141,22 +142,22 @@ export const Item = ({ tipo, seccionIndex }) => {
             </td>
             <td className="w-30 flex-none px-1">
               <CurrencyTypeInput
-                type="number"
+              //{...register(`secciones.${seccionIndex}.items.${index}.costo_unitario`)}
                 value={
                   watch(
                     `secciones.${seccionIndex}.items.${index}.costo_unitario`
-                  ) || ""
+                  ) || "0"
                 }
                 onValueChange={(value) => handleCostoTotalItem(value, index)}
               />
             </td>
             <td className="w-30 flex-none px-1">
               <CurrencyTypeInput
-                type="number"
                 readOnly={true}
                 value={
-                  watch(`secciones.${seccionIndex}.items.${index}.costo_total`) ||
-                  "0.00"
+                  watch(
+                    `secciones.${seccionIndex}.items.${index}.costo_total`
+                  ) || "0.00"
                 }
               />
             </td>

@@ -8,12 +8,12 @@ import { useModal } from "../../context/ModalContext";
 import ButtonEdit from "../../components/Generals/ButtonEdit";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 export default function Cotizacion() {
-  const {getDetalleCotizacion, detalleCotizacion} = useCotizacion();
+  //const {getDetalleCotizacion, detalleCotizacion} = useCotizacion();
   const { handleModalShow, handleModalClose } = useModal();
   const { oportunidadData } = useOutletContext();
   const [isEditable, setIsEditable] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [data, setData] = useState(oportunidadData);
+  //const [data, setData] = useState(oportunidadData);
   const onSubmit = ({ allValues, dirtyFields }) => {
     console.log(allValues);
   };
@@ -26,16 +26,16 @@ export default function Cotizacion() {
     setShowForm(true);
     setIsEditable(true);
   }
-  useEffect(() => {
+  /* useEffect(() => {
     getDetalleCotizacion(oportunidadData.id_cotizacion)
-  }, [])
+  }, []) */
   return (
     <>
-      {detalleCotizacion || showForm ? (
+      {oportunidadData.secciones || showForm ? (
         <>
         <FormularioCotizacion
           isEditable={isEditable}
-          defaultValues={detalleCotizacion}
+          defaultValues={oportunidadData}
           onSubmit={onSubmit}
           onError={onError}
         />

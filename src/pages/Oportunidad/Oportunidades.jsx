@@ -104,7 +104,6 @@ export function Oportunidades() {
           (cliente) => cliente.id === oportunidad.id_cliente
         );
       });
-      console.log(oportunidades);
       setDataFiltered(oportunidades);
     }
   }, [oportunidades]);

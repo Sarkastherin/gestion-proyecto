@@ -11,7 +11,10 @@ import {
 import { useParams } from "react-router-dom";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useEffect } from "react";
+
 function Oportunidad() {
+  const { getDetalleCotizacion, detalleCotizacion, getTotales, totales } =
+    useCotizacion();
   const { id } = useParams();
   const oportunidadData =
     JSON.parse(localStorage.getItem("oportunidadData")) || {};
@@ -45,6 +48,24 @@ function Oportunidad() {
       },
     ];
   };
+  useEffect(() => {
+    getDetalleCotizacion(oportunidadData.id_cotizacion);
+    getTotales(oportunidadData.id_cotizacion);
+  }, []);
+  useEffect(() => {
+    if (detalleCotizacion?.secciones && totales) {
+      oportunidadData["secciones"] = detalleCotizacion.secciones || [];
+      totales.forEach((item) => {
+        if (oportunidadData.margenes.some((item) => item.tipo == item.tipo)) {
+          const i = oportunidadData.margenes.findIndex(
+            (elem) => elem.tipo === item.tipo
+          );
+          oportunidadData.margenes[i]["totales"] = item;
+        }
+      });
+      localStorage.setItem("oportunidadData", JSON.stringify(oportunidadData));
+    }
+  }, [detalleCotizacion, oportunidadData, totales]);
   return (
     <>
       <Header

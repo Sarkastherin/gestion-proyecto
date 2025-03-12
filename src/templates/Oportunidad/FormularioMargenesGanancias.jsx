@@ -3,6 +3,7 @@ import { Footer } from "../../components/Footer";
 import { Button } from "../../components/Buttons";
 import Margenes from "../../components/Cotizacion/Margenes";
 import { useEffect, useState } from "react";
+import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 function FormularioMargenesGanancias({
   defaultValues,
   isEditable,
@@ -10,7 +11,8 @@ function FormularioMargenesGanancias({
   onSubmit,
   onError,
 }) {
-  const [totals, setTotals] = useState([]);
+  //const {totales} = useCotizacion()
+  //const [totals, setTotals] = useState([]);
   const methods = useForm({
     defaultValues: defaultValues || {},
   });
@@ -23,7 +25,8 @@ function FormularioMargenesGanancias({
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
-  const getTotals = () => {
+  console.log(defaultValues)
+  /* const getTotals = () => {
     const totales = {};
     defaultValues.secciones?.forEach((etapa) => {
       const tipo = etapa.tipo;
@@ -53,7 +56,7 @@ function FormularioMargenesGanancias({
 
   useEffect(() => {
     getTotals();
-  }, []);
+  }, []); */
   return (
     <FormProvider {...methods}>
       <form
@@ -62,7 +65,7 @@ function FormularioMargenesGanancias({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Margenes totals={totals}/>
+          <Margenes /* totales={totales} *//>
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">

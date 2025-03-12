@@ -3,18 +3,23 @@ import { CardToggle, Card } from "../Cards";
 import Table from "../Generals/Table";
 import { Input, InputGroup } from "../Inputs";
 import { useFormContext, useFieldArray } from "react-hook-form";
+import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 
-export default function Margenes({ totals }) {
-  const { register, control, watch, setValue } = useFormContext();
+export default function Margenes() {
+  const {totales} = useCotizacion()
+  const { register, control, watch, setValue, getValues } = useFormContext();
   const { fields } = useFieldArray({
     control,
     name: "margenes",
   });
   useEffect(() => {
-    totals.forEach((item, index) => {
+    totales.forEach((item, index) => {
       setValue(`margenes.${index}.tipo`, item.tipo); // Asigna el tipo en cada margen
     });
-  }, [totals, setValue]);
+  }, [totales, setValue]);
+  useEffect(()=> {
+
+  },[])
   const cells = [
     { element: "Componente", w: "w-full", flex: "flex-1" },
     { element: "Total", w: "w-30" },
@@ -28,21 +33,19 @@ export default function Margenes({ totals }) {
     { element: "Margen Final", w: "w-50" },
     { element: "Precio Final", w: "w-30" },
   ];
-
-  const totalMargen = totals.reduce((sum, item, index) => {
-    const porcentaje = watch(`margenes.${index}.porcentaje`) || 0;
-    return sum + (1 + porcentaje / 100) * item.total;
+  const totalMargen = watch('margenes')?.reduce((sum, item, index) => {
+    const porcentaje = watch(`margenes.${index}.margen`) || 0;
+    return sum + (1 + porcentaje / 100) * (item.totales?.total || 0);
   }, 0);
-
-  const margenFinal = watch("margen_final") || 0;
+  const margenFinal = watch("margen_general") || 0;
   const precioFinal = totalMargen * (1 + margenFinal / 100);
-
+  
   return (
     <>
       <CardToggle title={"Margenes de Ganancias"}>
         <Table cells={cells}>
-          {totals.map((item, index) => {
-            const porcentaje = watch(`margenes.${index}.porcentaje`) || 0;
+          {fields?.map((item, index) => {
+            const porcentaje = watch(`margenes.${index}.margen`) || 0;
             return (
               <tr
                 key={item.tipo}
@@ -50,17 +53,17 @@ export default function Margenes({ totals }) {
               >
                 <th className="px-1 w-full flex-1">{item.tipo}</th>
                 <td className="px-1 w-30">
-                  {item.total.toLocaleString("es-AR", {
+                  {item.totales?.total.toLocaleString("es-AR", {
                     style: "currency",
                     currency: "ARS",
-                  })}
+                  }) || "$ 0"}
                 </td>
-                <td className="px-1 w-30">{item.incpercent}</td>
+                <td className="px-1 w-30">{item.totales?.porcentaje || 0}</td>
                 <td className="px-1 w-50">
                   <InputGroup
                     type="number"
                     defaultValue={0}
-                    {...register(`margenes.${index}.porcentaje`, {
+                    {...register(`margenes.${index}.margen`, {
                       valueAsNumber: true,
                     })}
                   >
@@ -68,7 +71,7 @@ export default function Margenes({ totals }) {
                   </InputGroup>
                 </td>
                 <td className="px-1 w-30">
-                  {((1 + porcentaje / 100) * item.total).toLocaleString(
+                  {((1 + porcentaje / 100) * item.totales?.total || 0).toLocaleString(
                     "es-AR",
                     {
                       style: "currency",
@@ -86,7 +89,7 @@ export default function Margenes({ totals }) {
         <Table cells={cellsTotal}>
           <tr className="flex px-6 py-2 text-sm text-neutral-700 text-left items-center">
             <th className="px-1 w-full flex-1">
-              {totalMargen.toLocaleString("es-AR", {
+              {totalMargen?.toLocaleString("es-AR", {
                 style: "currency",
                 currency: "ARS",
               })}
@@ -94,7 +97,7 @@ export default function Margenes({ totals }) {
             <th className="px-1 w-50">
               <InputGroup
                 defaultValue={0}
-                {...register("margen_final", { valueAsNumber: true })}
+                {...register("margen_general", { valueAsNumber: true })}
               >
                 %
               </InputGroup>

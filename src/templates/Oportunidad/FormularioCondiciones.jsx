@@ -21,7 +21,6 @@ function FormularioCondicion({
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
-  console.log(defaultValues);
   return (
     <FormProvider {...methods}>
       <form

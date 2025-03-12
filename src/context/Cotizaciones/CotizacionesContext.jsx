@@ -7,6 +7,7 @@ export const CotizacionProvider = ({ children }) => {
   const initialState = {
     cotizaciones: [],
     detalleCotizacion: null,
+    totales: null
   };
   const [state, dispatch] = useReducer(CotizacionesReducer, initialState);
   const getCotizaciones = async () => {
@@ -42,9 +43,20 @@ export const CotizacionProvider = ({ children }) => {
       return secciones
     },[])
   };
+  const getTotales = async (id) => {
+    try {
+      const  { data: totales, error }  = await supabase
+        .from("view_totales_por_tipo")
+       .select("*")
+       .eq("id_cotizacion", id);
+      dispatch({ type: "GET_TOTALES", payload: totales });
+    } catch (error) {
+      console.error("Error fetching cotización:", error);
+    }
+  }
   return (
     <CotizacionesContext.Provider
-      value={{ getCotizaciones, cotizaciones: state.cotizaciones, getDetalleCotizacion, detalleCotizacion: state.detalleCotizacion }}
+      value={{ getCotizaciones, cotizaciones: state.cotizaciones, getDetalleCotizacion, detalleCotizacion: state.detalleCotizacion, getTotales, totales: state.totales }}
     >
       {children}
     </CotizacionesContext.Provider>

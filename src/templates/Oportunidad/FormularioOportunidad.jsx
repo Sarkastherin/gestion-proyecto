@@ -26,7 +26,6 @@ function FormularioOportunidad({
     const allValues = getValues(); 
     return {allValues, dirtyFields};
   }
-  console.log(defaultValues);
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(() => {onSubmit(getUpdateValues())}, onError)}>

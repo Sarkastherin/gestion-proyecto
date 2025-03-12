@@ -3,7 +3,6 @@ import { Card } from "../../components/Cards";
 import { useOutletContext } from "react-router-dom";
 export default function Resumen() {
   const { oportunidadData } = useOutletContext();
-  console.log("oportunidad: ",oportunidadData)
   return (
     <>
       <div className="flex flex-col gap-4">

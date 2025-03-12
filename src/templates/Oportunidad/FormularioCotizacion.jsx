@@ -26,7 +26,6 @@ function FormularioCotizacion({
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
-  console.log(defaultValues);
   return (
     <FormProvider {...methods}>
       <form
@@ -35,7 +34,7 @@ function FormularioCotizacion({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Seccion etapas={oportunidadData?.etapas}/>
+          <Seccion etapas={defaultValues?.etapas}/>
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">
