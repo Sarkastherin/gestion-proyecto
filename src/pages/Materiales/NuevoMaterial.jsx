@@ -8,7 +8,8 @@ import {
 } from "../../components/Generals/ModalsTypes";
 import { Button } from "../../components/Buttons";
 import { useNavigate } from "react-router-dom";
-export default function CrearOportunidad() {
+import FormularioMateriales from "../../templates/Materiales/FormularioMaterial";
+export default function NuevoMaterial() {
   const { handleModalShow, handleModalClose } = useModal();
   const navigate = useNavigate();
 
@@ -19,40 +20,37 @@ export default function CrearOportunidad() {
       handleModalClose();
       handleModalShow(idsModal.success);
     }, 2000);
-    
   };
-  const handleIrAOportunidad = () => {
+  /* const handleIrAOportunidad = () => {
     const id = 12345; // Aquí se obtiene el id de la oportunidad creada
     handleModalClose();
     navigate(`/oportunidad/${id}/resumen`)
-  }
+  } */
   const onError = (data) => console.log("Error:", data);
   const idsModal = { loading: "id-modal-loading", success: "id-modal-success" };
   return (
     <>
-      <Header text={"Creando Oportunidad"}>
-        <BoxComponentScrolling title="Creando Oportunidad" height='calc(100vh - 10rem)'>
-          <FormularioOportunidad
+      <Header text={"Creando Material"}>
+        <BoxComponentScrolling title="Creando Material"  height='calc(100vh - 10rem)'>
+          <FormularioMateriales
             isEditable={true}
-            defaultValues={{}}
             onSubmit={onSubmit}
             onError={onError}
           />
           <ModalLoading
             id={idsModal.loading}
-            title={"Guardando nueva oportunidad"}
+            title={"Guardando nuevo material"}
           />
           <ModalSuccess
             id={idsModal.success}
-            title={"Oportunidad creada exitosamente"}
+            title={"Material creado exitosamente"}
           >
             <div className="mt-10 text-center">
             <Button
             className={"min-w-40"}
             type="button"
             variant="green"
-            text="Ir a la oportunidad"
-            onClick={handleIrAOportunidad}
+            text="..."
           />
           </div>
           </ModalSuccess>

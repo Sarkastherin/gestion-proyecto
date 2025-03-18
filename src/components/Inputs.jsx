@@ -31,7 +31,7 @@ export const Select = React.forwardRef(
     ref
   ) => {
     return (
-      <div className="w-full">
+      <div className={`w-full ${className}`}>
         <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
           {" "}
           {label}{" "}
@@ -45,7 +45,7 @@ export const Select = React.forwardRef(
         onClick={onClick}
         onInput={onInput}
         disabled={disabled}
-        className={`w-full ${stylebases} ${className}`}
+        className={`w-full ${stylebases}`}
       >
         <option className="text-neutral-400" value="" disabled>
           {placeholder}
@@ -76,7 +76,7 @@ export const Input = React.forwardRef(
     ref
   ) => {
     return (
-      <div className="w-full">
+      <div className={`w-full ${className}`}>
         <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
           {" "}
           {label}{" "}
@@ -94,7 +94,7 @@ export const Input = React.forwardRef(
           readOnly={readOnly}
           disabled={disabled}
           defaultValue={defaultValue}
-          className={`w-full ${stylebases} ${className}`}
+          className={`w-full ${stylebases}`}
         />
       </div>
     );

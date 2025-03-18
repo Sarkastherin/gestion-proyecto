@@ -5,9 +5,9 @@ export function BoxComponent({ title, children,  size = 'md' }) {
     </div>
   );
 }
-export function BoxComponentScrolling({ title, children,  size = 'max-w-md'}) {
+export function BoxComponentScrolling({ title, children,  size = 'max-w-md', height='calc(100vh - 17rem)'}) {
   return (
-    <div className={`${size === 'max-w-md' ? 'max-w-[1200px]': 'max-w-full'} mx-auto overflow-y-auto pt-4 px-4`} title={title} style={{ height: 'calc(100vh - 17rem)' }}>
+    <div className={`${size === 'max-w-md' ? 'max-w-[1200px]': 'max-w-full'} mx-auto overflow-y-auto pt-4 px-4`} title={title} style={{ height: height }}>
       {children}
     </div>
   )}

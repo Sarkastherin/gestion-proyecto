@@ -22,3 +22,12 @@ export const NoDataComponent = ({title, text, children}) => {
     </div>
   );
 };
+export const NoDataComponentSimple = ({title, text, children}) => {
+  return (
+    <div className="flex flex-col items-center justify-center text-neutral-700 gap-4 my-4">
+      <p className=" ">{title}</p>
+      <p>{text}</p>
+      {children}
+    </div>
+  );
+};

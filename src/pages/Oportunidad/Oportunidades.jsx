@@ -1,4 +1,4 @@
-import Header from "../../components/Header";
+import Header from "../../components/Generals/Header";
 import { BoxComponent } from "../../components/BoxComponent";
 import TableComponent from "../../components/TableComponent";
 import { useForm } from "react-hook-form";
@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import { Input } from "../../components/Inputs";
 import { Button } from "../../components/Buttons";
 import { FunnelIcon } from "@heroicons/react/16/solid";
-import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
