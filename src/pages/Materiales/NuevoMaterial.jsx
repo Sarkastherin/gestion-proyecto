@@ -1,37 +1,44 @@
 import Header from "../../components/Generals/Header";
 import { BoxComponentScrolling } from "../../components/BoxComponent";
-import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
 import { useModal } from "../../context/ModalContext";
 import {
   ModalLoading,
   ModalSuccess,
+  ModalError,
 } from "../../components/Generals/ModalsTypes";
 import { Button } from "../../components/Buttons";
-import { useNavigate } from "react-router-dom";
 import FormularioMateriales from "../../templates/Materiales/FormularioMaterial";
+import { useMateriales } from "../../context/Materiales/MaterialesContext";
 export default function NuevoMaterial() {
+  const { postMaterial } = useMateriales();
   const { handleModalShow, handleModalClose } = useModal();
-  const navigate = useNavigate();
 
-  const onSubmit = ({ allValues }) => {
-    console.log(allValues);
-    handleModalShow(idsModal.loading);
-    setTimeout(() => {
-      handleModalClose();
-      handleModalShow(idsModal.success);
-    }, 2000);
+  const onSubmit = async ({ data }) => {
+    delete data.cod_material;
+    delete data.desc_material;
+    delete data.cod_tipo;
+    delete data.desc_tipo;
+    /* handleModalShow(idsModal.loading);
+    try {
+      const { data, error } = await postMaterial(data);
+      if (error) {
+        handleModalShow(idsModal.danger);
+      }
+      else {handleModalShow(idsModal.success);}
+    } catch (error) {
+      console.error("Error al crear el material:", error);
+    } */
+    console.log(data)
   };
-  /* const handleIrAOportunidad = () => {
-    const id = 12345; // Aquí se obtiene el id de la oportunidad creada
-    handleModalClose();
-    navigate(`/oportunidad/${id}/resumen`)
-  } */
   const onError = (data) => console.log("Error:", data);
-  const idsModal = { loading: "id-modal-loading", success: "id-modal-success" };
+  const idsModal = { loading: "id-modal-loading", success: "id-modal-success", danger: "id-modal-danger"};
   return (
     <>
       <Header text={"Creando Material"}>
-        <BoxComponentScrolling title="Creando Material"  height='calc(100vh - 10rem)'>
+        <BoxComponentScrolling
+          title="Creando Material"
+          height="calc(100vh - 10rem)"
+        >
           <FormularioMateriales
             isEditable={true}
             onSubmit={onSubmit}
@@ -46,14 +53,27 @@ export default function NuevoMaterial() {
             title={"Material creado exitosamente"}
           >
             <div className="mt-10 text-center">
-            <Button
-            className={"min-w-40"}
-            type="button"
-            variant="green"
-            text="..."
-          />
-          </div>
+              <Button
+                className={"min-w-40"}
+                type="button"
+                variant="green"
+                text="Ir a Materiales"
+              />
+            </div>
           </ModalSuccess>
+          <ModalError
+            id={idsModal.danger}
+            title={"Algo salió mal"}
+          >
+            <div className="mt-10 text-center">
+              <Button
+                className={"min-w-40"}
+                type="button"
+                variant="red"
+                text="..."
+              />
+            </div>
+          </ModalError>
         </BoxComponentScrolling>
       </Header>
     </>

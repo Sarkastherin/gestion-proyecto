@@ -4,6 +4,7 @@ import { Button } from "../Buttons";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";
 import Table from "../Generals/Table";
+import { Material } from "../Material";
 
 export const Item = ({ tipo, seccionIndex }) => {
   const { register, control, watch, setValue } = useFormContext();
@@ -42,7 +43,7 @@ export const Item = ({ tipo, seccionIndex }) => {
     );
     setValue(
       `secciones.${seccionIndex}.items.${index}.costo_total`,
-      (quantity * costo_unitario)
+      quantity * costo_unitario
     );
   };
   const cells = [
@@ -66,16 +67,9 @@ export const Item = ({ tipo, seccionIndex }) => {
             <td className="w-20 flex-none px-1">{index + 1}</td>
             <td className="w-full flex-1 px-1">
               {tipo === "Materiales" && (
-                <Input
-                  label="Descripción"
-                  no_label
-                  className="mb-1.5"
-                  type="text"
-                  placeholder="Descripción"
-                  {...register(
-                    `secciones.${seccionIndex}.items.${index}.descripcion_material`
-                  )}
-                />
+                <>
+                  <Material seccionIndex={seccionIndex} index={index}/>
+                </>
               )}
               {tipo === "Mano de Obra" && (
                 <Input
@@ -142,7 +136,7 @@ export const Item = ({ tipo, seccionIndex }) => {
             </td>
             <td className="w-30 flex-none px-1">
               <CurrencyTypeInput
-              //{...register(`secciones.${seccionIndex}.items.${index}.costo_unitario`)}
+                //{...register(`secciones.${seccionIndex}.items.${index}.costo_unitario`)}
                 value={
                   watch(
                     `secciones.${seccionIndex}.items.${index}.costo_unitario`

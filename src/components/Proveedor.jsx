@@ -4,24 +4,25 @@ import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
-import { useClientes } from "../context/ClientContext";
-export const Cliente = () => {
-  const {clientes} = useClientes();
+import { useProveedores } from "../context/ProveedoresContext";
+export const Proveedor = ({index}) => {
+  const {proveedores} = useProveedores();
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [selectClient, setSelectClient] = useState({});
+  const [selectProveedor, setSelectProveedor] = useState({});
   const { handleModalShow, handleModalClose } = useModal();
   const {
     register,
     formState: { errors },
     setValue,
+    watch
   } = useFormContext();
   useEffect(() => {
-    setFilteredData(clientes);
+    setFilteredData(proveedores);
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
-      const result = clientes.filter((item) =>
+      const result = proveedores.filter((item) =>
         item.name.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredData(result);
@@ -29,52 +30,54 @@ export const Cliente = () => {
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    if (selectClient?.name) {
-      setValue("cliente", selectClient, { shouldDirty: true });
-      setValue("cliente.name", selectClient.name, { shouldDirty: true });
+    console.log(watch())
+    if (selectProveedor?.name) {
+      setValue(`precios.${index}.proveedor`, selectProveedor.name, { shouldDirty: true });
+      setValue(`precios.${index}.id_proveedor`, selectProveedor.id, { shouldDirty: true });
     }
-  }, [selectClient, setValue]);
+  }, [selectProveedor, setValue]);
   return (
     <>
       <Input
-        label={"Cliente"}
-        onClick={() => handleModalShow("modalCliente")}
-        {...register("cliente.name", {
+        label={"Proveedor"}
+        no_label
+        onClick={() => handleModalShow("modalProveedor")}
+        {...register(`precios.${index}.proveedor`, {
           required: {
             value: true,
-            message: "Debe seleccionar un cliente",
+            message: "Debe seleccionar un proveedor",
           },
         })}
-        placeholder="Seleccione un cliente"
+        placeholder="Seleccione un proveedor"
       />
-      {errors.cliente && <TextInvalidate message={errors.cliente.message} />}
+      {errors.proveedor && <TextInvalidate message={errors.proveedor.message} />}
       <Modal
-        modalId="modalCliente"
-        title={"Buscar Cliente"}
+        modalId="modalProveedor"
+        title={"Buscar Proveedor"}
         variant="primary"
         icon={<UserGroupIcon width={"24px"} />}
       >
         <div className="mt-4">
-          <p className="mt-1 text-sm text-gray-700">Seleccione un cliente.</p>
+          <p className="mt-1 text-sm text-gray-700">Seleccione un proveedor.</p>
           <Input
-            label="Buscar Cliente"
+            label="Buscar Proveedor"
             no_label
             type="search"
-            placeholder="Buscar Cliente"
+            placeholder="Buscar Proveedor"
             onInput={(e) => setSearch(e.target.value)}
-            {...register("getCliente", {})}
+            {...register("getProveedor", {})}
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
-            {filteredData.map((client) => (
+            {filteredData.map((proveedor) => (
               <li
                 className="mt-2 text-sm text-gray-600 rounded border border-gray-300 px-4 py-1 cursor-pointer hover:bg-indigo-100"
-                key={client.id}
+                key={proveedor.id}
                 onClick={() => {
-                  setSelectClient(client);
+                  setSelectProveedor(proveedor);
                   handleModalClose();
                 }}
               >
-                <p>{client.name}</p>
+                <p>{proveedor.name}</p>
               </li>
             ))}
           </ul>

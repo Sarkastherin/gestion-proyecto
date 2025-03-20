@@ -29,18 +29,16 @@ export default function FormularioMateriales({
       precios: []
     },
   });
-  const { getValues, formState: { dirtyFields } } = methods;
+  const { formState: { dirtyFields } } = methods;
   
-  const getUpdateValues = () => {
-    methods.unregister('getCliente')
-    const allValues = getValues(); 
-    return {allValues, dirtyFields};
+  const getUpdateValues = (data) => {
+    return {data, dirtyFields};
   }
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(() => {onSubmit(getUpdateValues())}, onError)}>
+      <form onSubmit={methods.handleSubmit((data) => {onSubmit(getUpdateValues(data))}, onError)}>
         <fieldset disabled={!isEditable}>
-          <DatosMateriales/>
+          <DatosMateriales isNuevo={!defaultValues}/>
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">

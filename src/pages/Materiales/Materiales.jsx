@@ -11,7 +11,7 @@ import { FunnelIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
 
 export default function Materiales() {
-  const { getMateriales, materiales } = useMateriales();
+  const { materiales, listaMaterial, listaTipo } = useMateriales();
   const [dataFiltered, setDataFiltered] = useState([]);
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm({
@@ -34,26 +34,39 @@ export default function Materiales() {
     navigate(`/material/${data.id}`, { state: { materialData: data } });
   };
   useEffect(() => {
-    getMateriales();
-  }, []);
-  useEffect(() => {
-    setDataFiltered(materiales);
+    if (listaTipo.length > 0 && materiales.length> 0) {
+      materiales.forEach((material) => {
+        material.tipo = listaTipo.find((tipo) => tipo.id === material.id_tipo).descripcion
+        material.material = listaMaterial.find((mat) => mat.id === material.id_material).descripcion
+      })
+      setDataFiltered(materiales);
+    }
   }, [materiales]);
   const columns = [
     {
-      name: "codigo",
+      name: "Código",
       selector: (row) => row.codigo,
-      width: "200px",
     },
     {
       name: "Descripción",
       selector: (row) => row.descripcion,
+      width: "480px",
     },
-
     {
       name: "Tipo",
       selector: (row) => row.tipo,
-      width: "200px",
+    },
+    {
+      name: "Material",
+      selector: (row) => row.material,
+    },
+    {
+      name: "Medida",
+      selector: (row) => row.medida,
+    },
+    {
+      name: "Espesor",
+      selector: (row) => row.espesor,
     },
   ];
   return (

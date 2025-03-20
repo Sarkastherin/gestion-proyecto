@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useReducer, useEffect } from "react";
 import { MaterialesReducer } from "./MaterialesReducer";
 import { supabase } from "../../API/supabaseClient";
 const MaterialesContext = createContext();
@@ -43,6 +43,21 @@ export const MaterialesProvider = ({ children }) => {
       console.error("Error fetching tipo:", error);
     }
   };
+  const postMaterial = async (nuevoMaterial) => {
+    try {
+      const { data, error } = await supabase
+        .from("materiales")
+       .insert(nuevoMaterial);
+       return { data: data, error: error}
+    } catch (error) {
+      console.error("Error creating material:", error);
+    }
+  }
+  useEffect(() => {
+    getMateriales();
+    getListaMaterial();
+    getListaTipo();
+  }, []);
   return (
     <MaterialesContext.Provider
       value={{
@@ -52,6 +67,7 @@ export const MaterialesProvider = ({ children }) => {
         getListaMaterial,
         listaTipo: state.listaTipo,
         getListaTipo,
+        postMaterial
       }}
     >
       {children}

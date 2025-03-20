@@ -33,3 +33,14 @@ export const ModalLoading = ({ id,title }) => {
       </Modal>
     );
   };
+  export const ModalError = ({ title, id, children }) => {
+    return (
+      <Modal
+        modalId={id}
+        title={title}
+        variant="danger"
+      >
+        {children}
+      </Modal>
+    );
+  };

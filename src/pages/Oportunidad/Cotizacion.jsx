@@ -7,7 +7,9 @@ import { Button } from "../../components/Buttons";
 import { useModal } from "../../context/ModalContext";
 import ButtonEdit from "../../components/Generals/ButtonEdit";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
+import { useMateriales } from "../../context/Materiales/MaterialesContext";
 export default function Cotizacion() {
+  const {materiales} = useMateriales();
   //const {getDetalleCotizacion, detalleCotizacion} = useCotizacion();
   const { handleModalShow, handleModalClose } = useModal();
   const { oportunidadData } = useOutletContext();
@@ -26,6 +28,11 @@ export default function Cotizacion() {
     setShowForm(true);
     setIsEditable(true);
   }
+  /* useEffect(() => {
+    if(oportunidadData && oportunidadData.secciones.length > 0)  {
+      oportunidadData.secc
+    }
+  }, [materiales,oportunidadData]) */
   /* useEffect(() => {
     getDetalleCotizacion(oportunidadData.id_cotizacion)
   }, []) */

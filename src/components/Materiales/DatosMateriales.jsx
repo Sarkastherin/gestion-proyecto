@@ -8,14 +8,13 @@ import { Button } from "../Buttons";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import Table from "../Generals/Table";
 import { TrashIcon } from "@heroicons/react/16/solid";
-export default function DatosMateriales() {
+import { Proveedor } from "../Proveedor";
+import DatosPrecios from "./DatosPrecios";
+export default function DatosMateriales({ isNuevo }) {
   const {
     materiales,
     listaMaterial,
     listaTipo,
-    getMateriales,
-    getListaMaterial,
-    getListaTipo,
   } = useMateriales();
   const {
     register,
@@ -28,23 +27,19 @@ export default function DatosMateriales() {
     control,
     name: "precios",
   });
-  
   useEffect(() => {
-    getListaMaterial();
-    getListaTipo();
-    getMateriales();
-  }, []);
-  useEffect(() => {
-    const codigo = `${watch("cod_material")}-${watch("cod_tipo")}-${watch(
-      "espesor"
-    )}-${watch("sequence")}`;
-    const descripcion = `${watch("desc_tipo")}-${watch(
-      "desc_material"
-    )}-${watch("medida")}-${watch("espesor")}-${watch("norma")}-${watch(
-      "tipo_union"
-    )}-${watch("obs")}`;
-    setValue("codigo", codigo);
-    setValue("descripcion", descripcion);
+    if (isNuevo) {
+      const codigo = `${watch("cod_material")}-${watch("cod_tipo")}-${watch(
+        "espesor"
+      )}-${watch("sequence")}`;
+      const descripcion = `${watch("desc_tipo")}-${watch(
+        "desc_material"
+      )}-${watch("medida")}-${watch("espesor")}-${watch("norma")}-${watch(
+        "tipo_union"
+      )}-${watch("obs")}`;
+      setValue("codigo", codigo);
+      setValue("descripcion", descripcion);
+    }
   }, [
     watch("cod_material"),
     watch("cod_tipo"),
@@ -81,7 +76,7 @@ export default function DatosMateriales() {
       setValue("sequence", 1);
     }
   }, [watch("id_material"), watch("id_tipo"), watch("espesor")]);
-  
+
   const cells = [
     { element: "#", w: "w-10" },
     { element: "Fecha", w: "w-50" },
@@ -219,7 +214,8 @@ export default function DatosMateriales() {
               />
             </div>
           </CardToggle>
-          <CardToggle className={"mt-4"} title={"Precios"}>
+          <DatosPrecios/>
+          {/* <CardToggle className={"mt-4"} title={"Precios"}>
             <Table cells={cells}>
               {fields.map((item, index) => (
                 <tr
@@ -238,14 +234,7 @@ export default function DatosMateriales() {
                     />
                   </td>
                   <td className="px-1 w-full flex-1">
-                    <Input
-                      label="Proveedor"
-                      no_label
-                      type={"text"}
-                      {...register(`precios.${index}.proveedor`, {
-                        required: true,
-                      })}
-                    />
+                    <Proveedor index={index} />
                   </td>
                   <td className="px-1 w-50">
                     <Input
@@ -282,7 +271,7 @@ export default function DatosMateriales() {
                 }}
               />
             </div>
-          </CardToggle>
+          </CardToggle> */}
         </>
       )}
     </>

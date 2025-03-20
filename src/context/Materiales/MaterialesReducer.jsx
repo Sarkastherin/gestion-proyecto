@@ -8,7 +8,6 @@ export const MaterialesReducer = (state, action) => {
       return { ...state, listaMaterial: payload };
     case GET_TIPO:
       return { ...state, listaTipo: payload };
-
     // Add more cases as needed
     default:
       return state;

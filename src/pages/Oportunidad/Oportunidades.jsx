@@ -29,7 +29,7 @@ export function Oportunidades() {
     {
       name: "Monto Contización",
       selector: (row) =>
-        row.monto_cotizado?.toLocaleString("es-AR", {
+        row.total_monto?.toLocaleString("es-AR", {
           style: "currency",
           currency: "ARS",
         }) || "$ 0.00",

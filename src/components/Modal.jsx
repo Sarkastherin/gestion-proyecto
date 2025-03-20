@@ -1,6 +1,7 @@
 import {
   XMarkIcon,
-  CheckCircleIcon
+  CheckCircleIcon,
+  XCircleIcon
 } from "@heroicons/react/24/outline";
 import { useModal } from "../context/ModalContext";
 
@@ -14,7 +15,7 @@ export const Modal = ({
 }) => {
   const variants = {
     default: "text-gray-800",
-    danger: "text-red-700",
+    danger: {color: 'text-red-700', icon:<XCircleIcon className="w-6" />},
     primary: "text-indigo-600",
     success: {color: 'text-green-500', icon:<CheckCircleIcon className="w-6" />},
     waiting: "text-blue-500",

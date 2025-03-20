@@ -7,6 +7,7 @@ import { OportunidadProvider } from "./context/Oportunidades/OportunidadContext"
 import { ClienteContextProvider } from "./context/ClientContext";
 import { CotizacionProvider } from "./context/Cotizaciones/CotizacionesContext";
 import { MaterialesProvider } from "./context/Materiales/MaterialesContext";
+import { ProveedoresProvider } from "./context/ProveedoresContext";
 /* Pages */
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -65,11 +66,13 @@ function App() {
     <AuthProvider>
       <ClienteContextProvider>
         <ModalContextProvider>
+          <ProveedoresProvider>
           <MaterialesProvider>
             <OportunidadProvider>
               <RouterProvider router={router} />
             </OportunidadProvider>
           </MaterialesProvider>
+          </ProveedoresProvider>
         </ModalContextProvider>
       </ClienteContextProvider>
     </AuthProvider>
