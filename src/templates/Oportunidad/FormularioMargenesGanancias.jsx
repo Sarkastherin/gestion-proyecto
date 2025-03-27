@@ -2,8 +2,6 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Footer } from "../../components/Footer";
 import { Button } from "../../components/Buttons";
 import Margenes from "../../components/Cotizacion/Margenes";
-import { useEffect, useState } from "react";
-import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 function FormularioMargenesGanancias({
   defaultValues,
   isEditable,
@@ -11,8 +9,6 @@ function FormularioMargenesGanancias({
   onSubmit,
   onError,
 }) {
-  //const {totales} = useCotizacion()
-  //const [totals, setTotals] = useState([]);
   const methods = useForm({
     defaultValues: defaultValues || {},
   });
@@ -24,38 +20,6 @@ function FormularioMargenesGanancias({
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
-  console.log(defaultValues)
-  /* const getTotals = () => {
-    const totales = {};
-    defaultValues.secciones?.forEach((etapa) => {
-      const tipo = etapa.tipo;
-      const total = etapa.items.reduce(
-        (sum, item) => sum + parseFloat(item.costo_total),
-        0
-      );
-      const incpercent = 0
-
-      if (totales[tipo]) {
-        totales[tipo] += total;
-      } else {
-        totales[tipo] = total;
-      }
-    });
-    const result = Object.entries(totales).map(([tipo, total]) => ({
-      tipo,
-      total,
-    }));
-    const total = result.reduce((sum, item) => sum + parseFloat(item.total), 0)
-    result.map(item => {
-      item.incpercent = ((item.total / total) * 100).toFixed(2);
-      return item;
-    })
-    setTotals(result);
-  };
-
-  useEffect(() => {
-    getTotals();
-  }, []); */
   return (
     <FormProvider {...methods}>
       <form

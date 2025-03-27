@@ -4,21 +4,25 @@ import EtapasOportunidad from "../../components/Oportunidad/EtapasOportunidad";
 import { Footer } from "../../components/Footer";
 import { Button } from "../../components/Buttons";
 import { SeparateForm } from "../../components/Containers/SepareteForms";
-
+import { useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 function FormularioOportunidad({
   defaultValues,
   isEditable,
   children,
   onSubmit,
   onError,
+  setResetForm
 }) {
+  const {user} = useAuth()
   const methods = useForm({
     defaultValues: defaultValues || {
       nombre: "",
       cliente: "",
-      avance: "",
       etapas: [],
+      usuario: use
     },
+
   });
   const {
     getValues,
@@ -29,6 +33,11 @@ function FormularioOportunidad({
     const allValues = getValues();
     return { values, dirtyFields };
   };
+  useEffect(() => {
+      if (setResetForm) {
+        setResetForm(() => methods.reset);
+      }
+    }, [setResetForm, methods.reset]);
   return (
     <FormProvider {...methods}>
       <form

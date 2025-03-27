@@ -18,7 +18,6 @@ export const OportunidadProvider = ({ children }) => {
       const { data: oportunidades, error } = await supabase
         .from("view_oportunidades")
         .select("*");
-        console.log(oportunidades, error)
       dispatch({ type: "GET_OPORTUNIDADES", payload: oportunidades });
     } catch (error) {
       console.error("Error fetching oportunidades:", error);
@@ -26,7 +25,10 @@ export const OportunidadProvider = ({ children }) => {
   };
   const postOportunidad = async (values) => {
     try {
-      const { data, error } = await supabase.from("oportunidades").insert(values);
+      const {data, error} = await supabase
+        .from("oportunidades")
+        .insert(values)
+        .select();
       if (error) {
         // Retorna el error para que sea manejado en el componente que llama a esta función
         return { success: false, error };
@@ -37,9 +39,17 @@ export const OportunidadProvider = ({ children }) => {
       return { success: false, error: e };
     }
   };
+  const refreshOportunidades = async () => {
+    await getOportunidades();
+  };
   return (
     <OportunidadContext.Provider
-      value={{ getOportunidades, oportunidades: state.oportunidades }}
+      value={{
+        getOportunidades,
+        oportunidades: state.oportunidades,
+        postOportunidad,
+        refreshOportunidades
+      }}
     >
       {children}
     </OportunidadContext.Provider>

@@ -49,8 +49,10 @@ function Oportunidad() {
     ];
   };
   useEffect(() => {
-    getDetalleCotizacion(oportunidadData.id_cotizacion);
-    getTotales(oportunidadData.id_cotizacion);
+    if (oportunidadData.id_cotizacion) {
+      getDetalleCotizacion(oportunidadData.id_cotizacion);
+      getTotales(oportunidadData.id_cotizacion);
+    }
   }, []);
   useEffect(() => {
     if (detalleCotizacion?.secciones && totales) {
@@ -70,7 +72,7 @@ function Oportunidad() {
     <>
       <Container
         text={"Oportunidades"}
-        to={'/oportunidades'}
+        to={"/oportunidades"}
         hasSubheader={true}
         menuItems={menuItems}
         name={oportunidadData.nombre}

@@ -41,7 +41,7 @@ export function Oportunidades() {
     },
     {
       name: "Creado por",
-      selector: (row) => `${row.nombre_usuario} ${row.apellido_usuario}`,
+      selector: (row) => row.usuario,
     },
   ];
   const navigate = useNavigate();
@@ -146,7 +146,6 @@ export function Oportunidades() {
   }, []);
   useEffect(() => {
     if (clientes.length > 0 && oportunidades.length > 0) {
-      console.log(oportunidades)
       oportunidades.forEach((oportunidad) => {
         oportunidad.cliente = clientes.find(
           (cliente) => cliente.id === oportunidad.id_cliente

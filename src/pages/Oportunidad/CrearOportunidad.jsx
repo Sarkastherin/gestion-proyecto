@@ -1,19 +1,16 @@
-import Container from "../../components/Generals/Container";
-import { BoxComponentScrolling } from "../../components/BoxComponent";
 import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
 import { useModal } from "../../context/ModalContext";
-import {
-  ModalLoading,
-  ModalSuccess,
-} from "../../components/Generals/ModalsTypes";
-import { Button } from "../../components/Buttons";
 import { useNavigate } from "react-router-dom";
 import LayoutSaveElement from "../../templates/Generales/LayoutSaveElements";
 import { useState } from "react";
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 export default function CrearOportunidad() {
   const { handleModalShow, handleModalClose } = useModal();
   const [response, setResponse] = useState(null);
   const navigate = useNavigate();
+  const {postOportunidad, refreshOportunidades} = useOportunidad();
+  const [resetForm, setResetForm] = useState(null);
+  const [id, setId] = useState(null);
 
   const onSubmit = async ({ values }) => {
     /* for (const item in values) {
@@ -21,15 +18,19 @@ export default function CrearOportunidad() {
         values[item] = null;
       }
     } */
+   values.id_cliente = values.cliente.id;
+   delete values.cliente
+   console.log(values)
     handleModalShow("modal-loading");
     try {
-      const { success, error } = await postMaterial(values);
+      const { success, error, data } = await postOportunidad(values);
       if (success) {
+        setId(data[0].id)
         setResponse({
           message: "Material guardado correctamente",
           type: "success",
         });
-        refreshMateriales();
+        refreshOportunidades();
         if (resetForm) resetForm(); // Resetea el formulario si la función está disponible
       } else {
         setResponse({
@@ -48,7 +49,6 @@ export default function CrearOportunidad() {
     }
   };
   const handleIrAOportunidad = () => {
-    const id = 12345; // Aquí se obtiene el id de la oportunidad creada
     handleModalClose();
     navigate(`/oportunidad/${id}/resumen`);
   };
@@ -59,15 +59,15 @@ export default function CrearOportunidad() {
         hedearTitle={"Creando Oportunidad"}
         backTo={"/oportunidades"}
         response={response}
-        modalResponsetextButton={"Ir al Oportunidades"}
+        modalResponsetextButton={"Ir a la Oportunidad"}
         handleResponseButtonClick={handleIrAOportunidad}
         modalLoadingTitle={"Guardando nueva oportunidad"}
         form={
           <FormularioOportunidad
             isEditable={true}
-            defaultValues={{}}
             onSubmit={onSubmit}
             onError={onError}
+            setResetForm={setResetForm}
           />
         }
       />
