@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Header from "../../components/Generals/Header";
+import Container from "../../components/Generals/Container";
 import { BoxComponentScrolling } from "../../components/BoxComponent";
 import {
   PresentationChartBarIcon,
@@ -68,8 +68,9 @@ function Oportunidad() {
   }, [detalleCotizacion, oportunidadData, totales]);
   return (
     <>
-      <Header
+      <Container
         text={"Oportunidades"}
+        to={'/oportunidades'}
         hasSubheader={true}
         menuItems={menuItems}
         name={oportunidadData.nombre}
@@ -78,7 +79,7 @@ function Oportunidad() {
         <BoxComponentScrolling title="Creando Oportunidad">
           <Outlet context={{ oportunidadData }} />
         </BoxComponentScrolling>
-      </Header>
+      </Container>
     </>
   );
 }

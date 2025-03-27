@@ -1,16 +1,14 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { CardToggle, Card } from "../Cards";
-import { Input, TextInvalidate, Select } from "../Inputs";
-import { DataField } from "../DataField";
-import { useMateriales } from "../../context/Materiales/MaterialesContext";
-import { useEffect } from "react";
+import { CardToggle } from "../Cards";
+import { Input } from "../Inputs";
 import { Button } from "../Buttons";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import Table from "../Generals/Table";
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { Proveedor } from "../Proveedor";
-export default function DatosPrecios({ isNuevo }) {
-  const { materiales, listaMaterial, listaTipo } = useMateriales();
+import { useAuth } from "../../context/AuthContext";
+export default function DatosPrecios() {
+  const { user } = useAuth();
   const {
     register,
     setValue,
@@ -22,55 +20,6 @@ export default function DatosPrecios({ isNuevo }) {
     control,
     name: "precios",
   });
-  useEffect(() => {
-    if (isNuevo) {
-      const codigo = `${watch("cod_material")}-${watch("cod_tipo")}-${watch(
-        "espesor"
-      )}-${watch("sequence")}`;
-      const descripcion = `${watch("desc_tipo")}-${watch(
-        "desc_material"
-      )}-${watch("medida")}-${watch("espesor")}-${watch("norma")}-${watch(
-        "tipo_union"
-      )}-${watch("obs")}`;
-      setValue("codigo", codigo);
-      setValue("descripcion", descripcion);
-    }
-  }, [
-    watch("cod_material"),
-    watch("cod_tipo"),
-    watch("espesor"),
-    watch("desc_tipo"),
-    watch("desc_material"),
-    watch("medida"),
-    watch("norma"),
-    watch("tipo_union"),
-    watch("obs"),
-    watch("sequence"),
-  ]);
-  useEffect(() => {
-    const id_material = watch("id_material");
-    const id_tipo = watch("id_tipo");
-    const espesor = watch("espesor");
-    /* Evaluar si existe ya la secuencia */
-    const hasSequenceCod = materiales.some(
-      (material) =>
-        material.id_material === id_material &&
-        material.id_tipo === id_tipo &&
-        material.espesor === espesor
-    );
-    if (hasSequenceCod) {
-      const sequences = materiales.filter(
-        (material) =>
-          material.id_material === id_material &&
-          material.id_tipo === id_tipo &&
-          material.espesor === espesor
-      );
-      const sequence = Math.max(...sequences.map((item) => item.sequence)) + 1;
-      setValue("sequence", sequence);
-    } else {
-      setValue("sequence", 1);
-    }
-  }, [watch("id_material"), watch("id_tipo"), watch("espesor")]);
 
   const cells = [
     { element: "#", w: "w-10" },
@@ -83,11 +32,11 @@ export default function DatosPrecios({ isNuevo }) {
   return (
     <>
       <>
-        <CardToggle className={"mt-4"} title={"Precios"}>
+        <CardToggle title={"Precios"}>
           <Table cells={cells}>
             {fields.map((item, index) => (
               <tr
-                key={`precios.${index}.id_precio`}
+                key={`precios.${index}.id`}
                 className="flex px-6 py-2 text-sm text-neutral-700 text-left items-center"
               >
                 <th className="px-1 w-10">{index + 1}</th>
@@ -157,7 +106,13 @@ export default function DatosPrecios({ isNuevo }) {
               variant={"green"}
               text="Agregar Precio"
               onClick={() => {
-                append({ fecha: "", precio: "", default: fields.length === 0 });
+                append({
+                  id: fields.length + 1,
+                  fecha: "",
+                  precio: "",
+                  default: fields.length === 0,
+                  usuario: user.nombre_usuario,
+                });
               }}
             />
           </div>

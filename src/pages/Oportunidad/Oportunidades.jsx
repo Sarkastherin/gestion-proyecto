@@ -1,9 +1,9 @@
-import Header from "../../components/Generals/Header";
-import { BoxComponent } from "../../components/BoxComponent";
+import Container from "../../components/Generals/Container";
+import { BoxComponentScrolling } from "../../components/BoxComponent";
 import TableComponent from "../../components/TableComponent";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { Input } from "../../components/Inputs";
+import { Input, Select } from "../../components/Inputs";
 import { Button } from "../../components/Buttons";
 import { FunnelIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,7 @@ import { PlusIcon } from "@heroicons/react/16/solid";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import { NoDataComponent } from "../../components/DataField";
 import { useClientes } from "../../context/ClientContext";
+import { Footer } from "../../components/Footer";
 
 export function Oportunidades() {
   const { getClientes, clientes } = useClientes();
@@ -87,17 +88,65 @@ export function Oportunidades() {
     );
   };
   const openOportunidad = (data) => {
-    localStorage.setItem("oportunidadData", JSON.stringify(data)); // Guardar en localStorage
+    localStorage.setItem("oportunidadData", JSON.stringify(data));
     navigate(`/oportunidad/${data.id}/resumen`);
-    //navigate(`/oportunidad/${data.id}/resumen`, { state: { oportunidadData: data } });
   };
-
+  const SubHeaderComponent = () => {
+    return (
+      <div className="flex justify-between items-center mt-8">
+        <form
+          onSubmit={handleSubmit(handleFilter)}
+          className="flex items-center justify-between gap-2 w-full"
+        >
+          <div className="grid md:grid-cols-6 gap-2 grid-cols-4">
+            <Input
+             className="col-span-3"
+              label="Oportunidad"
+              no_label
+              placeholder={"Oportunidad"}
+              {...register("oportunidad")}
+            />
+            <Input
+              className="col-span-2"
+              label="Cliente"
+              no_label
+              placeholder={"Cliente"}
+              {...register("cliente")}
+            />
+            <Select
+              label={"Status"}
+              no_label
+              placeholder={"Status"}
+              {...register("status")}
+            >
+              {[].map((tipo) => (
+                <option key={tipo.id} value={tipo.descripcion}>
+                  {`[${tipo.cod}] ${tipo.descripcion}`}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <div>
+            <Button
+              className="flex-none"
+              type="submit"
+              text={"Filtrar"}
+              icon={<FunnelIcon className="w-4" />}
+              variant={"yellow"}
+              hidden_text
+            />
+          </div>
+        </form>
+      </div>
+    );
+  };
   useEffect(() => {
     getOportunidades();
     getClientes();
   }, []);
   useEffect(() => {
-    if (clientes.length > 0) {
+    if (clientes.length > 0 && oportunidades.length > 0) {
+      console.log(oportunidades)
       oportunidades.forEach((oportunidad) => {
         oportunidad.cliente = clientes.find(
           (cliente) => cliente.id === oportunidad.id_cliente
@@ -108,36 +157,13 @@ export function Oportunidades() {
   }, [oportunidades]);
   return (
     <>
-        <Header text={"Oportunidades"} />
-        <BoxComponent title="Creando Oportunidad" size="full">
-          <form
-            onSubmit={handleSubmit(handleFilter)}
-            className="flex gap-2 mb-4 justify-between"
-          >
-            <div className="inline-flex gap-2">
-              <Input
-                label="Filtro"
-                no_label
-                placeholder={"Filtrar"}
-                {...register("clienteQuery")}
-              />
-            </div>
-            <div className="inline-flex gap-2">
-              <Button
-                text={"Filtrar"}
-                icon={<FunnelIcon className="w-4" />}
-                variant={"yellow"}
-                hidden_text
-              />
-
-              <Button
-                text={"Agregar Oportunidad"}
-                icon={<PlusIcon className="w-4" />}
-                variant={"primary"}
-                onClick={() => navigate(`/nueva-oportunidad`)}
-              />
-            </div>
-          </form>
+      <Container text={"Oportunidades"} to={"/"}>
+        <BoxComponentScrolling
+          title="Creando Oportunidad"
+          height="calc(100vh - 10rem)"
+          size="max-w-full"
+        >
+          <SubHeaderComponent />
           <TableComponent
             data={dataFiltered}
             columns={columns}
@@ -155,7 +181,18 @@ export function Oportunidades() {
               />
             }
           />
-        </BoxComponent>
+        </BoxComponentScrolling>
+        <Footer>
+          <div className="flex gap-2 justify-end">
+            <Button
+              text={"Nueva Oportunidad"}
+              icon={<PlusIcon className="w-4" />}
+              variant={"primary"}
+              onClick={() => navigate(`/nueva-oportunidad`)}
+            />
+          </div>
+        </Footer>
+      </Container>
     </>
   );
 }

@@ -47,7 +47,7 @@ export const Select = React.forwardRef(
         disabled={disabled}
         className={`w-full ${stylebases}`}
       >
-        <option className="text-neutral-400" value="" disabled>
+        <option className="text-neutral-400" value="">
           {placeholder}
         </option>
         {children}
@@ -76,7 +76,7 @@ export const Input = React.forwardRef(
     ref
   ) => {
     return (
-      <div className={`w-full ${className}`}>
+      <div className={`${className} w-full`}>
         <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
           {" "}
           {label}{" "}

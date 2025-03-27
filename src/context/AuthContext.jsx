@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
         .select("*")
         .eq("id_usuario", userId);
       if(error) {console.log(error)}
-      else {setUser(data)}
+      else {setUser(data[0])}
     } catch (e) {
       console.error("Error fetching user:", e);
       return;

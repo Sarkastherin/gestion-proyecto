@@ -19,7 +19,7 @@ export const Proveedor = ({index}) => {
   } = useFormContext();
   useEffect(() => {
     setFilteredData(proveedores);
-  }, []);
+  }, [proveedores]);
   useEffect(() => {
     const timeout = setTimeout(() => {
       const result = proveedores.filter((item) =>
@@ -30,7 +30,6 @@ export const Proveedor = ({index}) => {
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    console.log(watch())
     if (selectProveedor?.name) {
       setValue(`precios.${index}.proveedor`, selectProveedor.name, { shouldDirty: true });
       setValue(`precios.${index}.id_proveedor`, selectProveedor.id, { shouldDirty: true });
@@ -65,7 +64,7 @@ export const Proveedor = ({index}) => {
             type="search"
             placeholder="Buscar Proveedor"
             onInput={(e) => setSearch(e.target.value)}
-            {...register("getProveedor", {})}
+            //{...register("getProveedor", {})}
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
             {filteredData.map((proveedor) => (

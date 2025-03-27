@@ -62,7 +62,6 @@ export const Cliente = () => {
             type="search"
             placeholder="Buscar Cliente"
             onInput={(e) => setSearch(e.target.value)}
-            {...register("getCliente", {})}
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
             {filteredData.map((client) => (

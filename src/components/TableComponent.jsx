@@ -33,7 +33,9 @@ export default function TableComponent({
   data,
   handleOnRowClick,
   conditionalRowStyles,
-  noDataComponent = <p>No hay datos</p>
+  subHeaderComponent,
+  noDataComponent = <p>No hay datos</p>,
+  subHeader=false
 }) {
   return (
     <DataTable
@@ -50,6 +52,8 @@ export default function TableComponent({
       conditionalRowStyles={conditionalRowStyles}
       noDataComponent={noDataComponent}
       theme="default"
+      subHeaderComponent={subHeaderComponent}
+      subHeader={subHeader}
     />
   );
 }

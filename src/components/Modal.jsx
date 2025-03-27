@@ -14,11 +14,9 @@ export const Modal = ({
   variant = "default",
 }) => {
   const variants = {
-    default: "text-gray-800",
     danger: {color: 'text-red-700', icon:<XCircleIcon className="w-6" />},
-    primary: "text-indigo-600",
+    primary: {color: 'text-indigo-600', icon:<XCircleIcon className="w-6" />},
     success: {color: 'text-green-500', icon:<CheckCircleIcon className="w-6" />},
-    waiting: "text-blue-500",
   };
   const { handleModalClose, activeModal } = useModal();
   const show = activeModal === modalId;
@@ -37,7 +35,7 @@ export const Modal = ({
           {variants[variant].icon}
 
           <div className="flex-1">
-            <strong className="block font-medium text-neutral-700"> {title} </strong>
+            <strong className="block font-medium"> {title} </strong>
           </div>
           <button
           title="close button"
@@ -49,7 +47,8 @@ export const Modal = ({
             <XMarkIcon width={"24px"} onClick={handleModalClose} />
           </button>
         </div>
-        {children}
+        <div className="mt-4">{children}</div>
+        
       </div>
     </div>
   );

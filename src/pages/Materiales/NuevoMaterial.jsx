@@ -1,81 +1,66 @@
-import Header from "../../components/Generals/Header";
-import { BoxComponentScrolling } from "../../components/BoxComponent";
+import LayoutSaveElement from "../../templates/Generales/LayoutSaveElements";
 import { useModal } from "../../context/ModalContext";
-import {
-  ModalLoading,
-  ModalSuccess,
-  ModalError,
-} from "../../components/Generals/ModalsTypes";
-import { Button } from "../../components/Buttons";
 import FormularioMateriales from "../../templates/Materiales/FormularioMaterial";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 export default function NuevoMaterial() {
-  const { postMaterial } = useMateriales();
-  const { handleModalShow, handleModalClose } = useModal();
-
-  const onSubmit = async ({ data }) => {
-    delete data.cod_material;
-    delete data.desc_material;
-    delete data.cod_tipo;
-    delete data.desc_tipo;
-    /* handleModalShow(idsModal.loading);
-    try {
-      const { data, error } = await postMaterial(data);
-      if (error) {
-        handleModalShow(idsModal.danger);
+  const { postMaterial, refreshMateriales } = useMateriales();
+  const { handleModalShow } = useModal();
+  const [response, setResponse] = useState(null);
+  const [resetForm, setResetForm] = useState(null); // Estado para almacenar reset()
+  const navigate = useNavigate();
+  const onSubmit = async ({ values }) => {
+    for (const item in values) {
+      if (values[item] === "") {
+        values[item] = null;
       }
-      else {handleModalShow(idsModal.success);}
+    }
+    handleModalShow("modal-loading");
+    try {
+      const { success, error } = await postMaterial(values);
+      if (success) {
+        setResponse({
+          message: "Material guardado correctamente",
+          type: "success",
+        });
+        refreshMateriales();
+        if (resetForm) resetForm(); // Resetea el formulario si la función está disponible
+      } else {
+        setResponse({
+          message: "No se pudo guardar el material",
+          type: "danger",
+        });
+        console.error(error);
+      }
     } catch (error) {
-      console.error("Error al crear el material:", error);
-    } */
-    console.log(data)
+      setResponse({
+        message: `Error al crear el material: ${error}`,
+        type: "danger",
+      });
+    } finally {
+      handleModalShow("modal-response");
+    }
   };
   const onError = (data) => console.log("Error:", data);
-  const idsModal = { loading: "id-modal-loading", success: "id-modal-success", danger: "id-modal-danger"};
   return (
     <>
-      <Header text={"Creando Material"}>
-        <BoxComponentScrolling
-          title="Creando Material"
-          height="calc(100vh - 10rem)"
-        >
+      <LayoutSaveElement
+        hedearTitle={"Creando Material"}
+        backTo={"/materiales"}
+        response={response}
+        modalResponsetextButton={"Ir al Materiales"}
+        handleResponseButtonClick={() => navigate(`/materiales`)}
+        modalLoadingTitle={"Guardando nuevo material"}
+        form={
           <FormularioMateriales
             isEditable={true}
             onSubmit={onSubmit}
             onError={onError}
+            setResetForm={setResetForm} // Pasamos la función para obtener reset()
           />
-          <ModalLoading
-            id={idsModal.loading}
-            title={"Guardando nuevo material"}
-          />
-          <ModalSuccess
-            id={idsModal.success}
-            title={"Material creado exitosamente"}
-          >
-            <div className="mt-10 text-center">
-              <Button
-                className={"min-w-40"}
-                type="button"
-                variant="green"
-                text="Ir a Materiales"
-              />
-            </div>
-          </ModalSuccess>
-          <ModalError
-            id={idsModal.danger}
-            title={"Algo salió mal"}
-          >
-            <div className="mt-10 text-center">
-              <Button
-                className={"min-w-40"}
-                type="button"
-                variant="red"
-                text="..."
-              />
-            </div>
-          </ModalError>
-        </BoxComponentScrolling>
-      </Header>
+        }
+      />
     </>
   );
 }

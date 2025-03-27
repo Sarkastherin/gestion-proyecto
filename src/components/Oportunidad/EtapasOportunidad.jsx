@@ -20,7 +20,7 @@ function EtapasOportunidad() {
     { element: <TrashIcon className="w-4" />, w: "w-10" }
   ];
   return (
-    <CardToggle title={"Etapas"} className={"mt-8"}>
+    <CardToggle title={"Etapas"}>
       <Table cells={cells}>
         {fields.map((item, index) => (
           <tr key={`etapas.${index}.id_etapa`} className="flex px-6 py-2 text-sm text-neutral-700 text-left items-center"

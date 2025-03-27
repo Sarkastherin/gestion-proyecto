@@ -17,7 +17,6 @@ function FormularioCondicion({
     formState: { dirtyFields },
   } = methods;
   const getUpdateValues = () => {
-    methods.unregister("getCliente");
     const allValues = getValues();
     return { allValues, dirtyFields };
   };
