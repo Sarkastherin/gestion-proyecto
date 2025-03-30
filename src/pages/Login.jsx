@@ -1,7 +1,7 @@
 import {useAuth} from "../context/AuthContext";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import {Input} from "../components/Inputs"
+import {Input} from "../components/Generals/Inputs"
 import { useNavigate } from "react-router-dom";
 import {Button} from "../components/Buttons"
 export default function Login() {

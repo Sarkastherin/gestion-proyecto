@@ -4,6 +4,7 @@ const ClienteContext = createContext();
 export const useClientes = () => useContext(ClienteContext);
 export const ClienteContextProvider = ({ children }) => {
     const [clientes, setClientes] = useState([]);
+    const [activeCliente, setActiveCliente] = useState(null);
     const getClientes = async () => {
         try {
          /*  const response = await fetch(
@@ -15,9 +16,18 @@ export const ClienteContextProvider = ({ children }) => {
           console.error("Error:", error);
         }
       };
+    const getClienteById = async (id) => {
+      try {
+        const cliente = dataClientes.find(item => item.id=== id)
+        setActiveCliente(cliente)
+      }
+      catch (error) {
+        console.error("Error:", error);
+      }
+    }
   return (
     <ClienteContext.Provider
-      value={{ clientes, getClientes }}
+      value={{ clientes, getClientes, getClienteById, activeCliente, setActiveCliente }}
     >
       {children}
     </ClienteContext.Provider>

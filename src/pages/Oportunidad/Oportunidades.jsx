@@ -3,7 +3,7 @@ import { BoxComponentScrolling } from "../../components/BoxComponent";
 import TableComponent from "../../components/TableComponent";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { Input, Select } from "../../components/Inputs";
+import { Input, Select } from "../../components/Generals/Inputs";
 import { Button } from "../../components/Buttons";
 import { FunnelIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ import { useClientes } from "../../context/ClientContext";
 import { Footer } from "../../components/Footer";
 
 export function Oportunidades() {
-  const { getClientes, clientes } = useClientes();
+  const { clientes, setActiveCliente } = useClientes();
   const { getOportunidades, oportunidades } = useOportunidad();
 
   const columns = [
@@ -88,7 +88,6 @@ export function Oportunidades() {
     );
   };
   const openOportunidad = (data) => {
-    localStorage.setItem("oportunidadData", JSON.stringify(data));
     navigate(`/oportunidad/${data.id}/resumen`);
   };
   const SubHeaderComponent = () => {
@@ -98,7 +97,7 @@ export function Oportunidades() {
           onSubmit={handleSubmit(handleFilter)}
           className="flex items-center justify-between gap-2 w-full"
         >
-          <div className="grid md:grid-cols-6 gap-2 grid-cols-4">
+          <div className="grid md:grid-cols-6 gap-2 grid-cols-3">
             <Input
              className="col-span-3"
               label="Oportunidad"
@@ -142,17 +141,8 @@ export function Oportunidades() {
   };
   useEffect(() => {
     getOportunidades();
-    getClientes();
   }, []);
-  useEffect(() => {
-    if (clientes.length > 0 && oportunidades.length > 0) {
-      oportunidades.forEach((oportunidad) => {
-        oportunidad.cliente = clientes.find(
-          (cliente) => cliente.id === oportunidad.id_cliente
-        );
-      });
-      setDataFiltered(oportunidades);
-    }
+  useEffect(() => {setDataFiltered(oportunidades);
   }, [oportunidades]);
   return (
     <>
@@ -168,6 +158,7 @@ export function Oportunidades() {
             columns={columns}
             handleOnRowClick={openOportunidad}
             conditionalRowStyles={conditionalRowStyles}
+            onRowMouseEnter={(data, e)=>{document.getElementById(e.target.id).setAttribute("title",data.nombre)}}
             noDataComponent={
               <NoDataComponent
                 title={"No hay Oportunidades."}

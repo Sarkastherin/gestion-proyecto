@@ -2,7 +2,7 @@ import { CardToggle } from "../Cards";
 import { useFormContext } from "react-hook-form";
 import { TrashIcon } from "@heroicons/react/16/solid";
 import { Button } from "../Buttons";
-import { Select, Textarea, Input } from "../Inputs";
+import { Select, Textarea, Input } from "../Generals/Inputs";
 function DatosPagos() {
   const {
     register,

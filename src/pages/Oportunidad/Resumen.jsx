@@ -5,6 +5,7 @@ export default function Resumen() {
   const { oportunidadData } = useOutletContext();
   return (
     <>
+    {oportunidadData && (
       <div className="flex flex-col gap-4">
         <Card>
           <DataField
@@ -15,6 +16,8 @@ export default function Resumen() {
           <DataField label={"Alcance"} value={oportunidadData?.alcance} />
         </Card>        
       </div>
+    )}
+      
     </>
   );
 }

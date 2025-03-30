@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { CardToggle } from "../Cards";
-import { Label, Input, TextInvalidate, Textarea } from "../Inputs";
+import { Label, Input, TextInvalidate, Textarea } from "../Generals/Inputs";
 import { Cliente } from "../Cliente";
 
 function DatosOportunidad() {

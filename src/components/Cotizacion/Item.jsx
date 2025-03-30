@@ -1,5 +1,5 @@
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import { Input, Textarea, CurrencyTypeInput } from "../Inputs";
+import { Input, Textarea, CurrencyTypeInput } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { useEffect } from "react";

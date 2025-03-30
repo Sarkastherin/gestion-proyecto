@@ -24,8 +24,8 @@ export const Button = React.forwardRef(
         : "px-7 py-2.5 disabled:border-neutral-400 disabled:bg-neutral-400 disabled:hover:border-neutral-400 disabled:hover:bg-neutral-400 disabled:hover:text-white disabled:text-white disabled:cursor-not-allowed"
     } focus:ring-3 focus:outline-hidden cursor-pointer ${className}`;
     const variants = {
-      default:
-        "text-gray-700 border-gray-400 hover:bg-gray-200 focus:ring-gray-500",
+      secondary:
+        "border-neutral-300 bg-neutral-300 text-neutral-700 hover:bg-transparent hover:text-neutral-500 hover:border-neutral-500 hover:dark:text-neutral-400 hover:dark:border-neutral-400 focus:outline-none focus:ring active:text-neutral-400",
       redOutline:
         "text-red-500 border-red-500 hover:bg-red-500 hover:text-white focus:outline-none focus:ring active:bg-red-500",
       primaryOutline:

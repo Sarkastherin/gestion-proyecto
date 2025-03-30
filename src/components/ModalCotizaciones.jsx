@@ -1,4 +1,4 @@
-import { Label, Input, TextInvalidate } from "./Inputs";
+import { Label, Input, TextInvalidate } from "./Generals/Inputs";
 import { Modal } from "./Modal";
 import { UserGroupIcon, CurrencyDollarIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";

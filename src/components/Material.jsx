@@ -1,4 +1,4 @@
-import { Input, TextInvalidate } from "./Inputs";
+import { Input, TextInvalidate } from "./Generals/Inputs";
 import { Modal } from "./Modal";
 import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";

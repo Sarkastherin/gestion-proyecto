@@ -20,17 +20,16 @@ function FormularioOportunidad({
       nombre: "",
       cliente: "",
       etapas: [],
-      usuario: use
+     usuario: user.nombre_usuario
     },
 
   });
   const {
-    getValues,
+    unregister,
     formState: { dirtyFields },
   } = methods;
 
   const getUpdateValues = (values) => {
-    const allValues = getValues();
     return { values, dirtyFields };
   };
   useEffect(() => {

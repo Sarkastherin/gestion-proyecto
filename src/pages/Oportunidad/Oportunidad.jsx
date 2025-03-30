@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Container from "../../components/Generals/Container";
 import { BoxComponentScrolling } from "../../components/BoxComponent";
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import {
   PresentationChartBarIcon,
   InboxIcon,
@@ -10,14 +11,16 @@ import {
 } from "@heroicons/react/16/solid";
 import { useParams } from "react-router-dom";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useClientes } from "../../context/ClientContext";
 
 function Oportunidad() {
+  const [oportunidadData, setOportunidadData] = useState(null);
+  const { getClienteById, activeCliente } = useClientes();
+  const { getOportunidadById, activeOportunidad } = useOportunidad();
   const { getDetalleCotizacion, detalleCotizacion, getTotales, totales } =
     useCotizacion();
   const { id } = useParams();
-  const oportunidadData =
-    JSON.parse(localStorage.getItem("oportunidadData")) || {};
   const menuItems = () => {
     return [
       {
@@ -49,39 +52,56 @@ function Oportunidad() {
     ];
   };
   useEffect(() => {
-    if (oportunidadData.id_cotizacion) {
-      getDetalleCotizacion(oportunidadData.id_cotizacion);
-      getTotales(oportunidadData.id_cotizacion);
-    }
+    getOportunidadById(parseInt(id));
   }, []);
   useEffect(() => {
+    if (activeOportunidad?.id_cotizacion) {
+      getDetalleCotizacion(activeOportunidad?.id_cotizacion);
+      getTotales(activeOportunidad?.id_cotizacion);
+    }
+    /* if (activeOportunidad?.id_cliente) {
+      getClienteById(activeOportunidad?.id_cliente);
+    } */
+  }, [activeOportunidad]);
+  useEffect(() => {
     if (detalleCotizacion?.secciones && totales) {
-      oportunidadData["secciones"] = detalleCotizacion.secciones || [];
+      activeOportunidad["secciones"] = detalleCotizacion.secciones || [];
       totales.forEach((item) => {
-        if (oportunidadData.margenes.some((item) => item.tipo == item.tipo)) {
-          const i = oportunidadData.margenes.findIndex(
+        if (activeOportunidad?.margenes?.some((item) => item.tipo == item.tipo)) {
+          const i = activeOportunidad.margenes.findIndex(
             (elem) => elem.tipo === item.tipo
           );
-          oportunidadData.margenes[i]["totales"] = item;
+          activeOportunidad.margenes[i]["totales"] = item;
         }
       });
-      localStorage.setItem("oportunidadData", JSON.stringify(oportunidadData));
     }
-  }, [detalleCotizacion, oportunidadData, totales]);
+    /* if (activeCliente) {
+      console.log(activeCliente)
+      activeOportunidad.cliente = activeCliente;
+    } */
+
+    if (activeOportunidad?.cliente) {
+      setOportunidadData(activeOportunidad);
+    }
+    //
+  }, [detalleCotizacion, activeOportunidad, totales, activeCliente]);
+  //console.log(oportunidadData)
   return (
     <>
-      <Container
-        text={"Oportunidades"}
-        to={"/oportunidades"}
-        hasSubheader={true}
-        menuItems={menuItems}
-        name={oportunidadData.nombre}
-        icon={<BanknotesIcon className="w-5 text-white" />}
-      >
-        <BoxComponentScrolling title="Creando Oportunidad">
-          <Outlet context={{ oportunidadData }} />
-        </BoxComponentScrolling>
-      </Container>
+      {oportunidadData && (
+        <Container
+          text={"Oportunidades"}
+          to={"/oportunidades"}
+          hasSubheader={true}
+          menuItems={menuItems}
+          name={oportunidadData.nombre}
+          icon={<BanknotesIcon className="w-5 text-white" />}
+        >
+          <BoxComponentScrolling title="Creando Oportunidad">
+            <Outlet context={{ oportunidadData }} />
+          </BoxComponentScrolling>
+        </Container>
+      )}
     </>
   );
 }

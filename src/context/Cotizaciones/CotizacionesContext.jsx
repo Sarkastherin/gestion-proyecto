@@ -23,7 +23,7 @@ export const CotizacionProvider = ({ children }) => {
   const getDetalleCotizacion = async (id) => {
     try {
       const  { data: detalle, error }  = await supabase
-        .from("view_detalle_cotizacion")
+        .from("detalle_cotizacion")
        .select("*")
        .eq("id_cotizacion", id);
        const newDetalle = convertDetalle(detalle)

@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { CardToggle, Card } from "../Cards";
-import { Input, TextInvalidate, Select } from "../Inputs";
+import { Input, TextInvalidate, Select } from "../Generals/Inputs";
 import { DataField } from "../DataField";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import { useEffect } from "react";

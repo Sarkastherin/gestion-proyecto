@@ -35,7 +35,8 @@ export default function TableComponent({
   conditionalRowStyles,
   subHeaderComponent,
   noDataComponent = <p>No hay datos</p>,
-  subHeader=false
+  subHeader=false,
+  onRowMouseEnter
 }) {
   return (
     <DataTable
@@ -54,6 +55,7 @@ export default function TableComponent({
       theme="default"
       subHeaderComponent={subHeaderComponent}
       subHeader={subHeader}
+      onRowMouseEnter={onRowMouseEnter}
     />
   );
 }

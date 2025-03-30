@@ -1,7 +1,7 @@
 import React from "react";
 import CurrencyInput from "react-currency-input-field";
 const stylebases =
-  "rounded-md border-gray-300 shadow-xs sm:text-sm disabled:bg-neutral-100 text-neutral-800";
+  "rounded-md border-gray-300 shadow-xs text-sm disabled:bg-neutral-100 text-neutral-800";
 export const Label = ({ label, htmlFor }) => {
   return (
     <label

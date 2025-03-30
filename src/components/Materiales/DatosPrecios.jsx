@@ -1,6 +1,6 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { CardToggle } from "../Cards";
-import { Input } from "../Inputs";
+import { Input } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import Table from "../Generals/Table";

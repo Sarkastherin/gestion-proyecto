@@ -1,5 +1,5 @@
 import { Item } from "./Item";
-import { Select } from "../Inputs";
+import { Select } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import {
   PlusIcon,
@@ -33,10 +33,10 @@ export const Seccion = ({ etapas }) => {
       [index]: !prev[index], // Alterna el estado de la sección específica
     }));
   };
+  console.log(fields);
   return (
     <>
       {fields.map((field, index) => (
-        
         <div
           key={field.id}
           className="rounded-lg border border-neutral-400/70 shadow-sm bg-white overflow-hidden mb-4"
@@ -48,7 +48,13 @@ export const Seccion = ({ etapas }) => {
           >
             <div className="flex items-center gap-2">
               <ChevronDoubleDownIcon className="w-5" />
-              {`${field.id_etapa}: ${etapas.find(e => e.id_etapa===field.id_etapa).nombre} - Tipo:`} <Badge text={field.tipo} variant={field.tipo === "Mano de Obra" ? "yellow": 'purple'}/>
+              {`${field?.id_etapa || "#"}: ${
+                etapas.find((e) => e.id_etapa === field?.id_etapa)?.nombre || "Definiendo Etapa"
+              } - Tipo:`}{" "}
+              <Badge
+                text={field?.tipo}
+                variant={field?.tipo === "Mano de Obra" ? "yellow" : "purple"}
+              />
             </div>
             <Button
               text="Eliminar Sección"
@@ -68,7 +74,7 @@ export const Seccion = ({ etapas }) => {
           >
             <div className="flex justify-start items-center gap-2 p-5 bg-indigo-100/80 border-b border-indigo-200">
               <Select
-              label="Etapa"
+                label="Etapa"
                 placeholder="Seleccione una Etapa"
                 {...register(`secciones.${index}.id_etapa`)}
               >
@@ -79,7 +85,7 @@ export const Seccion = ({ etapas }) => {
                 ))}
               </Select>
               <Select
-              label="Tipo de Cotización"
+                label="Tipo de Cotización"
                 placeholder="Tipo de Cotización"
                 {...register(`secciones.${index}.tipo`)}
                 disabled={!!watch(`secciones.${index}.tipo`)}

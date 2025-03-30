@@ -1,6 +1,6 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { CardToggle } from "../Cards";
-import { Input, TextInvalidate } from "../Inputs";
+import { Input, TextInvalidate } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import Table from "../Generals/Table";

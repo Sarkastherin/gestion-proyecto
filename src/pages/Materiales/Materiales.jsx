@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
 import TableComponent from "../../components/TableComponent";
 import { NoDataComponent } from "../../components/DataField";
-import { Input, Select } from "../../components/Inputs";
+import { Input, Select } from "../../components/Generals/Inputs";
 import { Button } from "../../components/Buttons";
 import { FunnelIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
@@ -39,6 +39,7 @@ export default function Materiales() {
       name: "Código",
       selector: (row) => row.codigo,
       sortable: true,
+      width: "160px",
     },
     {
       name: "Descripción",
