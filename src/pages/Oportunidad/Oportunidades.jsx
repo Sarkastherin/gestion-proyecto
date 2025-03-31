@@ -14,10 +14,15 @@ import { useClientes } from "../../context/ClientContext";
 import { Footer } from "../../components/Footer";
 
 export function Oportunidades() {
-  const { clientes, setActiveCliente } = useClientes();
   const { getOportunidades, oportunidades } = useOportunidad();
 
   const columns = [
+    {
+      name: "Id",
+      selector: (row) => row.id,
+      width: "70px",
+      sortable: true,
+    },
     {
       name: "Nombre de la oportunidad",
       selector: (row) => row.nombre,
@@ -25,23 +30,26 @@ export function Oportunidades() {
     {
       name: "Cliente",
       selector: (row) => row.cliente?.name,
+      width: "200px"
     },
-
     {
-      name: "Monto Contización",
+      name: "$ Contización",
       selector: (row) =>
         row.total_monto?.toLocaleString("es-AR", {
           style: "currency",
           currency: "ARS",
         }) || "$ 0.00",
+        width: "150px"
     },
     {
       name: "Status",
       selector: (row) => row.status,
+       width: "120px"
     },
     {
       name: "Creado por",
       selector: (row) => row.usuario,
+      width: "120px"
     },
   ];
   const navigate = useNavigate();

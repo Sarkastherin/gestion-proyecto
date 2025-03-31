@@ -47,7 +47,7 @@ function DatosPagos() {
         <Textarea
           placeholder="Garantía"
           label="Garantía"
-          {...register("garantía")}
+          {...register("garantia")}
         />
       </div>
     </CardToggle>

@@ -28,7 +28,7 @@ function FormularioMargenesGanancias({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Margenes /* totales={totales} *//>
+          <Margenes />
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">

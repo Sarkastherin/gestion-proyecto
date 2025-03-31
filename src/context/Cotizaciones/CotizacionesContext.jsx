@@ -7,7 +7,7 @@ export const CotizacionProvider = ({ children }) => {
   const initialState = {
     cotizaciones: [],
     detalleCotizacion: null,
-    totales: null
+    totales: null,
   };
   const [state, dispatch] = useReducer(CotizacionesReducer, initialState);
   const getCotizaciones = async () => {
@@ -22,41 +22,94 @@ export const CotizacionProvider = ({ children }) => {
   };
   const getDetalleCotizacion = async (id) => {
     try {
-      const  { data: detalle, error }  = await supabase
+      const { data: detalle, error } = await supabase
         .from("detalle_cotizacion")
-       .select("*")
-       .eq("id_cotizacion", id);
-       const newDetalle = convertDetalle(detalle)
-      dispatch({ type: "GET_DETALLE_COTIZACION", payload: {secciones: newDetalle} });
+        .select("*")
+        .eq("id_cotizacion", id);
+      const newDetalle = convertDetalle(detalle);
+      dispatch({
+        type: "GET_DETALLE_COTIZACION",
+        payload: { secciones: newDetalle },
+      });
     } catch (error) {
       console.error("Error fetching cotización:", error);
     }
-  }
+  };
   const convertDetalle = (data) => {
     return data.reduce((secciones, item) => {
-      let section = secciones.find(s => s.id_etapa === item.id_etapa && s.tipo === item.tipo);
-      if(!section) {
-        section = {id_etapa: item.id_etapa, tipo: item.tipo, items: []};
+      let section = secciones.find(
+        (s) => s.id_etapa === item.id_etapa && s.tipo === item.tipo
+      );
+      if (!section) {
+        section = { id_etapa: item.id_etapa, tipo: item.tipo, items: [] };
         secciones.push(section);
       }
       section.items.push(item);
-      return secciones
-    },[])
+      return secciones;
+    }, []);
   };
   const getTotales = async (id) => {
     try {
-      const  { data: totales, error }  = await supabase
+      const { data: totales, error } = await supabase
         .from("view_totales_por_tipo")
-       .select("*")
-       .eq("id_cotizacion", id);
+        .select("*")
+        .eq("id_cotizacion", id);
       dispatch({ type: "GET_TOTALES", payload: totales });
     } catch (error) {
       console.error("Error fetching cotización:", error);
     }
+  };
+  const postCotizacion = async (values) => {
+    try {
+      const { data, error } = await supabase
+        .from("cotizaciones")
+        .insert(values)
+        .select();
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data };
+    } catch (e) {
+      // Atrapa errores inesperados y los retorna
+      return { success: false, error: e };
+    }
+  };
+  const updateCotizacion = async (values, id) => {
+    try {
+      const { data, error, status } = await supabase
+        .from("cotizaciones")
+        .update(values)
+        .eq("id", id)
+        .select();
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      console.log(data)
+      return { success: true, data };
+    } catch (e) {
+      console.log(e);
+      // Atrapa errores inesperados y los retorna
+      return { success: false, error: e };
+    }
+  }
+  const resfreshCotizaciones = () => {
+    getCotizaciones();
   }
   return (
     <CotizacionesContext.Provider
-      value={{ getCotizaciones, cotizaciones: state.cotizaciones, getDetalleCotizacion, detalleCotizacion: state.detalleCotizacion, getTotales, totales: state.totales }}
+      value={{
+        postCotizacion,
+        getCotizaciones,
+        cotizaciones: state.cotizaciones,
+        getDetalleCotizacion,
+        detalleCotizacion: state.detalleCotizacion,
+        getTotales,
+        totales: state.totales,
+        resfreshCotizaciones,
+        updateCotizacion
+      }}
     >
       {children}
     </CotizacionesContext.Provider>
