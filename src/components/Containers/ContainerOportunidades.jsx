@@ -4,18 +4,30 @@ import { Button } from "../Buttons";
 import { Modal } from "../Modal";
 import { useModal } from "../../context/ModalContext";
 import { useNavigate } from "react-router-dom";
+import { Select } from "../Generals/Inputs";
 export default function ContainerOportunidades({
   form,
   response,
   setIsEditable,
 }) {
-    const {handleModalClose} = useModal();
-    const navigate = useNavigate();
+  const { handleModalClose } = useModal();
+  const navigate = useNavigate();
   return (
     <>
+      <div>
+        <Select
+          label="Cotización"
+        >
+          {['Abierta'].map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </Select>
+      </div>
       <div className="">{form}</div>
-      <ModalLoading id={"modal-loading"} title={'Guardando...'} />
-      <div className="absolute bottom-[-70px] left-8">
+      <ModalLoading id={"modal-loading"} title={"Guardando..."} />
+      <div className="absolute bottom-[-90px] left-8">
         <ButtonEdit
           func={() => {
             setIsEditable(true);

@@ -1,53 +1,68 @@
 import FormularioMargenesGanancias from "../../templates/Oportunidad/FormularioMargenesGanancias";
-import ButtonEdit from "../../components/Generals/ButtonEdit";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
-import { useParams } from "react-router-dom";
+import { useModal } from "../../context/ModalContext";
 export default function MargenesGanancias() {
-  /* const {
-    getDetalleCotizacion,
-    detalleCotizacion,
-    getTotales,
-    totales,
-    getCotizacionActiva,
-    cotizacionActiva,
-  } = useCotizacion(); */
-  
+  const {handleModalShow, handleModalClose} = useModal();
+  const {updateCotizacion, resfreshCotizaciones, cotizacionActiva} = useCotizacion();
   const [isEditable, setIsEditable] = useState(false);
   const { oportunidadData } = useOutletContext();
-  const onSubmit = ({ allValues, dirtyFields }) => {
-    console.log(allValues);
+  const [response, setResponse] = useState(null);
+  const onSubmit = async ({ values, dirtyFields }) => {
+    const margenes = {};
+    for (let item in dirtyFields) {
+      if (dirtyFields[item]) {
+        margenes[item] = values[item];
+      }
+    }
+    console.log(cotizacionActiva.id)
+    try {
+      const { success, error } = await updateCotizacion(
+        margenes,
+        cotizacionActiva.id
+      );
+      if (success) {
+        setResponse({
+          message: "Márgenes actualizados correctamente",
+          type: "success",
+        });
+        resfreshCotizaciones();
+        setIsEditable(false);
+      } else {
+        setResponse({
+          message: "No se pudo actualizar los márgenes",
+          type: "danger",
+        });
+        console.error(error);
+      }
+    } catch (error) {
+      setResponse({
+        message: `Error al actualizar los márgenes: ${error}`,
+        type: "danger",
+      });
+    } finally {
+      handleModalShow("modal-response");
+    }
+    /* Editar Cotización y setear margen_general */
+    console.log(margenes);
   };
   const onError = (data) => console.log("Error:", data);
-  /* const { id } = useParams();
-  useEffect(() => {
-    if (id) {
-      getCotizacionActiva(id);
-    }
-  }, []);
-  useEffect(() => {
-    if(cotizacionActiva) {getTotales(cotizacionActiva.id);}
-  }, [cotizacionActiva]);
-  useEffect(() => {
-    if (totales) console.log(totales);
-  }, [totales]);
-  console.log(oportunidadData) */
   return (
     <>
-      <FormularioMargenesGanancias
-        isEditable={isEditable}
-        defaultValues={oportunidadData}
-        onSubmit={onSubmit}
-        onError={onError}
+      <ContainerOportunidades
+        response={response}
+        setIsEditable={setIsEditable}
+        form={
+          <FormularioMargenesGanancias
+            isEditable={isEditable}
+            defaultValues={oportunidadData}
+            onSubmit={onSubmit}
+            onError={onError}
+          />
+        }
       />
-      <div className="absolute bottom-[-70px] left-8">
-        <ButtonEdit
-          func={() => {
-            setIsEditable(true);
-          }}
-        />
-      </div>
     </>
   );
 }

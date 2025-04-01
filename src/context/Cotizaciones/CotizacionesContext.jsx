@@ -36,21 +36,6 @@ export const CotizacionProvider = ({ children }) => {
       console.error("Error fetching cotización:", error);
     }
   };
-  const getDetalleCotizacionV2 = async (id) => {
-    try {
-      const { data: detalle, error } = await supabase
-        .from("detalle_cotizacion")
-        .select("*")
-        .eq("id_cotizacion", id);
-      const newDetalle = convertDetalle(detalle);
-      dispatch({
-        type: "GET_DETALLE_COTIZACION",
-        payload: newDetalle,
-      });
-    } catch (error) {
-      console.error("Error fetching cotización:", error);
-    }
-  };
   const getCotizacionActiva = async (id_oportunidad) => {
     try {
       const { data: cotizacion, error } = await supabase

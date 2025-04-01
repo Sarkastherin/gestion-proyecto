@@ -38,7 +38,7 @@ export default function Margenes() {
   ];
   const totalMargen = watch("margenes")?.reduce((sum, item, index) => {
     const porcentaje = watch(`margenes.${index}.margen`) || 0;
-    return sum + (1 + porcentaje / 100) * (totales.find((total) => total.tipo === item.tipo)?.total || 0);
+    return sum + (1 + porcentaje / 100) * (totales?.find((total) => total.tipo === item.tipo)?.total || 0);
   }, 0);
   const margenFinal = watch("margen_general") || 0;
   const precioFinal = totalMargen * (1 + margenFinal / 100);
@@ -66,7 +66,7 @@ export default function Margenes() {
                       }) || "$ 0"}
                     </td>
                     <td className="px-1 w-30">
-                    {percent}
+                    {percent}{" %"}
                     </td>
                     <td className="px-1 w-50">
                       <InputGroup

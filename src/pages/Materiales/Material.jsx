@@ -87,7 +87,7 @@ export default function MaterialID() {
             title={"Guardando nuevo material"}
           />
         </BoxComponentScrolling>
-        <div className="absolute bottom-[-70px] left-8">
+        <div className="absolute bottom-[-90px] left-8">
           <ButtonEdit
             func={() => {
               setIsEditable(true);
