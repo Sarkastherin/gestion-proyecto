@@ -1,12 +1,14 @@
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
-import { Input, Textarea, CurrencyTypeInput } from "../Generals/Inputs";
+import { Input, Textarea, CurrencyTypeInput, Select } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Table from "../Generals/Table";
 import { Material } from "../Material";
+import { PrecioMaterialInput } from "../PrecioMaterialInput";
 
 export const Item = ({ tipo, seccionIndex }) => {
+  const [selectMaterial, setSelectMaterial] = useState({});
   const { register, control, watch, setValue } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
@@ -36,7 +38,6 @@ export const Item = ({ tipo, seccionIndex }) => {
       parseFloat(watch(`secciones.${seccionIndex}.items.${index}.cantidad`)) ||
       0;
     const costo_unitario = value || "0";
-    console.log(costo_unitario);
     setValue(
       `secciones.${seccionIndex}.items.${index}.costo_unitario`,
       costo_unitario
@@ -68,7 +69,12 @@ export const Item = ({ tipo, seccionIndex }) => {
             <td className="w-full flex-1 px-1">
               {tipo === "Materiales" && (
                 <>
-                  <Material seccionIndex={seccionIndex} index={index}/>
+                  <Material
+                    seccionIndex={seccionIndex}
+                    index={index}
+                    selectMaterial={selectMaterial}
+                    setSelectMaterial={setSelectMaterial}
+                  />
                 </>
               )}
               {tipo === "Mano de Obra" && (
@@ -135,15 +141,25 @@ export const Item = ({ tipo, seccionIndex }) => {
               />
             </td>
             <td className="w-30 flex-none px-1">
-              <CurrencyTypeInput
-                //{...register(`secciones.${seccionIndex}.items.${index}.costo_unitario`)}
-                value={
-                  watch(
-                    `secciones.${seccionIndex}.items.${index}.costo_unitario`
-                  ) || "0"
-                }
-                onValueChange={(value) => handleCostoTotalItem(value, index)}
-              />
+              {tipo === "Materiales" ? (
+                <>
+                  <PrecioMaterialInput
+                    seccionIndex={seccionIndex}
+                    index={index}
+                    selectMaterial={selectMaterial}
+                    handleCostoTotalItem={handleCostoTotalItem}
+                  />
+                </>
+              ) : (
+                <CurrencyTypeInput
+                  value={
+                    watch(
+                      `secciones.${seccionIndex}.items.${index}.costo_unitario`
+                    ) || "0"
+                  }
+                  onValueChange={(value) => handleCostoTotalItem(value, index)}
+                />
+              )}
             </td>
             <td className="w-30 flex-none px-1">
               <CurrencyTypeInput
@@ -177,22 +193,20 @@ export const Item = ({ tipo, seccionIndex }) => {
           icon={<PlusCircleIcon className="w-5" />}
           variant={"primary_no_border"}
           disabled={tipo === ""}
-          onClick={() =>
-            append(
-              {
-                material: "",
-                mano_obra: "",
-                actividad: "",
-                item: "",
-                indicaciones: "",
-                observaciones: "",
-                cantidad: "",
-                costo_unitario: "",
-                costo_total: "0",
-              },
-              { shouldFocus: false }
-            )
-          }
+          onClick={() => {
+            console.log("new tipo");
+            append({
+              descripcion_material: "",
+              mano_obra: "",
+              actividad: "",
+              item: "",
+              indicaciones: "",
+              observaciones: "",
+              cantidad: "",
+              costo_unitario: "",
+              costo_total: "0",
+            });
+          }}
         />
       </div>
     </>

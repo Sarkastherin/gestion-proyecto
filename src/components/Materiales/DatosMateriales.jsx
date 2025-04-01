@@ -6,7 +6,6 @@ import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import { useEffect } from "react";
 import DatosPrecios from "./DatosPrecios";
 import { useAuth } from "../../context/AuthContext";
-import { SeparateForm } from "../Containers/SepareteForms";
 export default function DatosMateriales({ isNuevo }) {
   const { user } = useAuth();
   const {
@@ -18,6 +17,7 @@ export default function DatosMateriales({ isNuevo }) {
     listaMedida,
     listaUnion,
     listaCaracteristica,
+    listaUnidades
   } = useMateriales();
   const {
     register,
@@ -89,7 +89,9 @@ export default function DatosMateriales({ isNuevo }) {
         listaNorma.length > 0 &&
         listaMedida.length > 0 &&
         listaUnion.length > 0 &&
-        listaCaracteristica.length > 0 && (
+        listaCaracteristica.length > 0 &&
+        listaUnidades.length > 0 &&
+        (
           <>
             <Card>
               <div className="flex flex-col gap-4">
@@ -159,6 +161,19 @@ export default function DatosMateriales({ isNuevo }) {
                     {errors.tipo && (
                       <TextInvalidate message={"Campo requerido"} />
                     )}
+                  </div>
+                  <div className="flex-1">
+                    <Select
+                      label={"Unidad"}
+                      placeholder={"Seleccione la unidad"}
+                      {...register("unidad")}
+                    >
+                      {listaUnidades.map((unidad) => (
+                        <option key={unidad.id} value={unidad.abreviatura}>
+                          {`[${unidad.abreviatura}] ${unidad.descripcion}`}
+                        </option>
+                      ))}
+                    </Select>
                   </div>
                   <div className="flex-1">
                     <Select

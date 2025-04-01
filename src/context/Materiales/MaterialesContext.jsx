@@ -14,6 +14,7 @@ export const MaterialesProvider = ({ children }) => {
     listaMedida: [],
     listaUnion: [],
     listaCaracteristica: [],
+    listaUnidades: [],
   };
   const [state, dispatch] = useReducer(MaterialesReducer, initialState);
   const getMateriales = async () => {
@@ -92,6 +93,16 @@ export const MaterialesProvider = ({ children }) => {
       console.error("Error fetching caracteristica:", error);
     }
   };
+  const getListaUnidades = async () => {
+    try {
+      const { data: unidades, error } = await supabase
+        .from("unidades")
+        .select("*");
+      dispatch({ type: "GET_UNIDADES", payload: unidades });
+    } catch (error) {
+      console.error("Error fetching unidades:", error);
+    }
+  };
   const postMaterial = async (values) => {
     try {
       const { data, error } = await supabase.from("materiales").insert(values);
@@ -135,6 +146,7 @@ export const MaterialesProvider = ({ children }) => {
     getListaMedida();
     getListaUnion();
     getListaCaracteristica();
+    getListaUnidades();
   }, []);
   return (
     <MaterialesContext.Provider
@@ -147,6 +159,7 @@ export const MaterialesProvider = ({ children }) => {
         listaMedida: state.listaMedida,
         listaUnion: state.listaUnion,
         listaCaracteristica: state.listaCaracteristica,
+        listaUnidades: state.listaUnidades,
         postMaterial,
         updateMaterial,
         refreshMateriales,

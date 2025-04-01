@@ -1,4 +1,4 @@
-import { GET_MATERIALES, GET_MATERIAL, GET_TIPO, GET_ESPESOR, GET_NORMA, GET_MEDIDA, GET_UNION, GET_CARACTERISTICA } from "../types";
+import { GET_MATERIALES, GET_MATERIAL, GET_TIPO, GET_ESPESOR, GET_NORMA, GET_MEDIDA, GET_UNION, GET_CARACTERISTICA, GET_UNIDADES } from "../types";
 export const MaterialesReducer = (state, action) => {
   const { type, payload } = action;
   switch (action.type) {
@@ -18,6 +18,8 @@ export const MaterialesReducer = (state, action) => {
       return {...state, listaUnion: payload };
     case GET_CARACTERISTICA:
       return {...state, listaCaracteristica: payload };
+    case GET_UNIDADES:
+      return {...state, listaUnidades: payload };
     // Add more cases as needed
     default:
       return state;

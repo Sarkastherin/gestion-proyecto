@@ -1,4 +1,4 @@
-import { Input, TextInvalidate } from "./Generals/Inputs";
+import { Input, TextInvalidate, Select } from "./Generals/Inputs";
 import { Modal } from "./Modal";
 import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
@@ -6,12 +6,15 @@ import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
 import { useProveedores } from "../context/ProveedoresContext";
 import { useMateriales } from "../context/Materiales/MaterialesContext";
-export const Material = ({seccionIndex,index}) => {
-  const {materiales} = useMateriales();
-  const {proveedores} = useProveedores();
+export const Material = ({
+  seccionIndex,
+  index,
+  selectMaterial,
+  setSelectMaterial,
+}) => {
+  const { materiales, listaUnidades } = useMateriales();
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [selectMaterial, setSelectMaterial] = useState({});
   const { handleModalShow, handleModalClose } = useModal();
   const {
     register,
@@ -20,6 +23,7 @@ export const Material = ({seccionIndex,index}) => {
   } = useFormContext();
   useEffect(() => {
     setFilteredData(materiales);
+    console.log(materiales);
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -31,23 +35,66 @@ export const Material = ({seccionIndex,index}) => {
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    console.log(selectMaterial)
-    if (selectMaterial?.descripcion) {
-      setValue(`secciones.${seccionIndex}.items.${index}.descripcion_material`, selectMaterial.descripcion, { shouldDirty: true });
-      setValue(`secciones.${seccionIndex}.items.${index}.id_material`, selectMaterial.id, { shouldDirty: true });
+    if (selectMaterial[index]?.descripcion) {
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.descripcion_material`,
+        selectMaterial[index].descripcion,
+        { shouldDirty: true }
+      );
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.unidad`,
+        selectMaterial[index].unidad,
+        { shouldDirty: true }
+      );
+      /* if (selectMaterial[index].precios.length > 0) { */
+        const indexDefaultPrecio = selectMaterial[index].precios.findIndex(
+          (item) => item.default || 0
+        );
+        const precioDefault = selectMaterial[index].precios[indexDefaultPrecio]?.precio || 0;
+        setValue(
+          `secciones.${seccionIndex}.items.${index}.costo_unitario`,
+          precioDefault,
+          { shouldDirty: true }
+        );
+        console.log(selectMaterial[index].precios);
+      //}
     }
-  }, [selectMaterial, setValue]);
+  }, [selectMaterial[index], setValue]);
+  const handleSelectMaterial = (material) => {
+    setSelectMaterial((prev) => ({...prev, [index]: material}))
+    handleModalClose();
+  };
   return (
     <>
-      <Input
-        label={"Material"}
-        className="mb-1.5"
-        no_label
-        onClick={() => handleModalShow("modalMaterial")}
-        {...register(`secciones.${seccionIndex}.items.${index}.descripcion_material`)}
-        placeholder="Seleccione un material"
-      />
-      {errors.proveedor && <TextInvalidate message={errors.proveedor.message} />}
+      <div className="flex mb-1.5 gap-2">
+        <Input
+          label={"Material"}
+          className="basis-3/4"
+          no_label
+          onClick={() => handleModalShow("modalMaterial")}
+          {...register(
+            `secciones.${seccionIndex}.items.${index}.descripcion_material`
+          )}
+          placeholder="Seleccione un material"
+        />
+        <Select
+          label="Unidad"
+          no_label
+          className="basis-1/4"
+          placeholder="Unidad"
+          disabled
+          {...register(`secciones.${seccionIndex}.items.${index}.unidad`)}
+        >
+          {listaUnidades?.map((item) => (
+            <option key={item.id} value={item.abreviatura}>
+              {item.descripcion}
+            </option>
+          ))}
+        </Select>
+      </div>
+      {errors.proveedor && (
+        <TextInvalidate message={errors.proveedor.message} />
+      )}
       <Modal
         modalId="modalMaterial"
         title={"Buscar Material"}
@@ -57,25 +104,22 @@ export const Material = ({seccionIndex,index}) => {
         <div className="mt-4">
           <p className="mt-1 text-sm text-gray-700">Seleccione un proveedor.</p>
           <Input
-          className="mb-1.5"
+            className="mb-1.5"
             label="Buscar Material"
             no_label
             type="search"
             placeholder="Buscar Material"
             onInput={(e) => setSearch(e.target.value)}
-            {...register("getMaterial", {})}
+            /* {...register("getMaterial", {})} */
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
-            {filteredData.map((proveedor) => (
+            {filteredData.map((material) => (
               <li
                 className="mt-2 text-sm text-gray-600 rounded border border-gray-300 px-4 py-1 cursor-pointer hover:bg-indigo-100"
-                key={proveedor.id}
-                onClick={() => {
-                  setSelectMaterial(proveedor);
-                  handleModalClose();
-                }}
+                key={material.id}
+                onClick={() => handleSelectMaterial(material)}
               >
-                <p>{proveedor.descripcion}</p>
+                <p>{material.descripcion}</p>
               </li>
             ))}
           </ul>

@@ -33,7 +33,6 @@ export const Seccion = ({ etapas }) => {
       [index]: !prev[index], // Alterna el estado de la sección específica
     }));
   };
-  console.log(fields);
   return (
     <>
       {fields.map((field, index) => (
@@ -96,7 +95,7 @@ export const Seccion = ({ etapas }) => {
                 <option value="Otros">Otros</option>
               </Select>
             </div>
-            <Item
+            <Item 
               tipo={watch(`secciones.${index}.tipo`)}
               seccionIndex={index}
             />
