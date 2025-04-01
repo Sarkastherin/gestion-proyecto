@@ -23,7 +23,6 @@ export const Material = ({
   } = useFormContext();
   useEffect(() => {
     setFilteredData(materiales);
-    console.log(materiales);
   }, []);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -37,7 +36,7 @@ export const Material = ({
   useEffect(() => {
     if (selectMaterial[index]?.descripcion) {
       setValue(
-        `secciones.${seccionIndex}.items.${index}.descripcion_material`,
+        `secciones.${seccionIndex}.items.${index}.material`,
         selectMaterial[index].descripcion,
         { shouldDirty: true }
       );
@@ -73,7 +72,7 @@ export const Material = ({
           no_label
           onClick={() => handleModalShow("modalMaterial")}
           {...register(
-            `secciones.${seccionIndex}.items.${index}.descripcion_material`
+            `secciones.${seccionIndex}.items.${index}.material`
           )}
           placeholder="Seleccione un material"
         />

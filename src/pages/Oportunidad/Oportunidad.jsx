@@ -16,10 +16,9 @@ import { useClientes } from "../../context/ClientContext";
 
 function Oportunidad() {
   const [oportunidadData, setOportunidadData] = useState(null);
-  const { getClienteById, activeCliente } = useClientes();
+  const { activeCliente } = useClientes();
   const { getOportunidadById, activeOportunidad } = useOportunidad();
-  const { getDetalleCotizacion, detalleCotizacion, getTotales, totales } =
-    useCotizacion();
+  const { getDetalleCotizacion, detalleCotizacion, getTotales, totales } = useCotizacion();
   const { id } = useParams();
   const menuItems = () => {
     return [
@@ -55,15 +54,13 @@ function Oportunidad() {
     getOportunidadById(parseInt(id));
   }, []);
   useEffect(() => {
-    if (activeOportunidad?.id_cotizacion) {
+   /*  if (activeOportunidad?.id_cotizacion) {
       getDetalleCotizacion(activeOportunidad?.id_cotizacion);
       getTotales(activeOportunidad?.id_cotizacion);
-    }
-    /* if (activeOportunidad?.id_cliente) {
-      getClienteById(activeOportunidad?.id_cliente);
     } */
+      setOportunidadData(activeOportunidad)
   }, [activeOportunidad]);
-  useEffect(() => {
+  /* useEffect(() => {
     if (detalleCotizacion?.secciones && totales) {
       activeOportunidad["secciones"] = detalleCotizacion.secciones || [];
       totales.forEach((item) => {
@@ -75,17 +72,12 @@ function Oportunidad() {
         }
       });
     }
-    /* if (activeCliente) {
-      console.log(activeCliente)
-      activeOportunidad.cliente = activeCliente;
-    } */
 
     if (activeOportunidad?.cliente) {
       setOportunidadData(activeOportunidad);
     }
     //
-  }, [detalleCotizacion, activeOportunidad, totales, activeCliente]);
-  //console.log(oportunidadData)
+  }, [detalleCotizacion, activeOportunidad, totales, activeCliente]); */
   return (
     <>
       {oportunidadData && (

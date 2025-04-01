@@ -17,23 +17,21 @@ function FormularioCotizacion({
     defaultValues: defaultValues || {},
   });
   const {
-    getValues,
     formState: { dirtyFields },
   } = methods;
 
-  const getUpdateValues = () => {
-    const allValues = getValues();
-    return { allValues, dirtyFields };
+  const getUpdateValues = (values) => {
+    return { values, dirtyFields };
   };
   return (
     <FormProvider {...methods}>
       <form
-        onSubmit={methods.handleSubmit(() => {
-          onSubmit(getUpdateValues());
+        onSubmit={methods.handleSubmit((values) => {
+          onSubmit(getUpdateValues(values));
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Seccion etapas={defaultValues?.etapas}/>
+          <Seccion etapas={oportunidadData?.etapas}/>
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">

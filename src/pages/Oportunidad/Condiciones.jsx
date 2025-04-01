@@ -1,14 +1,12 @@
 import FormularioCondicion from "../../templates/Oportunidad/FormularioCondiciones";
-import ButtonEdit from "../../components/Generals/ButtonEdit";
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import NoCotizacionComponent from "../../components/Cotizacion/NoCotizacionComponent";
 import { Button } from "../../components/Buttons";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
-import { Modal } from "../../components/Modal";
-import { ModalLoading } from "../../components/Generals/ModalsTypes";
 import { useModal } from "../../context/ModalContext";
+import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 export default function Condiciones() {
   const { postCotizacion, resfreshCotizaciones, updateCotizacion } =
     useCotizacion();
@@ -27,16 +25,12 @@ export default function Condiciones() {
       }
     }
     try {
-      let result ;
+      let result;
       if (isNew) {
         insert["id_oportunidad"] = values.id;
-        insert["active"] = true;
         result = await postCotizacion(insert);
       } else {
-        result = await updateCotizacion(
-          insert,
-          oportunidadData.id_cotizacion
-        );
+        result = await updateCotizacion(insert, oportunidadData.id_cotizacion);
       }
       if (result.success) {
         setResponse({
@@ -67,49 +61,18 @@ export default function Condiciones() {
     <>
       {oportunidadData.id_cotizacion || showForm ? (
         <>
-          <FormularioCondicion
-            isEditable={isEditable}
-            defaultValues={oportunidadData}
-            onSubmit={onSubmit}
-            onError={onError}
+          <ContainerOportunidades
+            response={response}
+            setIsEditable={setIsEditable}
+            form={
+              <FormularioCondicion
+                isEditable={isEditable}
+                defaultValues={oportunidadData}
+                onSubmit={onSubmit}
+                onError={onError}
+              />
+            }
           />
-          <ModalLoading id={"modal-loading"} title={"Guardando cambios"} />
-          <div className="absolute bottom-[-70px] left-8">
-            <ButtonEdit
-              func={() => {
-                setIsEditable(true);
-              }}
-            />
-          </div>
-          {response && (
-            <Modal
-              modalId={"modal-response"}
-              title={
-                response.type === "success"
-                  ? "¡Todo marcha bien!"
-                  : "Algo anda mal"
-              }
-              variant={response.type}
-            >
-              <div className="flex flex-col gap-4">
-                {response.message}
-                <div className="flex gap-2 mt-2">
-                  <Button
-                    className="w-full"
-                    text={"Cerrar"}
-                    variant={"secondary"}
-                    onClick={handleModalClose}
-                  />
-                  <Button
-                    className="w-full"
-                    text={"Ir oportunidades"}
-                    variant={"primary"}
-                    onClick={() => console.log("something")}
-                  />
-                </div>
-              </div>
-            </Modal>
-          )}
         </>
       ) : (
         <NoCotizacionComponent>

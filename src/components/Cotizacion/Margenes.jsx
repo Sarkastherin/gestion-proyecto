@@ -4,22 +4,25 @@ import Table from "../Generals/Table";
 import { Input, InputGroup } from "../Generals/Inputs";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
+import { useParams } from "react-router-dom";
 
 export default function Margenes() {
-  const { totales } = useCotizacion();
-  const { register, control, watch, setValue, getValues } = useFormContext();
+  const { totales, getTotales, getCotizacionActiva, cotizacionActiva } = useCotizacion();
+  const { register, control, watch } = useFormContext();
   const { fields } = useFieldArray({
     control,
     name: "margenes",
   });
+  const { id } = useParams();
   useEffect(() => {
-    if (totales) {
-      totales.forEach((item, index) => {
-        setValue(`margenes.${index}.tipo`, item.tipo); // Asigna el tipo en cada margen
-      });
+    if (id) {
+      getCotizacionActiva(id);
     }
-  }, [totales, setValue]);
-  useEffect(() => {}, []);
+  }, []);
+  useEffect(() => {
+    if(cotizacionActiva) {getTotales(cotizacionActiva.id);}
+  }, [cotizacionActiva]);
+
   const cells = [
     { element: "Componente", w: "w-full", flex: "flex-1" },
     { element: "Total", w: "w-30" },
@@ -35,19 +38,20 @@ export default function Margenes() {
   ];
   const totalMargen = watch("margenes")?.reduce((sum, item, index) => {
     const porcentaje = watch(`margenes.${index}.margen`) || 0;
-    return sum + (1 + porcentaje / 100) * (item.totales?.total || 0);
+    return sum + (1 + porcentaje / 100) * (totales.find((total) => total.tipo === item.tipo)?.total || 0);
   }, 0);
   const margenFinal = watch("margen_general") || 0;
   const precioFinal = totalMargen * (1 + margenFinal / 100);
-
   return (
     <>
-      {fields.length > 0 ? (
+      {(fields.length > 0 && totales?.length>0) ? (
         <>
           <CardToggle title={"Margenes de Ganancias"}>
             <Table cells={cells}>
               {fields?.map((item, index) => {
                 const porcentaje = watch(`margenes.${index}.margen`) || 0;
+                const total =totales.find((total) => total.tipo === item.tipo)?.total || 0
+                const percent = totales.find((total) => total.tipo === item.tipo)?.porcentaje || 0
                 return (
                   <tr
                     key={item.tipo}
@@ -55,13 +59,14 @@ export default function Margenes() {
                   >
                     <th className="px-1 w-full flex-1">{item.tipo}</th>
                     <td className="px-1 w-30">
-                      {item.totales?.total.toLocaleString("es-AR", {
+                      
+                      {total.toLocaleString("es-AR", {
                         style: "currency",
                         currency: "ARS",
                       }) || "$ 0"}
                     </td>
                     <td className="px-1 w-30">
-                      {item.totales?.porcentaje || 0}
+                    {percent}
                     </td>
                     <td className="px-1 w-50">
                       <InputGroup
@@ -76,7 +81,7 @@ export default function Margenes() {
                     </td>
                     <td className="px-1 w-30">
                       {(
-                        (1 + porcentaje / 100) * item.totales?.total || 0
+                        (1 + porcentaje / 100) * total || 0
                       ).toLocaleString("es-AR", {
                         style: "currency",
                         currency: "ARS",

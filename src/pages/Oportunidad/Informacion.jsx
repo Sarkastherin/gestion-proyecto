@@ -1,17 +1,14 @@
 import { useOutletContext } from "react-router-dom";
 import { useState } from "react";
 import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
-import ButtonEdit from "../../components/Generals/ButtonEdit";
-import { Modal } from "../../components/Modal";
-import { ModalLoading } from "../../components/Generals/ModalsTypes";
 import { useModal } from "../../context/ModalContext";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
-import { Button } from "../../components/Buttons";
 import { useNavigate } from "react-router-dom";
+import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 export default function Informacion() {
   const navigate = useNavigate();
   const { updateOportunidad, refreshOportunidades } = useOportunidad();
-  const { handleModalShow, handleModalClose } = useModal();
+  const { handleModalShow } = useModal();
   const [isEditable, setIsEditable] = useState(false);
   const { oportunidadData } = useOutletContext();
   const [response, setResponse] = useState(null);
@@ -27,7 +24,6 @@ export default function Informacion() {
         updates[item] = values[item];
       }
     }
-    console.log(updates);
     try {
       const { success, error } = await updateOportunidad(
         updates,
@@ -61,43 +57,18 @@ export default function Informacion() {
 
   return (
     <>
-      <FormularioOportunidad
-        isEditable={isEditable}
-        defaultValues={oportunidadData}
-        onSubmit={onSubmit}
-        onError={onError}
+      <ContainerOportunidades
+        response={response}
+        setIsEditable={setIsEditable}
+        form={
+          <FormularioOportunidad
+            isEditable={isEditable}
+            defaultValues={oportunidadData}
+            onSubmit={onSubmit}
+            onError={onError}
+          />
+        }
       />
-      <ModalLoading id={"modal-loading"} title={"Guardando nuevo material"} />
-      <div className="absolute bottom-[-70px] left-8">
-        <ButtonEdit func={() => setIsEditable(true)} />
-      </div>
-      {response && (
-        <Modal
-          modalId={"modal-response"}
-          title={
-            response.type === "success" ? "¡Todo marcha bien!" : "Algo anda mal"
-          }
-          variant={response.type}
-        >
-          <div className="flex flex-col gap-4">
-            {response.message}
-            <div className="flex gap-2 mt-2">
-              <Button
-                className="w-full"
-                text={"Cerrar"}
-                variant={"secondary"}
-                onClick={handleModalClose}
-              />
-              <Button
-                className="w-full"
-                text={"Ir oportunidades"}
-                variant={"primary"}
-                onClick={() => navigate(`/oportunidades`)}
-              />
-            </div>
-          </div>
-        </Modal>
-      )}
     </>
   );
 }

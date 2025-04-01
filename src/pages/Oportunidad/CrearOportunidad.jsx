@@ -1,7 +1,7 @@
 import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
 import { useModal } from "../../context/ModalContext";
 import { useNavigate } from "react-router-dom";
-import LayoutSaveElement from "../../templates/Generales/LayoutSaveElements";
+import LayoutSaveElement from "../../components/Containers/LayoutSaveElements";
 import { useState } from "react";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 export default function CrearOportunidad() {
@@ -13,16 +13,13 @@ export default function CrearOportunidad() {
   const [id, setId] = useState(null);
 
   const onSubmit = async ({ values }) => {
-    /* for (const item in values) {
-      if (values[item] === "") {
-        values[item] = null;
-      }
-    } */
    values.id_cliente = values.cliente.id;
    delete values.cliente
-   console.log(values)
+   if(values.etapas.length === 0) {
+    values.etapas = [{id: '1', nombre: values.nombre }];
+   }
     handleModalShow("modal-loading");
-    try {
+     try {
       const { success, error, data } = await postOportunidad(values);
       if (success) {
         setId(data[0].id)

@@ -22,7 +22,7 @@ export const Seccion = ({ etapas }) => {
 
   useEffect(() => {
     if (fields.length === 0) {
-      append({ nombre_etapa: "", tipo: "" }, { shouldFocus: false });
+      append({ id_etapa: 1, tipo: '',items:[] }, { shouldFocus: false });
     }
   }, [fields, append]);
 
@@ -47,12 +47,13 @@ export const Seccion = ({ etapas }) => {
           >
             <div className="flex items-center gap-2">
               <ChevronDoubleDownIcon className="w-5" />
-              {`${field?.id_etapa || "#"}: ${
-                etapas.find((e) => e.id_etapa === field?.id_etapa)?.nombre || "Definiendo Etapa"
-              } - Tipo:`}{" "}
               <Badge
-                text={field?.tipo}
-                variant={field?.tipo === "Mano de Obra" ? "yellow" : "purple"}
+                text={`Etapa: ${watch(`secciones.${index}.id_etapa`)}`}
+                variant={"yellow"}
+              />{" "}
+              <Badge
+                text={watch(`secciones.${index}.tipo`)}
+                variant={"purple"}
               />
             </div>
             <Button
@@ -75,10 +76,11 @@ export const Seccion = ({ etapas }) => {
               <Select
                 label="Etapa"
                 placeholder="Seleccione una Etapa"
-                {...register(`secciones.${index}.id_etapa`)}
+
+                {...register(`secciones.${index}.id_etapa`,{valueAsNumber:true})}
               >
-                {etapas?.map((item) => (
-                  <option key={item.id_etapa} value={item.id_etapa}>
+                {etapas.map((item) => (
+                  <option key={item.id} value={item.id}>
                     {item.nombre}
                   </option>
                 ))}
@@ -95,7 +97,7 @@ export const Seccion = ({ etapas }) => {
                 <option value="Otros">Otros</option>
               </Select>
             </div>
-            <Item 
+            <Item
               tipo={watch(`secciones.${index}.tipo`)}
               seccionIndex={index}
             />
@@ -108,9 +110,12 @@ export const Seccion = ({ etapas }) => {
           text={"Agregar Sección"}
           icon={<PlusIcon className="w-4" />}
           variant={"secondaryOutline"}
-          onClick={() => append({ nombre_etapa: "", tipo: "" })}
+          onClick={() => {
+            append({ id_etapa: '', tipo: '',items:[] });
+          }}
         />
       </div>
     </>
   );
 };
+/* const data = [{ id_cotizacion, revision, id_etapa, tipo, material, mano_obra, actividad, otro_item, cantidad, costo_unitario, costo_total}]; */

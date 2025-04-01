@@ -1,9 +1,9 @@
-import Container from "../../components/Generals/Container";
-import { BoxComponentScrolling } from "../../components/BoxComponent";
+import Container from "../Generals/Container";
+import { BoxComponentScrolling } from "../BoxComponent";
 import { useState } from "react";
-import { Modal } from "../../components/Modal";
-import { ModalLoading } from "../../components/Generals/ModalsTypes";
-import { Button } from "../../components/Buttons";
+import { Modal } from "../Modal";
+import { ModalLoading } from "../Generals/ModalsTypes";
+import { Button } from "../Buttons";
 export default function LayoutSaveElement({
   hedearTitle,
   backTo,

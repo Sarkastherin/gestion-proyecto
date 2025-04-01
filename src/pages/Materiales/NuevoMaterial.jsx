@@ -1,4 +1,4 @@
-import LayoutSaveElement from "../../templates/Generales/LayoutSaveElements";
+import LayoutSaveElement from "../../components/Containers/LayoutSaveElements";
 import { useModal } from "../../context/ModalContext";
 import FormularioMateriales from "../../templates/Materiales/FormularioMaterial";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";

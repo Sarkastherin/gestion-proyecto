@@ -8,6 +8,7 @@ export const CotizacionProvider = ({ children }) => {
     cotizaciones: [],
     detalleCotizacion: null,
     totales: null,
+    cotizacionActiva: null,
   };
   const [state, dispatch] = useReducer(CotizacionesReducer, initialState);
   const getCotizaciones = async () => {
@@ -30,6 +31,36 @@ export const CotizacionProvider = ({ children }) => {
       dispatch({
         type: "GET_DETALLE_COTIZACION",
         payload: { secciones: newDetalle },
+      });
+    } catch (error) {
+      console.error("Error fetching cotización:", error);
+    }
+  };
+  const getDetalleCotizacionV2 = async (id) => {
+    try {
+      const { data: detalle, error } = await supabase
+        .from("detalle_cotizacion")
+        .select("*")
+        .eq("id_cotizacion", id);
+      const newDetalle = convertDetalle(detalle);
+      dispatch({
+        type: "GET_DETALLE_COTIZACION",
+        payload: newDetalle,
+      });
+    } catch (error) {
+      console.error("Error fetching cotización:", error);
+    }
+  };
+  const getCotizacionActiva = async (id_oportunidad) => {
+    try {
+      const { data: cotizacion, error } = await supabase
+        .from("cotizaciones")
+        .select("*")
+        .eq("id_oportunidad", id_oportunidad)
+        .eq("active", true);
+      dispatch({
+        type: "GET_COTIZACION_ACTIVA",
+        payload: cotizacion[0],
       });
     } catch (error) {
       console.error("Error fetching cotización:", error);
@@ -75,6 +106,21 @@ export const CotizacionProvider = ({ children }) => {
       return { success: false, error: e };
     }
   };
+  const postDetalle = async (values) => {
+    try {
+      const { data, error } = await supabase
+        .from("detalle_cotizacion")
+        .insert(values)
+        .select();
+        if (error) {
+          // Retorna el error para que sea manejado en el componente que llama a esta función
+          return { success: false, error };
+        }
+        return { success: true, data };
+    } catch (e) {
+      return { success: false, error: e };
+    }
+  };
   const updateCotizacion = async (values, id) => {
     try {
       const { data, error, status } = await supabase
@@ -86,17 +132,17 @@ export const CotizacionProvider = ({ children }) => {
         // Retorna el error para que sea manejado en el componente que llama a esta función
         return { success: false, error };
       }
-      console.log(data)
+      console.log(data);
       return { success: true, data };
     } catch (e) {
       console.log(e);
       // Atrapa errores inesperados y los retorna
       return { success: false, error: e };
     }
-  }
+  };
   const resfreshCotizaciones = () => {
     getCotizaciones();
-  }
+  };
   return (
     <CotizacionesContext.Provider
       value={{
@@ -108,7 +154,10 @@ export const CotizacionProvider = ({ children }) => {
         getTotales,
         totales: state.totales,
         resfreshCotizaciones,
-        updateCotizacion
+        updateCotizacion,
+        getCotizacionActiva,
+        cotizacionActiva: state.cotizacionActiva,
+        postDetalle
       }}
     >
       {children}

@@ -59,7 +59,7 @@ function EtapasOportunidad() {
             variant={"green"}
             text="Agregar Etapa"
             onClick={() => {
-              append({ etapa: "", id_etapa: "" });
+              append({ id: fields.length + 1, nombre:"" });
             }}
           />
         </div>

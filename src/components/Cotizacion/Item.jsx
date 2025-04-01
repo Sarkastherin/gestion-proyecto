@@ -9,7 +9,7 @@ import { PrecioMaterialInput } from "../PrecioMaterialInput";
 
 export const Item = ({ tipo, seccionIndex }) => {
   const [selectMaterial, setSelectMaterial] = useState({});
-  const { register, control, watch, setValue } = useFormContext();
+  const { register, control, watch, setValue, formState: {isDirty} } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: `secciones.${seccionIndex}.items`,
@@ -18,16 +18,13 @@ export const Item = ({ tipo, seccionIndex }) => {
     if (fields.length === 0 && tipo != "") {
       append(
         {
-          id_material: "",
-          descripcion_material: "",
-          mano_obra: "",
-          actividad: "",
-          item: "",
-          indicaciones: "",
-          observaciones: "",
+          material: null,
+          mano_obra: null,
+          actividad: null,
+          otro_item: null,
           cantidad: "",
           costo_unitario: "",
-          costo_total: "0",
+          costo_total: "",
         },
         { shouldFocus: false }
       );
@@ -196,15 +193,13 @@ export const Item = ({ tipo, seccionIndex }) => {
           onClick={() => {
             console.log("new tipo");
             append({
-              descripcion_material: "",
-              mano_obra: "",
-              actividad: "",
-              item: "",
-              indicaciones: "",
-              observaciones: "",
+              material: null,
+              mano_obra: null,
+              actividad: null,
+              otro_item: null,
               cantidad: "",
               costo_unitario: "",
-              costo_total: "0",
+              costo_total: "",
             });
           }}
         />

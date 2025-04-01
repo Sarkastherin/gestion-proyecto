@@ -65,7 +65,6 @@ export const ModalCotizaciones = () => {
             type="search"
             placeholder="Buscar Cotización"
             onInput={(e) => setSearch(e.target.value)}
-            {...register("getCotizaciones", {})}
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
             {filteredData.map((client) => (
