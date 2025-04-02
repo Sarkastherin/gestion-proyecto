@@ -30,7 +30,7 @@ export const PrecioMaterialInput = ({
   };
   return (
     <>
-      <div className="flex mb-1.5 gap-2 relative">
+      <div className="flex gap-2 relative">
         <span onClick={() => setHiddePrices(false)}>
           <CurrencyTypeInput
             readOnly={true}

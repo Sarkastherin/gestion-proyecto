@@ -55,7 +55,6 @@ export const Material = ({
           precioDefault,
           { shouldDirty: true }
         );
-        console.log(selectMaterial[index].precios);
       //}
     }
   }, [selectMaterial[index], setValue]);
@@ -65,7 +64,7 @@ export const Material = ({
   };
   return (
     <>
-      <div className="flex mb-1.5 gap-2">
+      <div className="flex gap-2">
         <Input
           label={"Material"}
           className="basis-3/4"
@@ -103,7 +102,7 @@ export const Material = ({
         <div className="mt-4">
           <p className="mt-1 text-sm text-gray-700">Seleccione un proveedor.</p>
           <Input
-            className="mb-1.5"
+            className=""
             label="Buscar Material"
             no_label
             type="search"

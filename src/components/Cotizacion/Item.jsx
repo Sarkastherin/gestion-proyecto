@@ -18,6 +18,7 @@ export const Item = ({ tipo, seccionIndex }) => {
     if (fields.length === 0 && tipo != "") {
       append(
         {
+          id:"",
           material: null,
           mano_obra: null,
           actividad: null,
@@ -58,7 +59,7 @@ export const Item = ({ tipo, seccionIndex }) => {
         {fields.map((field, index) => (
           <tr
             key={field.id}
-            className={`flex px-6 py-2 text-sm text-neutral-700 text-left ${
+            className={`flex px-3 py-1.5 text-sm text-neutral-700 text-left ${
               index !== fields.length - 1 ? "border-b border-neutral-200" : ""
             }`}
           >
@@ -78,7 +79,7 @@ export const Item = ({ tipo, seccionIndex }) => {
                 <Input
                   label="Operario"
                   no_label
-                  className="mb-1.5"
+                  className=""
                   type="text"
                   placeholder="Operario"
                   {...register(
@@ -86,11 +87,11 @@ export const Item = ({ tipo, seccionIndex }) => {
                   )}
                 />
               )}
-              {tipo === "Subcontratos" && (
+              {tipo === "Subcontrato" && (
                 <Input
                   label="Actividad"
                   no_label
-                  className="mb-1.5"
+                  className=""
                   type="text"
                   placeholder="Actividad"
                   {...register(
@@ -102,15 +103,16 @@ export const Item = ({ tipo, seccionIndex }) => {
                 <Input
                   label="Otros"
                   no_label
-                  className="mb-1.5"
+                  className=""
                   type="text"
                   placeholder="..."
-                  {...register(`secciones.${seccionIndex}.items.${index}.item`)}
+                  {...register(`secciones.${seccionIndex}.items.${index}.otro_item`)}
                 />
               )}
               <Textarea
                 label="Indicaciones"
                 no_label
+                className="sr-only"
                 placeholder="Indicaciones"
                 rows="2"
                 {...register(
@@ -118,6 +120,7 @@ export const Item = ({ tipo, seccionIndex }) => {
                 )}
               />
               <Textarea
+              className="sr-only"
                 label="Observaciones"
                 no_label
                 placeholder="Observaciones"
@@ -193,6 +196,7 @@ export const Item = ({ tipo, seccionIndex }) => {
           onClick={() => {
             console.log("new tipo");
             append({
+              id:"",
               material: null,
               mano_obra: null,
               actividad: null,

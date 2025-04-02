@@ -14,17 +14,6 @@ export default function ContainerOportunidades({
   const navigate = useNavigate();
   return (
     <>
-      <div>
-        <Select
-          label="Cotización"
-        >
-          {['Abierta'].map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </Select>
-      </div>
       <div className="">{form}</div>
       <ModalLoading id={"modal-loading"} title={"Guardando..."} />
       <div className="absolute bottom-[-90px] left-8">

@@ -92,17 +92,52 @@ export const CotizacionProvider = ({ children }) => {
     }
   };
   const postDetalle = async (values) => {
+    console.log(values)
     try {
       const { data, error } = await supabase
         .from("detalle_cotizacion")
         .insert(values)
         .select();
-        if (error) {
-          // Retorna el error para que sea manejado en el componente que llama a esta función
-          return { success: false, error };
-        }
-        return { success: true, data };
+      if (error) {
+        console.log(error)
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data };
     } catch (e) {
+      return { success: false, error: e };
+    }
+  };
+  const deleteDetalle = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from("detalle_cotizacion")
+        .delete()
+        .eq("id", id)
+        .select();
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data };
+    } catch (e) {
+      return { success: false, error: e };
+    }
+  };
+  const updateDetalle = async (values,id) => {
+    try {
+      const { data, error } = await supabase
+        .from("detalle_cotizacion")
+        .update(values)
+        .eq("id", id)
+        .select();
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data };
+    } catch (e) {
+      console.log(e)
       return { success: false, error: e };
     }
   };
@@ -125,7 +160,7 @@ export const CotizacionProvider = ({ children }) => {
       return { success: false, error: e };
     }
   };
-  const resfreshCotizaciones = () => {
+  const refreshCotizaciones = () => {
     getCotizaciones();
   };
   return (
@@ -138,11 +173,13 @@ export const CotizacionProvider = ({ children }) => {
         detalleCotizacion: state.detalleCotizacion,
         getTotales,
         totales: state.totales,
-        resfreshCotizaciones,
+        refreshCotizaciones,
         updateCotizacion,
         getCotizacionActiva,
         cotizacionActiva: state.cotizacionActiva,
-        postDetalle
+        postDetalle,
+        deleteDetalle,
+        updateDetalle
       }}
     >
       {children}

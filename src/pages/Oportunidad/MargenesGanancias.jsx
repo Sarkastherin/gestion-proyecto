@@ -6,7 +6,7 @@ import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useModal } from "../../context/ModalContext";
 export default function MargenesGanancias() {
   const {handleModalShow, handleModalClose} = useModal();
-  const {updateCotizacion, resfreshCotizaciones, cotizacionActiva} = useCotizacion();
+  const {updateCotizacion, refreshCotizaciones, cotizacionActiva} = useCotizacion();
   const [isEditable, setIsEditable] = useState(false);
   const { oportunidadData } = useOutletContext();
   const [response, setResponse] = useState(null);
@@ -28,7 +28,7 @@ export default function MargenesGanancias() {
           message: "Márgenes actualizados correctamente",
           type: "success",
         });
-        resfreshCotizaciones();
+        refreshCotizaciones();
         setIsEditable(false);
       } else {
         setResponse({

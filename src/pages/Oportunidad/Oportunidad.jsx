@@ -89,7 +89,7 @@ function Oportunidad() {
           name={oportunidadData.nombre}
           icon={<BanknotesIcon className="w-5 text-white" />}
         >
-          <BoxComponentScrolling title="Creando Oportunidad">
+          <BoxComponentScrolling title="...">
             <Outlet context={{ oportunidadData }} />
           </BoxComponentScrolling>
         </Container>

@@ -8,7 +8,7 @@ import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useModal } from "../../context/ModalContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 export default function Condiciones() {
-  const { postCotizacion, resfreshCotizaciones, updateCotizacion } =
+  const { postCotizacion, refreshCotizaciones, updateCotizacion } =
     useCotizacion();
   const { oportunidadData } = useOutletContext();
   const [isEditable, setIsEditable] = useState(false);
@@ -37,7 +37,7 @@ export default function Condiciones() {
           message: "Condiciones guardada correctamente",
           type: "success",
         });
-        resfreshCotizaciones();
+        refreshCotizaciones();
         setIsEditable(false);
       } else {
         setResponse({
