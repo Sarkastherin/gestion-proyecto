@@ -4,7 +4,7 @@ import { Button } from "../../components/Buttons";
 import DatosMateriales from "../../components/Materiales/DatosMateriales";
 import { useEffect } from "react";
 import { SeparateForm } from "../../components/Containers/SepareteForms";
-
+import DatosPrecios from "../../components/Materiales/DatosPrecios";
 export default function FormularioMateriales({
   defaultValues,
   isEditable,
@@ -54,6 +54,7 @@ export default function FormularioMateriales({
         <fieldset disabled={!isEditable}>
           <SeparateForm>
             <DatosMateriales isNuevo={!defaultValues} />
+            <DatosPrecios defaultValues={defaultValues}/>
           </SeparateForm>
 
           <Footer>

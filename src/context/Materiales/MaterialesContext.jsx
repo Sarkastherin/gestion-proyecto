@@ -15,6 +15,7 @@ export const MaterialesProvider = ({ children }) => {
     listaUnion: [],
     listaCaracteristica: [],
     listaUnidades: [],
+    activeMaterial: null,
   };
   const [state, dispatch] = useReducer(MaterialesReducer, initialState);
   const getMateriales = async () => {
@@ -137,6 +138,9 @@ export const MaterialesProvider = ({ children }) => {
   const refreshMateriales = async () => {
     await getMateriales();
   };
+  const setActiveMaterial = (material) => {
+    dispatch({ type: "SET_ACTIVE_MATERIAL", payload: material });
+  };
   useEffect(() => {
     getMateriales();
     getListaMaterial();
@@ -160,9 +164,11 @@ export const MaterialesProvider = ({ children }) => {
         listaUnion: state.listaUnion,
         listaCaracteristica: state.listaCaracteristica,
         listaUnidades: state.listaUnidades,
+        activeMaterial: state.activeMaterial,
         postMaterial,
         updateMaterial,
         refreshMateriales,
+        setActiveMaterial,
       }}
     >
       {children}

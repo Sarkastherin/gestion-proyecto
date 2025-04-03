@@ -13,6 +13,9 @@ import NoCotizacionComponent from "../../components/Cotizacion/NoCotizacionCompo
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 import TablaCotizacion from "../../components/Cotizacion/TablaCotizacion";
+import FormularioPrecios from "../../templates/Materiales/FormularioPrecios";
+import ModalPrecios from "../../components/Materiales/ModalPrecios";
+import { FormProvider, useForm } from "react-hook-form";
 export default function Cotizacion() {
   const [response, setResponse] = useState(null);
   const { id } = useParams();
@@ -25,7 +28,7 @@ export default function Cotizacion() {
     getDetalleCotizacion,
     detalleCotizacion,
     deleteDetalle,
-    updateDetalle
+    updateDetalle,
   } = useCotizacion();
   const { handleModalShow, handleModalClose } = useModal();
   const [isEditable, setIsEditable] = useState(false);
@@ -56,14 +59,14 @@ export default function Cotizacion() {
         actualValues,
         defaultValues
       );
-      const responseAll = []
+      const responseAll = [];
       if (append.length > 0) {
         append.map((item) => {
           //delete item.id;
           return item;
         });
         try {
-          console.log(append)
+          console.log(append);
           const { success, error } = await appendDetalle({
             values: append,
             convert: false,
@@ -83,42 +86,44 @@ export default function Cotizacion() {
         }
       }
       if (remove.length > 0) {
-        const response = []
+        const response = [];
         await Promise.all(
           remove.map(async (elem) => {
             const id = elem.id;
-            const {success} = await removeDetalle({ id });
-            response.push(success) 
+            const { success } = await removeDetalle({ id });
+            response.push(success);
           })
         );
-        if(response.some(item => item===false)) {
+        if (response.some((item) => item === false)) {
           setResponse({
             message: "Hubo problemas al eliminar los detalles seleccionados",
             type: "danger",
           });
+        } else {
+          responseAll.push(true);
         }
-        else {responseAll.push(true)}
       }
-      if(update.length > 0) {        
-        const response = []
+      if (update.length > 0) {
+        const response = [];
         await Promise.all(
           update.map(async (elem) => {
             const id = elem.id;
             delete elem.id;
-            delete elem.created_at
-            const {success} = await modifyDetalle( elem, id );
-            response.push(success) 
+            delete elem.created_at;
+            const { success } = await modifyDetalle(elem, id);
+            response.push(success);
           })
         );
-        if(response.some(item => item===false)) {
+        if (response.some((item) => item === false)) {
           setResponse({
             message: "Hubo problemas al actualizar los detalles seleccionados",
             type: "danger",
           });
+        } else {
+          responseAll.push(true);
         }
-        else {responseAll.push(true)}
       }
-      if (responseAll.every(item => item===true)) {
+      if (responseAll.every((item) => item === true)) {
         setResponse({
           message: "Cotización guardada correctamente",
           type: "success",
@@ -147,7 +152,7 @@ export default function Cotizacion() {
   };
   const appendDetalle = async ({ values, id, convert = true }) => {
     const dataPost = convert ? convertDataInDataBase(values, id) : values;
-    dataPost.map(item => delete item.id)
+    dataPost.map((item) => delete item.id);
     try {
       const { success, error } = await postDetalle(dataPost);
       return { success: success, error: error };
@@ -167,9 +172,9 @@ export default function Cotizacion() {
     }
   };
   //updateDetalle
-  const modifyDetalle = async ( values,id) => {
+  const modifyDetalle = async (values, id) => {
     try {
-      const { success, error } = await updateDetalle(values,id);
+      const { success, error } = await updateDetalle(values, id);
       return { success: success, error: error };
     } catch (error) {
       setResponse({
@@ -250,6 +255,7 @@ export default function Cotizacion() {
     if (detalleCotizacion) {
     }
   }, [detalleCotizacion]);
+  const methods = useForm();
   return (
     <>
       {(cotizacionActiva && detalleCotizacion?.secciones) || showForm ? (
@@ -268,7 +274,6 @@ export default function Cotizacion() {
           <ContainerOportunidades
             response={response}
             setIsEditable={setIsEditable}
-            //form= {<TablaCotizacion defaultValues={detalleCotizacion}/>}
             form={
               <>
                 <FormularioCotizacion
@@ -304,6 +309,9 @@ export default function Cotizacion() {
           />
         </NoCotizacionComponent>
       )}
+      <FormProvider {...methods}>
+        <ModalPrecios />
+      </FormProvider>
     </>
   );
 }

@@ -4,7 +4,6 @@ import { Input, TextInvalidate, Select } from "../Generals/Inputs";
 import { DataField } from "../DataField";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import { useEffect } from "react";
-import DatosPrecios from "./DatosPrecios";
 import { useAuth } from "../../context/AuthContext";
 export default function DatosMateriales({ isNuevo }) {
   const { user } = useAuth();
@@ -266,7 +265,7 @@ export default function DatosMateriales({ isNuevo }) {
                 />
               </div>
             </CardToggle>
-            <DatosPrecios />
+            
           </>
         )}
     </>

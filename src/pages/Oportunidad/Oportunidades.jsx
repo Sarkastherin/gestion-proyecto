@@ -166,7 +166,7 @@ export function Oportunidades() {
             columns={columns}
             handleOnRowClick={openOportunidad}
             conditionalRowStyles={conditionalRowStyles}
-            onRowMouseEnter={(data, e)=>{document.getElementById(e.target.id).setAttribute("title",data.nombre)}}
+            //onRowMouseEnter={(data, e)=>{document.getElementById(e.target.id).setAttribute("title",data.nombre)}}
             noDataComponent={
               <NoDataComponent
                 title={"No hay Oportunidades."}

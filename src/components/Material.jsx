@@ -4,7 +4,6 @@ import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
-import { useProveedores } from "../context/ProveedoresContext";
 import { useMateriales } from "../context/Materiales/MaterialesContext";
 export const Material = ({
   seccionIndex,
@@ -20,6 +19,7 @@ export const Material = ({
     register,
     formState: { errors },
     setValue,
+    watch
   } = useFormContext();
   useEffect(() => {
     setFilteredData(materiales);
@@ -45,7 +45,6 @@ export const Material = ({
         selectMaterial[index].unidad,
         { shouldDirty: true }
       );
-      /* if (selectMaterial[index].precios.length > 0) { */
         const indexDefaultPrecio = selectMaterial[index].precios.findIndex(
           (item) => item.default || 0
         );
@@ -55,9 +54,9 @@ export const Material = ({
           precioDefault,
           { shouldDirty: true }
         );
-      //}
     }
   }, [selectMaterial[index], setValue]);
+
   const handleSelectMaterial = (material) => {
     setSelectMaterial((prev) => ({...prev, [index]: material}))
     handleModalClose();
