@@ -16,7 +16,7 @@ import { useClientes } from "../../context/ClientContext";
 
 function Oportunidad() {
   const [oportunidadData, setOportunidadData] = useState(null);
-  const { activeCliente } = useClientes();
+  const { activeCliente, obtenerToken } = useClientes();
   const { getOportunidadById, activeOportunidad } = useOportunidad();
   const { getDetalleCotizacion, detalleCotizacion, getTotales, totales } = useCotizacion();
   const { id } = useParams();

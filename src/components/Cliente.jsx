@@ -22,16 +22,16 @@ export const Cliente = () => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const result = clientes.filter((item) =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.nombre.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredData(result);
     }, 300); // Agrega un debounce de 300ms
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    if (selectClient?.name) {
+    if (selectClient?.nombre) {
       setValue("cliente", selectClient, { shouldDirty: true });
-      setValue("cliente.name", selectClient.name, { shouldDirty: true });
+      setValue("cliente.nombre", selectClient.nombre, { shouldDirty: true });
     }
   }, [selectClient, setValue]);
   return (
@@ -39,7 +39,7 @@ export const Cliente = () => {
       <Input
         label={"Cliente"}
         onClick={() => handleModalShow("modalCliente")}
-        {...register("cliente.name", {
+        {...register("cliente.nombre", {
           required: {
             value: true,
             message: "Debe seleccionar un cliente",
@@ -73,7 +73,7 @@ export const Cliente = () => {
                   handleModalClose();
                 }}
               >
-                <p>{client.name}</p>
+                <p>{client.nombre}</p>
               </li>
             ))}
           </ul>

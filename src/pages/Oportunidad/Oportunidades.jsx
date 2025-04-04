@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import { NoDataComponent } from "../../components/DataField";
-import { useClientes } from "../../context/ClientContext";
 import { Footer } from "../../components/Footer";
 
 export function Oportunidades() {
