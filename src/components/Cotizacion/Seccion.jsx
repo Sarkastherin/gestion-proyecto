@@ -93,7 +93,7 @@ export const Seccion = ({ etapas }) => {
               >
                 <option value="Materiales">Materiales</option>
                 <option value="Mano de Obra">Mano de Obra</option>
-                <option value="Subcontrato">Subcontratos</option>
+                <option value="Subcontratos">Subcontratos</option>
                 <option value="Otros">Otros</option>
               </Select>
             </div>
@@ -109,7 +109,7 @@ export const Seccion = ({ etapas }) => {
         <Button
           text={"Agregar Sección"}
           icon={<PlusIcon className="w-4" />}
-          variant={"secondaryOutline"}
+          variant={"primaryOutline"}
           onClick={() => {
             append({ id_etapa: '', tipo: '',items:[] });
           }}
@@ -118,4 +118,3 @@ export const Seccion = ({ etapas }) => {
     </>
   );
 };
-/* const data = [{ id_cotizacion, revision, id_etapa, tipo, material, mano_obra, actividad, otro_item, cantidad, costo_unitario, costo_total}]; */

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import FormularioCotizacion from "../../templates/Oportunidad/FormularioCotizacion";
 import {
   PlusIcon,
@@ -8,16 +8,17 @@ import {
 } from "@heroicons/react/24/outline";
 import { Button } from "../../components/Buttons";
 import { useModal } from "../../context/ModalContext";
-import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import NoCotizacionComponent from "../../components/Cotizacion/NoCotizacionComponent";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
-import TablaCotizacion from "../../components/Cotizacion/TablaCotizacion";
-import FormularioPrecios from "../../templates/Materiales/FormularioPrecios";
 import ModalPrecios from "../../components/Materiales/ModalPrecios";
 import { FormProvider, useForm } from "react-hook-form";
 export default function Cotizacion() {
-  const [response, setResponse] = useState(null);
+  const [state, setState] = useState({
+    response: null,
+    isEditable: false,
+    showForm: false,
+  });
   const { id } = useParams();
   const {
     postDetalle,
@@ -30,9 +31,7 @@ export default function Cotizacion() {
     deleteDetalle,
     updateDetalle,
   } = useCotizacion();
-  const { handleModalShow, handleModalClose } = useModal();
-  const [isEditable, setIsEditable] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const { handleModalShow } = useModal();
   const onSubmit = async ({ values, dirtyFields }) => {
     handleModalShow("modal-loading");
     /* Caso 1: No hay cotización, crea cotización y añade los detalles de los items */
@@ -40,10 +39,13 @@ export default function Cotizacion() {
       const { success, id_cotizacion } = await crearCotizacion(id, values);
       if (success) await appendDetalle({ values: values, id: id_cotizacion });
       else {
-        setResponse({
-          message: "Hubo problemas al cargar la cotización",
-          type: "danger",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "Hubo problemas al cargar la cotización",
+            type: "danger",
+          },
+        }));
       }
     } else if (cotizacionActiva && detalleCotizacion.secciones.length === 0) {
       /* Caso 2: Hay Cotización, pero no hay detalle */
@@ -66,23 +68,28 @@ export default function Cotizacion() {
           return item;
         });
         try {
-          console.log(append);
           const { success, error } = await appendDetalle({
             values: append,
             convert: false,
           });
           if (error) {
-            setResponse({
-              message: `Hubo problemas al agregar el detalle: ErrorMessage: ${error.message}`,
-              type: "danger",
-            });
+            setState((prev) => ({
+              ...prev,
+              response: {
+                message: `Hubo problemas al agregar el detalle: ErrorMessage: ${error.message}`,
+                type: "danger",
+              },
+            }));
           }
           responseAll.push(success);
         } catch (e) {
-          setResponse({
-            message: `Hubo problemas al agregar el detalle: ErrorMessage: ${e.message}`,
-            type: "danger",
-          });
+          setState((prev) => ({
+            ...prev,
+            response: {
+              message: `Hubo problemas al agregar el detalle: ErrorMessage: ${e.message}`,
+              type: "danger",
+            },
+          }));
         }
       }
       if (remove.length > 0) {
@@ -95,10 +102,13 @@ export default function Cotizacion() {
           })
         );
         if (response.some((item) => item === false)) {
-          setResponse({
-            message: "Hubo problemas al eliminar los detalles seleccionados",
-            type: "danger",
-          });
+          setState((prev) => ({
+            ...prev,
+            response: {
+              message: `Hubo problemas al eliminar los detalles seleccionados`,
+              type: "danger",
+            },
+          }));
         } else {
           responseAll.push(true);
         }
@@ -115,20 +125,27 @@ export default function Cotizacion() {
           })
         );
         if (response.some((item) => item === false)) {
-          setResponse({
-            message: "Hubo problemas al actualizar los detalles seleccionados",
-            type: "danger",
-          });
+          setState((prev) => ({
+            ...prev,
+            response: {
+              message:
+                "Hubo problemas al actualizar los detalles seleccionados",
+              type: "danger",
+            },
+          }));
         } else {
           responseAll.push(true);
         }
       }
       if (responseAll.every((item) => item === true)) {
-        setResponse({
-          message: "Cotización guardada correctamente",
-          type: "success",
-        });
-        setIsEditable(false);
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "Cotización guardada correctamente",
+            type: "success",
+          },
+        }));
+        setState((prev) => ({ ...prev, isEditable: false }));
       }
     }
     handleModalShow("modal-response");
@@ -152,7 +169,7 @@ export default function Cotizacion() {
   };
   const appendDetalle = async ({ values, id, convert = true }) => {
     const dataPost = convert ? convertDataInDataBase(values, id) : values;
-    dataPost.map((item) => delete item.id);
+    dataPost.forEach((item) => delete item.id);
     try {
       const { success, error } = await postDetalle(dataPost);
       return { success: success, error: error };
@@ -165,22 +182,27 @@ export default function Cotizacion() {
       const { success, error } = await deleteDetalle(id);
       return { success: success, error: error };
     } catch (error) {
-      setResponse({
-        message: `Error al eliminar los detalles: ${error}`,
-        type: "danger",
-      });
+      setState((prev) => ({
+        ...prev,
+        response: {
+          message: `Error al eliminar los detalles: ${error}`,
+          type: "danger",
+        },
+      }));
     }
   };
-  //updateDetalle
   const modifyDetalle = async (values, id) => {
     try {
       const { success, error } = await updateDetalle(values, id);
       return { success: success, error: error };
     } catch (error) {
-      setResponse({
-        message: `Error al eliminar los detalles: ${error}`,
-        type: "danger",
-      });
+      setState((prev) => ({
+        ...prev,
+        response: {
+          message: `Error al eliminar los detalles: ${error}`,
+          type: "danger",
+        },
+      }));
     }
   };
   const getActionsInArray = (actualsValues, defaultValues = []) => {
@@ -234,18 +256,18 @@ export default function Cotizacion() {
   };
   const onError = (data) => console.log("Error:", data);
   const handleCopyCotizacion = () => {
-    handleNewCotización();
+    handleNewCotizacion();
     handleModalShow("modalCotizaciones");
   };
-  const handleNewCotización = () => {
-    setShowForm(true);
-    setIsEditable(true);
+  const handleNewCotizacion = () => {
+    setState((prev) => ({ ...prev, showForm: true }));
+    setState((prev) => ({ ...prev, isEditable: true }));
   };
   useEffect(() => {
     if (id) {
       getCotizacionActiva(id);
     }
-  }, []);
+  }, [id]);
   useEffect(() => {
     if (cotizacionActiva) {
       getDetalleCotizacion(cotizacionActiva.id);
@@ -256,9 +278,10 @@ export default function Cotizacion() {
     }
   }, [detalleCotizacion]);
   const methods = useForm();
+
   return (
     <>
-      {(cotizacionActiva && detalleCotizacion?.secciones) || showForm ? (
+      {(cotizacionActiva && detalleCotizacion?.secciones) || state.showForm ? (
         <>
           <div className="sr-only">
             <Button
@@ -272,12 +295,12 @@ export default function Cotizacion() {
             />
           </div>
           <ContainerOportunidades
-            response={response}
-            setIsEditable={setIsEditable}
+            state={state}
+            setState={setState}
             form={
               <>
                 <FormularioCotizacion
-                  isEditable={isEditable}
+                  isEditable={state.isEditable}
                   defaultValues={detalleCotizacion}
                   onSubmit={onSubmit}
                   onError={onError}
@@ -296,7 +319,7 @@ export default function Cotizacion() {
             icon={<PlusIcon className="w-4" />}
             variant="pink"
             text="Agregar Cotización"
-            onClick={handleNewCotización}
+            onClick={handleNewCotizacion}
           />
           <p>o inicia desde una existente</p>
           <Button

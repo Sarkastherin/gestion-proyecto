@@ -12,6 +12,7 @@ export const Modal = ({
   icon,
   disableXButton,
   variant = "default",
+  width = 'w-lg'
 }) => {
   const variants = {
     danger: {color: 'text-red-700', icon:<XCircleIcon className="w-6" />},
@@ -29,7 +30,7 @@ export const Modal = ({
     >
       <div
         role="alert"
-        className="rounded-xl border border-gray-100 bg-white px-8 pb-8 pt-6 mt-[100px] max-h-full sm:w-sm md:w-lg"
+        className={`rounded-xl border border-gray-100 bg-white px-8 pb-8 pt-6 mt-[100px] max-h-full md:${width}`}
       >
         <div className={`flex items-start gap-1.5 ${variants[variant].color}`}>
           {variants[variant].icon}

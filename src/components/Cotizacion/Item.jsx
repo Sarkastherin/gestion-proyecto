@@ -87,7 +87,7 @@ export const Item = ({ tipo, seccionIndex }) => {
                   )}
                 />
               )}
-              {tipo === "Subcontrato" && (
+              {tipo === "Subcontratos" && (
                 <Input
                   label="Actividad"
                   no_label

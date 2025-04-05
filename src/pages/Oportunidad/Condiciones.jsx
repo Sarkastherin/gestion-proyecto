@@ -1,20 +1,27 @@
 import FormularioCondicion from "../../templates/Oportunidad/FormularioCondiciones";
-import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
 import NoCotizacionComponent from "../../components/Cotizacion/NoCotizacionComponent";
 import { Button } from "../../components/Buttons";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useModal } from "../../context/ModalContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
+import { useParams } from "react-router-dom";
 export default function Condiciones() {
+  const { getOportunidadById, activeOportunidad, refreshOportunidades } = useOportunidad();
+  const { id } = useParams();
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+  }, []);
+  const [state, setState] = useState({
+    response: null,
+    isEditable: false,
+    showForm: false,
+  });
   const { postCotizacion, refreshCotizaciones, updateCotizacion } =
     useCotizacion();
-  const { oportunidadData } = useOutletContext();
-  const [isEditable, setIsEditable] = useState(false);
-  const [showForm, setShowForm] = useState(false);
   const [isNew, setIsNew] = useState(null);
-  const [response, setResponse] = useState(null);
   const { handleModalShow, handleModalClose } = useModal();
   const onSubmit = async ({ values, dirtyFields }) => {
     handleModalShow("modal-loading");
@@ -30,20 +37,30 @@ export default function Condiciones() {
         insert["id_oportunidad"] = values.id;
         result = await postCotizacion(insert);
       } else {
-        result = await updateCotizacion(insert, oportunidadData.id_cotizacion);
+        result = await updateCotizacion(
+          insert,
+          activeOportunidad.id_cotizacion
+        );
       }
       if (result.success) {
-        setResponse({
-          message: "Condiciones guardada correctamente",
-          type: "success",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "Condiciones guardada correctamente",
+            type: "success",
+          },
+        }));
         refreshCotizaciones();
-        setIsEditable(false);
+        refreshOportunidades();
+        setState((prev) => ({ ...prev, isEditable: false }));
       } else {
-        setResponse({
-          message: "No se pudo guardar las condiciones",
-          type: "danger",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "No se pudo guardar las condiciones",
+            type: "danger",
+          },
+        }));
         console.error(result.error);
       }
     } catch (e) {
@@ -52,22 +69,22 @@ export default function Condiciones() {
     }
   };
   const onError = (data) => console.log("Error:", data);
-  const handleNewCotización = () => {
-    setShowForm(true);
-    setIsEditable(true);
+  const handleNewCotizacion = () => {
+    setState((prev) => ({ ...prev, showForm: true }));
+    setState((prev) => ({ ...prev, isEditable: true }));
     setIsNew(true);
   };
   return (
     <>
-      {oportunidadData.id_cotizacion || showForm ? (
+      {activeOportunidad.id_cotizacion || state.showForm ? (
         <>
           <ContainerOportunidades
-            response={response}
-            setIsEditable={setIsEditable}
+            state={state}
+            setState={setState}
             form={
               <FormularioCondicion
-                isEditable={isEditable}
-                defaultValues={oportunidadData}
+                isEditable={state.isEditable}
+                defaultValues={activeOportunidad}
                 onSubmit={onSubmit}
                 onError={onError}
               />
@@ -91,7 +108,7 @@ export default function Condiciones() {
             icon={<PlusIcon className="w-4" />}
             variant="yellow"
             text="Iniciar Cotización"
-            onClick={handleNewCotización}
+            onClick={handleNewCotizacion}
           />
         </NoCotizacionComponent>
       )}

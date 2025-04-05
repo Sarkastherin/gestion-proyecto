@@ -92,7 +92,6 @@ export const CotizacionProvider = ({ children }) => {
     }
   };
   const postDetalle = async (values) => {
-    console.log(values)
     try {
       const { data, error } = await supabase
         .from("detalle_cotizacion")
@@ -152,7 +151,6 @@ export const CotizacionProvider = ({ children }) => {
         // Retorna el error para que sea manejado en el componente que llama a esta función
         return { success: false, error };
       }
-      console.log(data);
       return { success: true, data };
     } catch (e) {
       console.log(e);

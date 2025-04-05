@@ -6,8 +6,8 @@ export default function Table({ cells, children }) {
     <table className="w-full">
       <thead>
         <tr className="flex items-center px-6 py-2 text-sm text-neutral-700 border-b border-neutral-300 text-left">
-          {cells.map((cell) => (
-            <CellHead key={cell.element} w={cell.w} flex={cell.flex} element={cell.element}/>
+          {cells.map((cell, index) => (
+            <CellHead key={index} w={cell.w} flex={cell.flex} element={cell.element}/>
           ))}
         </tr>
       </thead>

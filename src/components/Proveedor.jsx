@@ -64,7 +64,6 @@ export const Proveedor = ({index}) => {
             type="search"
             placeholder="Buscar Proveedor"
             onInput={(e) => setSearch(e.target.value)}
-            //{...register("getProveedor", {})}
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
             {filteredData.map((proveedor) => (

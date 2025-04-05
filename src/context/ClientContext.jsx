@@ -70,7 +70,6 @@ export const ClienteContextProvider = ({ children }) => {
       if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
   
       const {data} = await response.json();
-      console.log('📌 Contactos obtenidos:', data);
       return data;
     } catch (error) {
       console.error('🚨 Error al obtener contactos:', error);

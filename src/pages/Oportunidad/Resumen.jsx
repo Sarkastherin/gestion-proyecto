@@ -1,19 +1,25 @@
 import { DataField } from "../../components/DataField";
 import { Card } from "../../components/Cards";
-import { useOutletContext } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
+import { useEffect } from "react";
 export default function Resumen() {
-  const { oportunidadData } = useOutletContext();
+  const { getOportunidadById, activeOportunidad } = useOportunidad();
+  const { id } = useParams();
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+  }, []);
   return (
     <>
-    {oportunidadData && (
+    {activeOportunidad && (
       <div className="flex flex-col gap-4">
         <Card>
           <DataField
             label={"Nombre de Oportunidad"}
-            value={oportunidadData?.nombre}
+            value={activeOportunidad?.nombre}
           />
-          <DataField label={"Cliente"} value={oportunidadData?.cliente.name} />
-          <DataField label={"Alcance"} value={oportunidadData?.alcance} />
+          <DataField label={"Cliente"} value={activeOportunidad?.cliente?.nombre} />
+          <DataField label={"Alcance"} value={activeOportunidad?.alcance} />
         </Card>        
       </div>
     )}

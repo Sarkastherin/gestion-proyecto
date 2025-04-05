@@ -14,7 +14,7 @@ export const Cliente = () => {
   const {
     register,
     formState: { errors },
-    setValue,
+    setValue
   } = useFormContext();
   useEffect(() => {
     setFilteredData(clientes);
@@ -31,7 +31,7 @@ export const Cliente = () => {
   useEffect(() => {
     if (selectClient?.nombre) {
       setValue("cliente", selectClient, { shouldDirty: true });
-      setValue("cliente.nombre", selectClient.nombre, { shouldDirty: true });
+      setValue("id_cliente", selectClient.id, { shouldDirty: true });
     }
   }, [selectClient, setValue]);
   return (

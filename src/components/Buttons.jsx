@@ -46,6 +46,8 @@ export const Button = React.forwardRef(
         "border-none text-indigo-600 hover:bg-transparent hover:text-indigo-600 focus:outline-none focus:ring active:text-indigo-600",
         blue:
         "border-blue-500 bg-blue-500 text-white hover:bg-transparent hover:text-blue-500 focus:outline-none focus:ring active:text-blue-500",
+        blueOutline:
+        "text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring active:bg-blue-500 focus:bg-blue-500 focus:text-white",
       
       };
 

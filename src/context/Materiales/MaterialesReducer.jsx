@@ -8,7 +8,8 @@ import {
   GET_UNION,
   GET_CARACTERISTICA,
   GET_UNIDADES,
-  SET_ACTIVE_MATERIAL
+  SET_ACTIVE_MATERIAL,
+  SET_CHECK_PRICE
 } from "../types";
 export const MaterialesReducer = (state, action) => {
   const { type, payload } = action;
@@ -33,6 +34,8 @@ export const MaterialesReducer = (state, action) => {
       return { ...state, listaUnidades: payload };
     case SET_ACTIVE_MATERIAL:
       return { ...state, activeMaterial: payload };
+    case SET_CHECK_PRICE:
+      return {...state, checkPrice: payload };
     // Add more cases as needed
     default:
       return state;

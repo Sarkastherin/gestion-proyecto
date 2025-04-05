@@ -10,16 +10,14 @@ import {
   ExclamationCircleIcon,
 } from "@heroicons/react/16/solid";
 import { useParams } from "react-router-dom";
-import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
-import { useEffect, useState } from "react";
-import { useClientes } from "../../context/ClientContext";
+import { useEffect } from "react";
 
 function Oportunidad() {
-  const [oportunidadData, setOportunidadData] = useState(null);
-  const { activeCliente, obtenerToken } = useClientes();
   const { getOportunidadById, activeOportunidad } = useOportunidad();
-  const { getDetalleCotizacion, detalleCotizacion, getTotales, totales } = useCotizacion();
   const { id } = useParams();
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+  }, []);
   const menuItems = () => {
     return [
       {
@@ -50,47 +48,19 @@ function Oportunidad() {
       },
     ];
   };
-  useEffect(() => {
-    getOportunidadById(parseInt(id));
-  }, []);
-  useEffect(() => {
-   /*  if (activeOportunidad?.id_cotizacion) {
-      getDetalleCotizacion(activeOportunidad?.id_cotizacion);
-      getTotales(activeOportunidad?.id_cotizacion);
-    } */
-      setOportunidadData(activeOportunidad)
-  }, [activeOportunidad]);
-  /* useEffect(() => {
-    if (detalleCotizacion?.secciones && totales) {
-      activeOportunidad["secciones"] = detalleCotizacion.secciones || [];
-      totales.forEach((item) => {
-        if (activeOportunidad?.margenes?.some((item) => item.tipo == item.tipo)) {
-          const i = activeOportunidad.margenes.findIndex(
-            (elem) => elem.tipo === item.tipo
-          );
-          activeOportunidad.margenes[i]["totales"] = item;
-        }
-      });
-    }
-
-    if (activeOportunidad?.cliente) {
-      setOportunidadData(activeOportunidad);
-    }
-    //
-  }, [detalleCotizacion, activeOportunidad, totales, activeCliente]); */
   return (
     <>
-      {oportunidadData && (
+      {activeOportunidad && (
         <Container
           text={"Oportunidades"}
           to={"/oportunidades"}
           hasSubheader={true}
           menuItems={menuItems}
-          name={oportunidadData.nombre}
+          name={activeOportunidad.nombre}
           icon={<BanknotesIcon className="w-5 text-white" />}
         >
           <BoxComponentScrolling title="...">
-            <Outlet context={{ oportunidadData }} />
+            <Outlet />
           </BoxComponentScrolling>
         </Container>
       )}

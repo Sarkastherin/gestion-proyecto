@@ -28,8 +28,8 @@ export function Oportunidades() {
     },
     {
       name: "Cliente",
-      selector: (row) => row.cliente?.name,
-      width: "200px"
+      selector: (row) => row.cliente?.nombre,
+      width: "300px"
     },
     {
       name: "$ Contización",

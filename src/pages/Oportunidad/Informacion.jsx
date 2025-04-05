@@ -1,17 +1,25 @@
-import { useOutletContext } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FormularioOportunidad from "../../templates/Oportunidad/FormularioOportunidad";
 import { useModal } from "../../context/ModalContext";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 export default function Informacion() {
-  const navigate = useNavigate();
-  const { updateOportunidad, refreshOportunidades } = useOportunidad();
+  const {
+    getOportunidadById,
+    activeOportunidad,
+    updateOportunidad,
+    refreshOportunidades,
+  } = useOportunidad();
+  const { id } = useParams();
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+  }, []);
+  const [state, setState] = useState({
+    response: null,
+    isEditable: false,
+  });
   const { handleModalShow } = useModal();
-  const [isEditable, setIsEditable] = useState(false);
-  const { oportunidadData } = useOutletContext();
-  const [response, setResponse] = useState(null);
   const onSubmit = async ({ values, dirtyFields }) => {
     handleModalShow("modal-loading");
     const updates = {};
@@ -27,43 +35,52 @@ export default function Informacion() {
     try {
       const { success, error } = await updateOportunidad(
         updates,
-        oportunidadData.id
+        activeOportunidad.id
       );
       if (success) {
-        setResponse({
-          message: "Oportunidad actualizada correctamente",
-          type: "success",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "Oportunidad actualizada correctamente",
+            type: "success",
+          },
+        }));
         refreshOportunidades();
-        setIsEditable(false);
+        setState((prev) => ({ ...prev, isEditable: false }));
       } else {
-        setResponse({
-          message: "No se pudo actualizar la oportunidad",
-          type: "danger",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "No se pudo actualizar la oportunidad",
+            type: "danger",
+          },
+        }));
         console.error(error);
       }
     } catch (error) {
-      setResponse({
-        message: `Error al actualizar la oportunidad: ${error}`,
-        type: "danger",
-      });
+      setState((prev) => ({
+        ...prev,
+        response: {
+          message: `Error al actualizar la oportunidad: ${error}`,
+          type: "danger",
+        },
+      }));
     } finally {
       handleModalShow("modal-response");
     }
-    setIsEditable(false);
+    setState((prev) => ({ ...prev, isEditable: false }));
   };
   const onError = (data) => console.log("Error:", data);
 
   return (
     <>
       <ContainerOportunidades
-        response={response}
-        setIsEditable={setIsEditable}
+        state={state}
+        setState={setState}
         form={
           <FormularioOportunidad
-            isEditable={isEditable}
-            defaultValues={oportunidadData}
+            isEditable={state.isEditable}
+            defaultValues={activeOportunidad}
             onSubmit={onSubmit}
             onError={onError}
           />

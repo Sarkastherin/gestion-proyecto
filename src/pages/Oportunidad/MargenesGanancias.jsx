@@ -1,15 +1,23 @@
 import FormularioMargenesGanancias from "../../templates/Oportunidad/FormularioMargenesGanancias";
-import { useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useState, useEffect } from "react";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useModal } from "../../context/ModalContext";
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
+import { useParams } from "react-router-dom";
 export default function MargenesGanancias() {
-  const {handleModalShow, handleModalClose} = useModal();
-  const {updateCotizacion, refreshCotizaciones, cotizacionActiva} = useCotizacion();
-  const [isEditable, setIsEditable] = useState(false);
-  const { oportunidadData } = useOutletContext();
-  const [response, setResponse] = useState(null);
+  const { getOportunidadById, activeOportunidad, refreshOportunidades } = useOportunidad();
+  const { id } = useParams();
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+  }, []);
+  const [state, setState] = useState({
+    response: null,
+    isEditable: false,
+  });
+  const { handleModalShow } = useModal();
+  const { updateCotizacion, refreshCotizaciones, cotizacionActiva } =
+    useCotizacion();
   const onSubmit = async ({ values, dirtyFields }) => {
     const margenes = {};
     for (let item in dirtyFields) {
@@ -17,47 +25,54 @@ export default function MargenesGanancias() {
         margenes[item] = values[item];
       }
     }
-    console.log(cotizacionActiva.id)
     try {
       const { success, error } = await updateCotizacion(
         margenes,
         cotizacionActiva.id
       );
       if (success) {
-        setResponse({
-          message: "Márgenes actualizados correctamente",
-          type: "success",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "Márgenes actualizados correctamente",
+            type: "success",
+          },
+        }));
         refreshCotizaciones();
-        setIsEditable(false);
+        refreshOportunidades();
+        setState((prev) => ({ ...prev, isEditable: false }));
       } else {
-        setResponse({
-          message: "No se pudo actualizar los márgenes",
-          type: "danger",
-        });
+        setState((prev) => ({
+          ...prev,
+          response: {
+            message: "No se pudo actualizar los márgenes",
+            type: "danger",
+          },
+        }));
         console.error(error);
       }
     } catch (error) {
-      setResponse({
-        message: `Error al actualizar los márgenes: ${error}`,
-        type: "danger",
-      });
+      setState((prev) => ({
+        ...prev,
+        response: {
+          message: `Error al actualizar los márgenes: ${error}`,
+          type: "danger",
+        },
+      }));
     } finally {
       handleModalShow("modal-response");
     }
-    /* Editar Cotización y setear margen_general */
-    console.log(margenes);
   };
   const onError = (data) => console.log("Error:", data);
   return (
     <>
       <ContainerOportunidades
-        response={response}
-        setIsEditable={setIsEditable}
+        state={state}
+        setState={setState}
         form={
           <FormularioMargenesGanancias
-            isEditable={isEditable}
-            defaultValues={oportunidadData}
+            isEditable={state.isEditable}
+            defaultValues={activeOportunidad}
             onSubmit={onSubmit}
             onError={onError}
           />

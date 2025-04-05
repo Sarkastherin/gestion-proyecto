@@ -5,11 +5,7 @@ import { Modal } from "../Modal";
 import { useModal } from "../../context/ModalContext";
 import { useNavigate } from "react-router-dom";
 import { Select } from "../Generals/Inputs";
-export default function ContainerOportunidades({
-  form,
-  response,
-  setIsEditable,
-}) {
+export default function ContainerOportunidades({ form, state, setState }) {
   const { handleModalClose } = useModal();
   const navigate = useNavigate();
   return (
@@ -19,20 +15,22 @@ export default function ContainerOportunidades({
       <div className="absolute bottom-[-90px] left-8">
         <ButtonEdit
           func={() => {
-            setIsEditable(true);
+            setState((prev) => ({ ...prev, isEditable: true }));
           }}
         />
       </div>
-      {response && (
+      {state.response && (
         <Modal
           modalId={"modal-response"}
           title={
-            response.type === "success" ? "¡Todo marcha bien!" : "Algo anda mal"
+            state.response.type === "success"
+              ? "¡Todo marcha bien!"
+              : "Algo anda mal"
           }
-          variant={response.type}
+          variant={state.response.type}
         >
           <div className="flex flex-col gap-4">
-            {response.message}
+            {state.response.message}
             <div className="flex gap-2 mt-2">
               <Button
                 className="w-full"
