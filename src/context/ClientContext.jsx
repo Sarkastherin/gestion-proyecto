@@ -1,5 +1,4 @@
 import { createContext, useState, useContext } from "react";
-import dataClientes from "../API/clientes";
 const ClienteContext = createContext();
 export const useClientes = () => useContext(ClienteContext);
 export const ClienteContextProvider = ({ children }) => {
@@ -23,10 +22,13 @@ export const ClienteContextProvider = ({ children }) => {
       console.error("Error:", error);
     }
   };
+  const usuario1 = import.meta.env.VITE_API_USER;
+const password2 = import.meta.env.VITE_API_PASSWORD;
   const usuario = "compras@imindustrial.com.ar";
   const password = "febr2025A3.";
-  const BASE_URL = import.meta.env.VITE_API_URL || '/api';
+  const BASE_URL = '/api';
   async function obtenerToken() {
+    console.log(usuario1)
     try {
       const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
