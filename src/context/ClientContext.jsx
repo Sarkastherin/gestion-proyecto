@@ -25,10 +25,10 @@ export const ClienteContextProvider = ({ children }) => {
   };
   const usuario = "compras@imindustrial.com.ar";
   const password = "febr2025A3.";
-
+  const BASE_URL = import.meta.env.VITE_API_URL || '/api';
   async function obtenerToken() {
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -51,7 +51,7 @@ export const ClienteContextProvider = ({ children }) => {
   }
   async function obtenerContactos(accessToken) {
     try {
-      const response = await fetch('/api/contactos', {
+      const response = await fetch(`${BASE_URL}/contactos`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
