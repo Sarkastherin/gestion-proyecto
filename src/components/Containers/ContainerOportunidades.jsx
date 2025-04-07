@@ -33,13 +33,13 @@ export default function ContainerOportunidades({ form, state, setState }) {
             {state.response.message}
             <div className="flex gap-2 mt-2">
               <Button
-                className="w-full"
+                className="min-w-40"
                 text={"Cerrar"}
                 variant={"secondary"}
                 onClick={handleModalClose}
               />
               <Button
-                className="w-full"
+                className="min-w-40"
                 text={"Ir oportunidades"}
                 variant={"primary"}
                 onClick={() => navigate(`/oportunidades`)}

@@ -30,7 +30,7 @@ export const Modal = ({
     >
       <div
         role="alert"
-        className={`rounded-xl border border-gray-100 bg-white px-8 pb-8 pt-6 mt-[100px] max-h-full md:${width}`}
+        className={`rounded-xl border border-gray-100 bg-white px-8 pb-8 pt-6 mt-[100px] max-h-full ${width}`}
       >
         <div className={`flex items-start gap-1.5 ${variants[variant].color}`}>
           {variants[variant].icon}
