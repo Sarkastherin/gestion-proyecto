@@ -1,5 +1,4 @@
 import React from "react";
-import 'flowbite';
 export const Button = React.forwardRef(
   (
     {
