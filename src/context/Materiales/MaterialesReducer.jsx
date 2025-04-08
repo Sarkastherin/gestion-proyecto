@@ -9,7 +9,8 @@ import {
   GET_CARACTERISTICA,
   GET_UNIDADES,
   SET_ACTIVE_MATERIAL,
-  SET_CHECK_PRICE
+  SET_CHECK_PRICE,
+  GET_CONSOLIDADO
 } from "../types";
 export const MaterialesReducer = (state, action) => {
   const { type, payload } = action;
@@ -36,6 +37,8 @@ export const MaterialesReducer = (state, action) => {
       return { ...state, activeMaterial: payload };
     case SET_CHECK_PRICE:
       return {...state, checkPrice: payload };
+    case GET_CONSOLIDADO:
+      return { ...state, consolidados: payload };
     // Add more cases as needed
     default:
       return state;

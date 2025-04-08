@@ -4,7 +4,7 @@ export async function handler(event, context) {
   try {
     const access_token = await getToken();
 
-    const contactosResponse = await fetch("https://imapx.com.ar/im-api/contactos", {
+    const proveedoresResponse = await fetch("https://imapx.com.ar/im-api/contactos", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${access_token}`,
@@ -13,18 +13,19 @@ export async function handler(event, context) {
       },
       body: JSON.stringify({
         include_archived: false,
-        include_cliente: true,
-        include_proveedor: false,
+        include_cliente: false,
+        include_proveedor: true,
         page: 1,
         page_size: 100,
+        
       }),
     });
 
-    const contactosData = await contactosResponse.json();
+    const proveedoresData = await proveedoresResponse.json();
 
     return {
       statusCode: 200,
-      body: JSON.stringify(contactosData),
+      body: JSON.stringify(proveedoresData),
     };
   } catch (error) {
     return {

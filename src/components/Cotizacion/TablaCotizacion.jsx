@@ -62,7 +62,6 @@ export default function TablaCotizacion({ defaultValues }) {
       delete seccion.id_etapa;
       delete seccion.tipo;
     });
-    console.log(dataCotizacion)
     setData(dataCotizacion);
   }, []);
 

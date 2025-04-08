@@ -175,7 +175,7 @@ export const InputGroup = React.forwardRef(
   }
 );
 export const TextInvalidate = ({ message }) => {
-  return <div className="mt-1 text-sm text-red-500">{message}</div>;
+  return <div className="mt-1 text-red-500 text-xs">{message}</div>;
 };
 export const CurrencyTypeInput = React.forwardRef(
   (
@@ -201,6 +201,50 @@ export const CurrencyTypeInput = React.forwardRef(
         ref={ref}
         value={value}
       />
+    );
+  }
+);
+export const InputXS = React.forwardRef(
+  (
+    {
+      onChange,
+      onBlur,
+      name,
+      placeholder,
+      onClick,
+      type = "text",
+      onInput,
+      readOnly,
+      className,
+      disabled,
+      defaultValue,
+      label ="falta label",
+      no_label
+    },
+    ref
+  ) => {
+    return (
+      <div className={`${className} w-full`}>
+        <label htmlFor={name} className={`block text-sm font-medium text-neutral-700 mb-1 ${no_label && 'sr-only'}`}>
+          {" "}
+          {label}{" "}
+        </label>
+
+        <input
+          onChange={onChange}
+          onBlur={onBlur}
+          name={name}
+          ref={ref}
+          placeholder={placeholder}
+          onClick={onClick}
+          type={type}
+          onInput={onInput}
+          readOnly={readOnly}
+          disabled={disabled}
+          defaultValue={defaultValue}
+          className={`w-full rounded-sm border-gray-300 shadow-xs text-[13px] disabled:bg-neutral-100 text-neutral-800 px-2 py-1`}
+        />
+      </div>
     );
   }
 );

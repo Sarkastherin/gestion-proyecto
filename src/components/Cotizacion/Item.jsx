@@ -195,7 +195,6 @@ export const Item = ({ tipo, seccionIndex }) => {
           variant={"primary_no_border"}
           disabled={tipo === ""}
           onClick={() => {
-            console.log("new tipo");
             append({
               id:"",
               material: null,

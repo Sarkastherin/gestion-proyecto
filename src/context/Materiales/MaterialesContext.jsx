@@ -16,6 +16,7 @@ export const MaterialesProvider = ({ children }) => {
     listaCaracteristica: [],
     listaUnidades: [],
     activeMaterial: null,
+    consolidados: [],
   };
   const [state, dispatch] = useReducer(MaterialesReducer, initialState);
   const getMateriales = async () => {
@@ -152,6 +153,16 @@ export const MaterialesProvider = ({ children }) => {
     getListaCaracteristica();
     getListaUnidades();
   }, []);
+  const getConsolidado = async () => {
+    try {
+      const { data: consolidados, error } = await supabase
+        .from("view_consolidado")
+        .select("*");
+      dispatch({ type: "GET_CONSOLIDADO", payload: consolidados });
+    } catch (error) {
+      console.error("Error fetching unidades:", error);
+    }
+  };
   return (
     <MaterialesContext.Provider
       value={{
@@ -165,10 +176,12 @@ export const MaterialesProvider = ({ children }) => {
         listaCaracteristica: state.listaCaracteristica,
         listaUnidades: state.listaUnidades,
         activeMaterial: state.activeMaterial,
+        consolidados: state.consolidados,
         postMaterial,
         updateMaterial,
         refreshMateriales,
         setActiveMaterial,
+        getConsolidado
       }}
     >
       {children}

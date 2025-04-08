@@ -16,7 +16,7 @@ export default function DatosMateriales({ isNuevo }) {
     listaMedida,
     listaUnion,
     listaCaracteristica,
-    listaUnidades
+    listaUnidades,
   } = useMateriales();
   const {
     register,
@@ -89,8 +89,7 @@ export default function DatosMateriales({ isNuevo }) {
         listaMedida.length > 0 &&
         listaUnion.length > 0 &&
         listaCaracteristica.length > 0 &&
-        listaUnidades.length > 0 &&
-        (
+        listaUnidades.length > 0 && (
           <>
             <Card>
               <div className="flex flex-col gap-4">
@@ -109,8 +108,8 @@ export default function DatosMateriales({ isNuevo }) {
 
             <CardToggle title={"Especificaciones"}>
               <fieldset disabled={!isNuevo}>
-                <div className="flex gap-2">
-                  <div className="flex-1">
+                <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-2">
+                  <div>
                     <Select
                       label={"Material"}
                       placeholder={"Seleccione un Material"}
@@ -135,7 +134,7 @@ export default function DatosMateriales({ isNuevo }) {
                       <TextInvalidate message={"Campo requerido"} />
                     )}
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <Select
                       label={"Tipo"}
                       placeholder={"Seleccione un Tipo"}
@@ -161,7 +160,7 @@ export default function DatosMateriales({ isNuevo }) {
                       <TextInvalidate message={"Campo requerido"} />
                     )}
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <Select
                       label={"Unidad"}
                       placeholder={"Seleccione la unidad"}
@@ -174,7 +173,7 @@ export default function DatosMateriales({ isNuevo }) {
                       ))}
                     </Select>
                   </div>
-                  <div className="flex-1">
+                  <div>
                     <Select
                       label={"Espesor"}
                       placeholder={"Seleccione un Espesor"}
@@ -187,9 +186,7 @@ export default function DatosMateriales({ isNuevo }) {
                       ))}
                     </Select>
                   </div>
-                </div>
 
-                <div className="flex gap-2 mt-2">
                   <Select
                     label={"Norma"}
                     placeholder={"Seleccione la norma o calidad"}
@@ -265,7 +262,6 @@ export default function DatosMateriales({ isNuevo }) {
                 />
               </div>
             </CardToggle>
-            
           </>
         )}
     </>

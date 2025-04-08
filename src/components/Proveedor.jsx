@@ -1,11 +1,11 @@
-import { Input, TextInvalidate } from "./Generals/Inputs";
+import { Input, TextInvalidate, InputXS } from "./Generals/Inputs";
 import { Modal } from "./Modal";
 import { UserGroupIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
 import { useProveedores } from "../context/ProveedoresContext";
-export const Proveedor = ({index}) => {
+export const Proveedor = ({index, disabled}) => {
   const {proveedores} = useProveedores();
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -23,23 +23,24 @@ export const Proveedor = ({index}) => {
   useEffect(() => {
     const timeout = setTimeout(() => {
       const result = proveedores.filter((item) =>
-        item.name.toLowerCase().includes(search.toLowerCase())
+        item.nombre.toLowerCase().includes(search.toLowerCase())
       );
       setFilteredData(result);
     }, 300); // Agrega un debounce de 300ms
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    if (selectProveedor?.name) {
-      setValue(`precios.${index}.proveedor`, selectProveedor.name, { shouldDirty: true });
+    if (selectProveedor?.nombre) {
+      setValue(`precios.${index}.proveedor`, selectProveedor.nombre, { shouldDirty: true });
       setValue(`precios.${index}.id_proveedor`, selectProveedor.id, { shouldDirty: true });
     }
   }, [selectProveedor, setValue]);
   return (
     <>
-      <Input
+      <InputXS
         label={"Proveedor"}
         no_label
+        disabled={disabled}
         onClick={() => handleModalShow("modalProveedor")}
         {...register(`precios.${index}.proveedor`, {
           required: {
@@ -75,7 +76,7 @@ export const Proveedor = ({index}) => {
                   handleModalClose();
                 }}
               >
-                <p>{proveedor.name}</p>
+                <p>{proveedor.nombre}</p>
               </li>
             ))}
           </ul>
