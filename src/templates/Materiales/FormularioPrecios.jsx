@@ -9,8 +9,8 @@ import { useAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import { use } from "react";
-export default function FormularioPrecios({ onlyPrices, defaultValues }) {
-  const {activeMaterial} = useMateriales();
+export default function FormularioPrecios({ onlyPrices, defaultValues, handleChangePrice }) {
+  const { activeMaterial } = useMateriales();
   const { user } = useAuth();
   const { register, setValue, watch, reset, control } = useFormContext();
   const { fields, append, remove } = useFieldArray({
@@ -20,11 +20,11 @@ export default function FormularioPrecios({ onlyPrices, defaultValues }) {
 
   const cells = [
     { element: "#", w: "w-10" },
-    { element: "Fecha", w: "w-50" },
+    { element: "Fecha", w: "w-35" },
     { element: "Proveedor", w: "w-full", flex: "flex-1" },
     { element: "Precio", w: "w-30" },
     { element: "Default", w: "w-20" },
-    { element: <TrashIcon className="w-4" />, w: "w-10" },
+    { element: <TrashIcon className="w-4" />, w: "w-20" },
     { element: <CheckIcon className="w-4" />, w: "w-10" },
   ];
   useEffect(() => {
@@ -38,13 +38,13 @@ export default function FormularioPrecios({ onlyPrices, defaultValues }) {
     <>
       <Table cells={cells}>
         {fields.map((item, index) => (
-          <div className="flex justify-between items-center">
+          <div key={item.id}>
             <tr
               key={`precios.${index}.id`}
               className="flex px-6 py-2 text-sm text-neutral-700 text-left items-center"
             >
               <th className="px-1 w-10">{index + 1}</th>
-              <td className="px-1 w-50">
+              <td className="px-1 w-35">
                 <Input
                   label="Fecha"
                   no_label
@@ -89,7 +89,7 @@ export default function FormularioPrecios({ onlyPrices, defaultValues }) {
                   <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-white transition-all peer-checked:start-6"></span>
                 </label>
               </td>
-              <td className="px-1 w-10 font-medium">
+              <td className="px-1 w-20">
                 <Button
                   icon={<TrashIcon className="w-4" />}
                   variant={"redOutline"}
@@ -100,17 +100,21 @@ export default function FormularioPrecios({ onlyPrices, defaultValues }) {
                   }}
                 />
               </td>
+              <td className="px-1 w-10">
+                <Button
+                  rounded="rounded-full"
+                  icon={<CheckIcon className="w-4" />}
+                  variant={"blueOutline"}
+                  hidden_text
+                  text="Seleccionar precio"
+                  onClick={() => {
+                    /* Cambiar precio por el seleccionado */
+                    const selectedPrice = watch(`precios.${index}.precio`);
+                    handleChangePrice(selectedPrice)
+                  }}
+                />
+              </td>
             </tr>
-            <Button
-              icon={<CheckIcon className="w-4" />}
-              variant={"blueOutline"}
-              hidden_text
-              text="Seleccionar precio"
-              onClick={() => {
-                /* Cambiar precio por el seleccionado */
-                const selectedPrice = watch(`precios.${index}.precio`)
-              }}
-            />
           </div>
         ))}
       </Table>

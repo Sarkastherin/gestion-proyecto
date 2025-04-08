@@ -7,6 +7,7 @@ import Table from "../Generals/Table";
 import { Material } from "../Material";
 import { PrecioMaterialInput } from "../PrecioMaterialInput";
 
+
 export const Item = ({ tipo, seccionIndex }) => {
   const [selectMaterial, setSelectMaterial] = useState({});
   const { register, control, watch, setValue, formState: {isDirty} } = useFormContext();
@@ -208,6 +209,7 @@ export const Item = ({ tipo, seccionIndex }) => {
           }}
         />
       </div>
+      
     </>
   );
 };

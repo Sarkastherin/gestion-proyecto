@@ -48,13 +48,11 @@ export const Seccion = ({ etapas }) => {
             <div className="flex items-center gap-2">
               <ChevronDoubleDownIcon className="w-5" />
               <Badge
-                text={`Etapa: ${watch(`secciones.${index}.id_etapa`)}`}
                 variant={"yellow"}
-              />{" "}
+              >{`Etapa: ${watch(`secciones.${index}.id_etapa`)}`}</Badge>{" "}
               <Badge
-                text={watch(`secciones.${index}.tipo`)}
                 variant={"purple"}
-              />
+              >{watch(`secciones.${index}.tipo`)}</Badge>
             </div>
             <Button
               text="Eliminar Sección"

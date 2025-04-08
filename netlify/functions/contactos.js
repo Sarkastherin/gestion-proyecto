@@ -1,8 +1,9 @@
-// netlify/functions/contactos.js
+/* import dotenv from "dotenv";
+dotenv.config(); */
 
 export async function handler(event, context) {
-  const usuario = process.env.VITE_API_USER;
-  const password = process.env.VITE_API_PASSWORD;
+  const usuario = process.env.API_USER;
+  const password = process.env.API_PASSWORD;
 
   try {
     // Obtener token
@@ -43,7 +44,6 @@ export async function handler(event, context) {
         }),
       }
     );
-
     const contactosData = await contactosResponse.json();
     return {
       statusCode: 200,
@@ -64,5 +64,5 @@ export async function handler(event, context) {
     statusCode: 200,
     body: JSON.stringify({ mensaje: "Función funcionando desde Netlify" }),
   };
-}
- */
+} */
+

@@ -20,7 +20,6 @@ export const ClienteContextProvider = ({ children }) => {
       value={{
         clientes,
         getClientes,
-        //getClienteById,
         activeCliente,
         setActiveCliente,
       }}

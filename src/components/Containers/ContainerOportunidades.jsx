@@ -31,7 +31,7 @@ export default function ContainerOportunidades({ form, state, setState }) {
         >
           <div className="flex flex-col gap-4">
             {state.response.message}
-            <div className="flex gap-2 mt-2">
+            <div className="flex gap-2 mt-2 justify-center">
               <Button
                 className="min-w-40"
                 text={"Cerrar"}
@@ -40,7 +40,7 @@ export default function ContainerOportunidades({ form, state, setState }) {
               />
               <Button
                 className="min-w-40"
-                text={"Ir oportunidades"}
+                text={"Ir a Oportunidades"}
                 variant={"primary"}
                 onClick={() => navigate(`/oportunidades`)}
               />

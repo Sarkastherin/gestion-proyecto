@@ -277,7 +277,7 @@ export default function Cotizacion() {
     if (detalleCotizacion) {
     }
   }, [detalleCotizacion]);
-  const methods = useForm();
+  //const methods = useForm();
 
   return (
     <>
@@ -332,9 +332,9 @@ export default function Cotizacion() {
           />
         </NoCotizacionComponent>
       )}
-      <FormProvider {...methods}>
-        <ModalPrecios />
-      </FormProvider>
+      
+        {/* <ModalPrecios /> */}
+      
     </>
   );
 }
