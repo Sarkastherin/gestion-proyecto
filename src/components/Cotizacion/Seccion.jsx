@@ -86,7 +86,7 @@ export const Seccion = ({ etapas }) => {
               <Select
                 label="Tipo de Cotización"
                 placeholder="Tipo de Cotización"
-                {...register(`secciones.${index}.tipo`)}
+                {...register(`secciones.${index}.tipo`,{required:true})}
                 disabled={!!watch(`secciones.${index}.tipo`)}
               >
                 <option value="Materiales">Materiales</option>

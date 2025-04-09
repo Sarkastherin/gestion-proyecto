@@ -62,6 +62,7 @@ export const ModalCotizaciones = () => {
                 onClick={() => {
                   //setSelectCotizacion(cotizacion);
                   handleModalClose();
+                  alert("En desarrollo")
                 }}
               >
                 <span className="flex">

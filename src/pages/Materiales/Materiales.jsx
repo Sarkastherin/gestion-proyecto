@@ -39,7 +39,7 @@ export default function Materiales() {
       name: "Código",
       selector: (row) => row.codigo,
       sortable: true,
-      width: "160px",
+      width: "180px",
     },
     {
       name: "Descripción",
@@ -179,6 +179,7 @@ export default function Materiales() {
             data={dataFiltered}
             columns={columns}
             handleOnRowClick={openMaterial}
+            defaultSortFieldId={"codigo"}
             noDataComponent={
               <NoDataComponent
                 title={"No hay Materiales."}

@@ -11,6 +11,7 @@ function Header({ text, to}) {
         <span className="text-xl font-medium text-indigo-600">{text}</span>
         </div>
         <Button
+        className="sr-only"
         text='menu'
         hidden_text
         icon={<Bars3Icon width={"16px"} />}

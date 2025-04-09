@@ -6,7 +6,7 @@ import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
 import { useClientes } from "../context/ClientContext";
 export const Cliente = () => {
-  const {clientes} = useClientes();
+  const { clientes } = useClientes();
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [selectClient, setSelectClient] = useState({});
@@ -14,7 +14,7 @@ export const Cliente = () => {
   const {
     register,
     formState: { errors },
-    setValue
+    setValue,
   } = useFormContext();
   useEffect(() => {
     setFilteredData(clientes);
@@ -28,6 +28,14 @@ export const Cliente = () => {
     }, 300); // Agrega un debounce de 300ms
     return () => clearTimeout(timeout);
   }, [search]);
+  const id_cliente = {
+    ...register("id_cliente", {
+      required: {
+        value: true,
+        message: "Debe seleccionar un cliente",
+      },
+    }),
+  };
   useEffect(() => {
     if (selectClient?.nombre) {
       setValue("cliente", selectClient, { shouldDirty: true });
@@ -47,7 +55,7 @@ export const Cliente = () => {
         })}
         placeholder="Seleccione un cliente"
       />
-      {errors.cliente && <TextInvalidate message={errors.cliente.message} />}
+      {errors.id_cliente && <TextInvalidate message={errors.id_cliente.message} />}
       <Modal
         modalId="modalCliente"
         title={"Buscar Cliente"}

@@ -1,10 +1,30 @@
-import { NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom";
 function Home() {
   return (
-    <nav className="flex flex-col items-center justify-center h-screen">
-      <NavLink to='/oportunidades'>Oportunidades</NavLink>
-      <NavLink to='/materiales'>Materiales</NavLink>
-    </nav>
-  )
+    <div className="flex flex-col items-center h-screen">
+      <h2 className="text-2xl mt-10">Módulos</h2>
+      <nav className="max-w-md w-full flex flex-col items-center justify-center mt-5 px-4">
+        <NavLink
+          className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
+          to="/oportunidades"
+        >
+          Oportunidades
+        </NavLink>
+
+        <NavLink
+          className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
+          to="/materiales"
+        >
+          Materiales
+        </NavLink>
+        <NavLink
+          className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
+          to="/instructivos"
+        >
+          Instructivos (Proximamente)
+        </NavLink>
+      </nav>
+    </div>
+  );
 }
-export default Home
+export default Home;

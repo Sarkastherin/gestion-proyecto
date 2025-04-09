@@ -54,6 +54,28 @@ export const Item = ({ tipo, seccionIndex }) => {
     { element: "Total", w: "w-30" },
     { element: <TrashIcon className="w-4.5" />, w: "w-10" },
   ];
+  /* const validated = (index) => {
+    const validatedElement = {...register(`secciones.${seccionIndex}.items.${index}.valid`,{required: true})}
+    const mano_obra = watch(`secciones.${seccionIndex}.items.${index}.mano_obra`)
+    const material = watch(`secciones.${seccionIndex}.items.${index}.material`)
+    const actividad = watch(`secciones.${seccionIndex}.items.${index}.actividad`)
+    const otro_items = watch(`secciones.${seccionIndex}.items.${index}.otro_item`)
+    const values = [mano_obra, material, actividad, otro_items];
+    const hasElement = values.some(item => item != undefined && item != '');
+    setValue(`secciones.${seccionIndex}.items.${index}.valid`, hasElement)
+  } */
+    const validarItem = (index) => {
+      const item = watch(`secciones.${seccionIndex}.items.${index}`);
+      const { material, mano_obra, actividad, otro_item } = item || {};
+      return (
+        (material && material !== "") ||
+        (mano_obra && mano_obra !== "") ||
+        (actividad && actividad !== "") ||
+        (otro_item && otro_item !== "")
+      ) || "Debe completar al menos un campo de detalle";
+    };
+    
+  
   return (
     <>
       <Table cells={cells}>
@@ -137,7 +159,7 @@ export const Item = ({ tipo, seccionIndex }) => {
                 no_label
                 type="number"
                 {...register(
-                  `secciones.${seccionIndex}.items.${index}.cantidad`
+                  `secciones.${seccionIndex}.items.${index}.cantidad`,{required:true, validate: () => validarItem(index)}
                 )}
               />
             </td>

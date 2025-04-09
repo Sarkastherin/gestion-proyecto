@@ -68,6 +68,7 @@ export const Material = ({
           label={"Material"}
           className="basis-3/4"
           no_label
+          readOnly
           onClick={() => handleModalShow("modalMaterial")}
           {...register(
             `secciones.${seccionIndex}.items.${index}.material`

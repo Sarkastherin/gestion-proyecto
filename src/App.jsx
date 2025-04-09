@@ -23,6 +23,8 @@ import MargenesGanancias from "./pages/Oportunidad/MargenesGanancias";
 import Condiciones from "./pages/Oportunidad/Condiciones";
 import NuevoMaterial from "./pages/Materiales/NuevoMaterial";
 import MaterialID from "./pages/Materiales/Material";
+import Instructivos from "./pages/Instructivos";
+import Error from "./pages/Error";
 function App() {
   const router = createBrowserRouter([
     {
@@ -55,11 +57,12 @@ function App() {
             { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
           ],
         },
+        { path: "/instructivos", element: <Instructivos /> },
         
       ],
     },
     { path: "/login", element: <Login /> },
-    { path: "*", element: <h1>Error</h1> },
+    { path: "*", element: <Error/> },
   ]);
 
   return (

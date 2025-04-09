@@ -36,7 +36,8 @@ export default function TableComponent({
   subHeaderComponent,
   noDataComponent = <p>No hay datos</p>,
   subHeader=false,
-  onRowMouseEnter
+  onRowMouseEnter,
+  defaultSortFieldId
 }) {
   return (
     <DataTable
@@ -56,6 +57,9 @@ export default function TableComponent({
       subHeaderComponent={subHeaderComponent}
       subHeader={subHeader}
       onRowMouseEnter={onRowMouseEnter}
+      defaultSortFieldId={defaultSortFieldId}
+      defaultSortAsc={true}
+
     />
   );
 }

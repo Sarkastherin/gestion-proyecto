@@ -29,7 +29,7 @@ export function Oportunidades() {
     {
       name: "Cliente",
       selector: (row) => row.cliente?.nombre,
-      width: "300px"
+      width: "300px",
     },
     {
       name: "$ Contización",
@@ -38,17 +38,17 @@ export function Oportunidades() {
           style: "currency",
           currency: "ARS",
         }) || "$ 0.00",
-        width: "150px"
+      width: "150px",
     },
     {
       name: "Status",
       selector: (row) => row.status,
-       width: "120px"
+      width: "120px",
     },
     {
       name: "Creado por",
       selector: (row) => row.usuario,
-      width: "120px"
+      width: "120px",
     },
   ];
   const navigate = useNavigate();
@@ -79,19 +79,15 @@ export function Oportunidades() {
     },
   ];
   const handleFilter = (data) => {
-    data.trazabilidadQuery = data.trazabilidadQuery
-      .replace(".", "")
-      .replace("-", "");
+    const filter = oportunidades.filter((item) => 
+      item.nombre.toLowerCase().includes(data.oportunidad.toLowerCase()) &&
+      item.cliente?.nombre.toLowerCase().includes(data.cliente.toLowerCase()) &&
+      item.status.toLowerCase().includes(data.status.toLowerCase())
+    );
     setDataFiltered(
-      oportunidades.filter((item) => {
-        return (
-          item.trazabilidad.toString().includes(data.trazabilidadQuery) &&
-          item.cliente
-            .toLowerCase()
-            .includes(data.clienteQuery.toLowerCase()) &&
-          item.modelo.toLowerCase().includes(data.modeloQuery.toLowerCase())
-        );
-      })
+      filter.length > 0
+        ? filter
+        : [{ nombre: "No hay datos para mostrar" }]
     );
   };
   const openOportunidad = (data) => {
@@ -102,46 +98,48 @@ export function Oportunidades() {
       <div className="flex justify-between items-center mt-8">
         <form
           onSubmit={handleSubmit(handleFilter)}
-          className="flex items-center justify-between gap-2 w-full"
+          className="w-full"
         >
-          <div className="grid md:grid-cols-6 gap-2 grid-cols-3">
-            <Input
-             className="col-span-3"
-              label="Oportunidad"
-              no_label
-              placeholder={"Oportunidad"}
-              {...register("oportunidad")}
-            />
-            <Input
-              className="col-span-2"
-              label="Cliente"
-              no_label
-              placeholder={"Cliente"}
-              {...register("cliente")}
-            />
-            <Select
-              label={"Status"}
-              no_label
-              placeholder={"Status"}
-              {...register("status")}
-            >
-              {[].map((tipo) => (
-                <option key={tipo.id} value={tipo.descripcion}>
-                  {`[${tipo.cod}] ${tipo.descripcion}`}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div>
-            <Button
-              className="flex-none"
-              type="submit"
-              text={"Filtrar"}
-              icon={<FunnelIcon className="w-4" />}
-              variant={"yellow"}
-              hidden_text
-            />
-          </div>
+          <fieldset className="flex items-center justify-between gap-2 w-full">
+            <div className="grid md:grid-cols-6 gap-2 grid-cols-3">
+              <Input
+                className="col-span-3"
+                label="Oportunidad"
+                no_label
+                placeholder={"Oportunidad"}
+                {...register("oportunidad")}
+              />
+              <Input
+                className="col-span-2"
+                label="Cliente"
+                no_label
+                placeholder={"Cliente"}
+                {...register("cliente")}
+              />
+              <Select
+                label={"Status"}
+                no_label
+                placeholder={"Status"}
+                {...register("status")}
+              >
+                {[{id:1,descripcion: "Nuevo"}, {id:2,descripcion: "Cerrada-Ganada"}, {id:3,descripcion: "Cerrada-Perdida"}].map((tipo) => (
+                  <option key={tipo.id} value={tipo.descripcion}>
+                    {tipo.descripcion}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <Button
+                className="flex-none"
+                type="submit"
+                text={"Filtrar"}
+                icon={<FunnelIcon className="w-4" />}
+                variant={"yellow"}
+                hidden_text
+              />
+            </div>
+          </fieldset>
         </form>
       </div>
     );
@@ -149,7 +147,8 @@ export function Oportunidades() {
   useEffect(() => {
     getOportunidades();
   }, []);
-  useEffect(() => {setDataFiltered(oportunidades);
+  useEffect(() => {
+    setDataFiltered(oportunidades);
   }, [oportunidades]);
   return (
     <>

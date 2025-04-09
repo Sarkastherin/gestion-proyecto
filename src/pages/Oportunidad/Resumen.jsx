@@ -9,6 +9,8 @@ import { CSVLink } from "react-csv";
 import { useState } from "react";
 import { SpinnerCircular } from "spinners-react";
 import { CloudArrowDownIcon } from "@heroicons/react/24/solid";
+import Badge from "../../components/Generals/Badge";
+import TableComponent from "../../components/TableComponent";
 export default function Resumen() {
   const { getConsolidado, consolidados } = useMateriales();
   const { getOportunidadById, activeOportunidad } = useOportunidad();
@@ -24,9 +26,16 @@ export default function Resumen() {
       const consolidado = consolidados.filter(
         (item) => item.id_cotizacion === activeOportunidad.id_cotizacion
       );
-      setStates((prev) => ({ ...prev, csvData: consolidado }));
-      setStates((prev) => ({ ...prev, loading: false }));
+      if (consolidado.length > 0) {
+        setStates((prev) => ({ ...prev, csvData: consolidado }));
+      } else {
+        alert("No hay cotizaciones para esta oportunidad");
+      }
     }
+    else {
+      alert("No hay cotizaciones para esta oportunidad");
+    }
+    setStates((prev) => ({ ...prev, loading: false }));
   };
   return (
     <>
@@ -43,34 +52,80 @@ export default function Resumen() {
             />
             <DataField label={"Alcance"} value={activeOportunidad?.alcance} />
           </Card>
-          <Button
-            className={"w-40"}
-            icon={
-              states.loading ? (
-                <SpinnerCircular color="white" size={20} />
-              ) : null
-            }
-            variant={"primary"}
-            text={states.loading ? "Cargando..." : "Consolidado"}
-            iconPosition="left"
-            onClick={handleConsolidado}
-          />
-          {states.csvData.length > 0 && (
-            <Button
-              className={"w-40"}
-              icon={<CloudArrowDownIcon className="w-5" />}
-              variant={"green_csv"}
-              text={
-                <CSVLink
-                  filename={`Consolidado-${activeOportunidad.nombre}`}
-                  data={states.csvData}
-                >
-                  Descargar
-                </CSVLink>
+          <Card>
+            <DataField
+              label={"Monto Total de Cotización"}
+              value={
+                activeOportunidad.total_monto?.toLocaleString("es-AR", {
+                  style: "currency",
+                  currency: "ARS",
+                }) || "$ 0.00"
               }
-              iconPosition="left"
             />
-          )}
+            <div className="flex justify-between mb-2 gap-4 text-neutral-700 text-sm">
+              <span className="flex-none flex items-center font-semibold">
+                {"Status"}:
+              </span>
+              <span className="px-5 py-0.5 w-full">
+                {<Badge variant="blue">{activeOportunidad.status}</Badge>}
+              </span>
+            </div>
+          </Card>
+          <div>
+            <div className="flex gap-10 justify-between">
+              <Button
+                className={"w-40"}
+                icon={
+                  states.loading ? (
+                    <SpinnerCircular color="white" size={20} />
+                  ) : null
+                }
+                variant={"primary"}
+                text={states.loading ? "Cargando..." : "Consolidado"}
+                iconPosition="left"
+                onClick={handleConsolidado}
+              />
+              {states.csvData.length > 0 && (
+                <Button
+                  className={"w-40"}
+                  icon={<CloudArrowDownIcon className="w-5" />}
+                  variant={"green_csv"}
+                  text={
+                    <CSVLink
+                      filename={`Consolidado-${activeOportunidad.nombre}`}
+                      data={states.csvData}
+                    >
+                      Descargar
+                    </CSVLink>
+                  }
+                  iconPosition="left"
+                />
+              )}
+            </div>
+            {states.csvData.length > 0 &&(
+              <TableComponent
+              data={states.csvData}
+            columns={[
+              {
+                name: "Código",
+                selector: (row) => row.codigo,
+                width: "200px"
+              },
+              {
+                name: "Descripcion",
+                selector: (row) => row.material
+              },
+              {
+                name: "Cantidad",
+                selector: (row) => row.cantidad_total,
+                width: "150px"
+              }
+            ]}
+            
+              />
+            )}
+            
+          </div>
         </div>
       )}
     </>

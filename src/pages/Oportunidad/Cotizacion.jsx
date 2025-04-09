@@ -32,7 +32,7 @@ export default function Cotizacion() {
     updateDetalle,
   } = useCotizacion();
   const { handleModalShow } = useModal();
-  const onSubmit = async ({ values, dirtyFields }) => {
+  const onSubmit= async ({ values, dirtyFields }) => {
     handleModalShow("modal-loading");
     /* Caso 1: No hay cotización, crea cotización y añade los detalles de los items */
     if (!cotizacionActiva) {
@@ -254,7 +254,17 @@ export default function Cotizacion() {
     });
     return dataPost;
   };
-  const onError = (data) => console.log("Error:", data);
+  const onError = (data) => {
+    console.log(data)
+    setState((prev) => ({
+      ...prev,
+      response: {
+        message: `Faltan datos por completar`,
+        type: "danger",
+      },
+    }));
+    handleModalShow('modal-response')
+  };
   const handleCopyCotizacion = () => {
     handleNewCotizacion();
     handleModalShow("modalCotizaciones");
