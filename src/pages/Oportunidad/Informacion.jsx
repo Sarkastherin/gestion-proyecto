@@ -26,13 +26,15 @@ export default function Informacion() {
     if (dirtyFields.cliente?.name) {
       updates.id_cliente = values.cliente.id;
     }
-    delete values.cliente;
+    delete dirtyFields.cliente;
+    delete dirtyFields.margenes;
     for (let item in dirtyFields) {
       if (dirtyFields[item]) {
         updates[item] = values[item];
       }
     }
     try {
+      console.log("values", updates, values);
       const { success, error } = await updateOportunidad(
         updates,
         activeOportunidad.id
@@ -51,7 +53,12 @@ export default function Informacion() {
         setState((prev) => ({
           ...prev,
           response: {
-            message: "No se pudo actualizar la oportunidad",
+            message: (
+              <>
+                <p>No se pudo actualizar la oportunidad</p>
+                <code>{error.message}</code>
+              </>
+            ),
             type: "danger",
           },
         }));

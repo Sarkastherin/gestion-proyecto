@@ -24,21 +24,26 @@ export default function CrearOportunidad() {
       if (success) {
         setId(data[0].id)
         setResponse({
-          message: "Material guardado correctamente",
+          message: "Oportunidad guardada correctamente",
           type: "success",
         });
         refreshOportunidades();
         if (resetForm) resetForm(); // Resetea el formulario si la función está disponible
       } else {
         setResponse({
-          message: "No se pudo guardar el material",
+          message: (
+            <>
+              <p>No se pudo guardar la oportunidad</p>
+              <code>{error.message}</code>
+            </>
+          ),
           type: "danger",
         });
         console.error(error);
       }
     } catch (error) {
       setResponse({
-        message: `Error al crear el material: ${error}`,
+        message: `Error al crear la oportunidad: ${error}`,
         type: "danger",
       });
     } finally {
