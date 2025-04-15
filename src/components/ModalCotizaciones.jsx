@@ -50,7 +50,10 @@ export const ModalCotizaciones = () => {
     handleModalClose();
     handleModalShow("modal-confirm");
   };
-  const copyCotizacion = async () => {
+  const copyCotizacion = () => {
+alert('EN DESARROLLO')
+  }
+  const copyCotizacion2 = async () => {
     handleModalShow("modal-loading");
     //Copiar Etapas de Oprtunidades
     try {
