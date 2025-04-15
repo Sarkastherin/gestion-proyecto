@@ -8,6 +8,7 @@ import { Select } from "../Generals/Inputs";
 export default function ContainerOportunidades({ form, state, setState }) {
   const { handleModalClose } = useModal();
   const navigate = useNavigate();
+  const handleOnClick = () => navigate(`/oportunidades`);
   return (
     <>
       <div className="">{form}</div>
@@ -42,7 +43,7 @@ export default function ContainerOportunidades({ form, state, setState }) {
                 className="min-w-40"
                 text={"Ir a Oportunidades"}
                 variant={"primary"}
-                onClick={() => navigate(`/oportunidades`)}
+                onClick={handleOnClick}
               />
             </div>
           </div>

@@ -13,6 +13,7 @@ import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
 import ModalPrecios from "../../components/Materiales/ModalPrecios";
 import { FormProvider, useForm } from "react-hook-form";
+import { Modal } from "../../components/Modal";
 export default function Cotizacion() {
   const [state, setState] = useState({
     response: null,
@@ -31,8 +32,8 @@ export default function Cotizacion() {
     deleteDetalle,
     updateDetalle,
   } = useCotizacion();
-  const { handleModalShow } = useModal();
-  const onSubmit= async ({ values, dirtyFields }) => {
+  const { handleModalShow, handleModalClose } = useModal();
+  const onSubmit = async ({ values, dirtyFields }) => {
     handleModalShow("modal-loading");
     /* Caso 1: No hay cotización, crea cotización y añade los detalles de los items */
     if (!cotizacionActiva) {
@@ -255,7 +256,6 @@ export default function Cotizacion() {
     return dataPost;
   };
   const onError = (data) => {
-    console.log(data)
     setState((prev) => ({
       ...prev,
       response: {
@@ -263,7 +263,7 @@ export default function Cotizacion() {
         type: "danger",
       },
     }));
-    handleModalShow('modal-response')
+    handleModalShow("modal-response");
   };
   const handleCopyCotizacion = () => {
     handleNewCotizacion();
@@ -314,10 +314,12 @@ export default function Cotizacion() {
                   defaultValues={detalleCotizacion}
                   onSubmit={onSubmit}
                   onError={onError}
+                  setState={setState}
                 />
               </>
             }
           />
+          
         </>
       ) : (
         <NoCotizacionComponent>
@@ -342,9 +344,8 @@ export default function Cotizacion() {
           />
         </NoCotizacionComponent>
       )}
-      
-        {/* <ModalPrecios /> */}
-      
+
+      {/* <ModalPrecios /> */}
     </>
   );
 }

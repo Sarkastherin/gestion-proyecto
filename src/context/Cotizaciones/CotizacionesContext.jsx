@@ -36,6 +36,21 @@ export const CotizacionProvider = ({ children }) => {
       console.error("Error fetching cotización:", error);
     }
   };
+  const getDetalleById = async (id) => {
+    try {
+      const { data: detalle, error } = await supabase
+        .from("detalle_cotizacion")
+        .select("*")
+        .eq("id_cotizacion", id);
+        if (error) {
+          // Retorna el error para que sea manejado en el componente que llama a esta función
+          return { success: false, error };
+        }
+        return { success: true, data };
+    } catch (error) {
+      return { success: false, error };
+    }
+  };
   const getCotizacionActiva = async (id_oportunidad) => {
     try {
       const { data: cotizacion, error } = await supabase
@@ -177,7 +192,8 @@ export const CotizacionProvider = ({ children }) => {
         cotizacionActiva: state.cotizacionActiva,
         postDetalle,
         deleteDetalle,
-        updateDetalle
+        updateDetalle,
+        getDetalleById
       }}
     >
       {children}

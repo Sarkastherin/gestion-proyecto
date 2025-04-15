@@ -1,7 +1,8 @@
 import {
   XMarkIcon,
   CheckCircleIcon,
-  XCircleIcon
+  XCircleIcon,
+  ExclamationTriangleIcon
 } from "@heroicons/react/24/outline";
 import { useModal } from "../context/ModalContext";
 
@@ -18,6 +19,8 @@ export const Modal = ({
     danger: {color: 'text-red-700', icon:<XCircleIcon className="w-6" />},
     primary: {color: 'text-indigo-600', icon:<XCircleIcon className="w-6" />},
     success: {color: 'text-green-500', icon:<CheckCircleIcon className="w-6" />},
+    warning: {color: 'text-orange-500', icon:<  ExclamationTriangleIcon
+      className="w-6" />},
   };
   const { handleModalClose, activeModal } = useModal();
   const show = activeModal === modalId;

@@ -7,6 +7,7 @@ import Table from "../Generals/Table";
 function EtapasOportunidad() {
   const {
     register,
+    watch,
     formState: { errors },
     control,
   } = useFormContext();
@@ -59,7 +60,9 @@ function EtapasOportunidad() {
             variant={"green"}
             text="Agregar Etapa"
             onClick={() => {
-              append({ id: fields.length + 1, nombre:"" });
+              const ids = watch("etapas").map(item => item.id);
+              const id = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+              append({ id: id, nombre:"" });
             }}
           />
         </div>

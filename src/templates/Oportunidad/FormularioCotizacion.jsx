@@ -12,7 +12,8 @@ function FormularioCotizacion({
   isEditable,
   children,
   onSubmit,
-  onError,
+  onError
+
 }) {
   const { getOportunidadById, activeOportunidad } = useOportunidad();
   const { id } = useParams();
@@ -52,7 +53,7 @@ function FormularioCotizacion({
           </Footer>
         </fieldset>
       </form>
-      <ModalCotizaciones />
+      <ModalCotizaciones/>
     </FormProvider>
   );
 }
