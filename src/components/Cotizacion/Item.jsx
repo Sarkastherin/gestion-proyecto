@@ -1,4 +1,4 @@
-import { TrashIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import { TrashIcon, PlusCircleIcon, AdjustmentsHorizontalIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
 import { Input, Textarea, CurrencyTypeInput, Select } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import { useFormContext, useFieldArray } from "react-hook-form";
@@ -7,10 +7,15 @@ import Table from "../Generals/Table";
 import { Material } from "../Material";
 import { PrecioMaterialInput } from "../PrecioMaterialInput";
 
-
 export const Item = ({ tipo, seccionIndex }) => {
   const [selectMaterial, setSelectMaterial] = useState({});
-  const { register, control, watch, setValue, formState: {isDirty} } = useFormContext();
+  const {
+    register,
+    control,
+    watch,
+    setValue,
+    formState: { isDirty },
+  } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: `secciones.${seccionIndex}.items`,
@@ -19,7 +24,7 @@ export const Item = ({ tipo, seccionIndex }) => {
     if (fields.length === 0 && tipo != "") {
       append(
         {
-          id:"",
+          id: "",
           material: null,
           mano_obra: null,
           actividad: null,
@@ -53,29 +58,20 @@ export const Item = ({ tipo, seccionIndex }) => {
     { element: "Costo unitario", w: "w-30" },
     { element: "Total", w: "w-30" },
     { element: <TrashIcon className="w-4.5" />, w: "w-10" },
+    { element: <EllipsisVerticalIcon className="w-4.5" />, w: "w-10" },
   ];
-  /* const validated = (index) => {
-    const validatedElement = {...register(`secciones.${seccionIndex}.items.${index}.valid`,{required: true})}
-    const mano_obra = watch(`secciones.${seccionIndex}.items.${index}.mano_obra`)
-    const material = watch(`secciones.${seccionIndex}.items.${index}.material`)
-    const actividad = watch(`secciones.${seccionIndex}.items.${index}.actividad`)
-    const otro_items = watch(`secciones.${seccionIndex}.items.${index}.otro_item`)
-    const values = [mano_obra, material, actividad, otro_items];
-    const hasElement = values.some(item => item != undefined && item != '');
-    setValue(`secciones.${seccionIndex}.items.${index}.valid`, hasElement)
-  } */
-    const validarItem = (index) => {
-      const item = watch(`secciones.${seccionIndex}.items.${index}`);
-      const { material, mano_obra, actividad, otro_item } = item || {};
-      return (
-        (material && material !== "") ||
-        (mano_obra && mano_obra !== "") ||
-        (actividad && actividad !== "") ||
-        (otro_item && otro_item !== "")
-      ) || "Debe completar al menos un campo de detalle";
-    };
-    
-  
+  const validarItem = (index) => {
+    const item = watch(`secciones.${seccionIndex}.items.${index}`);
+    const { material, mano_obra, actividad, otro_item } = item || {};
+    return (
+      (material && material !== "") ||
+      (mano_obra && mano_obra !== "") ||
+      (actividad && actividad !== "") ||
+      (otro_item && otro_item !== "") ||
+      "Debe completar al menos un campo de detalle"
+    );
+  };
+
   return (
     <>
       <Table cells={cells}>
@@ -129,29 +125,33 @@ export const Item = ({ tipo, seccionIndex }) => {
                   className=""
                   type="text"
                   placeholder="..."
-                  {...register(`secciones.${seccionIndex}.items.${index}.otro_item`)}
+                  {...register(
+                    `secciones.${seccionIndex}.items.${index}.otro_item`
+                  )}
                 />
               )}
-              <Textarea
-                label="Indicaciones"
-                no_label
-                className="sr-only"
-                placeholder="Indicaciones"
-                rows="2"
-                {...register(
-                  `secciones.${seccionIndex}.items.${index}.indicaciones`
-                )}
-              />
-              <Textarea
-              className="sr-only"
-                label="Observaciones"
-                no_label
-                placeholder="Observaciones"
-                rows="2"
-                {...register(
-                  `secciones.${seccionIndex}.items.${index}.observaciones`
-                )}
-              />
+              <div id={`hidden${index}`} className={`hidden`}>
+                <Textarea
+                  label="Indicaciones"
+                  no_label
+                  className="mt-1"
+                  placeholder="Indicaciones"
+                  rows="2"
+                  {...register(
+                    `secciones.${seccionIndex}.items.${index}.indicaciones`
+                  )}
+                />
+                <Textarea
+                  className=""
+                  label="Observaciones"
+                  no_label
+                  placeholder="Observaciones"
+                  rows="2"
+                  {...register(
+                    `secciones.${seccionIndex}.items.${index}.observaciones`
+                  )}
+                />
+              </div>
             </td>
             <td className="w-30 flex-none px-1">
               <Input
@@ -159,7 +159,8 @@ export const Item = ({ tipo, seccionIndex }) => {
                 no_label
                 type="number"
                 {...register(
-                  `secciones.${seccionIndex}.items.${index}.cantidad`,{required:true, validate: () => validarItem(index)}
+                  `secciones.${seccionIndex}.items.${index}.cantidad`,
+                  { required: true, validate: () => validarItem(index) }
                 )}
               />
             </td>
@@ -206,6 +207,20 @@ export const Item = ({ tipo, seccionIndex }) => {
                 }}
               />
             </td>
+            <td className="flex-none px-1">
+              <Button
+                tooltip="tooltip-test"
+                icon={<AdjustmentsHorizontalIcon className="w-4" />}
+                variant={"secondaryNoBorder"}
+                hidden_text
+                text="Expandir"
+                rounded="rounded-full"
+                onClick={() => {
+                  const elem = document.getElementById(`hidden${index}`);
+                  elem.classList.toggle("hidden");
+                }}
+              />
+            </td>
           </tr>
         ))}
       </Table>
@@ -218,7 +233,7 @@ export const Item = ({ tipo, seccionIndex }) => {
           disabled={tipo === ""}
           onClick={() => {
             append({
-              id:"",
+              id: "",
               material: null,
               mano_obra: null,
               actividad: null,
@@ -230,7 +245,6 @@ export const Item = ({ tipo, seccionIndex }) => {
           }}
         />
       </div>
-      
     </>
   );
 };

@@ -49,6 +49,7 @@ export const Button = React.forwardRef(
       blueOutline:
         "text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white focus:outline-none focus:ring active:bg-blue-500 focus:bg-blue-500 focus:text-white",
         blue: "border-blue-500 bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring active:text-blue-500",
+        secondaryNoBorder: "border-none text-neutral-400 hover:bg-neutral-900/10 focus:outline-none focus:ring active:text-indigo-500",
     };
 
     return (
