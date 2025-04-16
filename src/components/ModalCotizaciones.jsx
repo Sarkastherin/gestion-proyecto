@@ -8,20 +8,25 @@ import { useOportunidad } from "../context/Oportunidades/OportunidadContext";
 import { useCotizacion } from "../context/Cotizaciones/CotizacionesContext";
 import Badge from "./Generals/Badge";
 import { Button } from "./Buttons";
-export const ModalCotizaciones = () => {
+export const ModalCotizaciones = ({setState}) => {
   const {
     oportunidades,
     getOportunidadById,
     activeOportunidad,
     updateOportunidad,
   } = useOportunidad();
-  const { cotizaciones, getCotizaciones, postCotizacion, getDetalleById } =
-    useCotizacion();
+  const {
+    cotizaciones,
+    getCotizaciones,
+    postCotizacion,
+    getDetalleById,
+    postDetalle,
+    getCotizacionActiva
+  } = useCotizacion();
   const { handleModalShow, handleModalClose } = useModal();
   const [filteredData, setFilteredData] = useState([]);
-  const [state, setState] = useState({
-    cotizacion: null,
-  });
+  const [cotizacion, setCotizacion] = useState(null);
+  
   const {
     register,
     formState: { errors },
@@ -32,68 +37,86 @@ export const ModalCotizaciones = () => {
   }, []);
   useEffect(() => {
     if (cotizaciones.length > 0) {
-      cotizaciones.forEach((item) => {
-        const oportunidad = oportunidades.find(
+      const data = cotizaciones.map((itemOrigin) => {
+        const item = { ...itemOrigin };
+        const opotunidad = oportunidades.find(
           (elem) => elem.id === item.id_oportunidad
         );
-        if (oportunidad) {
-          item.nombre_oportunidad = oportunidad.nombre;
+        if (opotunidad) {
+          item.nombre_oportunidad = opotunidad.nombre;
         }
         return item;
       });
+      setFilteredData(data.filter((item) => item.active));
     }
-    setFilteredData(cotizaciones.filter((item) => item.nombre_oportunidad));
   }, [oportunidades, cotizaciones]);
 
   const handleCopyCotizacion = async (values) => {
-    setState((prev) => ({ ...prev, cotizacion: values }));
+    setCotizacion(values)
+    //setState((prev) => ({ ...prev, cotizacion: values }));
     handleModalClose();
     handleModalShow("modal-confirm");
   };
-  const copyCotizacion = () => {
-alert('EN DESARROLLO')
-  }
-  const copyCotizacion2 = async () => {
+
+  const copyCotizacion = async () => {
     handleModalShow("modal-loading");
-    //Copiar Etapas de Oprtunidades
+    const copy = {};
     try {
-      const { success, data, error } = await getOportunidadById(
-        state.cotizacion.id_oportunidad
+      //Obtener Etapas de oportunidad a copiar
+      const op_original = await getOportunidadById(
+        cotizacion.id_oportunidad
       );
-      if (success) {
-        const { etapas } = data;
+      if (op_original.success) {
+        copy.etapas = op_original.data.etapas;
+        //Obtener datos de Cotización a copiar
+        copy.cotizacion = {
+          id_oportunidad: activeOportunidad.id,
+          margenes: cotizacion.margenes,
+          margen_general: cotizacion.margen_general,
+        };
+        //Copiar Etapas
         const { success, error } = await updateOportunidad(
-          { etapas: etapas },
+          { etapas: copy.etapas },
           activeOportunidad.id
         );
         if (success) {
-          //Copiar Cotización
-          const copy = {...(cotizaciones.find(
-            (item) => item.id_oportunidad === state.cotizacion.id_oportunidad
-          ))};
-          copy.id_oportunidad = activeOportunidad.id;
-          delete copy.id;
-          delete copy.created_at;
-          delete copy.nombre_oportunidad;
-          delete copy.total_monto;
-          const { success, error, data } = await postCotizacion(copy);
-          if(success) {
-            const {id} = data[0];
-            /* const { success, error, data } = await getDetalleById(state.cotizacion.id);
-            if(success) {
-             console.log("Detalle copiada", data); 
-            } */
+          const copy_cotizacion = await postCotizacion(
+            copy.cotizacion
+          );
+          if (copy_cotizacion.success) {
+            const { id } = copy_cotizacion.data[0];
+            const original_detalle = await getDetalleById(
+              cotizacion.id
+            );
+            if (original_detalle.success) {
+              copy.detalle = original_detalle.data.map((itemOrigin) => {
+                const item = { ...itemOrigin };
+                delete item.id;
+                delete item.created_at;
+                delete item.costo_total;
+                item.id_cotizacion = id;
+                return item;
+              });
+              const { success, error} = await postDetalle(copy.detalle);
+              if(success) {
+                getCotizacionActiva(id)
+                setState((prev) => ({
+                  ...prev,
+                  response: {
+                    message: "Cotización duplicada correctamente",
+                    type: "success",
+                  },
+                }));
+              }
+            }
           }
         }
       }
-      //Buscar las etapas de la cotización
     } catch (error) {
       console.error("🧟 Error", error);
     } finally {
       handleModalClose();
     }
-
-    //Copiar Detalle de Cotización
   };
   return (
     <>

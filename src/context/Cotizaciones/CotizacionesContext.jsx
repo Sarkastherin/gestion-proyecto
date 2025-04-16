@@ -21,6 +21,16 @@ export const CotizacionProvider = ({ children }) => {
       console.error("Error fetching cotizaciones:", error);
     }
   };
+  const getCotizacionesToDuplicity = async () => {
+    try {
+      const { data: cotizaciones, error } = await supabase
+        .from("view_cotizaciones")
+        .select("*");
+      return cotizaciones;
+    } catch (error) {
+      console.error("Error fetching cotizaciones:", error);
+    }
+  };
   const getDetalleCotizacion = async (id) => {
     try {
       const { data: detalle, error } = await supabase
@@ -46,7 +56,7 @@ export const CotizacionProvider = ({ children }) => {
           // Retorna el error para que sea manejado en el componente que llama a esta función
           return { success: false, error };
         }
-        return { success: true, data };
+        return { success: true, data: detalle };
     } catch (error) {
       return { success: false, error };
     }
@@ -193,7 +203,8 @@ export const CotizacionProvider = ({ children }) => {
         postDetalle,
         deleteDetalle,
         updateDetalle,
-        getDetalleById
+        getDetalleById,
+        getCotizacionesToDuplicity
       }}
     >
       {children}
