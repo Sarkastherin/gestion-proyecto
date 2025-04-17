@@ -48,8 +48,9 @@ export default function Cotizacion() {
           },
         }));
       }
-    } else if (cotizacionActiva && detalleCotizacion.secciones.length === 0) {
-      /* Caso 2: Hay Cotización, pero no hay detalle */
+    } 
+    /* Caso 2: Hay Cotización, pero no hay detalle */
+    else if (cotizacionActiva && detalleCotizacion.secciones.length === 0) {
       await appendDetalle({ values: values, id: cotizacionActiva.id });
     } else if (cotizacionActiva && detalleCotizacion.secciones.length > 0) {
       /* Caso 3: Hay Cotización y hay detalles */
@@ -126,6 +127,7 @@ export default function Cotizacion() {
           })
         );
         if (response.some((item) => item === false)) {
+          console.log("error", response);
           setState((prev) => ({
             ...prev,
             response: {
@@ -138,7 +140,7 @@ export default function Cotizacion() {
           responseAll.push(true);
         }
       }
-      if (responseAll.every((item) => item === true)) {
+      if (responseAll.length > 0) {
         setState((prev) => ({
           ...prev,
           response: {
@@ -195,7 +197,7 @@ export default function Cotizacion() {
   const modifyDetalle = async (values, id) => {
     try {
       const { success, error } = await updateDetalle(values, id);
-      return { success: success, error: error };
+      return { success, error }
     } catch (error) {
       setState((prev) => ({
         ...prev,

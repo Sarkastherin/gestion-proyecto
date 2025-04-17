@@ -157,9 +157,10 @@ export const CotizacionProvider = ({ children }) => {
         .select();
       if (error) {
         // Retorna el error para que sea manejado en el componente que llama a esta función
-        return { success: false, error };
+        //return { success: false, error };
+        throw new Error(error.message);
       }
-      return { success: true, data };
+      return { success: true, data }
     } catch (e) {
       console.log(e)
       return { success: false, error: e };

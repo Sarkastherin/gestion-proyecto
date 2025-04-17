@@ -71,7 +71,8 @@ export const Input = React.forwardRef(
       disabled,
       defaultValue,
       label ="falta label",
-      no_label
+      no_label,
+      step = 0.01,
     },
     ref
   ) => {
@@ -95,6 +96,7 @@ export const Input = React.forwardRef(
           disabled={disabled}
           defaultValue={defaultValue}
           className={`w-full ${stylebases}`}
+          step={step}
         />
       </div>
     );

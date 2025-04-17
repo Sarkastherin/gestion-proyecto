@@ -130,7 +130,7 @@ export const Item = ({ tipo, seccionIndex }) => {
                   )}
                 />
               )}
-              <div id={`hidden${index}`} className={`hidden`}>
+              <div id={`hidden${index}-${seccionIndex}`} className={`hidden`}>
                 <Textarea
                   label="Indicaciones"
                   no_label
@@ -158,9 +158,10 @@ export const Item = ({ tipo, seccionIndex }) => {
                 label="Cantidad"
                 no_label
                 type="number"
+            
                 {...register(
                   `secciones.${seccionIndex}.items.${index}.cantidad`,
-                  { required: true, validate: () => validarItem(index) }
+                  { required: true, validate: () => validarItem(index), valueAsNumber: true }
                 )}
               />
             </td>
@@ -216,7 +217,7 @@ export const Item = ({ tipo, seccionIndex }) => {
                 text="Expandir"
                 rounded="rounded-full"
                 onClick={() => {
-                  const elem = document.getElementById(`hidden${index}`);
+                  const elem = document.getElementById(`hidden${index}-${seccionIndex}`);
                   elem.classList.toggle("hidden");
                 }}
               />
