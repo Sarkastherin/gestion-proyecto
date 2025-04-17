@@ -94,6 +94,8 @@ export default function Resumen() {
                     <CSVLink
                       filename={`Consolidado-${activeOportunidad.nombre}`}
                       data={states.csvData}
+                      bom={true}
+                      separator={";"}
                     >
                       Descargar
                     </CSVLink>
@@ -118,6 +120,14 @@ export default function Resumen() {
               {
                 name: "Cantidad",
                 selector: (row) => row.cantidad_total,
+                width: "150px"
+              },
+              {
+                name: "Costo",
+                selector: (row) => row.costo_total.toLocaleString("es-AR", {
+                  style: "currency",
+                  currency: "ARS",
+                }) || "$ 0.00",
                 width: "150px"
               }
             ]}
