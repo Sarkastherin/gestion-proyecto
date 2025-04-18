@@ -1,7 +1,6 @@
 import { Bars3Icon, ChevronLeftIcon } from "@heroicons/react/16/solid";
 import { Button } from "../Buttons";
 import { NavLink } from "react-router-dom";
-import { appVersion } from "../../utils/version";
 function Header({ text, to }) {
   return (
     <div className="flex justify-between bg-neutral-200 px-4 py-2 shadow-sm md:px-6 md:py-3 xl:px-10 xl:py-3">

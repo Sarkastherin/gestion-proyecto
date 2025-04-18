@@ -48,12 +48,11 @@ export default function Cotizacion() {
           },
         }));
       }
-    } 
+    } else if (cotizacionActiva && detalleCotizacion.secciones.length === 0) {
     /* Caso 2: Hay Cotización, pero no hay detalle */
-    else if (cotizacionActiva && detalleCotizacion.secciones.length === 0) {
       await appendDetalle({ values: values, id: cotizacionActiva.id });
     } else if (cotizacionActiva && detalleCotizacion.secciones.length > 0) {
-      /* Caso 3: Hay Cotización y hay detalles */
+    /* Caso 3: Hay Cotización y hay detalles */
       const defaultValues = convertDataInDataBase(
         detalleCotizacion,
         cotizacionActiva.id
@@ -151,6 +150,8 @@ export default function Cotizacion() {
         setState((prev) => ({ ...prev, isEditable: false }));
       }
     }
+    refreshCotizaciones();
+    getCotizacionActiva(id);
     handleModalShow("modal-response");
   };
   const crearCotizacion = async (id, values) => {
@@ -160,8 +161,6 @@ export default function Cotizacion() {
     try {
       const result = await postCotizacion(cotizacion);
       if (result.success) {
-        refreshCotizaciones();
-        getCotizacionActiva(id);
         return { success: true, id_cotizacion: result.data[0].id };
       } else {
         return { success: false };
@@ -197,7 +196,7 @@ export default function Cotizacion() {
   const modifyDetalle = async (values, id) => {
     try {
       const { success, error } = await updateDetalle(values, id);
-      return { success, error }
+      return { success, error };
     } catch (error) {
       setState((prev) => ({
         ...prev,
@@ -285,27 +284,11 @@ export default function Cotizacion() {
       getDetalleCotizacion(cotizacionActiva.id);
     }
   }, [cotizacionActiva]);
-  useEffect(() => {
-    if (detalleCotizacion) {
-    }
-  }, [detalleCotizacion]);
-  //const methods = useForm();
 
   return (
     <>
       {(cotizacionActiva && detalleCotizacion?.secciones) || state.showForm ? (
         <>
-          <div className="sr-only">
-            <Button
-              className={"mb-2"}
-              type="button"
-              icon={<AdjustmentsHorizontalIcon className="w-4" />}
-              variant="pink"
-              text="Ajustes"
-              hidden_text
-              onClick={() => 2 + 2}
-            />
-          </div>
           <ContainerOportunidades
             state={state}
             setState={setState}
@@ -321,7 +304,6 @@ export default function Cotizacion() {
               </>
             }
           />
-          
         </>
       ) : (
         <NoCotizacionComponent>

@@ -18,9 +18,7 @@ function FormularioCotizacion({
 }) {
   const { getOportunidadById, activeOportunidad } = useOportunidad();
   const { id } = useParams();
-  useEffect(() => {
-    getOportunidadById(parseInt(id));
-  }, []);
+  
   const methods = useForm({
     defaultValues: defaultValues || {},
   });
@@ -31,6 +29,10 @@ function FormularioCotizacion({
   const getUpdateValues = (values) => {
     return { values, dirtyFields };
   };
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+    
+  }, []);
   return (
     <FormProvider {...methods}>
       <form

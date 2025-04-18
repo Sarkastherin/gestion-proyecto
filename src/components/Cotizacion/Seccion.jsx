@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import Badge from "../Generals/Badge";
 
 export const Seccion = ({ etapas }) => {
-  const { register, control, watch } = useFormContext();
+  const { register, control, watch, reset } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "secciones",
