@@ -36,7 +36,7 @@ export function Oportunidades() {
       selector: (row) =>
         row.total_monto?.toLocaleString("es-AR", {
           style: "currency",
-          currency: "ARS",
+          currency: "USD",
         }) || "$ 0.00",
       width: "150px",
     },

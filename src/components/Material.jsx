@@ -69,7 +69,7 @@ export const Material = ({
           className="basis-3/4"
           no_label
           readOnly
-          onClick={() => handleModalShow("modalMaterial")}
+          onClick={() => handleModalShow(`modalMaterial-${seccionIndex}-${index}`)}
           {...register(
             `secciones.${seccionIndex}.items.${index}.material`
           )}
@@ -94,7 +94,7 @@ export const Material = ({
         <TextInvalidate message={errors.proveedor.message} />
       )}
       <Modal
-        modalId="modalMaterial"
+        modalId={`modalMaterial-${seccionIndex}-${index}`}
         title={"Buscar Material"}
         variant="primary"
         icon={<UserGroupIcon width={"24px"} />}

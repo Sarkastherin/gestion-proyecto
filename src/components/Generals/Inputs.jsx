@@ -184,7 +184,7 @@ export const CurrencyTypeInput = React.forwardRef(
     {
       defaultValue = 0,
       decimalScale = 2,
-      intlConfig = { locale: "es-AR", currency: "ARS" },
+      intlConfig = { locale: "es-AR", currency: "USD" },
       className,
       onValueChange,
       value,

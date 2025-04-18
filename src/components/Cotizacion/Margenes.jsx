@@ -62,7 +62,7 @@ export default function Margenes() {
                       
                       {total.toLocaleString("es-AR", {
                         style: "currency",
-                        currency: "ARS",
+                        currency: "USD",
                       }) || "$ 0"}
                     </td>
                     <td className="px-1 w-30">
@@ -84,7 +84,7 @@ export default function Margenes() {
                         (1 + porcentaje / 100) * total || 0
                       ).toLocaleString("es-AR", {
                         style: "currency",
-                        currency: "ARS",
+                        currency: "USD",
                       })}
                     </td>
                   </tr>
@@ -99,7 +99,7 @@ export default function Margenes() {
                 <th className="px-1 w-full flex-1">
                   {totalMargen?.toLocaleString("es-AR", {
                     style: "currency",
-                    currency: "ARS",
+                    currency: "USD",
                   })}
                 </th>
                 <th className="px-1 w-50">
@@ -113,7 +113,7 @@ export default function Margenes() {
                 <th className="px-1 w-30">
                   {precioFinal.toLocaleString("es-AR", {
                     style: "currency",
-                    currency: "ARS",
+                    currency: "USD",
                   })}
                 </th>
               </tr>

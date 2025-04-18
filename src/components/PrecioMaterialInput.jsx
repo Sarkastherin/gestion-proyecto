@@ -20,7 +20,7 @@ export const PrecioMaterialInput = ({
     const material = materiales.find(
       (item) => item.descripcion === descripcion
     );
-    handleModalShow(`modal-precio${index}`);
+    handleModalShow(`modal-precio-${seccionIndex}-${index}`);
     
     setActiveMaterial(material);
   };
@@ -41,7 +41,7 @@ export const PrecioMaterialInput = ({
           //onValueChange={(value) => handleCostoTotalItem(value, index)}
         />
       </span>
-      <ModalPrecios handleChangePrice={handleChangePrice} index={index}/>
+      <ModalPrecios handleChangePrice={handleChangePrice} index={index} seccionIndex={seccionIndex}/>
     </>
   );
 };

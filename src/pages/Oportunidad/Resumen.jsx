@@ -58,7 +58,7 @@ export default function Resumen() {
               value={
                 activeOportunidad.total_monto?.toLocaleString("es-AR", {
                   style: "currency",
-                  currency: "ARS",
+                  currency: "USD",
                 }) || "$ 0.00"
               }
             />
@@ -94,7 +94,6 @@ export default function Resumen() {
                     <CSVLink
                       filename={`Consolidado-${activeOportunidad.nombre}`}
                       data={states.csvData}
-                      bom={true}
                       separator={";"}
                     >
                       Descargar
@@ -123,11 +122,19 @@ export default function Resumen() {
                 width: "150px"
               },
               {
+                name: "Costo Unitario",
+                selector: (row) => row.costo_unitario.toLocaleString("es-AR", {
+                  style: "currency",
+                  currency: "USD",
+                }) || "$ 0.00",
+                width: "150px"
+              },
+              {
                 name: "Costo",
                 selector: (row) => row.costo_total.toLocaleString("es-AR", {
                   style: "currency",
-                  currency: "ARS",
-                }) || "$ 0.00",
+                  currency: "USD",
+                }) || "US$ 0.00",
                 width: "150px"
               }
             ]}

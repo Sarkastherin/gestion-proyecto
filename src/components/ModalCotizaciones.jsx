@@ -154,7 +154,7 @@ export const ModalCotizaciones = ({setState}) => {
                       Monto:
                       {cotizacion.total_monto.toLocaleString("es-AR", {
                         style: "currency",
-                        currency: "ARS",
+                        currency: "USD",
                       })}
                     </Badge>
                     <Badge variant="blue" className={"w-1/3"}>
