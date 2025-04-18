@@ -1,4 +1,9 @@
-import { TrashIcon, PlusCircleIcon, AdjustmentsHorizontalIcon, EllipsisVerticalIcon } from "@heroicons/react/24/outline";
+import {
+  TrashIcon,
+  PlusCircleIcon,
+  AdjustmentsHorizontalIcon,
+  EllipsisVerticalIcon,
+} from "@heroicons/react/24/outline";
 import { Input, Textarea, CurrencyTypeInput, Select } from "../Generals/Inputs";
 import { Button } from "../Buttons";
 import { useFormContext, useFieldArray } from "react-hook-form";
@@ -158,10 +163,17 @@ export const Item = ({ tipo, seccionIndex }) => {
                 label="Cantidad"
                 no_label
                 type="number"
-            
                 {...register(
                   `secciones.${seccionIndex}.items.${index}.cantidad`,
-                  { required: true, validate: () => validarItem(index), valueAsNumber: true }
+                  {
+                    required: true,
+                    validate: () => validarItem(index),
+                    valueAsNumber: true,
+                    onChange: () => {
+                      const value = watch(`secciones.${seccionIndex}.items.${index}.costo_unitario`);
+                      handleCostoTotalItem(value, index)
+                    },
+                  }
                 )}
               />
             </td>
@@ -217,7 +229,9 @@ export const Item = ({ tipo, seccionIndex }) => {
                 text="Expandir"
                 rounded="rounded-full"
                 onClick={() => {
-                  const elem = document.getElementById(`hidden${index}-${seccionIndex}`);
+                  const elem = document.getElementById(
+                    `hidden${index}-${seccionIndex}`
+                  );
                   elem.classList.toggle("hidden");
                 }}
               />

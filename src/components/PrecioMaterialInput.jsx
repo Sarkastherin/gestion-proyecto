@@ -26,6 +26,7 @@ export const PrecioMaterialInput = ({
   };
   const handleChangePrice = (value) => {
     if (value) setValue(`secciones.${seccionIndex}.items.${index}.costo_unitario`, value);
+    handleCostoTotalItem(value, index)
     handleModalClose()
   };
   return (
@@ -37,7 +38,7 @@ export const PrecioMaterialInput = ({
             watch(`secciones.${seccionIndex}.items.${index}.costo_unitario`) ||
             "0"
           }
-          onValueChange={(value) => handleCostoTotalItem(value, index)}
+          //onValueChange={(value) => handleCostoTotalItem(value, index)}
         />
       </span>
       <ModalPrecios handleChangePrice={handleChangePrice} index={index}/>
