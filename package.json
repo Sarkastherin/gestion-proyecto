@@ -2,6 +2,7 @@
   "name": "gestion-proyecto",
   "private": true,
   "version": "0.0.1",
+  "updatedDate": "",
   "type": "module",
   "scripts": {
     "dev": "vite",

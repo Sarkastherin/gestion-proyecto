@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { appVersion } from "../utils/version";
 function Home() {
   return (
     <div className="flex flex-col items-center h-screen">
@@ -24,6 +25,9 @@ function Home() {
           Instructivos (Proximamente)
         </NavLink>
       </nav>
+      <em className="absolute bottom-5 right-5 text-xs text-neutral-400 font-semibold">
+        Version: {appVersion}
+      </em>
     </div>
   );
 }
