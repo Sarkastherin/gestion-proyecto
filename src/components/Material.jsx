@@ -34,7 +34,6 @@ export const Material = ({
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
-    console.log(selectMaterial[index]?.precios)
     if (selectMaterial[index]?.descripcion) {
       setValue(
         `secciones.${seccionIndex}.items.${index}.material`,
@@ -75,7 +74,6 @@ export const Material = ({
         { shouldDirty: true }
       );
     }
-    console.log(watch())
   }, [selectMaterial[index], setValue]);
 
   const handleSelectMaterial = (material) => {

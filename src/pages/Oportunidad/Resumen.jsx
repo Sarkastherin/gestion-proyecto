@@ -110,7 +110,7 @@ export default function Resumen() {
               {
                 name: "Código",
                 selector: (row) => row.codigo,
-                width: "200px"
+                width: "170px"
               },
               {
                 name: "Descripcion",
@@ -119,22 +119,27 @@ export default function Resumen() {
               {
                 name: "Cantidad",
                 selector: (row) => row.cantidad_total,
-                width: "150px"
+                width: "100px"
               },
               {
-                name: "Costo Unitario",
+                name: "Costo unitario",
                 selector: (row) => row.costo_unitario.toLocaleString("es-AR", {
                   style: "currency",
                   currency: "USD",
-                }) || "$ 0.00",
+                }) || "US$ 0.00",
                 width: "150px"
               },
               {
-                name: "Costo",
+                name: "Costo total",
                 selector: (row) => row.costo_total.toLocaleString("es-AR", {
                   style: "currency",
                   currency: "USD",
                 }) || "US$ 0.00",
+                width: "150px"
+              },
+              {
+                name: "Proveedor",
+                selector: (row) => row.nombre_proveedor,
                 width: "150px"
               }
             ]}

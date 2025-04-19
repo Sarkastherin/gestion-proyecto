@@ -25,7 +25,6 @@ export const PrecioMaterialInput = ({
     setActiveMaterial(material);
   };
   const handleChangePrice = (value) => {
-    console.log(value)
     if (value) {
       setValue(
         `secciones.${seccionIndex}.items.${index}.costo_unitario`,
