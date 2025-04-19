@@ -19,7 +19,7 @@ export const Material = ({
     register,
     formState: { errors },
     setValue,
-    watch
+    watch,
   } = useFormContext();
   useEffect(() => {
     setFilteredData(materiales);
@@ -34,6 +34,7 @@ export const Material = ({
     return () => clearTimeout(timeout);
   }, [search]);
   useEffect(() => {
+    console.log(selectMaterial[index]?.precios)
     if (selectMaterial[index]?.descripcion) {
       setValue(
         `secciones.${seccionIndex}.items.${index}.material`,
@@ -45,20 +46,40 @@ export const Material = ({
         selectMaterial[index].unidad,
         { shouldDirty: true }
       );
-        const indexDefaultPrecio = selectMaterial[index].precios.findIndex(
-          (item) => item.default || 0
-        );
-        const precioDefault = selectMaterial[index].precios[indexDefaultPrecio]?.precio || 0;
-        setValue(
-          `secciones.${seccionIndex}.items.${index}.costo_unitario`,
-          precioDefault,
-          { shouldDirty: true }
-        );
+      
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.nombre_proveedor`,
+        selectMaterial[index].proveedor,
+        { shouldDirty: true }
+      );
+      const indexDefaultPrecio = selectMaterial[index].precios.findIndex(
+        (item) => item.default || 0
+      );
+      const precioDefault =
+        selectMaterial[index].precios[indexDefaultPrecio]?.precio || 0;
+      const idProveedorDefault = selectMaterial[index].precios[indexDefaultPrecio]?.id_proveedor;
+      const proveedorDefault = selectMaterial[index].precios[indexDefaultPrecio]?.proveedor;
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.id_proveedor`,
+        idProveedorDefault,
+        { shouldDirty: true }
+      );
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.nombre_proveedor`,
+        proveedorDefault,
+        { shouldDirty: true }
+      );
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.costo_unitario`,
+        precioDefault,
+        { shouldDirty: true }
+      );
     }
+    console.log(watch())
   }, [selectMaterial[index], setValue]);
 
   const handleSelectMaterial = (material) => {
-    setSelectMaterial((prev) => ({...prev, [index]: material}))
+    setSelectMaterial((prev) => ({ ...prev, [index]: material }));
     handleModalClose();
   };
   return (
@@ -69,10 +90,10 @@ export const Material = ({
           className="basis-3/4"
           no_label
           readOnly
-          onClick={() => handleModalShow(`modalMaterial-${seccionIndex}-${index}`)}
-          {...register(
-            `secciones.${seccionIndex}.items.${index}.material`
-          )}
+          onClick={() =>
+            handleModalShow(`modalMaterial-${seccionIndex}-${index}`)
+          }
+          {...register(`secciones.${seccionIndex}.items.${index}.material`)}
           placeholder="Seleccione un material"
         />
         <Select
@@ -108,7 +129,6 @@ export const Material = ({
             type="search"
             placeholder="Buscar Material"
             onInput={(e) => setSearch(e.target.value)}
-            /* {...register("getMaterial", {})} */
           />
           <ul className="mt-2 max-h-[300px] overflow-y-auto">
             {filteredData.map((material) => (

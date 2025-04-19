@@ -37,11 +37,27 @@ export const Proveedor = ({index, disabled}) => {
   }, [selectProveedor, setValue]);
   return (
     <>
+    <div className="flex gap-1">
+    <InputXS
+    className="basis-[60px]"
+        label={"Id"}
+        no_label
+        disabled={disabled}
+        readOnly
+        {...register(`precios.${index}.id_proveedor`, {
+          required: {
+            value: true,
+            message: "Debe seleccionar un proveedor",
+          },
+        })}
+        placeholder="Seleccione un proveedor"
+      />
       <InputXS
         label={"Proveedor"}
         no_label
         disabled={disabled}
-        onClick={() => handleModalShow("modalProveedor")}
+        readOnly
+        onClick={() => handleModalShow(`modal-proveedor-${index}`)}
         {...register(`precios.${index}.proveedor`, {
           required: {
             value: true,
@@ -50,9 +66,9 @@ export const Proveedor = ({index, disabled}) => {
         })}
         placeholder="Seleccione un proveedor"
       />
-      {errors.proveedor && <TextInvalidate message={errors.proveedor.message} />}
+      </div>
       <Modal
-        modalId="modalProveedor"
+        modalId={`modal-proveedor-${index}`}
         title={"Buscar Proveedor"}
         variant="primary"
         icon={<UserGroupIcon width={"24px"} />}

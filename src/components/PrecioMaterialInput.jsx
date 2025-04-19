@@ -21,13 +21,27 @@ export const PrecioMaterialInput = ({
       (item) => item.descripcion === descripcion
     );
     handleModalShow(`modal-precio-${seccionIndex}-${index}`);
-    
+
     setActiveMaterial(material);
   };
   const handleChangePrice = (value) => {
-    if (value) setValue(`secciones.${seccionIndex}.items.${index}.costo_unitario`, value);
-    handleCostoTotalItem(value, index)
-    handleModalClose()
+    console.log(value)
+    if (value) {
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.costo_unitario`,
+        value.precio
+      );
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.id_proveedor`,
+        value.id_proveedor
+      );
+      setValue(
+        `secciones.${seccionIndex}.items.${index}.nombre_proveedor`,
+        value.proveedor
+      );
+      handleCostoTotalItem(value.precio, index);
+      handleModalClose();
+    }
   };
   return (
     <>
@@ -38,10 +52,13 @@ export const PrecioMaterialInput = ({
             watch(`secciones.${seccionIndex}.items.${index}.costo_unitario`) ||
             "0"
           }
-          //onValueChange={(value) => handleCostoTotalItem(value, index)}
         />
       </span>
-      <ModalPrecios handleChangePrice={handleChangePrice} index={index} seccionIndex={seccionIndex}/>
+      <ModalPrecios
+        handleChangePrice={handleChangePrice}
+        index={index}
+        seccionIndex={seccionIndex}
+      />
     </>
   );
 };
