@@ -39,10 +39,9 @@ export default function LayoutSaveElement({
             {response.message}
             <Button
               className="max-w-50 mx-auto"
-              text={modalResponsetextButton}
               variant={"primary"}
               onClick={handleResponseButtonClick}
-            />
+            >{modalResponsetextButton}</Button>
           </div>
         </Modal>
       )}

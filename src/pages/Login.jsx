@@ -49,9 +49,8 @@ export default function Login() {
             className="w-full"
             variant="primary"
             type="submit"
-            text="Ingresar"
             onSubmit={handleSubmit}
-            />
+            >Ingresar</Button>
           
           <p className="text-center text-sm text-gray-500">
             No account?

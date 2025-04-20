@@ -179,16 +179,14 @@ export const ModalCotizaciones = ({setState}) => {
           <div className="flex gap-2 mt-2 justify-center">
             <Button
               className="min-w-40"
-              text={"Dejame pensarlo"}
               variant={"secondary"}
               onClick={handleModalClose}
-            />
+            >Dejame pensarlo</Button>
             <Button
               className="min-w-40"
-              text={"Si, lo estoy"}
-              variant={"green"}
+              variant={"yellow"}
               onClick={copyCotizacion}
-            />
+            >Si, lo estoy</Button>
           </div>
         </div>
       </Modal>

@@ -16,11 +16,9 @@ function Header({ text, to }) {
       </div>
       <Button
         className="sr-only"
-        text="menu"
-        hidden_text
-        icon={<Bars3Icon width={"16px"} />}
+        title="menu"
         variant="primary"
-      />
+      ><Bars3Icon className="w-4"/></Button>
     </div>
   );
 }

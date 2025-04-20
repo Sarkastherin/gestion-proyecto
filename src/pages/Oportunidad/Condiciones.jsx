@@ -9,7 +9,8 @@ import ContainerOportunidades from "../../components/Containers/ContainerOportun
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import { useParams } from "react-router-dom";
 export default function Condiciones() {
-  const { getOportunidadById, activeOportunidad, refreshOportunidades } = useOportunidad();
+  const { getOportunidadById, activeOportunidad, refreshOportunidades } =
+    useOportunidad();
   const { id } = useParams();
   useEffect(() => {
     getOportunidadById(parseInt(id));
@@ -105,11 +106,12 @@ export default function Condiciones() {
           <Button
             className={"min-w-40"}
             type="button"
-            icon={<PlusIcon className="w-4" />}
             variant="yellow"
-            text="Iniciar Cotización"
+            text=""
             onClick={handleNewCotizacion}
-          />
+          >
+            Iniciar Cotización <PlusIcon className="w-4" />
+          </Button>
         </NoCotizacionComponent>
       )}
     </>

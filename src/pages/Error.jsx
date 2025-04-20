@@ -21,10 +21,9 @@ const Error = () => {
                 </p>
                 <Button
                   className="min-w-40"
-                  text={"Ir al inicio"}
                   variant={"primary"}
                   onClick={() => navigate(`/`)}
-                />
+                >Ir al inicio</Button>
               </div>
             </div>
           </div>

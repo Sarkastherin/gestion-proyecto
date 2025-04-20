@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "../components/Buttons";
 import { useNavigate } from "react-router-dom";
 const Instructivos = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <>
       <section className="relative z-10 bg-primary py-[120px]">
@@ -17,14 +17,15 @@ const Instructivos = () => {
                   Se esta trabajando en ello
                 </h4>
                 <p className="mb-8 text-lg text-indigo-500">
-                  Cunado este lista te avisaremos
+                  Cuando este lista te avisaremos
                 </p>
                 <Button
                   className="min-w-40"
-                  text={"Ir al inicio"}
                   variant={"primary"}
                   onClick={() => navigate(`/`)}
-                />
+                >
+                  Ir al inicio
+                </Button>
               </div>
             </div>
           </div>

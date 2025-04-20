@@ -35,16 +35,14 @@ export default function ContainerOportunidades({ form, state, setState }) {
             <div className="flex gap-2 mt-2 justify-center">
               <Button
                 className="min-w-40"
-                text={"Cerrar"}
                 variant={"secondary"}
                 onClick={handleModalClose}
-              />
+              >Cerrar</Button>
               <Button
                 className="min-w-40"
-                text={"Ir a Oportunidades"}
                 variant={"primary"}
                 onClick={handleOnClick}
-              />
+              >Ir a Oportunidades</Button>
             </div>
           </div>
         </Modal>

@@ -107,10 +107,9 @@ export default function MaterialID() {
             {response.message}
             <Button
               className="max-w-50 mx-auto"
-              text={"Ir al Materiales"}
               variant={"primary"}
               onClick={() => navigate(`/materiales`)}
-            />
+            >Ir al Materiales</Button>
           </div>
         </Modal>
       )}

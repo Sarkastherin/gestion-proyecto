@@ -24,7 +24,6 @@ function FormularioOportunidad({
     },
   });
   const {
-    unregister,
     formState: { dirtyFields },
   } = methods;
 
