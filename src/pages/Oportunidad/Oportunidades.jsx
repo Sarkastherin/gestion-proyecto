@@ -130,14 +130,15 @@ export function Oportunidades() {
               </Select>
             </div>
             <div>
-              <Button
-                className="flex-none"
-                type="submit"
-                text={"Filtrar"}
-                icon={<FunnelIcon className="w-4" />}
-                variant={"yellow"}
-                hidden_text
-              />
+            <Button
+              className="flex-none"
+              type="submit"
+              title="Filtrar"
+              variant={"yellow"}
+              hidden_text
+            >
+              <FunnelIcon className="w-4" />
+            </Button>
             </div>
           </fieldset>
         </form>
@@ -164,7 +165,6 @@ export function Oportunidades() {
             columns={columns}
             handleOnRowClick={openOportunidad}
             conditionalRowStyles={conditionalRowStyles}
-            //onRowMouseEnter={(data, e)=>{document.getElementById(e.target.id).setAttribute("title",data.nombre)}}
             noDataComponent={
               <NoDataComponent
                 title={"No hay Oportunidades."}
@@ -180,12 +180,15 @@ export function Oportunidades() {
         </BoxComponentScrolling>
         <Footer>
           <div className="flex gap-2 justify-end">
-            <Button
-              text={"Nueva Oportunidad"}
-              icon={<PlusIcon className="w-4" />}
+          <Button
+              className="min-w-50"
+              text={""}
               variant={"primary"}
               onClick={() => navigate(`/nueva-oportunidad`)}
-            />
+            >
+              Nueva Oportunidad
+              <PlusIcon className="w-4" />
+            </Button>
           </div>
         </Footer>
       </Container>

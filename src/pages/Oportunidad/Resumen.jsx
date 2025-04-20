@@ -31,8 +31,7 @@ export default function Resumen() {
       } else {
         alert("No hay cotizaciones para esta oportunidad");
       }
-    }
-    else {
+    } else {
       alert("No hay cotizaciones para esta oportunidad");
     }
     setStates((prev) => ({ ...prev, loading: false }));
@@ -75,78 +74,76 @@ export default function Resumen() {
             <div className="flex gap-10 justify-between">
               <Button
                 className={"w-40"}
-                icon={
-                  states.loading ? (
-                    <SpinnerCircular color="white" size={20} />
-                  ) : null
-                }
                 variant={"primary"}
-                text={states.loading ? "Cargando..." : "Consolidado"}
                 iconPosition="left"
                 onClick={handleConsolidado}
-              />
+              >
+                {states.loading ? (
+                  <span className="flex gap-2">
+                    <SpinnerCircular color="white" size={20} /> Cargando
+                  </span>
+                ) : (
+                  "Consolidado"
+                )}
+              </Button>
               {states.csvData.length > 0 && (
-                <Button
-                  className={"w-40"}
-                  icon={<CloudArrowDownIcon className="w-5" />}
-                  variant={"green_csv"}
-                  text={
-                    <CSVLink
-                      filename={`Consolidado-${activeOportunidad.nombre}`}
-                      data={states.csvData}
-                      separator={";"}
-                    >
-                      Descargar
-                    </CSVLink>
-                  }
-                  iconPosition="left"
-                />
+                <Button className={"w-40"} variant={"green_csv"}>
+                  <CSVLink
+                  className="flex gap-2"
+                    filename={`Consolidado-${activeOportunidad.nombre}`}
+                    data={states.csvData}
+                    separator={";"}
+                  >
+                    Descargar
+                    <CloudArrowDownIcon className="w-4" />
+                  </CSVLink>
+                </Button>
               )}
             </div>
-            {states.csvData.length > 0 &&(
+            {states.csvData.length > 0 && (
               <TableComponent
-              data={states.csvData}
-            columns={[
-              {
-                name: "Código",
-                selector: (row) => row.codigo,
-                width: "170px"
-              },
-              {
-                name: "Descripcion",
-                selector: (row) => row.material
-              },
-              {
-                name: "Cantidad",
-                selector: (row) => row.cantidad_total,
-                width: "100px"
-              },
-              {
-                name: "Costo unitario",
-                selector: (row) => row.costo_unitario.toLocaleString("es-AR", {
-                  style: "currency",
-                  currency: "USD",
-                }) || "US$ 0.00",
-                width: "150px"
-              },
-              {
-                name: "Costo total",
-                selector: (row) => row.costo_total.toLocaleString("es-AR", {
-                  style: "currency",
-                  currency: "USD",
-                }) || "US$ 0.00",
-                width: "150px"
-              },
-              {
-                name: "Proveedor",
-                selector: (row) => row.nombre_proveedor,
-                width: "150px"
-              }
-            ]}
-            
+                data={states.csvData}
+                columns={[
+                  {
+                    name: "Código",
+                    selector: (row) => row.codigo,
+                    width: "170px",
+                  },
+                  {
+                    name: "Descripcion",
+                    selector: (row) => row.material,
+                  },
+                  {
+                    name: "Cantidad",
+                    selector: (row) => row.cantidad_total,
+                    width: "100px",
+                  },
+                  {
+                    name: "Costo unitario",
+                    selector: (row) =>
+                      row.costo_unitario.toLocaleString("es-AR", {
+                        style: "currency",
+                        currency: "USD",
+                      }) || "US$ 0.00",
+                    width: "150px",
+                  },
+                  {
+                    name: "Costo total",
+                    selector: (row) =>
+                      row.costo_total.toLocaleString("es-AR", {
+                        style: "currency",
+                        currency: "USD",
+                      }) || "US$ 0.00",
+                    width: "150px",
+                  },
+                  {
+                    name: "Proveedor",
+                    selector: (row) => row.nombre_proveedor,
+                    width: "150px",
+                  },
+                ]}
               />
             )}
-            
           </div>
         </div>
       )}

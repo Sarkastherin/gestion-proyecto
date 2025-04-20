@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-import {appVersion,updatedDate } from "../version"
+import { appVersion, updatedDate } from "../version";
+import { Button } from "../components/Buttons";
 function Home() {
   return (
     <div className="flex flex-col items-center h-screen">

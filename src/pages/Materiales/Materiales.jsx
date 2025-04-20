@@ -69,12 +69,14 @@ export default function Materiales() {
     },
   ];
   const handleFilter = (data) => {
-    const filter = materiales.filter((item) =>
-      Object.values(data).every((value) =>
-        item.descripcion.toLowerCase().includes(value.toLowerCase()) 
+    const filter = materiales
+      .filter((item) =>
+        Object.values(data).every((value) =>
+          item.descripcion.toLowerCase().includes(value.toLowerCase())
+        )
       )
-    ).filter((item) => item.codigo.includes(data.codigo));;
-    
+      .filter((item) => item.codigo.includes(data.codigo));
+
     setDataFiltered(
       filter.length > 0
         ? filter
@@ -155,11 +157,12 @@ export default function Materiales() {
             <Button
               className="flex-none"
               type="submit"
-              text={"Filtrar"}
-              icon={<FunnelIcon className="w-4" />}
+              title="Filtrar"
               variant={"yellow"}
               hidden_text
-            />
+            >
+              <FunnelIcon className="w-4" />
+            </Button>
           </div>
         </form>
       </div>
@@ -196,11 +199,14 @@ export default function Materiales() {
         <Footer>
           <div className="flex gap-2 justify-end">
             <Button
-              text={"Nuevo Material"}
-              icon={<PlusIcon className="w-4" />}
+              className="min-w-50"
+              text={""}
               variant={"primary"}
               onClick={() => navigate(`/nuevo-material`)}
-            />
+            >
+              Nuevo Material
+              <PlusIcon className="w-4" />
+            </Button>
           </div>
         </Footer>
       </Container>

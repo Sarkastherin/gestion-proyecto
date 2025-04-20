@@ -33,10 +33,11 @@ function FormularioMargenesGanancias({
               <Button
                 className={"min-w-40"}
                 type="submit"
-                variant="blue"
-                text="Guardar"
+                variant="primary"
                 onSubmit={methods.handleSubmit()}
-              />
+              >
+                Guardar
+              </Button>
             </div>
           </Footer>
         </fieldset>

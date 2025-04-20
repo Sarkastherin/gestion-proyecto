@@ -2,17 +2,14 @@ import { useFormContext, useFieldArray, useForm } from "react-hook-form";
 import {
   Input,
   InputXS,
-  TextInvalidate,
 } from "../../components/Generals/Inputs";
-import { Button, ButtonXS } from "../../components/Buttons";
+import { Button } from "../../components/Buttons";
 import { PlusIcon } from "@heroicons/react/16/solid";
-import Table from "../../components/Generals/Table";
 import { TrashIcon, CheckIcon } from "@heroicons/react/16/solid";
 import { Proveedor } from "../../components/Proveedor";
 import { useAuth } from "../../context/AuthContext";
 import { useEffect } from "react";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
-import { use } from "react";
 export default function FormularioPrecios({
   onlyPrices,
   defaultValues,
@@ -72,7 +69,7 @@ export default function FormularioPrecios({
                     type={"date"}
                     disabled={onlyPrices}
                     {...register(`precios.${index}.fecha`, {
-                      required: {value: true, message: "Fecha requerida"},
+                      required: { value: true, message: "Fecha requerida" },
                     })}
                   />
                 </td>
@@ -86,7 +83,7 @@ export default function FormularioPrecios({
                     no_label
                     type={"text"}
                     {...register(`precios.${index}.precio`, {
-                      required: {value: true, message: "Precio requerido"},
+                      required: { value: true, message: "Precio requerido" },
                     })}
                   />
                 </td>
@@ -114,30 +111,31 @@ export default function FormularioPrecios({
                   </label>
                 </td>
                 <td className="pt-1 px-0.5">
-                  <ButtonXS
-                    icon={<TrashIcon className="w-4" />}
-                    variant={"redOutline"}
-                    hidden_text
+                  <Button
+                    variant={"danger_outline"}
                     disabled={onlyPrices}
-                    text="Eliminar Etapa"
+                    text="Eliminar Precio"
+                    size="xs"
                     onClick={() => {
                       remove(index);
                     }}
-                  />
+                  >
+                    {<TrashIcon className="w-4" />}
+                  </Button>
                 </td>
                 {onlyPrices && (
                   <td className="pt-1 px-0.5">
-                    <ButtonXS
+                    <Button
                       rounded="rounded-full"
-                      icon={<CheckIcon className="w-4" />}
-                      variant={"blueOutline"}
-                      hidden_text
-                      text="Seleccionar precio"
+                      variant={"blue_outline"}
+                      title="Seleccionar precio"
                       onClick={() => {
                         const selectedPrice = watch(`precios.${index}`);
                         handleChangePrice(selectedPrice);
                       }}
-                    />
+                  >
+                    <CheckIcon className="w-4" />
+                  </Button>
                   </td>
                 )}
               </tr>
@@ -147,9 +145,21 @@ export default function FormularioPrecios({
             <tfoot className="text-sm text-red-500 h-8">
               <tr>
                 <td></td>
-                <td>{errors.precios.some(item => item.fecha) && errors.precios.filter(item => item.fecha)[0]?.fecha.message}</td>
-                <td>{errors.precios.some(item => item.proveedor) && errors.precios.filter(item => item.proveedor)[0]?.proveedor.message}</td>
-                <td>{errors.precios.some(item => item.precio) && errors.precios.filter(item => item.precio)[0]?.precio.message}</td>
+                <td>
+                  {errors.precios.some((item) => item.fecha) &&
+                    errors.precios.filter((item) => item.fecha)[0]?.fecha
+                      .message}
+                </td>
+                <td>
+                  {errors.precios.some((item) => item.proveedor) &&
+                    errors.precios.filter((item) => item.proveedor)[0]
+                      ?.proveedor.message}
+                </td>
+                <td>
+                  {errors.precios.some((item) => item.precio) &&
+                    errors.precios.filter((item) => item.precio)[0]?.precio
+                      .message}
+                </td>
               </tr>
             </tfoot>
           )}
@@ -157,11 +167,11 @@ export default function FormularioPrecios({
 
         <div className="flex justify-center mt-4">
           {!onlyPrices && (
-            <ButtonXS
+            <Button
               className={"min-w-40"}
-              icon={<PlusIcon className="w-4" />}
-              variant={"green"}
-              text="Agregar Precio"
+              variant={"success"}
+              title="Agregar Precio"
+              size="xs"
               onClick={() => {
                 append({
                   id: fields.length + 1,
@@ -171,7 +181,9 @@ export default function FormularioPrecios({
                   usuario: user.nombre_usuario,
                 });
               }}
-            />
+            >
+              Agregar Precio <PlusIcon className="w-4" />
+            </Button>
           )}
         </div>
       </div>

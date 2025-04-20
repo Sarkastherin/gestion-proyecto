@@ -1,5 +1,5 @@
 import { ModalLoading } from "../Generals/ModalsTypes";
-import ButtonEdit from "../Generals/ButtonEdit";
+import ButtonEdit from "../Generals/ButtonTypes";
 import { Button } from "../Buttons";
 import { Modal } from "../Modal";
 import { useModal } from "../../context/ModalContext";

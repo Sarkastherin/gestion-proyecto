@@ -55,15 +55,13 @@ export const Seccion = ({ etapas }) => {
               >{watch(`secciones.${index}.tipo`)}</Badge>
             </div>
             <Button
-              text="Eliminar Sección"
-              icon={<TrashIcon className="w-5" />}
-              hidden_text
-              variant="red"
+              title="Eliminar Sección"
+              variant="danger"
               onClick={(e) => {
                 e.stopPropagation();
                 remove(index);
               }}
-            />
+            ><TrashIcon className="w-4" /></Button>
           </div>
           <div
             className={`overflow-hidden transition-all duration-500 ease-in-out ${
@@ -105,13 +103,15 @@ export const Seccion = ({ etapas }) => {
 
       <div className="mt-4">
         <Button
-          text={"Agregar Sección"}
-          icon={<PlusIcon className="w-4" />}
-          variant={"primaryOutline"}
+        className="min-w-50"
+          variant={"primary_outline"}
           onClick={() => {
             append({ id_etapa: '', tipo: '',items:[] });
           }}
-        />
+        >
+          Agregar Sección
+          <PlusIcon className="w-4" />
+        </Button>
       </div>
     </>
   );

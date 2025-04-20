@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 import FormularioMateriales from "../../templates/Materiales/FormularioMaterial";
 import { useEffect, useState } from "react";
 import { useProveedores } from "../../context/ProveedoresContext";
-import ButtonEdit from "../../components/Generals/ButtonEdit";
+import ButtonEdit from "../../components/Generals/ButtonTypes";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import { Modal } from "../../components/Modal";
 import { useNavigate } from "react-router-dom";

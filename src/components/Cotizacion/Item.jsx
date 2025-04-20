@@ -210,23 +210,20 @@ export const Item = ({ tipo, seccionIndex }) => {
             </td>
             <td className="flex-none px-1">
               <Button
-                tooltip="tooltip-test"
-                icon={<TrashIcon className="w-4" />}
-                variant={"redOutline"}
+                variant={"danger_outline"}
                 hidden_text
-                text="Eliminar Etapa"
+                title="Eliminar Etapa"
                 onClick={() => {
                   remove(index);
                 }}
-              />
+              >
+                <TrashIcon className="w-4" />
+              </Button>
             </td>
             <td className="flex-none px-1">
               <Button
-                tooltip="tooltip-test"
-                icon={<AdjustmentsHorizontalIcon className="w-4" />}
-                variant={"secondaryNoBorder"}
-                hidden_text
-                text="Expandir"
+                variant={"secondary_no_border"}
+                title="Expandir"
                 rounded="rounded-full"
                 onClick={() => {
                   const elem = document.getElementById(
@@ -234,7 +231,9 @@ export const Item = ({ tipo, seccionIndex }) => {
                   );
                   elem.classList.toggle("hidden");
                 }}
-              />
+              >
+                <AdjustmentsHorizontalIcon className="w-4" />
+              </Button>
             </td>
           </tr>
         ))}
@@ -242,9 +241,10 @@ export const Item = ({ tipo, seccionIndex }) => {
 
       <div className="p-2 border-t border-neutral-300">
         <Button
-          text={"Agregar Item"}
-          icon={<PlusCircleIcon className="w-5" />}
+        className="min-w-50"
           variant={"primary_no_border"}
+          rounded="rounded-full"
+          size="xs"
           disabled={tipo === ""}
           onClick={() => {
             append({
@@ -258,7 +258,10 @@ export const Item = ({ tipo, seccionIndex }) => {
               costo_total: "",
             });
           }}
-        />
+        >
+          Agregar Item
+          <PlusCircleIcon className="w-5" />
+        </Button>
       </div>
     </>
   );

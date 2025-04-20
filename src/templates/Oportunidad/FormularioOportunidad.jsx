@@ -12,17 +12,16 @@ function FormularioOportunidad({
   children,
   onSubmit,
   onError,
-  setResetForm
+  setResetForm,
 }) {
-  const {user} = useAuth()
+  const { user } = useAuth();
   const methods = useForm({
     defaultValues: defaultValues || {
       nombre: "",
       cliente: "",
       etapas: [],
-     usuario: user.nombre_usuario
+      usuario: user.nombre_usuario,
     },
-
   });
   const {
     unregister,
@@ -33,10 +32,10 @@ function FormularioOportunidad({
     return { values, dirtyFields };
   };
   useEffect(() => {
-      if (setResetForm) {
-        setResetForm(() => methods.reset);
-      }
-    }, [setResetForm, methods.reset]);
+    if (setResetForm) {
+      setResetForm(() => methods.reset);
+    }
+  }, [setResetForm, methods.reset]);
   return (
     <FormProvider {...methods}>
       <form
@@ -56,9 +55,10 @@ function FormularioOportunidad({
                 className={"min-w-40"}
                 type="submit"
                 variant="primary"
-                text="Guardar"
                 onSubmit={methods.handleSubmit()}
-              />
+              >
+                Guardar
+              </Button>
             </div>
           </Footer>
         </fieldset>

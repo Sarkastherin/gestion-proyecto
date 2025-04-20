@@ -310,22 +310,24 @@ export default function Cotizacion() {
           <p>Puede agregar cotizaciones haciendo click en el botón de abajo</p>
 
           <Button
-            className={"min-w-40"}
+            className={"min-w-55"}
             type="button"
-            icon={<PlusIcon className="w-4" />}
             variant="pink"
-            text="Agregar Cotización"
             onClick={handleNewCotizacion}
-          />
+          >
+            Agregar Cotización
+            <PlusIcon className="w-4" />
+          </Button>
           <p>o inicia desde una existente</p>
           <Button
-            className={"min-w-40"}
+            className={"min-w-55"}
             type="button"
-            icon={<DocumentDuplicateIcon className="w-4" />}
             variant="blue"
-            text="Duplicar Cotización"
             onClick={handleCopyCotizacion}
-          />
+            >
+            Duplicar Cotización
+            <DocumentDuplicateIcon className="w-4" />
+          </Button>
         </NoCotizacionComponent>
       )}
     </>

@@ -54,7 +54,7 @@ export default function FormularioMateriales({
         <fieldset disabled={!isEditable}>
           <SeparateForm>
             <DatosMateriales isNuevo={!defaultValues} />
-            <DatosPrecios defaultValues={defaultValues}/>
+            <DatosPrecios defaultValues={defaultValues} />
           </SeparateForm>
 
           <Footer>
@@ -64,9 +64,10 @@ export default function FormularioMateriales({
                 className={"min-w-40"}
                 type="submit"
                 variant="primary"
-                text="Guardar"
                 onSubmit={methods.handleSubmit()}
-              />
+              >
+                Guardar
+              </Button>
             </div>
           </Footer>
         </fieldset>

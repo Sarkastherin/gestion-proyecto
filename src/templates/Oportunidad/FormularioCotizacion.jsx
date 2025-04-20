@@ -45,13 +45,14 @@ function FormularioCotizacion({
           <Footer>
             {children}
             <div className="flex gap-2 justify-end">
-              <Button
+            <Button
                 className={"min-w-40"}
                 type="submit"
-                variant="pink"
-                text="Guardar"
+                variant="primary"
                 onSubmit={methods.handleSubmit()}
-              />
+              >
+                Guardar
+              </Button>
             </div>
           </Footer>
         </fieldset>
