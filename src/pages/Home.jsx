@@ -21,6 +21,12 @@ function Home() {
         </NavLink>
         <NavLink
           className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
+          to="/configuraciones"
+        >
+          Configuraciones
+        </NavLink>
+        <NavLink
+          className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
           to="/instructivos"
         >
           Instructivos (Proximamente)

@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { Subheader } from "../../components/SubHeader";
 
 function Oportunidad() {
   const { getOportunidadById, activeOportunidad } = useOportunidad();
@@ -51,14 +52,13 @@ function Oportunidad() {
   return (
     <>
       {activeOportunidad && (
-        <Container
-          text={"Oportunidades"}
-          to={"/oportunidades"}
-          hasSubheader={true}
-          menuItems={menuItems}
-          name={activeOportunidad.nombre}
-          icon={<BanknotesIcon className="w-5 text-white" />}
-        >
+        <Container text={"Oportunidades"} to={"/oportunidades"}>
+          <Subheader
+            name={activeOportunidad.nombre}
+            menuItems={menuItems}
+            icon={<BanknotesIcon className="w-5 text-white" />}
+            id={id}
+          />
           <BoxComponentScrolling title="...">
             <Outlet />
           </BoxComponentScrolling>

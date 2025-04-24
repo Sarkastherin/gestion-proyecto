@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import { Oportunidades } from "./pages/Oportunidad/Oportunidades";
 import CrearOportunidad from "./pages/Oportunidad/CrearOportunidad";
 import Materiales from "./pages/Materiales/Materiales";
+import Configuraciones from "./pages/Configuraciones/Configuraciones";
 /* Oporttunidad */
 import Oportunidad from "./pages/Oportunidad/Oportunidad";
 import Resumen from "./pages/Oportunidad/Resumen";
@@ -25,6 +26,8 @@ import NuevoMaterial from "./pages/Materiales/NuevoMaterial";
 import MaterialID from "./pages/Materiales/Material";
 import Instructivos from "./pages/Instructivos";
 import Error from "./pages/Error";
+/* Configuraciones */
+import Material from "./pages/Configuraciones/Material";
 function App() {
   const router = createBrowserRouter([
     {
@@ -33,9 +36,14 @@ function App() {
       children: [
         { path: "/", element: <Home /> },
         { path: "/oportunidades", element: <Oportunidades /> },
-        { path: "/materiales", element: <Materiales />, children: [
-          ,
-        ] },
+        { path: "/materiales", element: <Materiales />, children: [,] },
+        {
+          path: "/configuraciones",
+          element: <Configuraciones />,
+          children: [
+            { path: "/configuraciones/material", element: <Material /> },
+          ],
+        },
         { path: "/nuevo-material", element: <NuevoMaterial /> },
         { path: "/nueva-oportunidad", element: <CrearOportunidad /> },
         { path: "/material/:id", element: <MaterialID /> },
@@ -58,11 +66,10 @@ function App() {
           ],
         },
         { path: "/instructivos", element: <Instructivos /> },
-        
       ],
     },
     { path: "/login", element: <Login /> },
-    { path: "*", element: <Error/> },
+    { path: "*", element: <Error /> },
   ]);
 
   return (
@@ -70,11 +77,11 @@ function App() {
       <ClienteContextProvider>
         <ModalContextProvider>
           <ProveedoresProvider>
-          <MaterialesProvider>
-            <OportunidadProvider>
-              <RouterProvider router={router} />
-            </OportunidadProvider>
-          </MaterialesProvider>
+            <MaterialesProvider>
+              <OportunidadProvider>
+                <RouterProvider router={router} />
+              </OportunidadProvider>
+            </MaterialesProvider>
           </ProveedoresProvider>
         </ModalContextProvider>
       </ClienteContextProvider>
