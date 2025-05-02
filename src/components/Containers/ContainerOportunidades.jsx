@@ -13,7 +13,7 @@ export default function ContainerOportunidades({ form, state, setState }) {
     <>
       <div className="">{form}</div>
       <ModalLoading id={"modal-loading"} title={"Guardando..."} />
-      <div className="absolute bottom-[-90px] left-8">
+      <div className="absolute bottom-[-70px] left-8">
         <ButtonEdit
           func={() => {
             setState((prev) => ({ ...prev, isEditable: true }));

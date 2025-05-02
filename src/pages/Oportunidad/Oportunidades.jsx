@@ -11,7 +11,7 @@ import { PlusIcon } from "@heroicons/react/16/solid";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import { NoDataComponent } from "../../components/DataField";
 import { Footer } from "../../components/Footer";
-
+import Badge from "../../components/Generals/Badge";
 export function Oportunidades() {
   const { getOportunidades, oportunidades } = useOportunidad();
 
@@ -25,11 +25,13 @@ export function Oportunidades() {
     {
       name: "Nombre de la oportunidad",
       selector: (row) => row.nombre,
+      sortable: true,
     },
     {
       name: "Cliente",
       selector: (row) => row.cliente?.nombre,
       width: "300px",
+      sortable: true,
     },
     {
       name: "$ Contización",
@@ -39,16 +41,20 @@ export function Oportunidades() {
           currency: "USD",
         }) || "$ 0.00",
       width: "150px",
+      sortable: true,
     },
     {
       name: "Status",
-      selector: (row) => row.status,
-      width: "120px",
+      selector: (row) => (
+        <Badge variant={row.status}>{row.status}</Badge>
+      ),
+      width: "150px",
     },
     {
       name: "Creado por",
       selector: (row) => row.usuario,
-      width: "120px",
+      width: "150px",
+      sortable: true,
     },
   ];
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ export const Subheader = ({ name, menuItems, icon, id }) => {
   
   const menu = menuItems(id)
   return (
-    <div className="px-10 border-b border-neutral-400 pb-2">
+    <div className="px-10 border-b border-neutral-300 pb-2 bg-white shadow">
       <div className="flex gap-4 items-center py-4">
         <span className="rounded-sm p-1.5 bg-blue-500">{icon}</span>
         <h3 className="text-lg font-medium text-neutral-700">{name}</h3>

@@ -4,16 +4,13 @@ import FormularioCotizacion from "../../templates/Oportunidad/FormularioCotizaci
 import {
   PlusIcon,
   DocumentDuplicateIcon,
-  AdjustmentsHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "../../components/Buttons";
 import { useModal } from "../../context/ModalContext";
 import NoCotizacionComponent from "../../components/Cotizacion/NoCotizacionComponent";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
-import ModalPrecios from "../../components/Materiales/ModalPrecios";
-import { FormProvider, useForm } from "react-hook-form";
-import { Modal } from "../../components/Modal";
+
 export default function Cotizacion() {
   const [state, setState] = useState({
     response: null,

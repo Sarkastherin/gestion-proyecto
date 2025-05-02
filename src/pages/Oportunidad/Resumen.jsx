@@ -66,7 +66,7 @@ export default function Resumen() {
                 {"Status"}:
               </span>
               <span className="px-5 py-0.5 w-full">
-                {<Badge variant="blue">{activeOportunidad.status}</Badge>}
+                <Badge variant={activeOportunidad.status}>{activeOportunidad.status}</Badge>
               </span>
             </div>
           </Card>

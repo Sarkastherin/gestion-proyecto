@@ -16,7 +16,7 @@ export async function handler(event, context) {
         include_cliente: true,
         include_proveedor: false,
         page: 1,
-        page_size: 100,
+        page_size: 1000,
       }),
     });
 

@@ -59,7 +59,7 @@ function Oportunidad() {
             icon={<BanknotesIcon className="w-5 text-white" />}
             id={id}
           />
-          <BoxComponentScrolling title="...">
+          <BoxComponentScrolling title="..." height='calc(100vh - 15rem)'>
             <Outlet />
           </BoxComponentScrolling>
         </Container>

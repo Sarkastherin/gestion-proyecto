@@ -21,6 +21,7 @@ export default function Informacion() {
   });
   const { handleModalShow } = useModal();
   const onSubmit = async ({ values, dirtyFields }) => {
+    
     handleModalShow("modal-loading");
     const updates = {};
     if (dirtyFields.cliente?.name) {
@@ -28,13 +29,17 @@ export default function Informacion() {
     }
     delete dirtyFields.cliente;
     delete dirtyFields.margenes;
+    
     for (let item in dirtyFields) {
       if (dirtyFields[item]) {
         updates[item] = values[item];
       }
     }
+    if(values.status === "Nuevo") {
+      updates.status = "En proceso"
+    }
+    console.log(values, updates)
     try {
-      console.log("values", updates, values);
       const { success, error } = await updateOportunidad(
         updates,
         activeOportunidad.id

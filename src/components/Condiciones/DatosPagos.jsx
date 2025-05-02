@@ -1,7 +1,5 @@
 import { CardToggle } from "../Cards";
 import { useFormContext } from "react-hook-form";
-import { TrashIcon } from "@heroicons/react/16/solid";
-import { Button } from "../Buttons";
 import { Select, Textarea, Input } from "../Generals/Inputs";
 function DatosPagos() {
   const {
@@ -18,37 +16,61 @@ function DatosPagos() {
     { descripcion: "contra envio de factura por e-cheq a 30 días" },
     { descripcion: "Otro" },
   ];
+  
   return (
     <CardToggle title={"Formas y metodos de pago"}>
-      <div className="flex gap-2">
-        <Select
-          label="Forma de pago"
-          {...register(`forma_pago`, {
-            required: true,
-          })}
-        >
-          <option value=''>
-            Seleccione una formas de pago
-          </option>
-          {formaPago.map((item) => (
-            <option key={item["descripcion"]} value={item["descripcion"]}>
-              {item["descripcion"]}
-            </option>
-          ))}
-        </Select>
-        <Input label="Vigencia" type="date" {...register("vigencia")} />
-      </div>
-      <div className="flex flex-col gap-1 mt-2">
-        <Textarea
-          placeholder="Tiempo de entrega"
-          label="Tiempo de entrega"
-          {...register("tiempo_entrega")}
-        />
+      <div className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <Select
+            label="Forma de pago"
+            {...register(`forma_pago`, {
+              required: true,
+            })}
+          >
+            <option value="">Seleccione una formas de pago</option>
+            {formaPago.map((item) => (
+              <option key={item["descripcion"]} value={item["descripcion"]}>
+                {item["descripcion"]}
+              </option>
+            ))}
+          </Select>
+          <Textarea
+            placeholder="Plazo de ejecución"
+            label="Plazo de ejecución"
+            {...register("tiempo_entrega")}
+          />
+        </div>
         <Textarea
           placeholder="Garantía"
           label="Garantía"
           {...register("garantia")}
         />
+        <div className="flex gap-2">
+          <Input label="Vigencia" type="date" {...register("vigencia")} />
+          <Input
+            label="Fecha probable de inicio"
+            type="date"
+            {...register("fecha_inicio_estimada")}
+          />
+          <Select
+          className="basis-1/3"
+          label="Status"
+          disabled
+          {...register("status_cotizacion", {
+            required: {
+              value: true,
+              message: "Seleccione un status",
+            }
+          })}
+        >
+          <option className="bg-green-300/50" value={"Abierta"}>
+          🔓 Abierta
+          </option>
+          <option className="bg-red-300/50" value={"Cerrada"}>
+          🔒 Cerrada
+          </option>
+        </Select>
+        </div>
       </div>
     </CardToggle>
   );
