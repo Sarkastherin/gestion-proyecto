@@ -2,7 +2,6 @@ import { useFormContext } from "react-hook-form";
 import { CurrencyTypeInput } from "./Generals/Inputs";
 import { useModal } from "../context/ModalContext";
 import { useMateriales } from "../context/Materiales/MaterialesContext";
-import { useEffect } from "react";
 import ModalPrecios from "./Materiales/ModalPrecios";
 export const PrecioMaterialInput = ({
   seccionIndex,

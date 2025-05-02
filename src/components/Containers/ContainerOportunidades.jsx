@@ -4,7 +4,6 @@ import { Button } from "../Buttons";
 import { Modal } from "../Modal";
 import { useModal } from "../../context/ModalContext";
 import { useNavigate } from "react-router-dom";
-import { Select } from "../Generals/Inputs";
 export default function ContainerOportunidades({ form, state, setState }) {
   const { handleModalClose } = useModal();
   const navigate = useNavigate();

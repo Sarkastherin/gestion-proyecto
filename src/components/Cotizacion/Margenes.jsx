@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { CardToggle, Card } from "../Cards";
 import Table from "../Generals/Table";
-import { Input, InputGroup } from "../Generals/Inputs";
+import { InputGroup } from "../Generals/Inputs";
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useParams } from "react-router-dom";

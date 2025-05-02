@@ -1,6 +1,5 @@
 import Container from "../Generals/Container";
 import { BoxComponentScrolling } from "../BoxComponent";
-import { useState } from "react";
 import { Modal } from "../Modal";
 import { ModalLoading } from "../Generals/ModalsTypes";
 import { Button } from "../Buttons";

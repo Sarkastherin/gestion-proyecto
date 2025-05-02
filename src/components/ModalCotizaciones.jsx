@@ -1,6 +1,6 @@
-import { Label, Input, TextInvalidate } from "./Generals/Inputs";
+import { Input} from "./Generals/Inputs";
 import { Modal } from "./Modal";
-import { UserGroupIcon, CurrencyDollarIcon } from "@heroicons/react/16/solid";
+import { CurrencyDollarIcon } from "@heroicons/react/16/solid";
 import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import { useFormContext, useForm } from "react-hook-form";

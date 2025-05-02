@@ -1,6 +1,5 @@
 import Container from "../../components/Generals/Container";
 import {
-  BoxComponent,
   BoxComponentScrolling,
 } from "../../components/BoxComponent";
 import { useNavigate } from "react-router-dom";

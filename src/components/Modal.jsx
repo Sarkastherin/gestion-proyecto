@@ -10,7 +10,6 @@ export const Modal = ({
   modalId,
   title,
   children,
-  icon,
   disableXButton,
   variant = "default",
   width = 'w-lg'
