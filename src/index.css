@@ -1,2 +1,40 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
+.markdown {
+  @apply text-gray-800;
+}
+.markdown h1 {
+  @apply text-3xl font-bold  mb-5;
+}
+
+.markdown h2 {
+  @apply text-2xl font-semibold mb-2;
+}
+.markdown h3 {
+  @apply text-xl font-semibold;
+}
+.markdown h4 {
+  @apply font-semibold my-1;
+}
+.markdown p {
+     @apply mt-2;
+   }
+.markdown ul {
+  @apply list-disc pl-8;
+}
+.markdown ol {
+     @apply list-decimal pl-8 ;
+   }
+   .markdown ol li {
+     @apply mb-1 ;
+   }
+.markdown code {
+  @apply bg-neutral-300 p-0.5 text-sm font-semibold rounded;
+}
+.markdown img {
+  @apply my-3;
+}
+.markdown a {
+     @apply text-indigo-600 underline decoration-solid;
+   }
+

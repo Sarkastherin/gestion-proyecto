@@ -26,20 +26,22 @@ function FormularioMargenesGanancias({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Margenes />
-          <Footer>
-            {children}
-            <div className="flex gap-2 justify-end">
-              <Button
-                className={"min-w-40"}
-                type="submit"
-                variant="primary"
-                onSubmit={methods.handleSubmit()}
-              >
-                Guardar
-              </Button>
-            </div>
-          </Footer>
+          <fieldset disabled={defaultValues.status_cotizacion === "Cerrada"}>
+            <Margenes />
+            <Footer>
+              {children}
+              <div className="flex gap-2 justify-end">
+                <Button
+                  className={"min-w-40"}
+                  type="submit"
+                  variant="primary"
+                  onSubmit={methods.handleSubmit()}
+                >
+                  Guardar
+                </Button>
+              </div>
+            </Footer>
+          </fieldset>
         </fieldset>
       </form>
     </FormProvider>

@@ -4,7 +4,9 @@ import { useModal } from "../../context/ModalContext";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import { useParams } from "react-router-dom";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
+import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 export default function Informacion() {
+  const { updateCotizacion, refreshCotizaciones } = useCotizacion();
   const {
     getOportunidadById,
     activeOportunidad,
@@ -21,7 +23,6 @@ export default function Informacion() {
   });
   const { handleModalShow } = useModal();
   const onSubmit = async ({ values, dirtyFields }) => {
-    
     handleModalShow("modal-loading");
     const updates = {};
     if (dirtyFields.cliente?.name) {
@@ -29,17 +30,26 @@ export default function Informacion() {
     }
     delete dirtyFields.cliente;
     delete dirtyFields.margenes;
-    
+
     for (let item in dirtyFields) {
       if (dirtyFields[item]) {
         updates[item] = values[item];
       }
     }
-    if(values.status === "Nuevo") {
-      updates.status = "En proceso"
+    if (values.status === "Nuevo") {
+      updates.status = "En proceso";
     }
-    console.log(values, updates)
     try {
+      if (updates.status_cotizacion) {
+        const { success, error, data } = await updateCotizacion(
+          { status: updates.status_cotizacion },
+          activeOportunidad.id_cotizacion
+        );
+        if(success) {
+          delete updates.status_cotizacion
+        }
+        
+      }
       const { success, error } = await updateOportunidad(
         updates,
         activeOportunidad.id
@@ -53,6 +63,8 @@ export default function Informacion() {
           },
         }));
         refreshOportunidades();
+        refreshCotizaciones();
+        getOportunidadById(parseInt(id));
         setState((prev) => ({ ...prev, isEditable: false }));
       } else {
         setState((prev) => ({
@@ -83,7 +95,6 @@ export default function Informacion() {
     setState((prev) => ({ ...prev, isEditable: false }));
   };
   const onError = (data) => console.log("Error:", data);
-
   return (
     <>
       <ContainerOportunidades

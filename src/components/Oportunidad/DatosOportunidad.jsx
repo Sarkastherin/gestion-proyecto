@@ -1,11 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { CardToggle } from "../Cards";
-import {
-  Input,
-  TextInvalidate,
-  Textarea,
-  Select,
-} from "../Generals/Inputs";
+import { Input, TextInvalidate, Textarea, Select } from "../Generals/Inputs";
 import { Cliente } from "../Cliente";
 
 function DatosOportunidad() {
@@ -17,31 +12,35 @@ function DatosOportunidad() {
   } = useFormContext();
   return (
     <CardToggle title={"Datos de la Oportunidad"}>
-      <div className="w-full mt-2 flex gap-2">
-        <div className="w-full">
-          <Input
-            label={"Nombre del proyecto"}
-            {...register("nombre", {
-              required: {
-                value: true,
-                message: "Debe ingresar el nombre de la oportunidad",
-              },
-            })}
-            placeholder="Nombre del proyecto"
+      <fieldset disabled={watch("status_cotizacion") === "Cerrada"}>
+        <div className="w-full mt-2 flex gap-2">
+          <div className="w-full">
+            <Input
+              label={"Nombre del proyecto"}
+              {...register("nombre", {
+                required: {
+                  value: true,
+                  message: "Debe ingresar el nombre de la oportunidad",
+                },
+              })}
+              placeholder="Nombre del proyecto"
+            />
+            {errors.nombre && (
+              <TextInvalidate message={errors.nombre.message} />
+            )}
+          </div>
+          <div className="w-full">
+            <Cliente />
+          </div>
+        </div>
+        <div className="w-full mt-2">
+          <Textarea
+            label={"Alcance"}
+            {...register("alcance")}
+            placeholder="Alcance"
           />
-          {errors.nombre && <TextInvalidate message={errors.nombre.message} />}
         </div>
-        <div className="w-full">
-          <Cliente />
-        </div>
-      </div>
-      <div className="w-full mt-2">
-        <Textarea
-          label={"Alcance"}
-          {...register("alcance")}
-          placeholder="Alcance"
-        />
-      </div>
+      </fieldset>
       <div className="w-full mt-2 flex gap-2">
         <Select
           className="basis-1/3"
@@ -52,13 +51,17 @@ function DatosOportunidad() {
               message: "Seleccione un status",
             },
             onChange: (e) => {
-              const cerrada = ["Desestimada", "Enviada", "Ganada", "Perdida"]
+              const cerrada = ["Desestimada", "Enviada", "Ganada", "Perdida"];
               const value = e.target.value;
-              const isClose = cerrada.map(item => item.includes(value)).some(item => item=== true)
-              if(isClose) {
-                setValue('status_cotizacion',"Cerrada")
+              const isClose = cerrada
+                .map((item) => item.includes(value))
+                .some((item) => item === true);
+              if (isClose) {
+                setValue("status_cotizacion", "Cerrada", { shouldDirty: true });
+              } else {
+                setValue("status_cotizacion", "Abierta", { shouldDirty: true });
               }
-            }
+            },
           })}
         >
           <option className="bg-blue-300/50" value={"Nuevo"}>

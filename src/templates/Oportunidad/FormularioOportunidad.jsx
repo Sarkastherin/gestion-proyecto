@@ -19,6 +19,7 @@ function FormularioOportunidad({
     defaultValues: defaultValues || {
       nombre: "",
       cliente: "",
+      status: "Nuevo",
       etapas: [],
       usuario: user.nombre_usuario,
     },

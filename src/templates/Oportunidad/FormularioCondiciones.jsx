@@ -26,6 +26,7 @@ function FormularioCondicion({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
+        <fieldset disabled={defaultValues.status_cotizacion === "Cerrada"}>
           <DatosPagos />
           <Footer>
             {children}
@@ -40,6 +41,7 @@ function FormularioCondicion({
               </Button>
             </div>
           </Footer>
+          </fieldset>
         </fieldset>
       </form>
     </FormProvider>

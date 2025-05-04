@@ -37,6 +37,7 @@ function App() {
         { path: "/", element: <Home /> },
         { path: "/oportunidades", element: <Oportunidades /> },
         { path: "/materiales", element: <Materiales />, children: [,] },
+        { path: "/instructivos", element: <Instructivos /> },
         {
           path: "/configuraciones",
           element: <Configuraciones />,
@@ -65,7 +66,7 @@ function App() {
             { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
           ],
         },
-        { path: "/instructivos", element: <Instructivos /> },
+        
       ],
     },
     { path: "/login", element: <Login /> },

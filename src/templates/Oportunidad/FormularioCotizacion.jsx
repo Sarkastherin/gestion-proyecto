@@ -13,12 +13,11 @@ function FormularioCotizacion({
   children,
   onSubmit,
   onError,
-  setState
-
+  setState,
 }) {
   const { getOportunidadById, activeOportunidad } = useOportunidad();
   const { id } = useParams();
-  
+
   const methods = useForm({
     defaultValues: defaultValues || {},
   });
@@ -31,7 +30,6 @@ function FormularioCotizacion({
   };
   useEffect(() => {
     getOportunidadById(parseInt(id));
-    
   }, []);
   return (
     <FormProvider {...methods}>
@@ -41,23 +39,25 @@ function FormularioCotizacion({
         }, onError)}
       >
         <fieldset disabled={!isEditable}>
-          <Seccion etapas={activeOportunidad?.etapas} />
-          <Footer>
-            {children}
-            <div className="flex gap-2 justify-end">
-            <Button
-                className={"min-w-40"}
-                type="submit"
-                variant="primary"
-                onSubmit={methods.handleSubmit()}
-              >
-                Guardar
-              </Button>
-            </div>
-          </Footer>
+          <fieldset disabled={activeOportunidad.status_cotizacion === "Cerrada"}>
+            <Seccion etapas={activeOportunidad?.etapas} />
+            <Footer>
+              {children}
+              <div className="flex gap-2 justify-end">
+                <Button
+                  className={"min-w-40"}
+                  type="submit"
+                  variant="primary"
+                  onSubmit={methods.handleSubmit()}
+                >
+                  Guardar
+                </Button>
+              </div>
+            </Footer>
+          </fieldset>
         </fieldset>
       </form>
-      <ModalCotizaciones setState={setState}/>
+      <ModalCotizaciones setState={setState} />
     </FormProvider>
   );
 }
