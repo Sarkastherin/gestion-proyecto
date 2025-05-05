@@ -4,7 +4,6 @@ import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import LayoutConfiguraciones from "../../templates/Configuraciones";
 import { useState } from "react";
 import { useModal } from "../../context/ModalContext";
-import { cleanValue } from "react-currency-input-field";
 export default function Material() {
   const { listaMaterial, postData, getMateriales } = useMateriales();
   const { register, handleSubmit } = useForm();
