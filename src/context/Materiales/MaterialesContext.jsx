@@ -142,6 +142,21 @@ export const MaterialesProvider = ({ children }) => {
   const setActiveMaterial = (material) => {
     dispatch({ type: "SET_ACTIVE_MATERIAL", payload: material });
   };
+  const postData = async ({ table, values }) => {
+    try {
+      const { data, error } = await supabase
+        .from(table)
+        .insert(values)
+        .select();
+      if (error) {
+        throw new Error(error);
+      }
+      return { success: true };
+    } catch (e) {
+      console.error(e);
+      return { success: false, error: e };
+    }
+  };
   useEffect(() => {
     getMateriales();
     getListaMaterial();
@@ -181,7 +196,9 @@ export const MaterialesProvider = ({ children }) => {
         updateMaterial,
         refreshMateriales,
         setActiveMaterial,
-        getConsolidado
+        getConsolidado,
+        postData,
+        getMateriales,
       }}
     >
       {children}

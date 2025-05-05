@@ -18,7 +18,7 @@ function Home() {
         >
           Materiales
         </NavLink>
-        {/* <NavLink
+        <NavLink
           className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
           to="/configuraciones"
         >
@@ -29,7 +29,7 @@ function Home() {
           to="/instructivos"
         >
           Instructivos (Proximamente)
-        </NavLink> */}
+        </NavLink>
       </nav>
       <em className="absolute bottom-5 right-5 text-xs text-neutral-400 font-semibold">
         Version: {appVersion} | Date: {updatedDate}

@@ -17,7 +17,7 @@ const Error = () => {
                   Oops! No se puede encontrar
                 </h4>
                 <p className="mb-8 text-lg text-indigo-500">
-                  La pagina que buscas pudo hacer sido eliminada
+                  La pagina que buscas pudo haber sido eliminada
                 </p>
                 <Button
                   className="min-w-40"
