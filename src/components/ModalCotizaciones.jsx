@@ -21,7 +21,7 @@ export const ModalCotizaciones = ({setState}) => {
     postCotizacion,
     getDetalleById,
     postDetalle,
-    getCotizacionActiva
+    getCotizacionActiva,
   } = useCotizacion();
   const { handleModalShow, handleModalClose } = useModal();
   const [filteredData, setFilteredData] = useState([]);
@@ -53,7 +53,6 @@ export const ModalCotizaciones = ({setState}) => {
 
   const handleCopyCotizacion = async (values) => {
     setCotizacion(values)
-    //setState((prev) => ({ ...prev, cotizacion: values }));
     handleModalClose();
     handleModalShow("modal-confirm");
   };
@@ -100,6 +99,7 @@ export const ModalCotizaciones = ({setState}) => {
               const { success, error} = await postDetalle(copy.detalle);
               if(success) {
                 getCotizacionActiva(id)
+                getOportunidadById(activeOportunidad.id)
                 setState((prev) => ({
                   ...prev,
                   response: {

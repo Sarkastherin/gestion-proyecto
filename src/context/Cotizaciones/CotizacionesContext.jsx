@@ -52,11 +52,11 @@ export const CotizacionProvider = ({ children }) => {
         .from("detalle_cotizacion")
         .select("*")
         .eq("id_cotizacion", id);
-        if (error) {
-          // Retorna el error para que sea manejado en el componente que llama a esta función
-          return { success: false, error };
-        }
-        return { success: true, data: detalle };
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data: detalle };
     } catch (error) {
       return { success: false, error };
     }
@@ -123,7 +123,7 @@ export const CotizacionProvider = ({ children }) => {
         .insert(values)
         .select();
       if (error) {
-        console.log(error)
+        console.log(error);
         // Retorna el error para que sea manejado en el componente que llama a esta función
         return { success: false, error };
       }
@@ -148,7 +148,7 @@ export const CotizacionProvider = ({ children }) => {
       return { success: false, error: e };
     }
   };
-  const updateDetalle = async (values,id) => {
+  const updateDetalle = async (values, id) => {
     try {
       const { data, error } = await supabase
         .from("detalle_cotizacion")
@@ -160,9 +160,9 @@ export const CotizacionProvider = ({ children }) => {
         //return { success: false, error };
         throw new Error(error.message);
       }
-      return { success: true, data }
+      return { success: true, data };
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return { success: false, error: e };
     }
   };
@@ -187,6 +187,44 @@ export const CotizacionProvider = ({ children }) => {
   const refreshCotizaciones = () => {
     getCotizaciones();
   };
+  const createCopyCotizacion = async (copyCotizacion, copyDetalle) => {
+    const cotizacion = {
+      id_oportunidad: copyCotizacion.id_oportunidad,
+      forma_pago: copyCotizacion.forma_pago,
+      vigencia: copyCotizacion.vigencia,
+      tiempo_entrega: copyCotizacion.tiempo_entrega,
+      garantia: copyCotizacion.garantia,
+      margenes: copyCotizacion.margenes,
+      margen_general: copyCotizacion.margen_general,
+      fecha_inicio_estimada: copyCotizacion.fecha_inicio_estimada,
+    };
+
+    try {
+      const { success, data, error } = await postCotizacion(cotizacion);
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (success) {
+        const { id } = data[0];
+        const detalle = copyDetalle.data.map((itemOriginal) => {
+          const item = { ...itemOriginal };
+          delete item.id;
+          delete item.created_at;
+          delete item.costo_total;
+          item.id_cotizacion = id;
+          return item;
+        });
+        const { success, error } = await postDetalle(detalle);
+        if (error) {
+          throw new Error(error.message);
+        }
+        return { success: true, data };
+      }
+    } catch (e) {
+      console.log(e);
+      return { success: false, error: e };
+    }
+  };
   return (
     <CotizacionesContext.Provider
       value={{
@@ -205,7 +243,8 @@ export const CotizacionProvider = ({ children }) => {
         deleteDetalle,
         updateDetalle,
         getDetalleById,
-        getCotizacionesToDuplicity
+        getCotizacionesToDuplicity,
+        createCopyCotizacion
       }}
     >
       {children}

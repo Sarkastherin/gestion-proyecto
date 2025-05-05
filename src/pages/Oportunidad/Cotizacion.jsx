@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import FormularioCotizacion from "../../templates/Oportunidad/FormularioCotizacion";
-import {
-  PlusIcon,
-  DocumentDuplicateIcon,
-} from "@heroicons/react/24/outline";
+import { PlusIcon, DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../components/Buttons";
 import { useModal } from "../../context/ModalContext";
 import NoCotizacionComponent from "../../components/Cotizacion/NoCotizacionComponent";
 import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import ContainerOportunidades from "../../components/Containers/ContainerOportunidades";
-
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
+import { Modal } from "../../components/Modal";
+import Badge from "../../components/Generals/Badge";
 export default function Cotizacion() {
   const [state, setState] = useState({
     response: null,
@@ -28,9 +27,13 @@ export default function Cotizacion() {
     detalleCotizacion,
     deleteDetalle,
     updateDetalle,
+    createCopyCotizacion,
+    getDetalleById,
+    updateCotizacion,
   } = useCotizacion();
+  const { activeOportunidad } = useOportunidad();
   const { handleModalShow, handleModalClose } = useModal();
-  const onSubmit = async ({ values, dirtyFields }) => {
+  const onSubmit = async ({ values }) => {
     handleModalShow("modal-loading");
     /* Caso 1: No hay cotización, crea cotización y añade los detalles de los items */
     if (!cotizacionActiva) {
@@ -46,10 +49,10 @@ export default function Cotizacion() {
         }));
       }
     } else if (cotizacionActiva && detalleCotizacion.secciones.length === 0) {
-    /* Caso 2: Hay Cotización, pero no hay detalle */
+      /* Caso 2: Hay Cotización, pero no hay detalle */
       await appendDetalle({ values: values, id: cotizacionActiva.id });
     } else if (cotizacionActiva && detalleCotizacion.secciones.length > 0) {
-    /* Caso 3: Hay Cotización y hay detalles */
+      /* Caso 3: Hay Cotización y hay detalles */
       const defaultValues = convertDataInDataBase(
         detalleCotizacion,
         cotizacionActiva.id
@@ -151,7 +154,7 @@ export default function Cotizacion() {
     getCotizacionActiva(id);
     handleModalShow("modal-response");
   };
-  const crearCotizacion = async (id, values) => {
+  const crearCotizacion = async (id) => {
     const cotizacion = {
       id_oportunidad: id,
     };
@@ -281,7 +284,48 @@ export default function Cotizacion() {
       getDetalleCotizacion(cotizacionActiva.id);
     }
   }, [cotizacionActiva]);
-
+  useEffect(() => {
+    if (activeOportunidad.status === "Revisión" && state.isEditable === true) {
+      handleModalShow("modal-duplicar");
+    }
+  }, [state.isEditable]);
+  const handleCreateCopy = async () => {
+    handleModalShow("modal-loading");
+    try {
+      const copyDetalle = await getDetalleById(
+        cotizacionActiva.id
+      );
+      const { error } = await createCopyCotizacion(
+        cotizacionActiva,
+        copyDetalle
+      );
+      if (error) {
+        throw new Error(error);
+      }
+      await updateCotizacion(
+        { active: false },
+        cotizacionActiva.id
+      );
+      getCotizacionActiva(id);
+      setState((prev) => ({
+        ...prev,
+        response: {
+          message: "Cotización duplicada correctamente",
+          type: "success",
+        },
+      }));
+    } catch (e) {
+      setState((prev) => ({
+        ...prev,
+        response: {
+          message: `Hubo problemas duplicar la cotizacion: ErrorMessage: ${e.message}`,
+          type: "danger",
+        },
+      }));
+    } finally {
+      handleModalShow("modal-response");
+    }
+  }
   return (
     <>
       {(cotizacionActiva && detalleCotizacion?.secciones) || state.showForm ? (
@@ -301,6 +345,44 @@ export default function Cotizacion() {
               </>
             }
           />
+          <Modal
+            modalId="modal-duplicar"
+            title={"Opciónes para editar la cotización"}
+            variant="primary"
+          >
+            <p>
+              La oportunidad se encuentra en{" "}
+              <Badge variant={"Revisión"}>Revisión</Badge> <br />
+              En este status para editar la cotización tiene dos opciones:
+              <span className="font-medium text-indigo-600">
+                {" "}
+                sobreescribir
+              </span>{" "}
+              los datos actuales, o{" "}
+              <span className="font-medium text-indigo-600">
+                crear una copia
+              </span>
+              .
+            </p>
+            <div className="flex gap-2 justify-center mt-5">
+              <Button
+                className="min-w-40"
+                variant="blue"
+                onClick={handleCreateCopy}
+              >
+                Crear una copia
+              </Button>
+              <Button
+                className="min-w-40"
+                variant="yellow"
+                onClick={() => {
+                  handleModalClose();
+                }}
+              >
+                Sobreescribir
+              </Button>
+            </div>
+          </Modal>
         </>
       ) : (
         <NoCotizacionComponent>
@@ -321,7 +403,7 @@ export default function Cotizacion() {
             type="button"
             variant="blue"
             onClick={handleCopyCotizacion}
-            >
+          >
             Duplicar Cotización
             <DocumentDuplicateIcon className="w-4" />
           </Button>
