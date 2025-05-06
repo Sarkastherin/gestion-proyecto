@@ -4,8 +4,8 @@ import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import LayoutConfiguraciones from "../../templates/Configuraciones";
 import { useState } from "react";
 import { useModal } from "../../context/ModalContext";
-export default function Material() {
-  const { listaMaterial, postData, getListaMaterial } = useMateriales();
+export default function Tipo() {
+  const { listaTipo, postData, getListaTipo } = useMateriales();
   const {
     register,
     handleSubmit,
@@ -45,7 +45,9 @@ export default function Material() {
         <div>
           <Input
             label="Descripción"
-            {...register("descripcion", {required:{ value: true, message: "Campo requerido" }})}
+            {...register("descripcion", {
+              required: { value: true, message: "Campo requerido" },
+            })}
           />
           {errors.cod && <TextInvalidate message={errors.cod.message} />}
         </div>
@@ -56,20 +58,21 @@ export default function Material() {
     handleModalShow("modal-loading");
     try {
       const { success, error } = await postData({
-        table: "material",
+        table: "tipo",
         values: [data],
       });
       if (error) {
+        console.log(error);
         throw new Error(error.message);
       }
       setState((prev) => ({
         ...prev,
         response: {
-          message: "¡Material Creado!",
+          message: "¡Tipo Creado!",
           type: "success",
         },
       }));
-      getListaMaterial();
+      getListaTipo();
       reset();
     } catch (e) {
       console.log(e);
@@ -88,14 +91,14 @@ export default function Material() {
   return (
     <LayoutConfiguraciones
       columns={columns}
-      data={listaMaterial}
-      title={"Crear nuevo tipo de material"}
+      data={listaTipo}
+      title={"Crear nuevo Tipo"}
       form={<Form />}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
       onError={onError}
       state={state}
-      color={{color: "text-yellow-600", variant: "yellow"}}
+      color={{ color: "text-blue-500", variant: "blue" }}
     />
   );
 }

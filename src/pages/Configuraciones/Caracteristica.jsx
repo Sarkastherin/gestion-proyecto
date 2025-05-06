@@ -4,8 +4,8 @@ import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import LayoutConfiguraciones from "../../templates/Configuraciones";
 import { useState } from "react";
 import { useModal } from "../../context/ModalContext";
-export default function Material() {
-  const { listaMaterial, postData, getListaMaterial } = useMateriales();
+export default function Caracteristica() {
+  const { listaCaracteristica, postData, getListaCaracteristica } = useMateriales();
   const {
     register,
     handleSubmit,
@@ -16,12 +16,6 @@ export default function Material() {
   const { handleModalShow } = useModal();
   const columns = [
     {
-      name: "Código",
-      selector: (row) => row.cod,
-      width: "170px",
-      sortable: true,
-    },
-    {
       name: "Descripción",
       selector: (row) => row.descripcion,
       sortable: true,
@@ -30,18 +24,7 @@ export default function Material() {
   const Form = () => {
     return (
       <>
-        <div>
-          <Input
-            label="Código"
-            placeholder="3 caracteres máximo"
-            {...register("cod", {
-              required: { value: true, message: "Campo requerido" },
-              maxLength: { value: 3, message: "3 caracteres máximo" },
-              minLength: { value: 3, message: "3 caracteres mínimo" },
-            })}
-          />
-          {errors.cod && <TextInvalidate message={errors.cod.message} />}
-        </div>
+        
         <div>
           <Input
             label="Descripción"
@@ -56,7 +39,7 @@ export default function Material() {
     handleModalShow("modal-loading");
     try {
       const { success, error } = await postData({
-        table: "material",
+        table: "caracteristica",
         values: [data],
       });
       if (error) {
@@ -69,7 +52,7 @@ export default function Material() {
           type: "success",
         },
       }));
-      getListaMaterial();
+      getListaCaracteristica();
       reset();
     } catch (e) {
       console.log(e);
@@ -88,14 +71,14 @@ export default function Material() {
   return (
     <LayoutConfiguraciones
       columns={columns}
-      data={listaMaterial}
-      title={"Crear nuevo tipo de material"}
+      data={listaCaracteristica}
+      title={"Crear nueva Característica"}
       form={<Form />}
       handleSubmit={handleSubmit}
       onSubmit={onSubmit}
       onError={onError}
       state={state}
-      color={{color: "text-yellow-600", variant: "yellow"}}
+      color={{color: "text-purple-500", variant: "purple"}}
     />
   );
 }

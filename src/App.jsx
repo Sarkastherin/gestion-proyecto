@@ -28,6 +28,13 @@ import Instructivos from "./pages/Instructivos";
 import Error from "./pages/Error";
 /* Configuraciones */
 import Material from "./pages/Configuraciones/Material";
+import Tipo from "./pages/Configuraciones/Tipo";
+import Unidad from "./pages/Configuraciones/Unidad"
+import Espesor from "./pages/Configuraciones/Espesor"
+import Norma from "./pages/Configuraciones/Norma"
+import Medida from "./pages/Configuraciones/Medida"
+import TipoUnion from "./pages/Configuraciones/TipoUnion"
+import Caracteristica from "./pages/Configuraciones/Caracteristica"
 function App() {
   const router = createBrowserRouter([
     {
@@ -43,6 +50,13 @@ function App() {
           element: <Configuraciones />,
           children: [
             { path: "/configuraciones/material", element: <Material /> },
+            { path: "/configuraciones/tipo", element: <Tipo /> },
+            { path: "/configuraciones/unidad", element: <Unidad /> },
+            { path: "/configuraciones/espesor", element: <Espesor /> },
+            { path: "/configuraciones/norma", element: <Norma /> },
+            { path: "/configuraciones/medida", element: <Medida /> },
+            { path: "/configuraciones/tipo_union", element: <TipoUnion /> },
+            { path: "/configuraciones/caracteristica", element: <Caracteristica /> },
           ],
         },
         { path: "/nuevo-material", element: <NuevoMaterial /> },

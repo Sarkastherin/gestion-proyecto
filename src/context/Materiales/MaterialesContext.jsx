@@ -149,7 +149,7 @@ export const MaterialesProvider = ({ children }) => {
         .insert(values)
         .select();
       if (error) {
-        throw new Error(error);
+        throw new Error(error.message);
       }
       return { success: true };
     } catch (e) {
@@ -199,6 +199,14 @@ export const MaterialesProvider = ({ children }) => {
         getConsolidado,
         postData,
         getMateriales,
+        getListaMaterial,
+        getListaTipo,
+        getListaEspesor,
+        getListaNorma,
+        getListaMedida,
+        getListaUnion,
+        getListaCaracteristica,
+        getListaUnidades,
       }}
     >
       {children}

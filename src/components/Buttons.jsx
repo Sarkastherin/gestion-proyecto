@@ -20,7 +20,11 @@ const variants = {
   danger_outline: `text-red-500 border-red-500 hover:bg-red-500 hover:text-white ${disabled.outline}`,
   blue_outline: `text-blue-500 border-blue-500 hover:bg-blue-500 hover:text-white ${disabled.outline}`,
   primary_no_border: `border-none text-indigo-600 hover:bg-indigo-600/10 hover:text-indigo-60 disabled:text-neutral-400 disabled:hover:bg-transparent`,
-  secondary_no_border: `border-none text-gray-500 hover:bg-gray-500/10 hover:text-indigo-60 disabled:text-neutral-400 disabled:hover:bg-transparent`
+  secondary_no_border: `border-none text-gray-500 hover:bg-gray-500/10 hover:text-indigo-60 disabled:text-neutral-400 disabled:hover:bg-transparent`,
+  green: `border-green-600 bg-green-600 text-white hover:bg-transparent hover:text-green-600 ${disabled.regular}`,
+  cyan: `border-cyan-500 bg-cyan-500 text-white hover:bg-transparent hover:text-cyan-500 ${disabled.regular}`,
+  emerald: `border-emerald-500 bg-emerald-500 text-white hover:bg-transparent hover:text-emerald-500 ${disabled.regular}`,
+  purple: `border-purple-500 bg-purple-500 text-white hover:bg-transparent hover:text-purple-500 ${disabled.regular}`,
 };
 export const Button = React.forwardRef(
   (
