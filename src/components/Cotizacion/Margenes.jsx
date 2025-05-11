@@ -7,8 +7,9 @@ import { useCotizacion } from "../../context/Cotizaciones/CotizacionesContext";
 import { useParams } from "react-router-dom";
 
 export default function Margenes() {
-  const { totales, getTotales, getCotizacionActiva, cotizacionActiva } = useCotizacion();
-  const { register, control, watch } = useFormContext();
+  const { totales, getTotales, getCotizacionActiva, cotizacionActiva } =
+    useCotizacion();
+  const { register, control, watch, reset } = useFormContext();
   const { fields } = useFieldArray({
     control,
     name: "margenes",
@@ -20,7 +21,9 @@ export default function Margenes() {
     }
   }, []);
   useEffect(() => {
-    if(cotizacionActiva) {getTotales(cotizacionActiva.id);}
+    if (cotizacionActiva) {
+      getTotales(cotizacionActiva.id);
+    }
   }, [cotizacionActiva]);
 
   const cells = [
@@ -38,20 +41,30 @@ export default function Margenes() {
   ];
   const totalMargen = watch("margenes")?.reduce((sum, item, index) => {
     const porcentaje = watch(`margenes.${index}.margen`) || 0;
-    return sum + (1 + porcentaje / 100) * (totales?.find((total) => total.tipo === item.tipo)?.total || 0);
+    return (
+      sum +
+      (1 + porcentaje / 100) *
+        (totales?.find((total) => total.tipo === item.tipo)?.total || 0)
+    );
   }, 0);
   const margenFinal = watch("margen_general") || 0;
   const precioFinal = totalMargen * (1 + margenFinal / 100);
+  useEffect(() => {
+    reset(cotizacionActiva);
+  }, [totales]);
   return (
     <>
-      {(fields.length > 0 && totales?.length>0) ? (
+      {fields.length > 0 && totales?.length > 0 ? (
         <>
           <CardToggle title={"Margenes de Ganancias"}>
             <Table cells={cells}>
               {fields?.map((item, index) => {
                 const porcentaje = watch(`margenes.${index}.margen`) || 0;
-                const total =totales.find((total) => total.tipo === item.tipo)?.total || 0
-                const percent = totales.find((total) => total.tipo === item.tipo)?.porcentaje || 0
+                const total =
+                  totales.find((total) => total.tipo === item.tipo)?.total || 0;
+                const percent =
+                  totales.find((total) => total.tipo === item.tipo)
+                    ?.porcentaje || 0;
                 return (
                   <tr
                     key={item.tipo}
@@ -59,14 +72,14 @@ export default function Margenes() {
                   >
                     <th className="px-1 w-full flex-1">{item.tipo}</th>
                     <td className="px-1 w-30">
-                      
                       {total.toLocaleString("es-AR", {
                         style: "currency",
                         currency: "USD",
                       }) || "$ 0"}
                     </td>
                     <td className="px-1 w-30">
-                    {percent}{" %"}
+                      {percent}
+                      {" %"}
                     </td>
                     <td className="px-1 w-50">
                       <InputGroup
@@ -80,12 +93,13 @@ export default function Margenes() {
                       </InputGroup>
                     </td>
                     <td className="px-1 w-30">
-                      {(
-                        (1 + porcentaje / 100) * total || 0
-                      ).toLocaleString("es-AR", {
-                        style: "currency",
-                        currency: "USD",
-                      })}
+                      {((1 + porcentaje / 100) * total || 0).toLocaleString(
+                        "es-AR",
+                        {
+                          style: "currency",
+                          currency: "USD",
+                        }
+                      )}
                     </td>
                   </tr>
                 );
@@ -120,7 +134,9 @@ export default function Margenes() {
             </Table>
           </Card>
         </>
-      ): <p className="text-center mt-4 text-lg">No hay datos en cotización</p>}
+      ) : (
+        <p className="text-center mt-4 text-lg">No hay datos en cotización</p>
+      )}
     </>
   );
 }

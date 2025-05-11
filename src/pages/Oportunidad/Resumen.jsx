@@ -13,13 +13,16 @@ import Badge from "../../components/Generals/Badge";
 import TableComponent from "../../components/TableComponent";
 export default function Resumen() {
   const { getConsolidado, consolidados } = useMateriales();
-  const { getOportunidadById, activeOportunidad } = useOportunidad();
+  const { getOportunidadById, activeOportunidad, getOportunidades, oportunidades } = useOportunidad();
   const [states, setStates] = useState({ csvData: [], loading: null });
   const { id } = useParams();
   useEffect(() => {
+    getOportunidades();
+  }, []);
+  useEffect(() => {
     getConsolidado();
     getOportunidadById(parseInt(id));
-  }, []);
+  }, [oportunidades]);
   const handleConsolidado = () => {
     setStates((prev) => ({ ...prev, loading: true }));
     if (consolidados.length > 0) {

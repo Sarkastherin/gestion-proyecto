@@ -45,9 +45,7 @@ export function Oportunidades() {
     },
     {
       name: "Status",
-      selector: (row) => (
-        <Badge variant={row.status}>{row.status}</Badge>
-      ),
+      selector: (row) => <Badge variant={row.status}>{row.status}</Badge>,
       width: "150px",
     },
     {
@@ -63,37 +61,17 @@ export function Oportunidades() {
   });
   const [dataFiltered, setDataFiltered] = useState([]);
 
-  const conditionalRowStyles = [
-    {
-      when: (row) => row.status === "Aceptado", //lime-100
-      style: {
-        backgroundColor: "#ecfccb",
-        "&:hover": {
-          cursor: "pointer",
-        },
-      },
-    },
-    {
-      when: (row) => row.status === "Rechazado",
-      style: {
-        backgroundColor: "#fee2e2", //Red-100
-        color: "#b91c1c",
-        "&:hover": {
-          cursor: "pointer",
-        },
-      },
-    },
-  ];
   const handleFilter = (data) => {
-    const filter = oportunidades.filter((item) => 
-      item.nombre.toLowerCase().includes(data.oportunidad.toLowerCase()) &&
-      item.cliente?.nombre.toLowerCase().includes(data.cliente.toLowerCase()) &&
-      item.status.toLowerCase().includes(data.status.toLowerCase())
+    const filter = oportunidades.filter(
+      (item) =>
+        item.nombre.toLowerCase().includes(data.oportunidad.toLowerCase()) &&
+        item.cliente?.nombre
+          .toLowerCase()
+          .includes(data.cliente.toLowerCase()) &&
+        item.status.toLowerCase().includes(data.status.toLowerCase())
     );
     setDataFiltered(
-      filter.length > 0
-        ? filter
-        : [{ nombre: "No hay datos para mostrar" }]
+      filter.length > 0 ? filter : [{ nombre: "No hay datos para mostrar" }]
     );
   };
   const openOportunidad = (data) => {
@@ -102,10 +80,7 @@ export function Oportunidades() {
   const SubHeaderComponent = () => {
     return (
       <div className="flex justify-between items-center mt-8">
-        <form
-          onSubmit={handleSubmit(handleFilter)}
-          className="w-full"
-        >
+        <form onSubmit={handleSubmit(handleFilter)} className="w-full">
           <fieldset className="flex items-center justify-between gap-2 w-full">
             <div className="grid md:grid-cols-6 gap-2 grid-cols-3">
               <Input
@@ -128,23 +103,39 @@ export function Oportunidades() {
                 placeholder={"Status"}
                 {...register("status")}
               >
-                {[{id:1,descripcion: "Nuevo"}, {id:2,descripcion: "Cerrada-Ganada"}, {id:3,descripcion: "Cerrada-Perdida"}].map((tipo) => (
-                  <option key={tipo.id} value={tipo.descripcion}>
-                    {tipo.descripcion}
-                  </option>
-                ))}
+                <option className="bg-blue-300/50" value={"Nuevo"}>
+                  🆕 Nuevo{" "}
+                </option>
+                <option className="bg-gray-400/50" value={"Desestimada"}>
+                  🗑️ Desestimada
+                </option>
+                <option className="bg-amber-300/50" value={"En proceso"}>
+                  ⏳ En proceso
+                </option>
+                <option className="bg-indigo-300/50" value={"Enviada"}>
+                  📧 Enviada
+                </option>
+                <option className="bg-orange-300/50" value={"Revisión"}>
+                  ⚠️ Revisión
+                </option>
+                <option className="bg-green-300/50" value={"Ganada"}>
+                  ✅ Ganada
+                </option>
+                <option className="bg-red-300/50" value={"Perdida"}>
+                  ❌ Perdida
+                </option>
               </Select>
             </div>
             <div>
-            <Button
-              className="flex-none"
-              type="submit"
-              title="Filtrar"
-              variant={"yellow"}
-              hidden_text
-            >
-              <FunnelIcon className="w-4" />
-            </Button>
+              <Button
+                className="flex-none"
+                type="submit"
+                title="Filtrar"
+                variant={"yellow"}
+                hidden_text
+              >
+                <FunnelIcon className="w-4" />
+              </Button>
             </div>
           </fieldset>
         </form>
@@ -170,7 +161,6 @@ export function Oportunidades() {
             data={dataFiltered}
             columns={columns}
             handleOnRowClick={openOportunidad}
-            conditionalRowStyles={conditionalRowStyles}
             noDataComponent={
               <NoDataComponent
                 title={"No hay Oportunidades."}
@@ -186,7 +176,7 @@ export function Oportunidades() {
         </BoxComponentScrolling>
         <Footer>
           <div className="flex gap-2 justify-end">
-          <Button
+            <Button
               className="min-w-50"
               text={""}
               variant={"primary"}

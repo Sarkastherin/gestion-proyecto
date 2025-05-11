@@ -9,12 +9,16 @@ import ContainerOportunidades from "../../components/Containers/ContainerOportun
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 import { useParams } from "react-router-dom";
 export default function Condiciones() {
-  const { getOportunidadById, activeOportunidad, refreshOportunidades } =
+  const { getOportunidadById, activeOportunidad, refreshOportunidades, getOportunidades, oportunidades } =
     useOportunidad();
   const { id } = useParams();
   useEffect(() => {
-    getOportunidadById(parseInt(id));
+    getOportunidades()
+    
   }, []);
+  useEffect(() => {
+    getOportunidadById(parseInt(id));
+  }, [oportunidades]);
   const [state, setState] = useState({
     response: null,
     isEditable: false,

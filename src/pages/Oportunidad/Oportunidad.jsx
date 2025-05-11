@@ -14,7 +14,7 @@ import { useEffect } from "react";
 import { Subheader } from "../../components/SubHeader";
 
 function Oportunidad() {
-  const { getOportunidadById, activeOportunidad } = useOportunidad();
+  const { getOportunidadById, activeOportunidad, getOportunidades } = useOportunidad();
   const { id } = useParams();
   useEffect(() => {
     getOportunidadById(parseInt(id));
@@ -49,6 +49,7 @@ function Oportunidad() {
       },
     ];
   };
+  
   return (
     <>
       {activeOportunidad && (
