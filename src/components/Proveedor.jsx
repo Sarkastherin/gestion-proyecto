@@ -5,8 +5,8 @@ import { useState, useEffect } from "react";
 import { useModal } from "../context/ModalContext";
 import { useFormContext } from "react-hook-form";
 import { useProveedores } from "../context/ProveedoresContext";
-export const Proveedor = ({index, disabled}) => {
-  const {proveedores} = useProveedores();
+export const Proveedor = ({ index, disabled }) => {
+  const { proveedores } = useProveedores();
   const [search, setSearch] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [selectProveedor, setSelectProveedor] = useState({});
@@ -15,10 +15,10 @@ export const Proveedor = ({index, disabled}) => {
     register,
     formState: { errors },
     setValue,
-    watch
+    watch,
   } = useFormContext();
   useEffect(() => {
-    setFilteredData(proveedores);
+    if (proveedores && proveedores.length > 0) setFilteredData(proveedores);
   }, [proveedores]);
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -31,41 +31,45 @@ export const Proveedor = ({index, disabled}) => {
   }, [search]);
   useEffect(() => {
     if (selectProveedor?.nombre) {
-      setValue(`precios.${index}.proveedor`, selectProveedor.nombre, { shouldDirty: true });
-      setValue(`precios.${index}.id_proveedor`, selectProveedor.id, { shouldDirty: true });
+      setValue(`precios.${index}.proveedor`, selectProveedor.nombre, {
+        shouldDirty: true,
+      });
+      setValue(`precios.${index}.id_proveedor`, selectProveedor.id, {
+        shouldDirty: true,
+      });
     }
   }, [selectProveedor, setValue]);
   return (
     <>
-    <div className="flex gap-1">
-    <InputXS
-    className="basis-[60px]"
-        label={"Id"}
-        no_label
-        disabled={disabled}
-        readOnly
-        {...register(`precios.${index}.id_proveedor`, {
-          required: {
-            value: true,
-            message: "Debe seleccionar un proveedor",
-          },
-        })}
-        placeholder="Seleccione un proveedor"
-      />
-      <InputXS
-        label={"Proveedor"}
-        no_label
-        disabled={disabled}
-        readOnly
-        onClick={() => handleModalShow(`modal-proveedor-${index}`)}
-        {...register(`precios.${index}.proveedor`, {
-          required: {
-            value: true,
-            message: "Debe seleccionar un proveedor",
-          },
-        })}
-        placeholder="Seleccione un proveedor"
-      />
+      <div className="flex gap-1">
+        <InputXS
+          className="basis-[60px]"
+          label={"Id"}
+          no_label
+          disabled={disabled}
+          readOnly
+          {...register(`precios.${index}.id_proveedor`, {
+            required: {
+              value: true,
+              message: "Debe seleccionar un proveedor",
+            },
+          })}
+          placeholder="Seleccione un proveedor"
+        />
+        <InputXS
+          label={"Proveedor"}
+          no_label
+          disabled={disabled}
+          readOnly
+          onClick={() => handleModalShow(`modal-proveedor-${index}`)}
+          {...register(`precios.${index}.proveedor`, {
+            required: {
+              value: true,
+              message: "Debe seleccionar un proveedor",
+            },
+          })}
+          placeholder="Seleccione un proveedor"
+        />
       </div>
       <Modal
         modalId={`modal-proveedor-${index}`}

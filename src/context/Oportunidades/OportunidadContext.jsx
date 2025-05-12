@@ -20,6 +20,7 @@ export const OportunidadProvider = ({ children }) => {
       const { data: oportunidades, error } = await supabase
         .from("view_oportunidades")
         .select("*");
+        console.log(clientes);
       if (oportunidades && clientes) {
         if (clientes.length > 0 && oportunidades.length > 0) {
           oportunidades.forEach((oportunidad) => {

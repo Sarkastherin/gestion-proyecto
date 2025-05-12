@@ -11,7 +11,7 @@ export const Modal = ({
   title,
   children,
   disableXButton,
-  variant = "default",
+  variant = "primary",
   width = 'w-lg'
 }) => {
   const variants = {
