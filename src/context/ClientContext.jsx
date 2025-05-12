@@ -9,7 +9,6 @@ export const ClienteContextProvider = ({ children }) => {
     try {
       const response = await fetch("/.netlify/functions/contactos");
       const data = await response.json();
-      console.log("Clientes desde función:", data);
       setClientes(data?.data); // depende de cómo venga la estructura
     } catch (error) {
       console.error("Error al obtener clientes desde función:", error);
