@@ -1,7 +1,5 @@
 import { useFormContext, useFieldArray } from "react-hook-form";
-import {
-  InputXS,
-} from "../../components/Generals/Inputs";
+import { InputXS } from "../../components/Generals/Inputs";
 import { Button } from "../../components/Buttons";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { TrashIcon, CheckIcon } from "@heroicons/react/16/solid";
@@ -50,11 +48,13 @@ export default function FormularioPrecios({
               <th>
                 <TrashIcon className="w-4" />
               </th>
+              {/* borra */}
               {onlyPrices && (
                 <th>
                   <CheckIcon className="w-4" />
                 </th>
               )}
+              {/* borra */}
             </tr>
           </thead>
           <tbody className="">
@@ -66,18 +66,25 @@ export default function FormularioPrecios({
                     label="Fecha"
                     no_label
                     type={"date"}
+                    /* borra */
                     disabled={onlyPrices}
+                    /* borra */
                     {...register(`precios.${index}.fecha`, {
                       required: { value: true, message: "Fecha requerida" },
                     })}
                   />
                 </td>
                 <td className="pt-1 px-0.5">
-                  <Proveedor index={index} disabled={onlyPrices} />
+                  <Proveedor
+                    index={index}
+                    /* borra */ disabled={onlyPrices} /* borra */
+                  />
                 </td>
                 <td className="pt-1 px-0.5">
                   <InputXS
+                    /* borra */
                     disabled={onlyPrices}
+                    /* borra */
                     label="Precio"
                     no_label
                     type={"text"}
@@ -92,7 +99,9 @@ export default function FormularioPrecios({
                     className="relative inline-block h-8 w-12 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-green-500"
                   >
                     <input
+                      /* borra */
                       disabled={onlyPrices}
+                      /* borra */
                       type="checkbox"
                       id={`precios.${index}.default`}
                       checked={watch(`precios.${index}.default`) || false}
@@ -112,7 +121,9 @@ export default function FormularioPrecios({
                 <td className="pt-1 px-0.5">
                   <Button
                     variant={"danger_outline"}
+                    /* borra */
                     disabled={onlyPrices}
+                    /* borra */
                     text="Eliminar Precio"
                     size="xs"
                     onClick={() => {
@@ -132,9 +143,9 @@ export default function FormularioPrecios({
                         const selectedPrice = watch(`precios.${index}`);
                         handleChangePrice(selectedPrice);
                       }}
-                  >
-                    <CheckIcon className="w-4" />
-                  </Button>
+                    >
+                      <CheckIcon className="w-4" />
+                    </Button>
                   </td>
                 )}
               </tr>

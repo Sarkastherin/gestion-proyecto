@@ -82,6 +82,22 @@ export const OportunidadProvider = ({ children }) => {
       return { success: false, error: e };
     }
   }
+  const deleteOportunidad = async (id) => {
+      try {
+        const { data, error } = await supabase
+          .from("oportunidades")
+          .delete()
+          .eq("id", id)
+          .select();
+        if (error) {
+          // Retorna el error para que sea manejado en el componente que llama a esta función
+          return { success: false, error };
+        }
+        return { success: true, data };
+      } catch (e) {
+        return { success: false, error: e };
+      }
+    };
   return (
     <OportunidadContext.Provider
       value={{
@@ -91,7 +107,8 @@ export const OportunidadProvider = ({ children }) => {
         postOportunidad,
         refreshOportunidades,
         getOportunidadById,
-        updateOportunidad
+        updateOportunidad,
+        deleteOportunidad
       }}
     >
       {children}

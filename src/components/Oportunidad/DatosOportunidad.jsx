@@ -2,6 +2,7 @@ import { useFormContext } from "react-hook-form";
 import { CardToggle } from "../Cards";
 import { Input, TextInvalidate, Textarea, Select } from "../Generals/Inputs";
 import { Cliente } from "../Cliente";
+import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
 
 function DatosOportunidad() {
   const {
@@ -10,6 +11,8 @@ function DatosOportunidad() {
     setValue,
     formState: { errors },
   } = useFormContext();
+  const { activeOportunidad } = useOportunidad();
+  const { id_cotizacion } = activeOportunidad;
   return (
     <CardToggle title={"Datos de la Oportunidad"}>
       <fieldset disabled={watch("status_cotizacion") === "Cerrada"}>
@@ -51,15 +54,21 @@ function DatosOportunidad() {
               message: "Seleccione un status",
             },
             onChange: (e) => {
-              const cerrada = ["Desestimada", "Enviada", "Ganada", "Perdida"];
-              const value = e.target.value;
-              const isClose = cerrada
-                .map((item) => item.includes(value))
-                .some((item) => item === true);
-              if (isClose) {
-                setValue("status_cotizacion", "Cerrada", { shouldDirty: true });
-              } else {
-                setValue("status_cotizacion", "Abierta", { shouldDirty: true });
+              if (id_cotizacion) {
+                const cerrada = ["Desestimada", "Enviada", "Ganada", "Perdida"];
+                const value = e.target.value;
+                const isClose = cerrada
+                  .map((item) => item.includes(value))
+                  .some((item) => item === true);
+                if (isClose) {
+                  setValue("status_cotizacion", "Cerrada", {
+                    shouldDirty: true,
+                  });
+                } else {
+                  setValue("status_cotizacion", "Abierta", {
+                    shouldDirty: true,
+                  });
+                }
               }
             },
           })}

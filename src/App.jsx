@@ -26,15 +26,16 @@ import NuevoMaterial from "./pages/Materiales/NuevoMaterial";
 import MaterialID from "./pages/Materiales/Material";
 import Instructivos from "./pages/Instructivos";
 import Error from "./pages/Error";
+import Upload from "./templates/Materiales/Upload";
 /* Configuraciones */
 import Material from "./pages/Configuraciones/Material";
 import Tipo from "./pages/Configuraciones/Tipo";
-import Unidad from "./pages/Configuraciones/Unidad"
-import Espesor from "./pages/Configuraciones/Espesor"
-import Norma from "./pages/Configuraciones/Norma"
-import Medida from "./pages/Configuraciones/Medida"
-import TipoUnion from "./pages/Configuraciones/TipoUnion"
-import Caracteristica from "./pages/Configuraciones/Caracteristica"
+import Unidad from "./pages/Configuraciones/Unidad";
+import Espesor from "./pages/Configuraciones/Espesor";
+import Norma from "./pages/Configuraciones/Norma";
+import Medida from "./pages/Configuraciones/Medida";
+import TipoUnion from "./pages/Configuraciones/TipoUnion";
+import Caracteristica from "./pages/Configuraciones/Caracteristica";
 function App() {
   const router = createBrowserRouter([
     {
@@ -56,19 +57,19 @@ function App() {
             { path: "/configuraciones/norma", element: <Norma /> },
             { path: "/configuraciones/medida", element: <Medida /> },
             { path: "/configuraciones/tipo_union", element: <TipoUnion /> },
-            { path: "/configuraciones/caracteristica", element: <Caracteristica /> },
+            {
+              path: "/configuraciones/caracteristica",
+              element: <Caracteristica />,
+            },
           ],
         },
         { path: "/nuevo-material", element: <NuevoMaterial /> },
         { path: "/nueva-oportunidad", element: <CrearOportunidad /> },
         { path: "/material/:id", element: <MaterialID /> },
+        { path: "/upload-materiales", element: <Upload /> },
         {
           path: "/oportunidad/:id",
-          element: (
-            <CotizacionProvider>
-              <Oportunidad />
-            </CotizacionProvider>
-          ),
+          element: <Oportunidad />,
           children: [
             { path: "/oportunidad/:id/resumen", element: <Resumen /> },
             { path: "/oportunidad/:id/informacion", element: <Informacion /> },
@@ -80,7 +81,6 @@ function App() {
             { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
           ],
         },
-        
       ],
     },
     { path: "/login", element: <Login /> },
@@ -94,7 +94,9 @@ function App() {
           <ProveedoresProvider>
             <MaterialesProvider>
               <OportunidadProvider>
-                <RouterProvider router={router} />
+                <CotizacionProvider>
+                  <RouterProvider router={router} />
+                </CotizacionProvider>
               </OportunidadProvider>
             </MaterialesProvider>
           </ProveedoresProvider>

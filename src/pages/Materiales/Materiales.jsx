@@ -9,7 +9,7 @@ import TableComponent from "../../components/TableComponent";
 import { NoDataComponent } from "../../components/DataField";
 import { Input, Select } from "../../components/Generals/Inputs";
 import { Button } from "../../components/Buttons";
-import { FunnelIcon, PlusIcon } from "@heroicons/react/16/solid";
+import { FunnelIcon, PlusIcon, ArrowUpIcon } from "@heroicons/react/16/solid";
 import { useMateriales } from "../../context/Materiales/MaterialesContext";
 import { Footer } from "../../components/Footer";
 
@@ -158,7 +158,6 @@ export default function Materiales() {
               type="submit"
               title="Filtrar"
               variant={"yellow"}
-              hidden_text
             >
               <FunnelIcon className="w-4" />
             </Button>
@@ -197,6 +196,17 @@ export default function Materiales() {
         </BoxComponentScrolling>
         <Footer>
           <div className="flex gap-2 justify-end">
+            <Button
+              className="min-w-50"
+              text={""}
+              variant={"green"}
+              disabled
+              title="En proceso"
+              onClick={() => navigate(`/upload-materiales`)}
+            >
+              Importar
+              <PlusIcon className="w-4" />
+            </Button>
             <Button
               className="min-w-50"
               text={""}

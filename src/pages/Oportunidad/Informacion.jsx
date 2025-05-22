@@ -40,6 +40,7 @@ export default function Informacion() {
       updates.status = "En proceso";
     }
     try {
+      console.log(activeOportunidad)
       if (updates.status_cotizacion) {
         const { success, error, data } = await updateCotizacion(
           { status: updates.status_cotizacion },

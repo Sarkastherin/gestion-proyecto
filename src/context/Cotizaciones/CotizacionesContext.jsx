@@ -148,6 +148,38 @@ export const CotizacionProvider = ({ children }) => {
       return { success: false, error: e };
     }
   };
+  const deleteDetalleByIdCot = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from("detalle_cotizacion")
+        .delete()
+        .eq("id_cotizacion", id)
+        .select();
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data };
+    } catch (e) {
+      return { success: false, error: e };
+    }
+  };
+  const deleteCotizacion = async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from("cotizaciones")
+        .delete()
+        .eq("id", id)
+        .select();
+      if (error) {
+        // Retorna el error para que sea manejado en el componente que llama a esta función
+        return { success: false, error };
+      }
+      return { success: true, data };
+    } catch (e) {
+      return { success: false, error: e };
+    }
+  };
   const updateDetalle = async (values, id) => {
     try {
       const { data, error } = await supabase
@@ -244,7 +276,9 @@ export const CotizacionProvider = ({ children }) => {
         updateDetalle,
         getDetalleById,
         getCotizacionesToDuplicity,
-        createCopyCotizacion
+        createCopyCotizacion,
+        deleteDetalleByIdCot,
+        deleteCotizacion
       }}
     >
       {children}
