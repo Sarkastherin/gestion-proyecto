@@ -55,29 +55,9 @@ export default function DatosMateriales({ isNuevo }) {
   ]);
   useEffect(() => {
     if (isNuevo) {
-      const material = watch("material");
-      const tipo = watch("tipo");
-      const espesor = watch("espesor");
-      /* Evaluar si existe ya la secuencia */
-      const hasSequenceCod = materiales.some(
-        (item) =>
-          item.material === material &&
-          item.tipo === tipo &&
-          item.espesor === espesor
-      );
-      if (hasSequenceCod) {
-        const sequences = materiales.filter(
-          (item) =>
-            item.material === material &&
-            item.tipo === tipo &&
-            item.espesor === espesor
-        );
-        const sequence =
-          Math.max(...sequences.map((item) => item.sequence)) + 1;
-        setValue("sequence", sequence);
-      } else {
-        setValue("sequence", 1);
-      }
+      const sequences = materiales.map((item) => item.sequence);
+      const sequence = Math.max(...sequences) + 1;
+      setValue("sequence", sequence);
     }
   }, [watch("material"), watch("tipo"), watch("espesor")]);
   return (
@@ -107,7 +87,7 @@ export default function DatosMateriales({ isNuevo }) {
             </Card>
 
             <CardToggle title={"Especificaciones"}>
-              <fieldset >
+              <fieldset>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div className="">
                     <Select

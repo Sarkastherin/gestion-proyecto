@@ -23,7 +23,8 @@ export const MaterialesProvider = ({ children }) => {
     try {
       const { data: materiales, error } = await supabase
         .from("materiales")
-        .select("*");
+        .select("*")
+        .range(0, 1999);
       dispatch({ type: "GET_MATERIALES", payload: materiales });
     } catch (error) {
       console.error("Error fetching materiales:", error);
