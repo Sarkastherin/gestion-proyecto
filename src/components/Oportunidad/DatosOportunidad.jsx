@@ -3,6 +3,7 @@ import { CardToggle } from "../Cards";
 import { Input, TextInvalidate, Textarea, Select } from "../Generals/Inputs";
 import { Cliente } from "../Cliente";
 import { useOportunidad } from "../../context/Oportunidades/OportunidadContext";
+import { useEffect, useState } from "react";
 
 function DatosOportunidad() {
   const {
@@ -12,7 +13,13 @@ function DatosOportunidad() {
     formState: { errors },
   } = useFormContext();
   const { activeOportunidad } = useOportunidad();
-  const { id_cotizacion } = activeOportunidad;
+  const [idCotizacion, setIdCotizacion] = useState(null)
+  useEffect(()=> {
+    if(activeOportunidad) {
+      setIdCotizacion(activeOportunidad.id_cotizacion)
+    }
+  },[])
+  //const { id_cotizacion } = activeOportunidad;
   return (
     <CardToggle title={"Datos de la Oportunidad"}>
       <fieldset disabled={watch("status_cotizacion") === "Cerrada"}>
@@ -54,7 +61,7 @@ function DatosOportunidad() {
               message: "Seleccione un status",
             },
             onChange: (e) => {
-              if (id_cotizacion) {
+              if (idCotizacion) {
                 const cerrada = ["Desestimada", "Enviada", "Ganada", "Perdida"];
                 const value = e.target.value;
                 const isClose = cerrada
