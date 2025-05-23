@@ -46,7 +46,7 @@ export default function TableComponent({
       data={data}
       customStyles={customStyles}
       pagination
-      paginationPerPage={10}
+      paginationPerPage={30}
       paginationComponentOptions={options}
       pointerOnHover
       highlightOnHover
