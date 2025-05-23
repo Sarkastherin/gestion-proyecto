@@ -107,12 +107,13 @@ export default function DatosMateriales({ isNuevo }) {
             </Card>
 
             <CardToggle title={"Especificaciones"}>
-              <fieldset disabled={!isNuevo}>
-                <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-2">
-                  <div>
+              <fieldset >
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="">
                     <Select
                       label={"Material"}
                       placeholder={"Seleccione un Material"}
+                      disabled={!isNuevo}
                       {...register("material", {
                         required: { value: true },
                         onChange: (e) => {
@@ -134,10 +135,11 @@ export default function DatosMateriales({ isNuevo }) {
                       <TextInvalidate message={"Campo requerido"} />
                     )}
                   </div>
-                  <div>
+                  <div className="">
                     <Select
                       label={"Tipo"}
                       placeholder={"Seleccione un Tipo"}
+                      disabled={!isNuevo}
                       {...register("tipo", {
                         required: true,
                         onChange: (e) => {
@@ -160,7 +162,7 @@ export default function DatosMateriales({ isNuevo }) {
                       <TextInvalidate message={"Campo requerido"} />
                     )}
                   </div>
-                  <div>
+                  <div className="">
                     <Select
                       label={"Unidad"}
                       placeholder={"Seleccione la unidad"}
@@ -173,10 +175,11 @@ export default function DatosMateriales({ isNuevo }) {
                       ))}
                     </Select>
                   </div>
-                  <div>
+                  <div className="">
                     <Select
                       label={"Espesor"}
                       placeholder={"Seleccione un Espesor"}
+                      disabled={!isNuevo}
                       {...register("espesor")}
                     >
                       {listaEspesor.map((tipo) => (
@@ -186,52 +189,71 @@ export default function DatosMateriales({ isNuevo }) {
                       ))}
                     </Select>
                   </div>
-
-                  <Select
-                    label={"Norma"}
-                    placeholder={"Seleccione la norma o calidad"}
-                    {...register("norma")}
-                  >
-                    {listaNorma.map((tipo) => (
-                      <option key={tipo.id} value={tipo.descripcion}>
-                        {tipo.descripcion}
-                      </option>
-                    ))}
-                  </Select>
-
-                  <Select
-                    label={"Medida"}
-                    placeholder={"Seleccione la medida"}
-                    {...register("medida")}
-                  >
-                    {listaMedida.map((tipo) => (
-                      <option key={tipo.id} value={tipo.descripcion}>
-                        {tipo.descripcion}
-                      </option>
-                    ))}
-                  </Select>
-                  <Select
-                    label={"Tipo de union"}
-                    placeholder={"Seleccione el tipo de unión"}
-                    {...register("tipo_union")}
-                  >
-                    {listaUnion.map((tipo) => (
-                      <option key={tipo.id} value={tipo.descripcion}>
-                        {tipo.descripcion}
-                      </option>
-                    ))}
-                  </Select>
-                  <Select
-                    label={"Característica especial"}
-                    placeholder={"Seleccione una característica"}
-                    {...register("caracteristica")}
-                  >
-                    {listaCaracteristica.map((tipo) => (
-                      <option key={tipo.id} value={tipo.descripcion}>
-                        {tipo.descripcion}
-                      </option>
-                    ))}
-                  </Select>
+                  <div className="">
+                    <Select
+                      label={"Norma"}
+                      placeholder={"Seleccione la norma o calidad"}
+                      disabled={!isNuevo}
+                      {...register("norma")}
+                    >
+                      {listaNorma.map((tipo) => (
+                        <option key={tipo.id} value={tipo.descripcion}>
+                          {tipo.descripcion}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="">
+                    <Select
+                      label={"Medida"}
+                      placeholder={"Seleccione la medida"}
+                      disabled={!isNuevo}
+                      {...register("medida")}
+                    >
+                      {listaMedida.map((tipo) => (
+                        <option key={tipo.id} value={tipo.descripcion}>
+                          {tipo.descripcion}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="">
+                    <Select
+                      label={"Tipo de union"}
+                      placeholder={"Seleccione el tipo de unión"}
+                      disabled={!isNuevo}
+                      {...register("tipo_union")}
+                    >
+                      {listaUnion.map((tipo) => (
+                        <option key={tipo.id} value={tipo.descripcion}>
+                          {tipo.descripcion}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="">
+                    <Select
+                      label={"Característica especial"}
+                      placeholder={"Seleccione una característica"}
+                      disabled={!isNuevo}
+                      {...register("caracteristica")}
+                    >
+                      {listaCaracteristica.map((tipo) => (
+                        <option key={tipo.id} value={tipo.descripcion}>
+                          {tipo.descripcion}
+                        </option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="">
+                    <Input
+                      type="number"
+                      label="Peso"
+                      placeholder="Kg"
+                      defaultValue={0}
+                      {...register("peso")}
+                    />
+                  </div>
                 </div>
               </fieldset>
               <div className="flex sr-only">
