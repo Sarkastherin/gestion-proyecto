@@ -28,6 +28,17 @@ export function Oportunidades() {
       sortable: true,
     },
     {
+      name: "Fecha",
+      selector: (row) => {
+        const dateString = row.created_at;
+        const date = new Date(dateString);
+        const options = { year: "numeric", day: "numeric", month: "long" };
+        return date.toLocaleString("es-AR", options);
+      },
+      width: "175px",
+      sortable: true,
+    },
+    {
       name: "Nombre de la oportunidad",
       selector: (row) => row.nombre,
       sortable: true,
@@ -171,7 +182,11 @@ export function Oportunidades() {
     getOportunidades();
   }, []);
   useEffect(() => {
-    setDataFiltered(oportunidades);
+    setDataFiltered(
+      oportunidades.sort((a, b) => {
+        return b.id - a.id;
+      })
+    );
   }, [oportunidades]);
   const handleConfirmed = ({ id, id_cotizacion }) => {
     setDeleteData({ oportunidad: id, cotizacion: id_cotizacion });
@@ -179,11 +194,9 @@ export function Oportunidades() {
   };
   const handleDeleteOportunidad = async () => {
     try {
-      console.log(deleteData.cotizacion);
       const res1 = await deleteDetalleByIdCot(deleteData.cotizacion);
       const res2 = await deleteCotizacion(deleteData.cotizacion);
       const res3 = await deleteOportunidad(deleteData.oportunidad);
-      console.log(res1, res2, res3);
     } catch (e) {
     } finally {
       getOportunidades();
