@@ -26,14 +26,14 @@ function DatosOportunidad() {
         <div className="w-full mt-2 flex gap-2">
           <div className="w-full">
             <Input
-              label={"Nombre del proyecto"}
+              label={"Nombre de la oportunidad"}
               {...register("nombre", {
                 required: {
                   value: true,
                   message: "Debe ingresar el nombre de la oportunidad",
                 },
               })}
-              placeholder="Nombre del proyecto"
+              placeholder="Nombre de la oportunidad"
             />
             {errors.nombre && (
               <TextInvalidate message={errors.nombre.message} />

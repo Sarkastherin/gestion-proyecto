@@ -37,6 +37,7 @@ export const CotizacionProvider = ({ children }) => {
         .from("detalle_cotizacion")
         .select("*")
         .eq("id_cotizacion", id);
+        console.log(detalle)
       const newDetalle = convertDetalle(detalle);
       dispatch({
         type: "GET_DETALLE_COTIZACION",

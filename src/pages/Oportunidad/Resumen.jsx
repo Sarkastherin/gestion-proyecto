@@ -11,9 +11,16 @@ import { SpinnerCircular } from "spinners-react";
 import { CloudArrowDownIcon } from "@heroicons/react/24/solid";
 import Badge from "../../components/Generals/Badge";
 import TableComponent from "../../components/TableComponent";
+import { useNavigate } from "react-router-dom";
 export default function Resumen() {
+  const navigate = useNavigate();
   const { getConsolidado, consolidados } = useMateriales();
-  const { getOportunidadById, activeOportunidad, getOportunidades, oportunidades } = useOportunidad();
+  const {
+    getOportunidadById,
+    activeOportunidad,
+    getOportunidades,
+    oportunidades,
+  } = useOportunidad();
   const [states, setStates] = useState({ csvData: [], loading: null });
   const { id } = useParams();
   useEffect(() => {
@@ -69,12 +76,23 @@ export default function Resumen() {
                 {"Status"}:
               </span>
               <span className="px-5 py-0.5 w-full">
-                <Badge variant={activeOportunidad.status}>{activeOportunidad.status}</Badge>
+                <Badge variant={activeOportunidad.status}>
+                  {activeOportunidad.status}
+                </Badge>
               </span>
             </div>
           </Card>
           <div>
             <div className="flex gap-10 justify-between">
+              <Button
+                className={"w-20"}
+                variant={"danger"}
+                onClick={() =>
+                  navigate("/oportunidad/:id/pdf", { state: { pdfData: activeOportunidad } })
+                }
+              >
+                PDF
+              </Button>
               <Button
                 className={"w-40"}
                 variant={"primary"}
@@ -92,7 +110,7 @@ export default function Resumen() {
               {states.csvData.length > 0 && (
                 <Button className={"w-40"} variant={"green_csv"}>
                   <CSVLink
-                  className="flex gap-2"
+                    className="flex gap-2"
                     filename={`Consolidado-${activeOportunidad.nombre}`}
                     data={states.csvData}
                     separator={";"}

@@ -19,7 +19,7 @@ export function Oportunidades() {
   const { getOportunidades, oportunidades, deleteOportunidad } =
     useOportunidad();
   const { handleModalClose, handleModalShow } = useModal();
-  const { deleteDetalleByIdCot, deleteCotizacion } = useCotizacion();
+  const { deleteDetalleByIdCot, deleteCotizacion, getDetalleCotizacion } = useCotizacion();
   const columns = [
     {
       name: "Id",

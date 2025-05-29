@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { appVersion, updatedDate } from "../version";
 function Home() {
   return (
@@ -24,12 +24,13 @@ function Home() {
         >
           Configuraciones
         </NavLink>
-        {/* <NavLink
+        <NavLink
           className="text-center w-full border rounded-md border-neutral-400 p-4 m-2 font-medium text-neutral-600 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 cursor-pointer"
-          to="/instructivos"
+          to="https://sarkastherin.notion.site/Funcionalidades-del-proyecto-202273e4619e80d2951ffc32926a1656" 
+          target="_blank"
         >
-          Instructivos (Proximamente)
-        </NavLink> */}
+          🆕 Funcionalidades del proyecto
+        </NavLink>
       </nav>
       <em className="absolute bottom-5 right-5 text-xs text-neutral-400 font-semibold">
         Version: {appVersion} | Date: {updatedDate}

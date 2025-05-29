@@ -71,6 +71,11 @@ function DatosPagos() {
           </option>
         </Select>
         </div>
+        <Textarea
+            placeholder="Notas de Cotización"
+            label="Notas de Cotización"
+            {...register("notas")}
+          />
       </div>
     </CardToggle>
   );

@@ -36,6 +36,7 @@ import Norma from "./pages/Configuraciones/Norma";
 import Medida from "./pages/Configuraciones/Medida";
 import TipoUnion from "./pages/Configuraciones/TipoUnion";
 import Caracteristica from "./pages/Configuraciones/Caracteristica";
+import PDFCotizacion from "./PDF/PDFCotizacion";
 function App() {
   const router = createBrowserRouter([
     {
@@ -79,6 +80,7 @@ function App() {
               element: <MargenesGanancias />,
             },
             { path: "/oportunidad/:id/condiciones", element: <Condiciones /> },
+            { path: "/oportunidad/:id/pdf", element: <PDFCotizacion /> },
           ],
         },
       ],
