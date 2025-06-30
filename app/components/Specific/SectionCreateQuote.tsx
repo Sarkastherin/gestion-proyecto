@@ -2,9 +2,10 @@ import { useUI } from "~/context/UIContext";
 import { quotesApi, type QuotesInput } from "~/backend/dataBase";
 import { Button } from "../Forms/Buttons";
 import { Card } from "../Generals/Cards";
-import React from "react";
+import React, { useState } from "react";
 import { ButtonNavigate } from "./Buttons";
 import { useOpportunityRealtime } from "~/backend/realTime";
+import { LayoutModal } from "../Generals/Modals";
 const ContainerSection = ({
   title,
   message,
@@ -42,6 +43,7 @@ export function ButtonCreateQuote({
   label?: string;
 }) {
   useOpportunityRealtime();
+  const [open, setOpen] = useState<boolean>(false);
   const { selectedOpportunity, showModal } = useUI();
   const { quotes } = selectedOpportunity || {};
 
@@ -85,7 +87,43 @@ export function ButtonCreateQuote({
       });
     }
   };
-  return <Button onClick={handleCreateQuote}>{label}</Button>;
+  const handleCopyQuote = () => {
+    showModal({
+      title: "En proceso",
+      message: "Se está trabajando en ello 👩🏻‍💻. En breve estará disponible",
+      variant: "information"
+    })
+  };
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>{label}</Button>
+      <LayoutModal
+        open={open}
+        handleOpen={() => setOpen(false)}
+        title="Crear nueva cotización"
+        size="w-md"
+      >
+        <div className="flex flex-col gap-4 mt-6">
+          <p className="text-sm">Puedes comenzar una cotización desde cero:</p>
+          <span className="mx-auto text-center">
+            <Button variant="yellow" onClick={handleCreateQuote}>
+              Crear en blanco
+            </Button>
+          </span>
+
+          <p className="text-sm">
+            o duplicar una cotización existente. Se copiarán todos los detalles,
+            y se reemplazarán las etapas del flujo actual.
+          </p>
+          <span className="mx-auto text-center">
+            <Button variant="blue" onClick={handleCopyQuote}>
+              Duplicar cotización
+            </Button>
+          </span>
+        </div>
+      </LayoutModal>
+    </>
+  );
 }
 
 export function ButtonNavigateDetails() {
