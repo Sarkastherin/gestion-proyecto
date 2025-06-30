@@ -77,7 +77,7 @@ export default function OpportunityLayout() {
       setSelectedClient(selectedOpportunity.client);
       const quote = selectedOpportunity?.quotes.find((q) => q.active);
       setSelectedQuoteId(quote?.id ?? null);
-      const revision = ["Nuevo", "En proceso", "En revision"];
+      const revision = ["Nuevo", "En proceso", "Revisión"];
       setEditByStatus(revision.some((r) => r === selectedOpportunity?.status));
     }
   }, [selectedOpportunity]);
