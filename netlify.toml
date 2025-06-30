@@ -1,7 +1,8 @@
-# netlify.toml
-[functions]
-  directory = "netlify/functions"
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+[build]
+  functions = "netlify/functions"
+  publish = "build/client" # Esto depende del build de Vite
+
+[dev]
+  functions = "netlify/functions"
+  port = 8888
+  targetPort = 5173 # el puerto donde corre Vite

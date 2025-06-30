@@ -1,0 +1,7 @@
+@import "tailwindcss";
+input:-webkit-autofill {
+  box-shadow: 0 0 0px 1000px #ffffff26 inset !important; /* fondo dark */
+  -webkit-text-fill-color: #e4e4e7 !important;         /* texto claro */
+  transition: background-color 9999s ease-in-out 0s;   /* hack visual */
+}
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
