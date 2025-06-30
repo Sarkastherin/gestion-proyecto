@@ -8,7 +8,8 @@
     "dev": "react-router dev",
     "dev:netlify": "netlify dev",
     "start": "react-router-serve ./build/server/index.js",
-    "typecheck": "react-router typegen && tsc"
+    "typecheck": "react-router typegen && tsc",
+    "deploy": "bash ./scripts/deploy-dev-to-main.sh"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
