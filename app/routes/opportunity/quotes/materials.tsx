@@ -49,6 +49,7 @@ export default function Materials() {
     setOpenMaterialsModal,
     setOpenPriceModal,
     materials,
+    editByStatus,
   } = useUI();
   const {
     register,
@@ -231,8 +232,10 @@ export default function Materials() {
                         {/* ID (oculto) */}
                         <Cell>
                           <Input
+                            disabled={!editByStatus}
                             {...register(`materials.${index}.id_material`, {
                               required: "Campo requerido",
+
                               validate: {
                                 checkNumber: (value) => {
                                   return (
@@ -245,6 +248,7 @@ export default function Materials() {
                             className="sr-only"
                           />
                           <Input
+                            disabled={!editByStatus}
                             readOnly
                             placeholder="Material"
                             value={watch(
@@ -266,6 +270,7 @@ export default function Materials() {
                         {/* Cantidad (registrada) */}
                         <Cell>
                           <Input
+                            disabled={!editByStatus}
                             type="number"
                             step={0.01}
                             {...register(`materials.${index}.quantity`, {
@@ -298,6 +303,7 @@ export default function Materials() {
                             })}
                           />
                           <Input
+                            disabled={!editByStatus}
                             readOnly
                             value={
                               Number(
@@ -328,13 +334,18 @@ export default function Materials() {
                         {/* Eliminar fila */}
                         <Cell>
                           <ButtonDeleteIcon
+                            disabled={!editByStatus}
                             onClick={() => handleRemove(index)}
                           />
                         </Cell>
                       </tr>
                     ))}
                 </TableDetailsQuotes>
-                <ButtonAdd title="Agregar Material" onClick={handleAdd} />
+                <ButtonAdd
+                  disabled={!editByStatus}
+                  title="Agregar Material"
+                  onClick={handleAdd}
+                />
               </div>
             </fieldset>
             <FooterForms mode="view" />

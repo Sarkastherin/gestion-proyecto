@@ -144,14 +144,15 @@ type UIContextType = {
   getCategories: () => Promise<void>
   subcategories: SubCategoryType[] | null;
   setSubcategories: React.Dispatch<React.SetStateAction<SubCategoryType[] | null>>
-  getSubcategories: () => Promise<void>
+  getSubcategories: () => Promise<void>;
+  editByStatus: boolean;
+  setEditByStatus: React.Dispatch<React.SetStateAction<boolean>>
 };
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const html = document.getElementsByTagName("html");
   const [theme, setTheme] = useState<ThemeProps>(prefersDark ? "dark" : "light");
   /* Datos */
   const [materials, setMaterials] = useState<MaterialTypeDB[] | null>(null);
@@ -165,6 +166,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [categorizations, setCategorizations] =
     useState<CategorizationsProps | null>(null);
   const { clients } = useContacts();
+  const [editByStatus, setEditByStatus] = useState<boolean>(false);
   /* Seleccionados */
   const [selectedClient, setSelectedClient] = useState<ClientDataType | null>(
     null
@@ -543,7 +545,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
         getCategories,
         subcategories,
         setSubcategories,
-        getSubcategories
+        getSubcategories,
+        setEditByStatus,
+        editByStatus
       }}
     >
       {children}

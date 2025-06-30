@@ -34,7 +34,7 @@ export default function Items() {
     showModal,
     selectedPhase,
     selectedOpportunity,
-    handleSetIsFieldsChanged,
+    editByStatus,
     isModeEdit,
   } = useUI();
   const {
@@ -169,11 +169,13 @@ export default function Items() {
                         <Input
                           {...register(`items.${index}.item`)}
                           placeholder="Ítem"
+                          disabled={!editByStatus}
                         />
                       </Cell>
                       <Cell>
                         <Input
                           type="number"
+                          disabled={!editByStatus}
                           step={0.01}
                           {...register(`items.${index}.quantity`, {
                             valueAsNumber: true,
@@ -182,6 +184,7 @@ export default function Items() {
                       </Cell>
                       <Cell>
                         <Input
+                        disabled={!editByStatus}
                           type="number"
                           {...register(`items.${index}.unit_cost`, {
                             valueAsNumber: true,
@@ -203,12 +206,12 @@ export default function Items() {
                         />
                       </Cell>
                       <Cell>
-                        <ButtonDeleteIcon onClick={() => handleRemove(index)} />
+                        <ButtonDeleteIcon disabled={!editByStatus} onClick={() => handleRemove(index)} />
                       </Cell>
                     </tr>
                   ))}
               </TableDetailsQuotes>
-              <ButtonAdd title="Agregar Item" onClick={handleAdd} />
+              <ButtonAdd title="Agregar Item" disabled={!editByStatus} onClick={handleAdd} />
             </div>
           </fieldset>
           <FooterForms mode="view" />

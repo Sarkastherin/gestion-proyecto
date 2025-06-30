@@ -24,7 +24,7 @@ export default function OpportunityForm({
     selectedClient,
     showModal,
     isModeEdit,
-    handleSetIsFieldsChanged,
+    editByStatus
   } = useUI();
   const {
     register,
@@ -112,6 +112,7 @@ export default function OpportunityForm({
               <Input
                 label="Nombre de Oportunidad"
                 placeholder="Ingresa un nombre para la oportunidad"
+                disabled={!editByStatus}
                 {...register("name", { required: "Campo requerido" })}
                 error={errors.name?.message}
               />
@@ -119,6 +120,7 @@ export default function OpportunityForm({
                 label="Cliente"
                 placeholder="Seleccione un cliente"
                 readOnly
+                disabled={!editByStatus}
                 value={selectedClient?.nombre || ""}
                 onClick={() => setOpenClientModal(true)}
                 error={errors.id_client?.message}
@@ -130,7 +132,7 @@ export default function OpportunityForm({
                   valueAsNumber: true,
                 })}
               />
-              <Textarea label="Alcance" {...register("scope")} />
+              <Textarea disabled={!editByStatus} label="Alcance" {...register("scope")} />
               <Select
                 label="Status"
                 selectText="Selecciona un status"

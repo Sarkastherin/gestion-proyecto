@@ -14,7 +14,7 @@ export default function ConditionsForm({
 }: {
   quoteActive: number;
 }) {
-  const { showModal, isModeEdit, selectedOpportunity } = useUI();
+  const { showModal, isModeEdit, selectedOpportunity, editByStatus } = useUI();
   const { quotes } = selectedOpportunity || {};
   const {
     register,
@@ -111,6 +111,7 @@ export default function ConditionsForm({
           <CardToggle title="Formas y metodos de pago">
             <div className="flex flex-col gap-4">
               <Select
+                disabled={!editByStatus}
                 label="Forma de pago"
                 {...register("method_payment", {
                   required: true,
@@ -123,28 +124,33 @@ export default function ConditionsForm({
                 ))}
               </Select>
               <Input
+                disabled={!editByStatus}
                 placeholder="Plazo de ejecución"
                 label="Plazo de ejecución"
                 {...register("delivery_time")}
               />
               <Input
+                disabled={!editByStatus}
                 placeholder="Garantía"
                 label="Garantía"
                 {...register("guarantee")}
               />
               <Input
+                disabled={!editByStatus}
                 type="date"
                 placeholder="Vigencia"
                 label="Vigencia"
                 {...register("validity")}
               />
               <Input
+                disabled={!editByStatus}
                 type="date"
                 placeholder="Fecha probable de inicio"
                 label="Fecha probable de inicio"
                 {...register("estimated_start_date")}
               />
               <Select
+                disabled={!editByStatus}
                 label="Status"
                 {...register("status", {
                   required: true,
@@ -163,6 +169,7 @@ export default function ConditionsForm({
                 )}
               </Select>
               <Textarea
+              disabled={!editByStatus}
                 label="Notas de Cotización"
                 placeholder="Notas de Cotización"
                 rows={2}
@@ -207,6 +214,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
+                      disabled={!editByStatus}
                         placeholder="0 %"
                         {...register("materials", {
                           onChange: (e) =>
@@ -238,6 +246,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
+                      disabled={!editByStatus}
                         placeholder="0%"
                         {...register("labor", {
                           onChange: (e) =>
@@ -269,6 +278,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
+                      disabled={!editByStatus}
                         placeholder="0%"
                         {...register("subcontracting", {
                           onChange: (e) =>
@@ -298,6 +308,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
+                      disabled={!editByStatus}
                         placeholder="0%"
                         {...register("others", {
                           onChange: (e) =>
@@ -346,6 +357,7 @@ export default function ConditionsForm({
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
                     <Input
+                    disabled={!editByStatus}
                       placeholder="0%"
                       {...register("general", {
                         valueAsNumber: true,

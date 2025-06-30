@@ -30,9 +30,8 @@ export default function PhasesForm({
   );
   const {
     showModal,
-    refreshOpportunity,
     isModeEdit,
-    handleSetIsFieldsChanged,
+    editByStatus
   } = useUI();
   const {
     register,
@@ -146,6 +145,7 @@ export default function PhasesForm({
                       <td className="px-3 py-2 whitespace-nowrap">
                         <Input
                           placeholder="Nombre de la etapa"
+                          disabled={!editByStatus}
                           {...register(`phases.${index}.name`, {
                             required: "Campo requerido",
                           })}
@@ -156,7 +156,7 @@ export default function PhasesForm({
                       </td>
 
                       <td className="px-3 py-2 whitespace-nowrap">
-                        <ButtonDeleteIcon onClick={() => handleRemove(index)} />
+                        <ButtonDeleteIcon onClick={() => handleRemove(index)} disabled={!editByStatus}/>
                       </td>
                     </tr>
                   ))}
@@ -166,6 +166,7 @@ export default function PhasesForm({
                 <ButtonAdd
                   aria-label="Agregar nueva etapa"
                   onClick={handleAddPhase}
+                  disabled={!editByStatus}
                 />
               </div>
             </div>

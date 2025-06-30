@@ -7,7 +7,7 @@ import {
   InboxIcon,
   ReceiptPercentIcon,
   SwatchIcon,
-  ClipboardDocumentIcon
+  ClipboardDocumentIcon,
 } from "@heroicons/react/16/solid";
 /* Contexts */
 import { useUI } from "~/context/UIContext";
@@ -57,6 +57,7 @@ export default function OpportunityLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [selectedQuoteId, setSelectedQuoteId] = useState<number | null>(null);
+  
   const {
     selectedOpportunity,
     isFieldsChanged,
@@ -64,6 +65,7 @@ export default function OpportunityLayout() {
     getOpportunityById,
     setSelectedClient,
     showModal,
+    setEditByStatus
   } = useUI();
   const { id } = useParams();
   const menu = menuItems(Number(id));
@@ -75,6 +77,8 @@ export default function OpportunityLayout() {
       setSelectedClient(selectedOpportunity.client);
       const quote = selectedOpportunity?.quotes.find((q) => q.active);
       setSelectedQuoteId(quote?.id ?? null);
+      const revision = ["Nuevo", "En proceso", "En revision"];
+      setEditByStatus(revision.some((r) => r === selectedOpportunity?.status));
     }
   }, [selectedOpportunity]);
   const handleNavigate = (href: string) => {
@@ -118,6 +122,7 @@ export default function OpportunityLayout() {
   const onClose = () => {
     setHidden(true);
   };
+
   return (
     <>
       <div className="px-10 pb-2 border-b border-zinc-100 bg-white shadow-xs dark:border-zinc-800 dark:bg-zinc-900 dark:shadow-zinc-700/25">
@@ -276,12 +281,11 @@ export default function OpportunityLayout() {
                             variant: "error",
                           });
                         } else {
-                           showModal({
-                              title: "¡Todo OK!",
-                              message:
-                                "Cotización cambiada.",
-                              variant: "success",
-                            });
+                          showModal({
+                            title: "¡Todo OK!",
+                            message: "Cotización cambiada.",
+                            variant: "success",
+                          });
                         }
                       }}
                     />
