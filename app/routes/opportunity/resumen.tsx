@@ -41,15 +41,38 @@ const getActiveQuoteDetails = (
 ): (ExtendedDetailsMaterials | DetailsItemsType)[] => {
   if (!opportunity || !quoteId || !units) return [];
 
-  const materials = opportunity.details_materials
-    .filter((m) => m.id_quote === quoteId)
-    .map((m) => {
-      const unit = units.find((u) => u.id === m.materials.id_unit)?.description;
-      return { ...m, unit };
-    });
+  // Agrupar materiales por id_material + id_price
+  const materialMap = new Map<string, ExtendedDetailsMaterials>();
 
-  const items = opportunity.details_items.filter((i) => i.id_quote === quoteId);
-  return [...materials, ...items];
+  const materialsRaw = opportunity.details_materials.filter(
+    (m) => m.id_quote === quoteId
+  );
+
+  for (const m of materialsRaw) {
+    const key = `${m.id_material}-${m.id_price}`;
+    const unit = units.find((u) => u.id === m.materials.id_unit)?.description;
+    const existing = materialMap.get(key);
+
+    if (existing) {
+      materialMap.set(key, {
+        ...existing,
+        quantity: existing.quantity + m.quantity, // sumamos cantidades
+      });
+    } else {
+      materialMap.set(key, {
+        ...m,
+        unit,
+      });
+    }
+  }
+
+  const groupedMaterials = Array.from(materialMap.values());
+
+  const items: DetailsItemsType[] = opportunity.details_items.filter(
+    (i) => i.id_quote === quoteId
+  );
+
+  return [...groupedMaterials, ...items];
 };
 
 // 🧩 Cabecera de la oportunidad
@@ -125,7 +148,7 @@ interface Props {
 }
 export const QuoteDetailsTable = ({ details }: Props) => {
   const [filterType, setFilterType] = useState<string>("Todos");
-  const [separator, setSeparator] = useState<","|";">(";")
+  const [separator, setSeparator] = useState<"," | ";">(";");
 
   const uniqueTypes = useMemo(() => {
     const types = new Set(details.map((item) => item.type));
@@ -175,45 +198,45 @@ export const QuoteDetailsTable = ({ details }: Props) => {
           ))}
         </div>
         <div className="text-sm inline-flex divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800">
-      {/* Botón Exportar */}
-      <CSVLink
-        data={filtered}
-        headers={headers}
-        separator={separator}
-        className="bg-green-600 text-white dark:text-zinc-800 px-3 py-1.5 font-medium hover:bg-green-700 transition"
-      >
-        Exportar
-      </CSVLink>
-
-      {/* Selector de separador */}
-      <div className="relative">
-        <select
-          className="dark:bg-zinc-800 appearance-none w-full h-full px-3 py-1.5 text-gray-700 dark:text-zinc-200 bg-transparent pr-8 focus:outline-none cursor-pointer"
-          onChange={(e) => setSeparator(e.target.value as "," | ";")}
-          value={separator}
-        >
-          <option disabled>Separador</option>
-          <option value=",">coma [,]</option>
-          <option value=";">punto y coma [;]</option>
-        </select>
-
-        {/* Ícono de flecha */}
-        <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-          <svg
-            className="h-4 w-4 text-gray-500 dark:text-zinc-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
+          {/* Botón Exportar */}
+          <CSVLink
+            data={filtered}
+            headers={headers}
+            separator={separator}
+            className="bg-green-600 text-white dark:text-zinc-800 px-3 py-1.5 font-medium hover:bg-green-700 transition"
           >
-            <path
-              fillRule="evenodd"
-              d="M10 12a1 1 0 01-.707-.293l-3-3a1 1 0 111.414-1.414L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3A1 1 0 0110 12z"
-              clipRule="evenodd"
-            />
-          </svg>
+            Exportar
+          </CSVLink>
+
+          {/* Selector de separador */}
+          <div className="relative">
+            <select
+              className="dark:bg-zinc-800 appearance-none w-full h-full px-3 py-1.5 text-gray-700 dark:text-zinc-200 bg-transparent pr-8 focus:outline-none cursor-pointer"
+              onChange={(e) => setSeparator(e.target.value as "," | ";")}
+              value={separator}
+            >
+              <option disabled>Separador</option>
+              <option value=",">coma [,]</option>
+              <option value=";">punto y coma [;]</option>
+            </select>
+
+            {/* Ícono de flecha */}
+            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+              <svg
+                className="h-4 w-4 text-gray-500 dark:text-zinc-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 12a1 1 0 01-.707-.293l-3-3a1 1 0 111.414-1.414L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3A1 1 0 0110 12z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
       </div>
 
       <div className="overflow-auto">
