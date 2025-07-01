@@ -1,5 +1,9 @@
 import { createCrud } from "./crudFactory";
-import type { CommonTypesDataBase, OpportunityInput, OpportunityType } from "~/types/database";
+import type {
+  CommonTypesDataBase,
+  OpportunityInput,
+  OpportunityType,
+} from "~/types/database";
 
 export type PhasesInput = {
   name: string;
@@ -23,7 +27,6 @@ export type QuotesInput = {
   subcontracting?: number;
   others?: number;
   general?: number;
-  
 };
 export type QuotesType = QuotesInput & CommonTypesDataBase;
 export type DetailsItemsInput = {
@@ -35,8 +38,7 @@ export type DetailsItemsInput = {
   unit_cost: number;
   notes?: string;
   observations?: string;
-  total?: number
-  
+  total?: number;
 };
 export type DetailsItemsType = DetailsItemsInput & CommonTypesDataBase;
 export type DetailsMaterialsInput = {
@@ -49,22 +51,26 @@ export type DetailsMaterialsInput = {
   notes?: string;
   observations?: string;
 };
-export type DetailsMaterialsType = DetailsMaterialsInput & CommonTypesDataBase;
+export type DetailsMaterialsType = DetailsMaterialsInput &
+  CommonTypesDataBase & {
+    materials: MaterialsType;
+    prices: PricesType | {};
+  };
 export type PricesInput = {
   id_material: number | null;
   id_supplier: number | null;
   price: number;
   default: boolean;
-  date?:string;
+  date?: string;
   history_data?: object;
 };
-export type PricesType = PricesInput & CommonTypesDataBase
+export type PricesType = PricesInput & CommonTypesDataBase;
 export type MaterialsInput = {
   id_subcategory: number | null;
   description: string;
   id_unit: number | null;
   weight?: number;
-  applycation?:string
+  applycation?: string;
 };
 export type MaterialsType = MaterialsInput & CommonTypesDataBase;
 export type ProfitMarginInput = {
@@ -75,26 +81,26 @@ export type ProfitMarginInput = {
   subcontracting: number;
   others: number;
   general: number;
-}
+};
 export type FamilyInput = {
-  description: string
-}
+  description: string;
+};
 export type FamilyType = FamilyInput & CommonTypesDataBase;
 export type CategoryInput = {
   description: string;
-  id_family: number
-}
+  id_family: number;
+};
 export type CategoryType = CategoryInput & CommonTypesDataBase;
 export type SubCategoryInput = {
   description: string;
-  id_category: number
-}
+  id_category: number;
+};
 export type SubCategoryType = SubCategoryInput & CommonTypesDataBase;
 
 export type UnitsInput = {
   description: string;
-  abbreviation: string
-}
+  abbreviation: string;
+};
 export type UnitsType = UnitsInput & CommonTypesDataBase;
 
 export type ProfitMarginType = ProfitMarginInput & CommonTypesDataBase;
@@ -102,9 +108,7 @@ export const opportunityApi = createCrud<OpportunityType, OpportunityInput>(
   "opportunities"
 );
 export const phasesApi = createCrud<PhasesType, PhasesInput>("phases");
-export const quotesApi = createCrud<QuotesType, QuotesInput>(
-  "quotes"
-);
+export const quotesApi = createCrud<QuotesType, QuotesInput>("quotes");
 export const details_itemsApi = createCrud<DetailsItemsType, DetailsItemsInput>(
   "details_items"
 );
@@ -119,15 +123,11 @@ export const materialsApi = createCrud<MaterialsType, MaterialsInput>(
 export const profitMarginApi = createCrud<ProfitMarginType, ProfitMarginInput>(
   "profit_margins"
 );
-export const familyApi = createCrud<FamilyType, FamilyInput>(
-  "families"
-);
+export const familyApi = createCrud<FamilyType, FamilyInput>("families");
 export const categoryApi = createCrud<CategoryType, CategoryInput>(
   "categories"
 );
 export const subcategoryApi = createCrud<SubCategoryType, SubCategoryInput>(
   "subcategories"
 );
-export const unitsApi = createCrud<UnitsType, UnitsInput>(
-  "units"
-);
+export const unitsApi = createCrud<UnitsType, UnitsInput>("units");

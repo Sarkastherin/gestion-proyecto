@@ -1,3 +1,6 @@
+import pkg from "package.json";
+export const appVersion = pkg.version;
+
 export type Totals = {
   id_quote: number;
   total_materials: number;

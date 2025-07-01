@@ -25,7 +25,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-type DetailsMaterialForm = {
+export type DetailsMaterialForm = {
   materials: Array<
     DetailsMaterialsType & {
       materials: MaterialsType;

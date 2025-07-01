@@ -3,9 +3,10 @@ import type { StatusType } from "~/types/database";
 
 type BadgeStatusType = {
   variant: StatusType;
+  size?: "sm" | "md"
   children: React.ReactNode
 }
-export default function BadgeStatus({ variant,children }: BadgeStatusType) {
+export default function BadgeStatus({ variant,size = "sm",children }: BadgeStatusType) {
   const variants = {
     "Nuevo": "bg-blue-200 text-blue-700",
     "Desestimada": "bg-gray-200 text-gray-700",
@@ -17,5 +18,9 @@ export default function BadgeStatus({ variant,children }: BadgeStatusType) {
     "No status": "bg-red-200 text-red-700",
 
   };
-  return <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold whitespace-nowrap ${variants[variant]}`}>{children}</span>;
+  const sizes = {
+    sm:"px-2.5 py-0.5 text-xs",
+    md: "px-3 py-1 text-sm"
+  }
+  return <span className={`rounded-full font-semibold whitespace-nowrap ${sizes[size]} ${variants[variant]}`}>{children}</span>;
 }

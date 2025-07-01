@@ -5,6 +5,7 @@ import type { ModalBaseProps } from "~/components/Generals/Modals";
 import { supabase } from "~/backend/supabaseClient";
 import { categoryApi, familyApi, subcategoryApi, unitsApi } from "~/backend/dataBase";
 import type { OpportunityType } from "~/types/database";
+import type { DetailsMaterialForm } from "~/routes/opportunity/quotes/materials";
 import {
   getQuoteTotals,
   roundToPrecision,
