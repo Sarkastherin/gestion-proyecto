@@ -9,6 +9,8 @@ import type { HandleRowClicked } from "~/templates/MaterialTable";
 import { Button } from "~/components/Forms/Buttons";
 import { Modal } from "~/components/Generals/Modals";
 import { ImportCsvInput } from "~/utils/import";
+import { ButtonExport } from "~/components/Specific/Buttons";
+
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Materiales" },
@@ -23,6 +25,7 @@ export default function Materials() {
     categorizations,
     getCategorizations,
     getMaterials,
+    materials
   } = useUI();
   const navigate = useNavigate();
   useEffect(() => {
@@ -37,7 +40,13 @@ export default function Materials() {
   const handleUploadFile = () => {
     setHidden(false);
   };
-
+const headers = [
+  {label:"ID", key: "id"},
+  {label:"FAMILIA", key: "view_categorizations.description_family"},
+  {label:"RUBRO", key: "view_categorizations.description_category"},
+  {label:"SUBRUBRO", key: "view_categorizations.description_subcategory"},
+  {label:"DESCRIPCION", key: "description"},
+]
   return (
     <>
       <ContainerWithTitle title="Materiales" width="w-full">
@@ -51,12 +60,12 @@ export default function Materials() {
         )}
       </ContainerWithTitle>
       <span className="fixed bottom-0 w-full">
-        <div className="flex justify-between w-full px-10 py-5 hover:bg-zinc-900">
+        <div className="flex justify-between w-full px-10 py-5 hover:bg-zinc-200 hover:dark:bg-zinc-900">
           <div className="flex gap-4">
-            <Button variant="green" type="button" onClick={handleUploadFile}>
+            <Button variant="blue" type="button" onClick={handleUploadFile}>
               Importar
             </Button>
-            <Button type="button">Exportar</Button>
+            <ButtonExport data={materials ?? []} headers={headers} filename="Listado de materiales"/>
           </div>
           <ButtonNavigate variant="yellow" route="/new-material">
             Nuevo Material
@@ -64,17 +73,43 @@ export default function Materials() {
         </div>
       </span>
       <Modal hidden={hidden} setHidden={setHidden} title="Seleccionar archivo">
-        <div className="text-zinc-700 dark:text-zinc-300 mb-10">
-          <p className="text-lg font-semibold">Recomendaciones</p>
-          <ul className="list-disc ps-10">
+        <div className="text-zinc-700 dark:text-zinc-300 mb-10 space-y-3">
+          <p className="text-lg font-semibold">Herramienta de Importación</p>
+          <p>
+            Para ayudarte a preparar los materiales de forma correcta, puedes
+            usar una hoja de Google Sheets que genera el formato compatible con
+            esta importación.
+          </p>
+          <ul className="list-disc list-inside text-sm text-zinc-600 dark:text-zinc-400">
             <li>
-              Asegurate de guardar tu hoja de Excel como CSV delimitado por
-              comas.
+              Seleccioná familia, rubro y subrubro desde listas predefinidas.
             </li>
-            <li>La primera fila debe contener los nombres de las columnas.</li>
-            <li>No uses celdas combinadas ni fórmulas sin resolver.</li>
+            <li>
+              El archivo calcula automáticamente el{" "}
+              <code className="text-blue-600 dark:text-blue-400">
+                id_subrubro
+              </code>{" "}
+              correspondiente.
+            </li>
+            <li>
+              Si la combinación no es válida, te avisa y resalta la fila en
+              naranja.
+            </li>
+            <li>
+              También puedes elegir la unidad de medida sin errores de
+              escritura.
+            </li>
           </ul>
+          <a
+            href="https://docs.google.com/spreadsheets/d/1QuuoWQXr5BYu-sZQLGGJ7Z-HOqQxzNxp3nMIHO0M4Ys/edit?gid=1833383596#gid=1833383596"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-2 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+          >
+            Ver hoja de Google Sheets para preparar archivo →
+          </a>
         </div>
+
         <ImportCsvInput
           table="materials"
           className="block text-sm text-zinc-700 file:border-none file:bg-indigo-600 file:text-white file:rounded file:px-4 file:py-1 hover:file:bg-indigo-500"

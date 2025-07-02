@@ -17,9 +17,8 @@ import type {
   PricesType,
 } from "~/backend/dataBase";
 import type { OpportunityAll } from "~/context/UIContext";
-import { Button } from "~/components/Forms/Buttons";
-import { CSVLink, CSVDownload } from "react-csv";
-import { Select } from "~/components/Forms/Inputs";
+import { CSVLink } from "react-csv";
+import { ButtonExport } from "~/components/Specific/Buttons";
 
 // 📌 Meta
 export function meta({}: Route.MetaArgs) {
@@ -148,7 +147,7 @@ interface Props {
 }
 export const QuoteDetailsTable = ({ details }: Props) => {
   const [filterType, setFilterType] = useState<string>("Todos");
-  const [separator, setSeparator] = useState<"," | ";">(";");
+  //const [separator, setSeparator] = useState<"," | ";">(";");
 
   const uniqueTypes = useMemo(() => {
     const types = new Set(details.map((item) => item.type));
@@ -197,46 +196,13 @@ export const QuoteDetailsTable = ({ details }: Props) => {
             </button>
           ))}
         </div>
-        <div className="text-sm inline-flex divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800">
-          {/* Botón Exportar */}
-          <CSVLink
-            data={filtered}
-            headers={headers}
-            separator={separator}
-            className="bg-green-600 text-white dark:text-zinc-800 px-3 py-1.5 font-medium hover:bg-green-700 transition"
-          >
-            Exportar
-          </CSVLink>
-
-          {/* Selector de separador */}
-          <div className="relative">
-            <select
-              className="dark:bg-zinc-800 appearance-none w-full h-full px-3 py-1.5 text-gray-700 dark:text-zinc-200 bg-transparent pr-8 focus:outline-none cursor-pointer"
-              onChange={(e) => setSeparator(e.target.value as "," | ";")}
-              value={separator}
-            >
-              <option disabled>Separador</option>
-              <option value=",">coma [,]</option>
-              <option value=";">punto y coma [;]</option>
-            </select>
-
-            {/* Ícono de flecha */}
-            <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-              <svg
-                className="h-4 w-4 text-gray-500 dark:text-zinc-400"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 12a1 1 0 01-.707-.293l-3-3a1 1 0 111.414-1.414L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3A1 1 0 0110 12z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-          </div>
-        </div>
+        <ButtonExport
+          data={filtered}
+          headers={headers}
+          filename={`detalle_cotizacion_${
+            details[0].id_quote
+          }_${filterType.toLocaleLowerCase()}`}
+        />
       </div>
 
       <div className="overflow-auto">

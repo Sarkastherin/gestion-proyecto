@@ -4,16 +4,15 @@ import { useNavigate } from "react-router";
 import { variants } from "../Forms/Buttons";
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/16/solid";
 import type { ButtonHTMLAttributes } from "react";
-type ButtonProps = & {
+import { useState } from "react";
+import { CSVLink } from "react-csv";
+import type { CommonPropTypes } from "react-csv/components/CommonPropTypes";
+type ButtonProps = {
   route: string;
   variant?: keyof typeof variants;
   children: React.ReactNode;
 };
-export const ButtonNavigate = ({
-  route,
-  variant,
-  children,
-}: ButtonProps) => {
+export const ButtonNavigate = ({ route, variant, children }: ButtonProps) => {
   const navigate = useNavigate();
   return (
     <Button type="button" variant={variant} onClick={() => navigate(route)}>
@@ -57,5 +56,52 @@ export const ButtonAdd = ({
         <span>Agregar</span>
       </div>
     </button>
+  );
+};
+export const ButtonExport = ({data, headers, filename}:CommonPropTypes) => {
+    const [separator, setSeparator] = useState<"," | ";">(";");
+  
+  return (
+    <div className="text-sm inline-flex divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800">
+      {/* Botón Exportar */}
+      <CSVLink
+        data={data}
+        headers={headers}
+        separator={separator}
+        filename={filename}
+        className="bg-green-600 text-white dark:text-zinc-800 px-3 py-1.5 font-medium hover:bg-green-700 transition"
+      >
+        Exportar
+      </CSVLink>
+
+      {/* Selector de separador */}
+      <div className="relative">
+        <select
+          className="dark:bg-zinc-800 appearance-none w-full h-full px-3 py-1.5 text-gray-700 dark:text-zinc-200 bg-transparent pr-8 focus:outline-none cursor-pointer"
+          onChange={(e) => setSeparator(e.target.value as "," | ";")}
+          value={separator}
+        >
+          <option disabled>Separador</option>
+          <option value=",">coma [,]</option>
+          <option value=";">punto y coma [;]</option>
+        </select>
+
+        {/* Ícono de flecha */}
+        <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+          <svg
+            className="h-4 w-4 text-gray-500 dark:text-zinc-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 12a1 1 0 01-.707-.293l-3-3a1 1 0 111.414-1.414L10 9.586l2.293-2.293a1 1 0 111.414 1.414l-3 3A1 1 0 0110 12z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
   );
 };
