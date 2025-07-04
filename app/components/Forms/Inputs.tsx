@@ -5,6 +5,7 @@ import type {
   JSX,
 } from "react";
 import type { UseFormRegisterReturn } from "react-hook-form";
+import { forwardRef } from "react";
 const basesClass = (error: string) => {
   return `mt-0.5 w-full rounded border py-2 px-2 shadow-sm sm:text-sm text-zinc-700
           ${error ? "border-red-500" : "border-zinc-300 dark:border-zinc-600"}

@@ -24,7 +24,7 @@ export default function OpportunityForm({
     selectedClient,
     showModal,
     isModeEdit,
-    editByStatus
+    editByStatus,
   } = useUI();
   const {
     register,
@@ -40,7 +40,7 @@ export default function OpportunityForm({
       created_by: "",
     },
   });
-  useFieldsChange({isSubmitSuccessful, isDirty})
+  useFieldsChange({ isSubmitSuccessful, isDirty });
   useEffect(() => {
     if (selectedClient && selectedClient.id !== watch("id_client")) {
       setValue("id_client", selectedClient.id, { shouldDirty: true });
@@ -102,7 +102,6 @@ export default function OpportunityForm({
     }
   };
   const isLost = watch("status") === "Perdida";
-  
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
@@ -112,7 +111,7 @@ export default function OpportunityForm({
               <Input
                 label="Nombre de Oportunidad"
                 placeholder="Ingresa un nombre para la oportunidad"
-                disabled={!editByStatus}
+                disabled={!editByStatus && mode!= "create"}
                 {...register("name", { required: "Campo requerido" })}
                 error={errors.name?.message}
               />
@@ -120,7 +119,7 @@ export default function OpportunityForm({
                 label="Cliente"
                 placeholder="Seleccione un cliente"
                 readOnly
-                disabled={!editByStatus}
+                disabled={!editByStatus && mode!= "create"}
                 value={selectedClient?.nombre || ""}
                 onClick={() => setOpenClientModal(true)}
                 error={errors.id_client?.message}
@@ -132,7 +131,11 @@ export default function OpportunityForm({
                   valueAsNumber: true,
                 })}
               />
-              <Textarea disabled={!editByStatus} label="Alcance" {...register("scope")} />
+              <Textarea
+                disabled={!editByStatus && mode!= "create"}
+                label="Alcance"
+                {...register("scope")}
+              />
               <Select
                 label="Status"
                 selectText="Selecciona un status"

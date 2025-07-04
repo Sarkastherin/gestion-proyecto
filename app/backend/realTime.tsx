@@ -22,8 +22,7 @@ export function useMaterialsRealtime() {
   }, [materials, selectedMaterial]);
 }
 
-
-export function usePricesRealtime(idMaterial?:number) {
+export function usePricesRealtime(idMaterial?: number) {
   const { refreshMaterial } = useUI();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const debounceDelay = 500; // ajustar según el ritmo de tus eventos
@@ -61,8 +60,8 @@ export function useUnitsRealTime() {
         "postgres_changes",
         { event: "*", schema: "public", table: "units" },
         () => {
-          console.log("ejecutando getUnits()")
-          getUnits()
+          console.log("ejecutando getUnits()");
+          getUnits();
         }
       )
       .subscribe();
@@ -77,14 +76,9 @@ export function useConfigRealTime() {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { getCategorizations } = useUI();
   useEffect(() => {
-
     const channel = supabase.channel("realtime:categorizations_realtime");
 
-    const tablesToListen = [
-      "families",
-      "categories",
-      "subcategories"
-    ];
+    const tablesToListen = ["families", "categories", "subcategories"];
 
     tablesToListen.forEach((table) => {
       channel.on(
@@ -97,7 +91,7 @@ export function useConfigRealTime() {
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
           timeoutRef.current = setTimeout(() => {
-            console.log('refrescando categorias')
+            console.log("refrescando categorias");
             getCategorizations();
             timeoutRef.current = null;
           }, 500);
@@ -128,7 +122,7 @@ export function useOpportunityRealtime() {
       "profit_margins",
       "details_items",
       "details_materials",
-      "phases"
+      "phases",
     ];
 
     tablesToListen.forEach((table) => {
@@ -142,7 +136,7 @@ export function useOpportunityRealtime() {
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
           timeoutRef.current = setTimeout(() => {
-            console.log('refrescando oportunidad')
+            console.log("refrescando oportunidad");
             refreshOpportunity();
             timeoutRef.current = null;
           }, 500);
@@ -158,4 +152,3 @@ export function useOpportunityRealtime() {
     };
   }, [selectedOpportunity]);
 }
-

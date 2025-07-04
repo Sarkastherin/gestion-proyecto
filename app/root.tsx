@@ -36,7 +36,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <html lang="en" data-theme={theme} className={theme === 'dark' ? 'dark:bg-zinc-800' : ''}>
+    <html lang="en" data-theme={theme} className={theme === 'dark' ? 'dark:bg-zinc-800' : ''} title="Gestión de Proyectos IM + Industrial">
+      <title>Gestión de Proyectos IM + Industrial</title>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
