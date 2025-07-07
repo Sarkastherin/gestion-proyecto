@@ -79,6 +79,16 @@ export default function Settings() {
 ];
   const colsSubcategories: TableColumn<SubCategoryType>[] = [
     { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
+    { name: "Subrubro", selector: (row) => row.description },
+    {
+      name: "Rubro",
+      selector: (row) => {
+        const category = categories?.find(
+          (c) => c.id === row.id_category
+        )?.description;
+        return category ?? "";
+      },
+    },
     {
       name: "Familia",
       selector: (row) => {
@@ -88,19 +98,9 @@ export default function Settings() {
         )?.description;
         return family ?? "";
       },
-      width: "230px",
     },
-    {
-      name: "Rubro",
-      selector: (row) => {
-        const category = categories?.find(
-          (c) => c.id === row.id_category
-        )?.description;
-        return category ?? "";
-      },
-      width: "230px",
-    },
-    { name: "Subrubro", selector: (row) => row.description },
+    
+    
   ];
   return (
     <div className="flex flex-1 gap-6 min-h-[calc(100vh-64px)]">
@@ -208,8 +208,9 @@ export default function Settings() {
                 name: "id_category",
                 label: "Rubro",
                 type: "select",
-                options: categories?.map((f) => {
-                  return { value: f.id, label: f.description };
+                options: categories?.map((c) => {
+                  const family = families?.find(f => f.id ===c.id_family )?.description
+                  return { value: c.id, label: `${c.description}-[🧩${family}]` };
                 }),
                 required: true,
               },
