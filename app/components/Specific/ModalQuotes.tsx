@@ -3,10 +3,26 @@ import { useUI } from "~/context/UIContext";
 import type { HandleRowClicked } from "~/templates/OpportunitiesTable";
 import { LayoutModal } from "../Generals/Modals";
 import { OpportunitiesTable } from "~/templates/OpportunitiesTable";
+import { useOpportunityRealtime } from "~/backend/realTime";
+import {
+  phasesApi,
+  quotesApi,
+  details_itemsApi,
+  details_materialsApi,
+} from "~/backend/dataBase";
+import { supabase } from "~/backend/supabaseClient";
+import type { QuotesInput } from "~/backend/dataBase";
 
 export default function ModalQuotes() {
-  const { openQuotesModal, setOpenQuotesModal, showModal, closeModal } =
-    useUI();
+  useOpportunityRealtime()
+  const {
+    openQuotesModal,
+    setOpenQuotesModal,
+    showModal,
+    closeModal,
+    getOpportunityById,
+    selectedOpportunity,
+  } = useUI();
   const handleRowClicked: HandleRowClicked = (data) => {
     if (data.total_quote <= 0) return;
     showModal({
@@ -62,18 +78,140 @@ export default function ModalQuotes() {
         </div>
       ),
       variant: "warning",
-      handleAccept: () => {
+      handleAccept: async () => {
         closeModal();
+
         showModal({
-          title: "En construcción",
-          message:"Ya casi está lista la funcionalidad para duplicar. Seguimos trabajando en ello. 👩🏻‍💻",
-          variant: "information"
-        })
-        /* showModal({
           title: "Procesando",
           message: "Duplicando cotización, por favor espere",
           variant: "loanding",
-        }); */
+        });
+
+        try {
+          const { quote_id, id_opportunity } = data;
+          const original = await getOpportunityById(id_opportunity, true);
+          if (!original)
+            throw new Error("No se encontró la oportunidad original.");
+          if (!selectedOpportunity)
+            throw new Error("No hay oportunidad seleccionada.");
+
+          const {
+            phases: oldPhases,
+            details_items,
+            details_materials,
+          } = original;
+          const oldItems = details_items.filter(
+            (oldItem) => oldItem.id_quote === quote_id
+          );
+          const oldMaterials = details_materials.filter(
+            (oldMaterial) => oldMaterial.id_quote === quote_id
+          );
+          // 1. Crear nuevas fases
+          const quotePhaseIds = new Set([...oldItems, ...oldMaterials].map(d => d.id_phase));
+          const filteredOldPhases = oldPhases.filter(p => quotePhaseIds.has(p.id));
+
+          const newPhases = filteredOldPhases.map((p) => ({
+            name: p.name,
+            id_opportunity: selectedOpportunity.id,
+          }));
+
+          const { data: insertedPhases, error: phasesError } =
+            await phasesApi.insert(newPhases);
+          if (phasesError)
+            throw new Error(`Error al duplicar fases: ${phasesError.message}`);
+          if (insertedPhases && insertedPhases.length !== oldPhases.length)
+            throw new Error("Cantidad de fases duplicadas no coincide.");
+
+          // 2. Nueva cotización
+          //2.1 Desactivar cotizacion actual, si existe:
+          if (
+            selectedOpportunity.quotes &&
+            selectedOpportunity.quotes.length > 0
+          ) {
+            const activeQuote = selectedOpportunity.quotes.find(
+              (q) => q.active === true
+            );
+            if (!activeQuote) return;
+            const { error: updateError } = await quotesApi.update({
+              id: activeQuote?.id,
+              values: { active: false },
+            });
+            if (updateError) throw new Error(updateError.message);
+          }
+          //2.2 Crear cotización vacía
+          const newQuote: QuotesInput = {
+            id_opportunity: selectedOpportunity.id,
+            status: "Abierta",
+            active: true,
+          };
+
+          const { data: createdQuote, error: quoteError } =
+            await quotesApi.insertOne(newQuote);
+          if (quoteError)
+            throw new Error(
+              `Error al crear la nueva cotización: ${quoteError.message}`
+            );
+          if (!createdQuote)
+            throw new Error("No se pudo obtener la nueva cotización creada.");
+
+          // 3. Mapear fases originales a las nuevas
+          if (!insertedPhases)
+            throw new Error("No se pudieron insertar las nuevas fases.");
+          const phaseMap = filteredOldPhases.reduce<Record<number, number>>(
+            (map, oldPhase, index) => {
+              map[oldPhase.id] = insertedPhases[index].id;
+              return map;
+            },
+            {}
+          );
+          // 4. Copiar ítems
+          if (oldItems.length > 0) {
+            const itemsToInsert = oldItems.map(
+              ({ id, created_at, ...item }) => ({
+                ...item,
+                id_phase: phaseMap[item.id_phase],
+                id_quote: createdQuote.id,
+              })
+            );
+            const { error: itemError } = await details_itemsApi.insert(
+              itemsToInsert
+            );
+            if (itemError)
+              throw new Error(`Error al duplicar ítems: ${itemError.message}`);
+          }
+
+          // 5. Copiar materiales
+          if (oldMaterials.length > 0) {
+            const materialsToInsert = oldMaterials.map(
+              ({ id, created_at, materials, prices,...mat }) => ({
+                ...mat,
+                id_phase: phaseMap[mat.id_phase],
+                id_quote: createdQuote.id,
+              })
+            );
+            const { error: matError } = await details_materialsApi.insert(
+              materialsToInsert
+            );
+            if (matError)
+              throw new Error(
+                `Error al duplicar materiales: ${matError.message}`
+              );
+          }
+
+          // 6. Finalizar
+          showModal({
+            title: "¡Todo OK!",
+            message: "Cotización duplicada correctamente",
+            variant: "success",
+          });
+        } catch (e) {
+          showModal({
+            title: "Error al duplicar",
+            message: "Ocurrió un problema durante el proceso",
+            code: String(e),
+            variant: "error",
+          });
+        }
       },
     });
   };

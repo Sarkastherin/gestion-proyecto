@@ -119,7 +119,6 @@ export function useOpportunityRealtime() {
     const tablesToListen = [
       "opportunities",
       "quotes",
-      "profit_margins",
       "details_items",
       "details_materials",
       "phases",

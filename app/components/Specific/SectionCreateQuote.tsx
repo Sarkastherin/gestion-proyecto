@@ -94,6 +94,7 @@ export function ButtonCreateQuote({
     }
   };
   const handleCopyQuote = () => {
+    setOpen(false)
     setOpenQuotesModal(true);
   };
   return (

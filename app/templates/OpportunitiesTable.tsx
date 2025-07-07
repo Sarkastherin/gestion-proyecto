@@ -9,7 +9,7 @@ import BadgeStatus from "~/components/Specific/Badge";
 import type { StatusType } from "~/types/database";
 type ViewType = {
   id_opportunity: number;
-  id_quotes: number;
+  quote_id: number;
   opportunity_name: string;
   opportunity_status: StatusType;
   total_materials: number;

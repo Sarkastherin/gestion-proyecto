@@ -68,7 +68,10 @@ type QuotesDataTypes = {
   details_items: DetailsItemsType[] | [];
   details_materials: DetailsMaterialsType[] | [];
 };
-export type OpportunityAll = OpportunitiesTypeDB & {quotes: QuotesEnrichType[]} & QuotesDataTypes;
+export type OpportunityAll = OpportunitiesTypeDB & {
+  phases: PhasesType[];
+  quotes: QuotesEnrichType[];
+} & QuotesDataTypes;
 type ModalProps = Omit<ModalBaseProps, "onClose">;
 type ThemeProps = "dark" | "light";
 
@@ -141,7 +144,10 @@ type UIContextType = {
   setOpportunities: React.Dispatch<
     React.SetStateAction<OpportunitiesTypeDB[] | null>
   >;
-  getOpportunityById: (id: number) => Promise<OpportunityAll | null>;
+  getOpportunityById: (
+    id: number,
+    onlyReturn?: boolean
+  ) => Promise<OpportunityAll | null>;
   families: FamilyType[] | null;
   setFamilies: React.Dispatch<React.SetStateAction<FamilyType[] | null>>;
   getFamilies: () => Promise<void>;
@@ -333,7 +339,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
     return allData;
   };
   const getOpportunityById = async (
-    id: number
+    id: number,
+    onlyReturn?: boolean
   ): Promise<OpportunityAll | null> => {
     try {
       const { data: opportunity, error } = await supabase
@@ -427,12 +434,13 @@ export function UIProvider({ children }: { children: ReactNode }) {
           };
         }
       }
-      const completedOpportunity = {
+      const completedOpportunity: OpportunityAll = {
         ...opportunity,
         client,
         ...dataQuotes,
       };
-      setSelectedOpportunity(completedOpportunity);
+      if (!onlyReturn) setSelectedOpportunity(completedOpportunity);
+
       return completedOpportunity;
     } catch (err) {
       console.error("Error en getOpportunityById:", err);
@@ -562,7 +570,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setEditByStatus,
         editByStatus,
         openQuotesModal,
-        setOpenQuotesModal
+        setOpenQuotesModal,
       }}
     >
       {children}

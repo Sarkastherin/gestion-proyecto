@@ -52,7 +52,7 @@ export const createCrud = <TFull, TInsert extends object>(table: string) => {
         };
       }
     },
-    insert: async (payload: TInsert[]): Promise<CommonResponse<TFull>> => {
+    insert: async (payload: TInsert[]): Promise<CommonResponse<TFull[]>> => {
       try {
         const { data, error } = await supabase
           .from(table)
@@ -60,7 +60,7 @@ export const createCrud = <TFull, TInsert extends object>(table: string) => {
           .select();
         if (error) throw error;
 
-        return { data: data?.[0] ?? null, error: null };
+        return { data: data ?? null, error: null };
       } catch (err) {
         return {
           data: null,
