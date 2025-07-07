@@ -14,7 +14,7 @@ export const variants = {
   secondary_outline:
     "border-zinc-400 text-zinc-400 hover:bg-zinc-400 hover:text-white",
 };
-const basesClass = "border cursor-pointer font-medium hover:bg-transparent disabled:cursor-not-allowed disabled:bg-gray-400 disabled:border-gray-400 disabled:hover:text-zinc-800";
+const basesClass = "w-full border cursor-pointer font-medium hover:bg-transparent disabled:cursor-not-allowed disabled:bg-gray-400 disabled:border-gray-400 disabled:hover:text-zinc-800";
 const sizes = {
   sm: "text-xs h-8 px-4 rounded-sm",
   md: "text-sm py-2 px-4 rounded-md",

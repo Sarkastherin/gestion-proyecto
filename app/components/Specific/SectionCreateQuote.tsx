@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { ButtonNavigate } from "./Buttons";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { LayoutModal } from "../Generals/Modals";
+import ModalQuotes from "./ModalQuotes";
 const ContainerSection = ({
   title,
   message,
@@ -44,7 +45,12 @@ export function ButtonCreateQuote({
 }) {
   useOpportunityRealtime();
   const [open, setOpen] = useState<boolean>(false);
-  const { selectedOpportunity, showModal } = useUI();
+  const {
+    selectedOpportunity,
+    showModal,
+    openQuotesModal,
+    setOpenQuotesModal,
+  } = useUI();
   const { quotes } = selectedOpportunity || {};
 
   const handleCreateQuote = async () => {
@@ -88,20 +94,18 @@ export function ButtonCreateQuote({
     }
   };
   const handleCopyQuote = () => {
-    showModal({
-      title: "En proceso",
-      message: "Se está trabajando en ello 👩🏻‍💻. En breve estará disponible",
-      variant: "information"
-    })
+    setOpenQuotesModal(true);
   };
   return (
     <>
-      <Button onClick={() => setOpen(true)}>{label}</Button>
+      <div className="w-42">
+        <Button onClick={() => setOpen(true)}>{label}</Button>
+      </div>
       <LayoutModal
         open={open}
         handleOpen={() => setOpen(false)}
         title="Crear nueva cotización"
-        size="w-md"
+        size="w-md min-w-xs"
       >
         <div className="flex flex-col gap-4 mt-6">
           <p className="text-sm">Puedes comenzar una cotización desde cero:</p>
@@ -122,6 +126,7 @@ export function ButtonCreateQuote({
           </span>
         </div>
       </LayoutModal>
+      <ModalQuotes />
     </>
   );
 }

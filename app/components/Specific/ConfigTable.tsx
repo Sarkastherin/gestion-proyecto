@@ -7,7 +7,7 @@ import { customStyles } from "../Generals/Tables";
 import { useUI } from "~/context/UIContext";
 import type { TableColumn } from "react-data-table-component";
 import type { CrudMethod } from "~/backend/crudFactory";
-import type {Path} from "react-hook-form"
+import type { Path } from "react-hook-form";
 
 type FormField<T> = {
   name: Path<T>;
@@ -75,7 +75,7 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
         code: error.message,
         variant: "error",
       });
-      return
+      return;
     }
     showModal({
       title: "¡Todo Ok!",
@@ -88,9 +88,11 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">{title}</h2>
-        <Button variant="primary" onClick={handleAdd}>
-          + Agregar
-        </Button>
+        <div className="w-32">
+          <Button variant="primary" onClick={handleAdd}>
+            + Agregar
+          </Button>
+        </div>
       </div>
       <DataTable
         columns={[...columns, actionColumn]}
@@ -102,7 +104,6 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
         pointerOnHover
         highlightOnHover
         defaultSortFieldId={"id"}
-        defaultSortAsc={true}
       />
 
       <ConfigFormModal<T, TInsert>

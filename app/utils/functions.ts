@@ -65,3 +65,11 @@ export function getQuoteTotals(data: {
     total_others,
   };
 }
+export const dateUSFormatted = (date: Date) => {
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  const stringDay = day > 9 ? String(day) : `0${day}`;
+  const stringMonth = month > 9 ? String(month) : `0${month}`;
+  return `${year}-${stringMonth}-${stringDay}`;
+};

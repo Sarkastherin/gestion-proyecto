@@ -15,9 +15,9 @@ type CommonInputsProps = {
   label?: string;
   register?: UseFormRegisterReturn;
   error?: string;
-  
 };
-type InputProps = CommonInputsProps & InputHTMLAttributes<HTMLInputElement> & {ref?:React.Ref<HTMLInputElement>};
+type InputProps = CommonInputsProps &
+  InputHTMLAttributes<HTMLInputElement> & { ref?: React.Ref<HTMLInputElement> };
 export const Input = ({
   label,
   id,
@@ -39,7 +39,8 @@ export const Input = ({
       <input
         ref={ref}
         id={id}
-        className={`${basesClass(error ?? "")}`}
+        className={`dark:[&::-webkit-calendar-picker-indicator]:invert
+ ${basesClass(error ?? "")}`}
         {...inputProps}
         {...register}
       />

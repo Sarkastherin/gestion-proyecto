@@ -12,9 +12,10 @@ import { useEffect, useState } from "react";
 import { useContacts } from "~/context/ContactsContext";
 import FooterForms from "./FooterForms";
 import { Button } from "~/components/Forms/Buttons";
+
+
 import { usePricesRealtime } from "~/backend/realTime";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
-import { useNavigate } from "react-router";
 export type PricesFormType = {
   prices: Array<PricesType | PricesInput>;
 };
@@ -145,7 +146,7 @@ export default function PricesForm({
           `prices.${index}.name_supplier`
         ) as HTMLInputElement | null;
         if (supplierInput) {
-          const supplier = suppliers.find((s) => s.id === field.id_supplier);
+          const supplier = suppliers?.find((s) => s.id === field.id_supplier);
           supplierInput.value = supplier ? supplier.nombre : "";
         }
       });
@@ -160,7 +161,7 @@ export default function PricesForm({
   };
   return (
     <>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} className="">
         <fieldset disabled={!isModeEdit}>
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto divide-y-2 divide-zinc-200 dark:divide-zinc-700">
@@ -172,6 +173,7 @@ export default function PricesForm({
                 <col className="w-[15%]" />
                 <col className="w-[1%]" />
                 <col className="w-[1%]" />
+                {onSelectPrice && <col className="w-[1%]" />}
               </colgroup>
               <thead className="ltr:text-left rtl:text-right">
                 <tr className="*:font-medium *:text-zinc-900 dark:*:text-white">
@@ -260,14 +262,16 @@ export default function PricesForm({
                       <ButtonDeleteIcon onClick={() => handleRemove(index)} />
                     </td>
                     {onSelectPrice && (
-                      <td className="px-1 py-2 whitespace-nowrap">
+                      <td className="px-1 py-2 whitespace-nowrap text-center">
                         <button
                           type="button"
-                          className={`text-blue-600 hover:underline disabled:opacity-50 disabled:cursor-not-allowed`}
+                          className={"text-xs dark:bg-blue-300 rounded-full px-2 py-1 text-blue-600 dark:text-blue-700 font-bold disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"}
                           disabled={!watch(`prices.${index}.id`)}
                           onClick={() => {
                             const priceId = Number(watch(`prices.${index}.id`));
-                            const price = watch(`prices.${index}`) as PricesType;
+                            const price = watch(
+                              `prices.${index}`
+                            ) as PricesType;
                             if (priceId > 0) {
                               onSelectPrice({ id: priceId, price: price });
                             }

@@ -3,7 +3,12 @@ import type { ReactNode } from "react";
 import { useContacts, type ClientDataType } from "./ContactsContext";
 import type { ModalBaseProps } from "~/components/Generals/Modals";
 import { supabase } from "~/backend/supabaseClient";
-import { categoryApi, familyApi, subcategoryApi, unitsApi } from "~/backend/dataBase";
+import {
+  categoryApi,
+  familyApi,
+  subcategoryApi,
+  unitsApi,
+} from "~/backend/dataBase";
 import type { OpportunityType } from "~/types/database";
 import type { DetailsMaterialForm } from "~/routes/opportunity/quotes/materials";
 import {
@@ -46,8 +51,6 @@ export type MaterialTypeDB = MaterialsType & {
 };
 export type OpportunitiesTypeDB = OpportunityType & {
   client: ClientDataType;
-  phases: PhasesType[];
-  quotes: QuotesEnrichType[];
 };
 export type CategoriesProps = {
   id: number;
@@ -65,7 +68,7 @@ type QuotesDataTypes = {
   details_items: DetailsItemsType[] | [];
   details_materials: DetailsMaterialsType[] | [];
 };
-export type OpportunityAll = OpportunitiesTypeDB & QuotesDataTypes;
+export type OpportunityAll = OpportunitiesTypeDB & {quotes: QuotesEnrichType[]} & QuotesDataTypes;
 type ModalProps = Omit<ModalBaseProps, "onClose">;
 type ThemeProps = "dark" | "light";
 
@@ -87,10 +90,12 @@ type UIContextType = {
   openSupplierModal: boolean;
   propsPriceModal: PropsModalPrice;
   openMaterialsModal: boolean;
+  openQuotesModal: boolean;
   setOpenPriceModal: React.Dispatch<React.SetStateAction<PropsModalPrice>>;
   setOpenClientModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenSupplierModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenMaterialsModal: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenQuotesModal: React.Dispatch<React.SetStateAction<boolean>>;
   selectedClient: ClientDataType | null;
   setSelectedClient: React.Dispatch<
     React.SetStateAction<ClientDataType | null>
@@ -138,23 +143,27 @@ type UIContextType = {
   >;
   getOpportunityById: (id: number) => Promise<OpportunityAll | null>;
   families: FamilyType[] | null;
-  setFamilies: React.Dispatch<React.SetStateAction<FamilyType[] | null>>
-  getFamilies: () => Promise<void>
+  setFamilies: React.Dispatch<React.SetStateAction<FamilyType[] | null>>;
+  getFamilies: () => Promise<void>;
   categories: CategoryType[] | null;
-  setCategories: React.Dispatch<React.SetStateAction<CategoryType[] | null>>
-  getCategories: () => Promise<void>
+  setCategories: React.Dispatch<React.SetStateAction<CategoryType[] | null>>;
+  getCategories: () => Promise<void>;
   subcategories: SubCategoryType[] | null;
-  setSubcategories: React.Dispatch<React.SetStateAction<SubCategoryType[] | null>>
+  setSubcategories: React.Dispatch<
+    React.SetStateAction<SubCategoryType[] | null>
+  >;
   getSubcategories: () => Promise<void>;
   editByStatus: boolean;
-  setEditByStatus: React.Dispatch<React.SetStateAction<boolean>>
+  setEditByStatus: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [theme, setTheme] = useState<ThemeProps>(prefersDark ? "dark" : "light");
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [theme, setTheme] = useState<ThemeProps>(
+    prefersDark ? "dark" : "light"
+  );
   /* Datos */
   const [materials, setMaterials] = useState<MaterialTypeDB[] | null>(null);
   const [opportunities, setOpportunities] = useState<
@@ -163,7 +172,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [units, setUnits] = useState<UnitsType[] | null>(null);
   const [families, setFamilies] = useState<FamilyType[] | null>(null);
   const [categories, setCategories] = useState<CategoryType[] | null>(null);
-  const [subcategories, setSubcategories] = useState<SubCategoryType[] | null>(null);
+  const [subcategories, setSubcategories] = useState<SubCategoryType[] | null>(
+    null
+  );
   const [categorizations, setCategorizations] =
     useState<CategorizationsProps | null>(null);
   const { clients } = useContacts();
@@ -190,6 +201,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   /* Modales Específicos */
   const [openClientModal, setOpenClientModal] = useState<boolean>(false);
   const [openMaterialsModal, setOpenMaterialsModal] = useState<boolean>(false);
+  const [openQuotesModal, setOpenQuotesModal] = useState<boolean>(false);
   const [propsPriceModal, setOpenPriceModal] = useState<PropsModalPrice>({
     open: false,
     data: null,
@@ -217,7 +229,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
         return {
           id: item.id_subcategory,
           description: item.description_subcategory,
-          id_category: item.id_category
+          id_category: item.id_category,
         };
       });
       const categoriesAll = data?.map((item) => {
@@ -230,7 +242,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       const categories = Array.from(
         new Map(categoriesAll?.map((item) => [item.id, item])).values()
       );
-      const familiesAll= data?.map((item) => {
+      const familiesAll = data?.map((item) => {
         return { id: item.id_family, description: item.description_family };
       });
       const families = Array.from(
@@ -295,7 +307,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
     while (true) {
       const { data, error, count } = await supabase
         .from("opportunities")
-        .select("*, phases(*),quotes(*)", { count: "exact" })
+        .select("*")
         .order("id", { ascending: false })
         .range(from, from + pageSize - 1);
 
@@ -548,7 +560,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setSubcategories,
         getSubcategories,
         setEditByStatus,
-        editByStatus
+        editByStatus,
+        openQuotesModal,
+        setOpenQuotesModal
       }}
     >
       {children}

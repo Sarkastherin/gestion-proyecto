@@ -28,6 +28,7 @@ export default function MainLayout() {
               code={modal.code}
               onClose={closeModal}
               variant={modal.variant}
+              handleAccept={modal.handleAccept}
             />
           )}
         </>

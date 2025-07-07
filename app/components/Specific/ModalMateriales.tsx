@@ -27,13 +27,15 @@ export default function ModalMateriales({
       handleOpen={() => setOpenMaterialsModal(false)}
       justifyStyle="justify-end"
       buttonsGroup={
-        <Button
-          type="button"
-          onClick={() => setOpenMaterialsModal(false)}
-          variant="secondary"
-        >
-          Cerrar
-        </Button>
+        <div className="w-32">
+          <Button
+            type="button"
+            onClick={() => setOpenMaterialsModal(false)}
+            variant="secondary"
+          >
+            Cerrar
+          </Button>
+        </div>
       }
     >
       <div className="mt-4">

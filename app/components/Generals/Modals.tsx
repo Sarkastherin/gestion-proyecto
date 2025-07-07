@@ -6,6 +6,7 @@ export type ModalBaseProps = {
   onClose: () => void;
   variant?: "information" | "warning" | "error" | "success";
   code?: string;
+  handleAccept?: () => void;
 };
 const variants = {
   default: { color: "text-indigo-600 dark:text-indigo-400", icon: "" },
@@ -18,7 +19,7 @@ type PropsLayout = {
   open: boolean;
   handleOpen: () => void;
   title: string;
-  size:string;
+  size?: "w-md min-w-xs";
   justifyStyle?: "justify-between" | "justify-end";
   buttonsGroup?: React.ReactNode;
   children: React.ReactNode;
@@ -41,7 +42,13 @@ export const LayoutModal = ({
       aria-modal="false"
       aria-labelledby="modalTitle"
     >
-      <div className={`${size} rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900`}>
+      <div
+        className={`${
+          size
+            ? size
+            : "w-full max-w-[95vw] sm:max-w-[640px] md:max-w-[768px] lg:max-w-[1024px] xl:max-w-[1280px]"
+        } rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900`}
+      >
         <div className="flex items-start justify-between">
           <h2
             id="modalTitle"
@@ -73,10 +80,12 @@ export const LayoutModal = ({
           </button>
         </div>
         {children}
+        {buttonsGroup && (
+          <footer className={`mt-6 flex ${justifyStyle}`}>
+            {buttonsGroup}
+          </footer>
+        )}
       </div>
-      {buttonsGroup && (
-        <footer className={`mt-6 flex ${justifyStyle}`}>{buttonsGroup}</footer>
-      )}
     </div>
   );
 };
@@ -86,6 +95,7 @@ export default function ModalBase({
   onClose,
   variant,
   code,
+  handleAccept,
 }: ModalBaseProps) {
   return (
     <div
@@ -129,9 +139,9 @@ export default function ModalBase({
         </div>
 
         <div className="mt-4">
-          <p className="text-pretty text-zinc-700 dark:text-zinc-200">
+          <div className="text-pretty text-zinc-700 dark:text-zinc-200">
             {message}
-          </p>
+          </div>
           {code && (
             <>
               <p className="mt-2 mb-1 text-sm text-zinc-500 dark:text-zinc-400">
@@ -144,10 +154,19 @@ export default function ModalBase({
           )}
         </div>
 
-        <footer className="mt-6 flex justify-end">
-          <Button type="button" onClick={onClose} variant="secondary">
-            Cerrar
-          </Button>
+        <footer className="mt-6 flex justify-end gap-2">
+          <div className="w-32">
+            <Button type="button" onClick={onClose} variant="secondary">
+              Cerrar
+            </Button>
+          </div>
+          {variant === "warning" && (
+            <div className="w-32">
+              <Button type="button" onClick={handleAccept} variant="primary">
+                Aceptar
+              </Button>
+            </div>
+          )}
         </footer>
       </div>
     </div>

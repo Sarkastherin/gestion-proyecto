@@ -2,10 +2,9 @@ import { useUI } from "~/context/UIContext";
 import { useEffect, useState} from "react";
 import type { QuotesEnrichType } from "~/context/UIContext";
 import type { PropStateReport } from "~/routes/opportunity/report";
-import {
-  PDFViewer,
-} from "@react-pdf/renderer";
+import { PDFViewer } from "@react-pdf/renderer";
 import QuotePDFDocument from "./QuotePDFDocument";
+
 export default function PDFQuote({
   quoteActive,
   settings,

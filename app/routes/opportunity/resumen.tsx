@@ -17,7 +17,6 @@ import type {
   PricesType,
 } from "~/backend/dataBase";
 import type { OpportunityAll } from "~/context/UIContext";
-import { CSVLink } from "react-csv";
 import { ButtonExport } from "~/components/Specific/Buttons";
 
 // 📌 Meta

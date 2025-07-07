@@ -2,28 +2,24 @@ import type { Route } from "./+types/home";
 import { Input, Select } from "~/components/Forms/Inputs";
 import type { TableColumn } from "react-data-table-component";
 import { useForm } from "react-hook-form";
-import { useContacts } from "~/context/ContactsContext";
 import BadgeStatus from "~/components/Specific/Badge";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { StatusOptions } from "~/components/Specific/StatusOptions";
 import { useNavigate } from "react-router";
-import type { OpportunitiesWithClient } from "~/context/UIContext";
 import { useUI } from "~/context/UIContext";
 import DataTable from "react-data-table-component";
 import type { OpportunitiesTypeDB } from "~/context/UIContext";
 import { useState, useEffect } from "react";
 import { customStyles } from "~/components/Generals/Tables";
 import { Button } from "~/components/Forms/Buttons";
-import { Modal } from "~/components/Generals/Modals";
-import { ImportCsvInput } from "~/utils/import";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidades" },
     { name: "description", content: "Oportunidades" },
   ];
 }
-const columns: TableColumn<OpportunitiesWithClient>[] = [
+const columns: TableColumn<OpportunitiesTypeDB>[] = [
   {
     name: "Id",
     selector: (row) => row.id,
@@ -82,7 +78,7 @@ export default function Opportunities() {
     if (!opportunities) getOpportunities();
   }, []);
   interface HandleRowClicked {
-    (data: OpportunitiesWithClient): void;
+    (data: OpportunitiesTypeDB): void;
   }
   const onFilter = (data: FilterOpportunityType) => {
     const search = opportunities?.filter((item) => {
@@ -138,9 +134,11 @@ export default function Opportunities() {
               <StatusOptions />
             </Select>
           </div>
-          <Button variant="yellow" type="submit">
-            Filtrar
-          </Button>
+          <div className="w-32">
+            <Button variant="yellow" type="submit">
+              Filtrar
+            </Button>
+          </div>
         </form>
         {filterData && (
           <DataTable
@@ -158,9 +156,11 @@ export default function Opportunities() {
       </ContainerWithTitle>
       <span className="fixed bottom-0 w-full">
         <div className="flex justify-end w-full px-10 py-5 hover:bg-zinc-900">
-          <ButtonNavigate variant="yellow" route="/new-opportunity">
-            Nueva Oportunidad
-          </ButtonNavigate>
+          <div className="w-42">
+            <ButtonNavigate variant="yellow" route="/new-opportunity">
+              Nueva Oportunidad
+            </ButtonNavigate>
+          </div>
         </div>
       </span>
     </>

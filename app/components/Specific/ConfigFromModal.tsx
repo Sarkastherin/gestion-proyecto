@@ -82,7 +82,7 @@ export function ConfigFormModal<T extends { id: number }, TInsert = Partial<T>>(
       open={open}
       title={`${initialValues?.id ? "Editar" : "Agregar"} registro`}
       handleOpen={onClose}
-      size="min-w-md"
+      size="w-md min-w-xs"
     >
       <form className="space-y-4 mt-4" onSubmit={handleSubmit(onSubmit)}>
         {fields.map((f) => (

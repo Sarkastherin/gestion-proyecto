@@ -25,7 +25,7 @@ export default function Materials() {
     categorizations,
     getCategorizations,
     getMaterials,
-    materials
+    materials,
   } = useUI();
   const navigate = useNavigate();
   useEffect(() => {
@@ -40,13 +40,13 @@ export default function Materials() {
   const handleUploadFile = () => {
     setHidden(false);
   };
-const headers = [
-  {label:"ID", key: "id"},
-  {label:"FAMILIA", key: "view_categorizations.description_family"},
-  {label:"RUBRO", key: "view_categorizations.description_category"},
-  {label:"SUBRUBRO", key: "view_categorizations.description_subcategory"},
-  {label:"DESCRIPCION", key: "description"},
-]
+  const headers = [
+    { label: "ID", key: "id" },
+    { label: "FAMILIA", key: "view_categorizations.description_family" },
+    { label: "RUBRO", key: "view_categorizations.description_category" },
+    { label: "SUBRUBRO", key: "view_categorizations.description_subcategory" },
+    { label: "DESCRIPCION", key: "description" },
+  ];
   return (
     <>
       <ContainerWithTitle title="Materiales" width="w-full">
@@ -62,14 +62,22 @@ const headers = [
       <span className="fixed bottom-0 w-full">
         <div className="flex justify-between w-full px-10 py-5 hover:bg-zinc-200 hover:dark:bg-zinc-900">
           <div className="flex gap-4">
-            <Button variant="blue" type="button" onClick={handleUploadFile}>
-              Importar
-            </Button>
-            <ButtonExport data={materials ?? []} headers={headers} filename="Listado de materiales"/>
+            <div className="w-32">
+              <Button variant="blue" type="button" onClick={handleUploadFile}>
+                Importar
+              </Button>
+            </div>
+            <ButtonExport
+              data={materials ?? []}
+              headers={headers}
+              filename="Listado de materiales"
+            />
           </div>
-          <ButtonNavigate variant="yellow" route="/new-material">
-            Nuevo Material
-          </ButtonNavigate>
+          <div className="w-4/*  */2">
+            <ButtonNavigate variant="yellow" route="/new-material">
+              Nuevo Material
+            </ButtonNavigate>
+          </div>
         </div>
       </span>
       <Modal hidden={hidden} setHidden={setHidden} title="Seleccionar archivo">

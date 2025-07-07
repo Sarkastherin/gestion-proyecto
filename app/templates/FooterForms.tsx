@@ -1,19 +1,23 @@
 import { useUI } from "~/context/UIContext";
 import { EyeIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { Button } from "~/components/Forms/Buttons";
-import { useEffect, type  JSX } from "react";
+import { useEffect, type JSX } from "react";
 type FooterFormsProps = {
- mode:"create" | "view"
-}
-export default function FooterForms({mode}:FooterFormsProps): JSX.Element{
+  mode: "create" | "view";
+};
+export default function FooterForms({ mode }: FooterFormsProps): JSX.Element {
   const { isModeEdit, setIsModeEdit } = useUI();
-  useEffect(() => { setIsModeEdit(mode === "create") }, [])
+  useEffect(() => {
+    setIsModeEdit(mode === "create");
+  }, []);
   return (
     <div className="fixed left-0 bottom-0 dark:bg-zinc-900 bg-zinc-300 shadow-lg shadow-zinc-900 dark:shadow-zinc-500 min-w-full">
       <div className="px-10 py-3 flex justify-between">
         <label
           htmlFor="ChangeViewToEdit"
-          className={`${mode === "create" && "hidden"} relative block h-8 w-14 rounded-full bg-gray-400 transition-colors [-webkit-tap-highlight-color:_transparent] has-checked:bg-lime-500 dark:bg-gray-600 dark:has-checked:bg-lime-600`}
+          className={`${
+            mode === "create" && "hidden"
+          } relative block h-8 w-14 rounded-full bg-gray-400 transition-colors [-webkit-tap-highlight-color:_transparent] has-checked:bg-lime-500 dark:bg-gray-600 dark:has-checked:bg-lime-600`}
         >
           <input
             type="checkbox"
@@ -28,10 +32,12 @@ export default function FooterForms({mode}:FooterFormsProps): JSX.Element{
             <PencilIcon className="size-4" />
           </span>
         </label>
-        <Button type="submit" variant="primary" disabled={!isModeEdit}>
-          Guardar
-        </Button>
+        <div className="w-32">
+          <Button type="submit" variant="primary" disabled={!isModeEdit}>
+            Guardar
+          </Button>
+        </div>
       </div>
     </div>
   );
-};
+}

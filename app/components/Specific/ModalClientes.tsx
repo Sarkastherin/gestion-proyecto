@@ -17,7 +17,6 @@ const columns: TableColumn<ClientDataType>[] = [
   {
     name: "Cliente",
     selector: (row) => row.nombre,
-    wrap: true,
   },
   {
     name: "CUIT",
@@ -38,15 +37,15 @@ export default function ModalClientes() {
     const searchText = inputElement
       ? inputElement.value.toLocaleLowerCase()
       : "";
-    const filterData = clients.filter((client) => {
+    const filterData = clients?.filter((client) => {
       const nombres = client.nombre.toLocaleLowerCase().includes(searchText);
       const cuit = client.cuit?.toLocaleLowerCase().includes(searchText);
       return nombres || cuit;
     });
-    setClientsData(filterData);
+    setClientsData(filterData ?? []);
   };
   useEffect(() => {
-    if (clients.length > 0) {
+    if (clients && clients.length > 0) {
       setClientsData(clients);
     }
   }, [clients]);
@@ -61,13 +60,15 @@ export default function ModalClientes() {
       handleOpen={() => setOpenClientModal(false)}
       justifyStyle="justify-end"
       buttonsGroup={
-        <Button
-          type="button"
-          onClick={() => setOpenClientModal(false)}
-          variant="secondary"
-        >
-          Cerrar
-        </Button>
+        <div className="w-32">
+          <Button
+            type="button"
+            onClick={() => setOpenClientModal(false)}
+            variant="secondary"
+          >
+            Cerrar
+          </Button>
+        </div>
       }
     >
       <div className="mt-4">
