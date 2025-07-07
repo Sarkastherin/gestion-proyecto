@@ -35,12 +35,9 @@ const colsUnits: TableColumn<UnitsType>[] = [
 
 const colsFamilies: TableColumn<FamilyType>[] = [
   { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
-  { name: "Descripción", selector: (row) => row.description },
+  { name: "Familia", selector: (row) => row.description },
 ];
-const colsCategories: TableColumn<CategoryType>[] = [
-  { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
-  { name: "Descripción", selector: (row) => row.description },
-];
+
 
 export default function Settings() {
   useUnitsRealTime();
@@ -66,6 +63,20 @@ export default function Settings() {
     if (!categorizations) getCategorizations();
     if (!units) getUnits();
   }, []);
+  const colsCategories: TableColumn<CategoryType>[] = [
+  { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
+  {
+      name: "Familia",
+      selector: (row) => {
+        const family = families?.find(
+          (c) => c.id === row.id_family
+        )?.description;
+        return family ?? "";
+      },
+      width: "230px",
+    },
+  { name: "Rubro", selector: (row) => row.description },
+];
   const colsSubcategories: TableColumn<SubCategoryType>[] = [
     { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
     {
@@ -78,7 +89,7 @@ export default function Settings() {
       },
       width: "230px",
     },
-    { name: "Descripción", selector: (row) => row.description },
+    { name: "Subrubro", selector: (row) => row.description },
   ];
   return (
     <div className="flex flex-1 gap-6 min-h-[calc(100vh-64px)]">
@@ -144,7 +155,7 @@ export default function Settings() {
         {activeTab === "rubros" && (
           <ConfigTable<CategoryType, CategoryInput>
             table="categories"
-            title="Categorías"
+            title="Rubros"
             columns={colsCategories}
             data={(categories as CategoryType[]) || []}
             method={categoryApi}
@@ -171,7 +182,7 @@ export default function Settings() {
         {activeTab === "subrubros" && (
           <ConfigTable<SubCategoryType, SubCategoryInput>
             table="subcategories"
-            title="Subcategorías"
+            title="Subrubros"
             columns={colsSubcategories}
             data={(subcategories as SubCategoryType[]) || []}
             method={subcategoryApi}
