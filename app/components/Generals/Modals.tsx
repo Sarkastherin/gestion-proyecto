@@ -4,7 +4,7 @@ export type ModalBaseProps = {
   title: string;
   message: React.ReactNode;
   onClose: () => void;
-  variant?: "information" | "warning" | "error" | "success";
+  variant?: "information" | "warning" | "error" | "success" | "loanding";
   code?: string;
   handleAccept?: () => void;
 };
@@ -14,6 +14,7 @@ const variants = {
   warning: { color: "text-yellow-600 dark:text-yellow-400", icon: "⚠️" },
   error: { color: "text-red-600 dark:text-red-400", icon: "❌" },
   success: { color: "text-green-600 dark:text-green-400", icon: "✅" },
+  loanding: { color: "text-cyan-600 dark:text-cyan-400", icon: "⌛" },
 };
 type PropsLayout = {
   open: boolean;
@@ -154,20 +155,22 @@ export default function ModalBase({
           )}
         </div>
 
-        <footer className="mt-6 flex justify-end gap-2">
-          <div className="w-32">
-            <Button type="button" onClick={onClose} variant="secondary">
-              Cerrar
-            </Button>
-          </div>
-          {variant === "warning" && (
+        {variant !== "loanding" && (
+          <footer className="mt-6 flex justify-end gap-2">
             <div className="w-32">
-              <Button type="button" onClick={handleAccept} variant="primary">
-                Aceptar
+              <Button type="button" onClick={onClose} variant="secondary">
+                Cerrar
               </Button>
             </div>
-          )}
-        </footer>
+            {variant === "warning" && (
+              <div className="w-32">
+                <Button type="button" onClick={handleAccept} variant="primary">
+                  Aceptar
+                </Button>
+              </div>
+            )}
+          </footer>
+        )}
       </div>
     </div>
   );

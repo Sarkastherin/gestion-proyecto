@@ -59,8 +59,9 @@ export default function Items() {
       return;
     }
     showModal({
-      title: "⌛ Procesando...",
+      title: "Procesando",
       message: `Procesando requerimiento`,
+      variant: "loanding",
     });
     try {
       const { items } = formData;

@@ -64,7 +64,16 @@ export default function ModalQuotes() {
       variant: "warning",
       handleAccept: () => {
         closeModal();
-        alert("Ya casi está lista la funcionalidad para duplicar. Seguimos trabajando en ello. 👩🏻‍💻")
+        showModal({
+          title: "En construcción",
+          message:"Ya casi está lista la funcionalidad para duplicar. Seguimos trabajando en ello. 👩🏻‍💻",
+          variant: "information"
+        })
+        /* showModal({
+          title: "Procesando",
+          message: "Duplicando cotización, por favor espere",
+          variant: "loanding",
+        }); */
       },
     });
   };

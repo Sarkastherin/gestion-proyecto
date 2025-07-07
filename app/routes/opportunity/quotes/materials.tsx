@@ -77,8 +77,9 @@ export default function Materials() {
       return;
     }
     showModal({
-      title: "⌛ Procesando...",
+      title: "Procesando",
       message: `Procesando requerimiento`,
+      variant: "loanding",
     });
     try {
       const { materials } = formData;

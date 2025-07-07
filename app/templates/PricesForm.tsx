@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useContacts } from "~/context/ContactsContext";
 import FooterForms from "./FooterForms";
 import { Button } from "~/components/Forms/Buttons";
+import { dateUSFormatted } from "~/utils/functions";
 
 
 import { usePricesRealtime } from "~/backend/realTime";
@@ -32,6 +33,7 @@ export default function PricesForm({
   onSelectPrice?: (price: { id: number; price: PricesType }) => void;
 }) {
   usePricesRealtime(idMaterial);
+  const today = dateUSFormatted(new Date());
   const { suppliers } = useContacts();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [pricesToDelete, setPricesToDelete] = useState<Array<PricesType["id"]>>(
@@ -60,7 +62,7 @@ export default function PricesForm({
       id_supplier: null,
       price: 0,
       default: fields.length === 0,
-      date: "",
+      date: today,
     });
   };
   const onSubmit = async (data: PricesFormType) => {

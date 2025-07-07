@@ -2,7 +2,7 @@ import type { MaterialsInput, MaterialsType } from "~/backend/dataBase";
 import { materialsApi } from "~/backend/dataBase";
 import { useForm } from "react-hook-form";
 import type {
-  ViewCategorizacionProps,
+  Categorization,
   CategoriesProps,
 } from "~/context/UIContext";
 import { useUI } from "~/context/UIContext";
@@ -18,7 +18,7 @@ export type MaterialFormType = MaterialsInput | MaterialsType;
 type MaterialFormProps = {
   defaultValues: MaterialFormType;
   mode: "create" | "view";
-  categorization?: ViewCategorizacionProps;
+  categorization?: Categorization;
 };
 
 export const MaterialForm = ({
@@ -56,8 +56,9 @@ export const MaterialForm = ({
   });
   const onSubmit = async (formData: MaterialFormType) => {
     showModal({
-      title: "⌛ Procesando...",
+      title: "Procesando",
       message: `Procesando requerimiento`,
+      variant: "loanding",
     });
     if (mode === "create") {
       try {

@@ -12,8 +12,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  //const { opportunities } = useUI();
-
   const to = dateUSFormatted(new Date());
   const fromArray = to.split("-");
   fromArray[2] = "01";

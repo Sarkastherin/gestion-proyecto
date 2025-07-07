@@ -28,8 +28,9 @@ export default function ConditionsForm({
   });
   const onSubmit = async (formData: QuotesEnrichType): Promise<void> => {
     showModal({
-      title: "⌛ Procesando...",
+      title: "Procesando",
       message: `Procesando requerimiento`,
+      variant: "loanding",
     });
     try {
       const {
@@ -109,7 +110,7 @@ export default function ConditionsForm({
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <fieldset disabled={!isModeEdit}>
           <CardToggle title="Formas y metodos de pago">
-            <div className="flex flex-col gap-4">
+            <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-2">
               <Select
                 disabled={!editByStatus}
                 label="Forma de pago"
@@ -168,13 +169,15 @@ export default function ConditionsForm({
                   )
                 )}
               </Select>
-              <Textarea
-              disabled={!editByStatus}
-                label="Notas de Cotización"
-                placeholder="Notas de Cotización"
-                rows={2}
-                {...register("notes")}
-              />
+              <div className="lg:col-span-2">
+                <Textarea
+                  disabled={!editByStatus}
+                  label="Notas de Cotización"
+                  placeholder="Notas de Cotización"
+                  rows={2}
+                  {...register("notes")}
+                />
+              </div>
             </div>
           </CardToggle>
         </fieldset>
@@ -214,7 +217,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
-                      disabled={!editByStatus}
+                        disabled={!editByStatus}
                         placeholder="0 %"
                         {...register("materials", {
                           onChange: (e) =>
@@ -246,7 +249,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
-                      disabled={!editByStatus}
+                        disabled={!editByStatus}
                         placeholder="0%"
                         {...register("labor", {
                           onChange: (e) =>
@@ -278,7 +281,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
-                      disabled={!editByStatus}
+                        disabled={!editByStatus}
                         placeholder="0%"
                         {...register("subcontracting", {
                           onChange: (e) =>
@@ -308,7 +311,7 @@ export default function ConditionsForm({
                     <td className="px-3 py-2 whitespace-nowrap">0 %</td>
                     <td className="px-3 py-2 whitespace-nowrap">
                       <Input
-                      disabled={!editByStatus}
+                        disabled={!editByStatus}
                         placeholder="0%"
                         {...register("others", {
                           onChange: (e) =>
@@ -336,8 +339,8 @@ export default function ConditionsForm({
           <Card>
             <table className="min-w-full table-auto ">
               <colgroup>
-                <col className="w-[1%]" />
                 <col className="w-[20%]" />
+                <col className="w-[4%]" />
                 <col className="w-[1%]" />
               </colgroup>
               <thead className="ltr:text-left rtl:text-right">
@@ -356,15 +359,19 @@ export default function ConditionsForm({
                     }) || "$ 0.00"}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
-                    <Input
-                    disabled={!editByStatus}
-                      placeholder="0%"
-                      {...register("general", {
-                        valueAsNumber: true,
-                        onChange: (e) =>
-                          handleChangeTotalMS("total", "general", "t_mg_total"),
-                      })}
-                    />
+                      <Input
+                        disabled={!editByStatus}
+                        placeholder="0%"
+                        {...register("general", {
+                          valueAsNumber: true,
+                          onChange: (e) =>
+                            handleChangeTotalMS(
+                              "total",
+                              "general",
+                              "t_mg_total"
+                            ),
+                        })}
+                      />
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
                     {watch("t_mg_total")?.toLocaleString("es-AR", {

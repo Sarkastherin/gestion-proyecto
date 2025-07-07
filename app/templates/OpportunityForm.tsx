@@ -25,6 +25,7 @@ export default function OpportunityForm({
     showModal,
     isModeEdit,
     editByStatus,
+    getOpportunities
   } = useUI();
   const {
     register,
@@ -48,8 +49,9 @@ export default function OpportunityForm({
   }, [selectedClient]);
   const onSubmit = async (formData: OpportunityInput | OpportunityType) => {
     showModal({
-      title: "⌛ Procesando...",
+      title: "Procesando",
       message: `Procesando requerimiento`,
+      variant: "loanding",
     });
     if (mode === "create") {
       try {
@@ -60,6 +62,7 @@ export default function OpportunityForm({
           throw new Error("No se pudo obtener el id de la oportunidad creada");
         }
         const { id } = data;
+        getOpportunities()
         navigate(`/opportunity/${id}/resumen`);
         showModal({
           title: "Guardado con exito",

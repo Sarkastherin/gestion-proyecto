@@ -57,8 +57,9 @@ export default function PhasesForm({
       return;
     }
     showModal({
-      title: "⌛ Procesando...",
+      title: "Procesando",
       message: `Procesando requerimiento`,
+      variant: "loanding",
     });
     {
       try {
