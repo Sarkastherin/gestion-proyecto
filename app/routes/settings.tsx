@@ -80,6 +80,17 @@ export default function Settings() {
   const colsSubcategories: TableColumn<SubCategoryType>[] = [
     { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
     {
+      name: "Familia",
+      selector: (row) => {
+        const id_family = categories?.find(c => c.id === row.id_category)?.id_family
+        const family = families?.find(
+          (c) => c.id === id_family
+        )?.description;
+        return family ?? "";
+      },
+      width: "230px",
+    },
+    {
       name: "Rubro",
       selector: (row) => {
         const category = categories?.find(
