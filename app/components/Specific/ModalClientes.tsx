@@ -24,6 +24,7 @@ const columns: TableColumn<ClientDataType>[] = [
     width: "150px",
   },
 ];
+
 export default function ModalClientes() {
   const [clientsData, setClientsData] = useState<ClientDataType[]>([]);
   const { theme, openClientModal, setOpenClientModal, setSelectedClient } =
