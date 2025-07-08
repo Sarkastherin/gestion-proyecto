@@ -296,7 +296,7 @@ export default function PricesForm({
           </div>
         </fieldset>
         {modalMode ? (
-          <div className="mt-4 text-end">
+          <div className="mt-4 float-end w-32">
             <Button type="submit" variant="yellow">
               Guardar
             </Button>
