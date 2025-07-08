@@ -120,6 +120,7 @@ export default function Materials() {
       });
     }
   };
+
   const handleAdd = () => {
     if (selectedPhase && selectedPhase > 0) {
       append({
@@ -256,6 +257,7 @@ export default function Materials() {
                               `materials.${index}.materials.description`
                             )}
                             onClick={() => handleOpenMaterials(index)}
+                            error={errors.materials?.[index]?.id_material?.message}
                           />
                         </Cell>
                         {/* Unidad (no registrada, solo visible) */}
@@ -284,7 +286,9 @@ export default function Materials() {
                                   );
                                 },
                               },
+                              
                             })}
+                            error={errors.materials?.[index]?.quantity?.message}
                           />
                         </Cell>
 
@@ -313,6 +317,7 @@ export default function Materials() {
                             }
                             placeholder="$ 0.00"
                             onClick={() => handleOpenPrices(index)}
+                            error={errors.materials?.[index]?.id_price?.message}
                           />
                         </Cell>
 

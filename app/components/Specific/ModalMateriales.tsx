@@ -2,7 +2,6 @@ import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
 import { MaterialTable } from "~/templates/MaterialTable";
 import type { HandleRowClicked } from "~/templates/MaterialTable";
-import type { PricesType } from "~/backend/dataBase";
 import type { MaterialTypeDB } from "~/context/UIContext";
 import { LayoutModal } from "../Generals/Modals";
 type ModalPriceProps = {
@@ -38,7 +37,7 @@ export default function ModalMateriales({
         </div>
       }
     >
-      <div className="mt-4">
+      <div className="mt-4 overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
         <MaterialTable
           handleRowClicked={handleRowClicked}
           paginationPerPage={10}

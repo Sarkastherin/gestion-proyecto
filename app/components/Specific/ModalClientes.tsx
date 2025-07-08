@@ -79,7 +79,10 @@ export default function ModalClientes() {
           onChange={onFilter}
         />
         {clientsData.length > 0 && (
-          <>
+          <div
+              className="overflow-y-auto"
+              style={{ height: "calc(100vh - 270px)" }}
+            >
             <DataTable
               columns={columns}
               data={clientsData}
@@ -90,7 +93,7 @@ export default function ModalClientes() {
               pointerOnHover
               highlightOnHover
             />
-          </>
+          </div>
         )}
       </div>
     </LayoutModal>

@@ -42,15 +42,15 @@ export default function ModalProveedores() {
     const searchText = inputElement
       ? inputElement.value.toLocaleLowerCase()
       : "";
-    const filterData = suppliers.filter((supplier) => {
+    const filterData = suppliers?.filter((supplier) => {
       const nombres = supplier.nombre.toLocaleLowerCase().includes(searchText);
       const cuit = supplier.cuit?.toLocaleLowerCase().includes(searchText);
       return nombres || cuit;
     });
-    setSuppliersData(filterData);
+    setSuppliersData(filterData ?? [])
   };
   useEffect(() => {
-    if (suppliers.length > 0) {
+    if (suppliers && suppliers.length > 0) {
       setSuppliersData(suppliers);
     }
   }, [suppliers]);
@@ -64,7 +64,6 @@ export default function ModalProveedores() {
         open={openSupplierModal}
         title="Listado de Proveedores"
         handleOpen={() => setOpenSupplierModal(false)}
-        size="min-w-lg"
       >
         <div className="mt-4">
           <Input
@@ -74,7 +73,10 @@ export default function ModalProveedores() {
             onChange={onFilter}
           />
           {suppliersData.length > 0 && (
-            <div className="overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
+            <div
+              className="overflow-y-auto"
+              style={{ height: "calc(100vh - 270px)" }}
+            >
               <DataTable
                 columns={columns}
                 data={suppliersData}
@@ -90,13 +92,15 @@ export default function ModalProveedores() {
           )}
         </div>
         <footer className="mt-6 flex justify-end">
-          <Button
-            type="button"
-            onClick={() => setOpenSupplierModal(false)}
-            variant="secondary"
-          >
-            Cerrar
-          </Button>
+          <div className="w-38">
+            <Button
+              type="button"
+              onClick={() => setOpenSupplierModal(false)}
+              variant="secondary"
+            >
+              Cerrar
+            </Button>
+          </div>
         </footer>
       </LayoutModal>
     </>

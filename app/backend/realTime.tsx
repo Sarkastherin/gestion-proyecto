@@ -129,8 +129,6 @@ export function useOpportunityRealtime() {
         "postgres_changes",
         { event: "*", schema: "public", table },
         (payload) => {
-          console.log(`[${table.toUpperCase()}] Evento recibido:`, payload);
-
           // Reiniciamos el timer
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
 

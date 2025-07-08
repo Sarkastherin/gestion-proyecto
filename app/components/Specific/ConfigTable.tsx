@@ -104,6 +104,7 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
         pointerOnHover
         highlightOnHover
         defaultSortFieldId={"id"}
+        paginationPerPage={30}
       />
 
       <ConfigFormModal<T, TInsert>

@@ -233,7 +233,7 @@ export default function ModalQuotes() {
         </div>
       }
     >
-      <div className="mt-4">
+      <div className="mt-4 overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
         <OpportunitiesTable handleRowClicked={handleRowClicked} />
       </div>
     </LayoutModal>
