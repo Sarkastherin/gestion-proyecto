@@ -4,9 +4,11 @@ import { useNavigate } from "react-router";
 import { variants } from "../Forms/Buttons";
 import { TrashIcon, PlusCircleIcon } from "@heroicons/react/16/solid";
 import type { ButtonHTMLAttributes } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CSVLink } from "react-csv";
 import type { CommonPropTypes } from "react-csv/components/CommonPropTypes";
+import { sanitizeCSVData } from "~/utils/functions";
+import type { Data } from "react-csv/lib/core";
 type ButtonProps = {
   route: string;
   variant?: keyof typeof variants;
@@ -58,14 +60,13 @@ export const ButtonAdd = ({
     </button>
   );
 };
-export const ButtonExport = ({data, headers, filename}:CommonPropTypes) => {
-    const [separator, setSeparator] = useState<"," | ";">(";");
-  
+export const ButtonExport = ({ data, headers, filename }: CommonPropTypes) => {
+  const [separator, setSeparator] = useState<"," | ";">(";");
   return (
     <div className="text-sm inline-flex divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800">
       {/* Botón Exportar */}
       <CSVLink
-        data={data}
+        data={sanitizeCSVData(data as Data)}
         headers={headers}
         separator={separator}
         filename={filename}
