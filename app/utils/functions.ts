@@ -1,4 +1,5 @@
 import pkg from "package.json";
+import type { Data } from "react-csv/lib/core";
 export const appVersion = pkg.version;
 
 export type Totals = {
@@ -73,3 +74,21 @@ export const dateUSFormatted = (date: Date) => {
   const stringMonth = month > 9 ? String(month) : `0${month}`;
   return `${year}-${stringMonth}-${stringDay}`;
 };
+// Escapa comillas dobles y transforma valores undefined
+export const escapeCSVValue = (value: any) =>
+  typeof value === 'string' ? value.replace(/"/g, '""') : value ?? '';
+
+// Transforma un solo ítem en una fila CSV compatible
+export const transformToCSVRow = (item: any) => ({
+  type: escapeCSVValue(item.type || ''),
+  'materials.id': escapeCSVValue(item.materials?.id || ''),
+  'materials.description': escapeCSVValue(item.materials?.description || ''),
+  item: escapeCSVValue(item.item || ''),
+  quantity: item.quantity ?? '',
+  'prices.price': item.prices?.price ?? '',
+  unit_cost: item.unit_cost ?? '',
+  unit: escapeCSVValue(item.unit || ''),
+});
+
+// Aplica la transformación a todo el array de datos
+export const sanitizeCSVData = (data: Data) => data.map(transformToCSVRow);
