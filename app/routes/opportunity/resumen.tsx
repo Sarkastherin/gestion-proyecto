@@ -146,7 +146,6 @@ interface Props {
 }
 export const QuoteDetailsTable = ({ details }: Props) => {
   const [filterType, setFilterType] = useState<string>("Todos");
-  //const [separator, setSeparator] = useState<"," | ";">(";");
 
   const uniqueTypes = useMemo(() => {
     const types = new Set(details.map((item) => item.type));

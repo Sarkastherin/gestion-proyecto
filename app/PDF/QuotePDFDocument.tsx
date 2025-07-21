@@ -12,7 +12,6 @@ import type { PropStateReport } from "~/routes/opportunity/report";
 import Logo from "public/logo_imindustrial.png";
 import { currencies, modelOfTable } from "~/routes/opportunity/report";
 
-// estilos: (los tuyos aquí)
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -96,7 +95,6 @@ export default function QuotePDFDocument({
       ? settings.exchangeRate
       : 1;
   const format = (amount: number) => {
-    
     return (
       settings.currency === "USD" ? amount : amount * safeRate
     ).toLocaleString("es-AR", {
@@ -151,13 +149,20 @@ export default function QuotePDFDocument({
     }
   })();
   const total = rows.reduce((acc, row) => acc + row.value, 0);
-
+  const fecha = new Date().toLocaleString("es-AR", {
+    year: "numeric",
+    day: "numeric",
+    month: "long",
+  });
   return (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <Image src={Logo} style={styles.logo} />
-          <Text style={styles.h1}>Cotización Nro: {quoteId}</Text>
+          <View>
+            <Text style={styles.h1}>Cotización Nro: {quoteId}</Text>
+            <Text style={{marginTop: 10}}>Fecha: {fecha}</Text>
+          </View>
         </View>
         <View style={styles.body}>
           <View style={{ marginBottom: 20 }}>
