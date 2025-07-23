@@ -9,7 +9,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Oportunidad [Condiciones]" },
   ];
 }
-
+//probando script
 export default function Conditions() {
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
