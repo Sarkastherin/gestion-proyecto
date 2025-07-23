@@ -30,44 +30,41 @@ export const modelOfTable: PropsModelTable[] = [
       "Muestra un solo total global, sin desglose.",
       "Ideal para ofertas paquetizadas o clientes que no necesitan ver detalle.",
     ],
+    active: true,
   },
   {
     name: "Total por tipo",
     mode: "byType",
-    paragraph:"Muestra los 4 bloques por separado:",
-    listDescription: [
-      "Materiales",
-      "Mano de obra",
-      "Subcontratos",
-      "Otros",
-    ],
+    paragraph: "Muestra los 4 bloques por separado:",
+    listDescription: ["Materiales", "Mano de obra", "Subcontratos", "Otros"],
+    active: true,
   },
   {
     name: "Servicios",
     mode: "groupedServices",
-    paragraph:"Muestra 3 bloques, agrupando mano de obra y subcontratos en una etiqueta 'Servicios':",
-    listDescription: [
-      "Materiales",
-      "Servicios",
-      "Otros",
-    ],
+    paragraph:
+      "Muestra 3 bloques, agrupando mano de obra y subcontratos en una etiqueta 'Servicios':",
+    listDescription: ["Materiales", "Servicios", "Otros"],
+    active: false,
   },
   {
     name: "Directos e indirectos",
     mode: "useCategory",
-    paragraph:"Categoriza la cotización en 2 bloques:",
+    paragraph: "Categoriza la cotización en 2 bloques:",
     listDescription: [
       "Directos (materiales, mano de obra)",
       "Indirectos (subcontratos, otros)",
     ],
+    active: false,
   },
   {
     name: "Materiales + totales",
     mode: "materialsOnly",
     listDescription: [
-      "Agrupa mano de obra, subcontratos y otros en 'Otros'",
+      "Agrupa mano de obra, subcontratos y otros en 'Mano de Obra'",
       "Total de Materiales",
     ],
+    active: true,
   },
 ];
 type Currencies = "USD" | "ARS";
@@ -137,11 +134,13 @@ export default function Report() {
               label="Modelo de tabla"
               defaultValue={settings.model}
             >
-              {modelOfTable.map((c) => (
-                <option key={c.mode} value={c.mode}>
-                  {c.name}
-                </option>
-              ))}
+              {modelOfTable
+                .filter((c) => c.active)
+                .map((item) => (
+                  <option key={item.mode} value={item.mode}>
+                    {item.name}
+                  </option>
+                ))}
             </Select>
             {description && <TextDescription description={description} />}
           </div>

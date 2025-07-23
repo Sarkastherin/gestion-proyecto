@@ -139,7 +139,7 @@ export default function QuotePDFDocument({
         return [
           { label: "Materiales", value: quote.t_mg_materials },
           {
-            label: "Otros",
+            label: "Mano de Obra",
             value:
               quote.t_mg_labor + quote.t_mg_subcontracting + quote.t_mg_others,
           },

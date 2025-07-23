@@ -15,6 +15,7 @@ export type PropsModelTable = {
   mode: ReportMode;
   paragraph?: string;
   listDescription: string[];
+  active: boolean
 };
 export const TextDescription = ({
   description,
