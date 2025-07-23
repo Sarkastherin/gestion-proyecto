@@ -107,7 +107,7 @@ export default function QuotePDFDocument({
   const rows = (() => {
     switch (settings.model) {
       case "closed":
-        return [{ label: "Precio cerrado", value: quote.t_mg_total }];
+        return [{ label: "Precio Global", value: quote.t_mg_total }];
       case "byType":
         return [
           { label: "Materiales", value: quote.t_mg_materials },
@@ -139,7 +139,7 @@ export default function QuotePDFDocument({
         return [
           { label: "Materiales", value: quote.t_mg_materials },
           {
-            label: "Mano de Obra",
+            label: "Mano de Obra - Subcontratos - Otros",
             value:
               quote.t_mg_labor + quote.t_mg_subcontracting + quote.t_mg_others,
           },

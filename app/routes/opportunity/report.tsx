@@ -24,7 +24,7 @@ export const currencies: { value: Currencies; label: string }[] = [
 
 export const modelOfTable: PropsModelTable[] = [
   {
-    name: "Precio cerrado",
+    name: "Precio Global",
     mode: "closed",
     listDescription: [
       "Muestra un solo total global, sin desglose.",
@@ -58,7 +58,7 @@ export const modelOfTable: PropsModelTable[] = [
     active: false,
   },
   {
-    name: "Materiales + totales",
+    name: "Materiales + Mano de Obra",
     mode: "materialsOnly",
     listDescription: [
       "Agrupa mano de obra, subcontratos y otros en 'Mano de Obra'",
