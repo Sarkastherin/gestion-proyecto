@@ -7,7 +7,6 @@ import FooterForms from "./FooterForms";
 import { useEffect } from "react";
 import { updateSingleRow, type DirtyMap } from "~/utils/updatesSingleRow";
 import { useFieldsChange } from "~/utils/fieldsChange";
-//import { roundToPrecision } from "~/utils/functions";
 import type { QuotesEnrichType } from "~/context/UIContext";
 export default function ConditionsForm({
   quoteActive,
@@ -105,6 +104,24 @@ export default function ConditionsForm({
     const safePercent = percent ?? 0;
     setValue(setValueLabel, total * (1 + safePercent / 100));
   };
+  useEffect(() => {
+    const total =
+      watch("t_mg_materials") +
+      watch("t_mg_labor") +
+      watch("t_mg_subcontracting") +
+      watch("t_mg_others");
+    setValue("total", total);
+  }, [
+    watch("t_mg_materials"),
+    watch("t_mg_labor"),
+    watch("t_mg_subcontracting"),
+    watch("t_mg_others"),
+  ]);
+  useEffect(() => {
+    const percent = watch("general") ?? 0;
+    const t_mg_total = watch("total") * (1 + percent / 100);
+    setValue("t_mg_total", t_mg_total);
+  }, [watch("total")]);
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
@@ -359,19 +376,15 @@ export default function ConditionsForm({
                     }) || "$ 0.00"}
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
-                      <Input
-                        disabled={!editByStatus}
-                        placeholder="0%"
-                        {...register("general", {
-                          valueAsNumber: true,
-                          onChange: (e) =>
-                            handleChangeTotalMS(
-                              "total",
-                              "general",
-                              "t_mg_total"
-                            ),
-                        })}
-                      />
+                    <Input
+                      disabled={!editByStatus}
+                      placeholder="0%"
+                      {...register("general", {
+                        valueAsNumber: true,
+                        onChange: (e) =>
+                          handleChangeTotalMS("total", "general", "t_mg_total"),
+                      })}
+                    />
                   </td>
                   <td className="px-3 py-2 whitespace-nowrap">
                     {watch("t_mg_total")?.toLocaleString("es-AR", {
