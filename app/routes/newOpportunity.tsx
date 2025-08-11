@@ -30,7 +30,7 @@ export default function NewOpportunity() {
             name: "",
             id_client: 0,
             status: "Nuevo",
-            created_by: user?.user_name || "",
+            created_by: user?.auth_user_id|| "",
           }}
         />
       </ContainerWithTitle>
