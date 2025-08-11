@@ -1,10 +1,10 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { supabase } from "~/backend/supabaseClient";
 import type { User, Session, AuthError } from "@supabase/supabase-js";
-type MyUser = {
+export type MyUser = {
   id: number;
   created_at: string;
-  id_user: string;
+  auth_user_id: string;
   name: string;
   last_name: string;
   roll: string;
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { data, error } = await supabase
         .from("users")
         .select("*")
-        .eq("id_user", userId);
+        .eq("auth_user_id", userId);
       if (error) {
         alert(`No se pudo acceder al servidor: Error: ${error.message}`);
         return;

@@ -21,4 +21,5 @@ export type OpportunityInput = {
   created_by: string;
   history_data?: {} | null;
   loss_reason?: string | null;
+  user_id:string
 };

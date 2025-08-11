@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
 import { useContacts, type ClientDataType } from "./ContactsContext";
 import type { ModalBaseProps } from "~/components/Generals/Modals";
@@ -10,7 +10,6 @@ import {
   unitsApi,
 } from "~/backend/dataBase";
 import type { OpportunityType } from "~/types/database";
-import type { DetailsMaterialForm } from "~/routes/opportunity/quotes/materials";
 import {
   getQuoteTotals,
   roundToPrecision,
@@ -313,7 +312,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
     while (true) {
       const { data, error, count } = await supabase
         .from("opportunities")
-        .select("*")
+        .select("*, users(*)")
         .order("id", { ascending: false })
         .range(from, from + pageSize - 1);
 
@@ -336,6 +335,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
           .filter((item): item is OpportunitiesTypeDB => item !== null)
       );
     }
+    console.log("Oportunidades obtenidas:", allData);
     return allData;
   };
   const getOpportunityById = async (
