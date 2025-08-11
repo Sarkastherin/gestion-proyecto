@@ -55,7 +55,7 @@ const columns: TableColumn<OpportunitiesTypeDB>[] = [
   },
   {
     name: "Creado por",
-    selector: (row) => row.created_by || "",
+    selector: (row) => row.users?.user_name || "",
     width: "120px",
   },
 ];

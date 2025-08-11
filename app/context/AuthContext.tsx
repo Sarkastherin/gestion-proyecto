@@ -7,8 +7,8 @@ export type MyUser = {
   auth_user_id: string;
   name: string;
   last_name: string;
-  roll: string;
   user_name: string;
+  role: string;
 };
 type AuthContextType = {
   session: Session | null;

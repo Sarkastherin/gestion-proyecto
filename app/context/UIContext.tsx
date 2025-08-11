@@ -27,6 +27,7 @@ import type {
   CategoryType,
   SubCategoryType,
 } from "~/backend/dataBase";
+import type { MyUser } from "./AuthContext";
 export type QuotesEnrichType = QuotesType &
   Totals & {
     t_mg_materials: number;
@@ -50,6 +51,7 @@ export type MaterialTypeDB = MaterialsType & {
 };
 export type OpportunitiesTypeDB = OpportunityType & {
   client: ClientDataType;
+  users: MyUser | null;
 };
 export type CategoriesProps = {
   id: number;
