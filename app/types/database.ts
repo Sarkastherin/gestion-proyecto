@@ -19,7 +19,5 @@ export type OpportunityInput = {
   id_client: number;
   status: StatusType;
   created_by: string;
-  history_data?: {} | null;
   loss_reason?: string | null;
-  user_id:string
 };

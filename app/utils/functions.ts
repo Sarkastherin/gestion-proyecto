@@ -79,16 +79,21 @@ export const escapeCSVValue = (value: any) =>
   typeof value === 'string' ? value.replace(/"/g, '""') : value ?? '';
 
 // Transforma un solo ítem en una fila CSV compatible
-export const transformToCSVRow = (item: any) => ({
-  type: escapeCSVValue(item.type || ''),
-  'materials.id': escapeCSVValue(item.materials?.id || ''),
-  'materials.description': escapeCSVValue(item.materials?.description || ''),
-  item: escapeCSVValue(item.item || ''),
-  quantity: item.quantity ?? '',
-  'prices.price': item.prices?.price ?? '',
-  unit_cost: item.unit_cost ?? '',
-  unit: escapeCSVValue(item.unit || ''),
-});
+export const transformToCSVRow = (item: any) => {
+  const defaultPrice = item.prices?.find((p: any) => p.default) ?? {};
+
+  return {
+    id: item.id,
+    description: escapeCSVValue(item.description),
+    weight: item.weight ?? '',
+    unit: item.id_unit ?? '',
+    price: defaultPrice.price ?? '',
+    supplier: defaultPrice.id_supplier ?? '',
+    'view_categorizations.description_family': escapeCSVValue(item.view_categorizations?.description_family ?? ''),
+    'view_categorizations.description_category': escapeCSVValue(item.view_categorizations?.description_category ?? ''),
+    'view_categorizations.description_subcategory': escapeCSVValue(item.view_categorizations?.description_subcategory ?? ''),
+  };
+};
 
 // Aplica la transformación a todo el array de datos
 export const sanitizeCSVData = (data: Data) => data.map(transformToCSVRow);

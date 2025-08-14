@@ -337,7 +337,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
           .filter((item): item is OpportunitiesTypeDB => item !== null)
       );
     }
-    console.log("Oportunidades obtenidas:", allData);
     return allData;
   };
   const getOpportunityById = async (
