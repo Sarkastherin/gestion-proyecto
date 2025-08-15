@@ -200,6 +200,7 @@ export const QuoteDetailsTable = ({ details }: Props) => {
           filename={`detalle_cotizacion_${
             details[0].id_quote
           }_${filterType.toLocaleLowerCase()}`}
+          type="resumen"
         />
       </div>
 

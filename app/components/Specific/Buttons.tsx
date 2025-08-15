@@ -60,13 +60,19 @@ export const ButtonAdd = ({
     </button>
   );
 };
-export const ButtonExport = ({ data, headers, filename }: CommonPropTypes) => {
+type ButtonExportProps = { type: "resumen" | "materials" } & CommonPropTypes;
+export const ButtonExport = ({
+  data,
+  headers,
+  filename,
+  type = "resumen",
+}: ButtonExportProps) => {
   const [separator, setSeparator] = useState<"," | ";">(";");
   return (
     <div className="text-sm inline-flex divide-x divide-gray-300 overflow-hidden rounded-md border border-gray-300 bg-white shadow-sm dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-800">
       {/* Botón Exportar */}
       <CSVLink
-        data={sanitizeCSVData(data as Data)}
+        data={sanitizeCSVData(data as Data, type)}
         headers={headers}
         separator={separator}
         filename={filename}

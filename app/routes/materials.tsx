@@ -71,6 +71,7 @@ export default function Materials() {
               data={materials ?? []}
               headers={headers}
               filename="Listado de materiales"
+              type="materials"
             />
           </div>
           <div className="w-4/*  */2">
