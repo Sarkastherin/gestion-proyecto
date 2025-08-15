@@ -65,7 +65,7 @@ export const ButtonExport = ({
   data,
   headers,
   filename,
-  type = "resumen",
+  type,
 }: ButtonExportProps) => {
   const [separator, setSeparator] = useState<"," | ";">(";");
   return (

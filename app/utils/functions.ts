@@ -81,9 +81,11 @@ export const escapeCSVValue = (value: any) =>
 // Transforma un solo ítem en una fila CSV compatible
 export const transformToCSVRow =
   (type: "resumen" | "materials") => (item: any) => {
-    const defaultPrice = item.prices?.find((p: any) => p.default) ?? {};
+    //console.log("type", type);
+    
 
-    if (type === "resumen") {
+    if (type === "materials") {
+      const defaultPrice = item.prices?.find((p: any) => p.default) ?? {};
       return {
         id: item.id,
         description: escapeCSVValue(item.description),
@@ -103,7 +105,7 @@ export const transformToCSVRow =
       };
     }
 
-    if (type === "materials") {
+    if (type === "resumen") {
       return {
         type: escapeCSVValue(item.type || ""),
         "materials.id": escapeCSVValue(item.materials?.id || ""),
