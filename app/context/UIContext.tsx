@@ -325,6 +325,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       allData = allData.concat(data);
       from += pageSize;
       if (data.length < pageSize) break;
+      
     }
     if (clients && clients.length > 0) {
       setOpportunities(
