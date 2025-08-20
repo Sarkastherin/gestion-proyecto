@@ -20,4 +20,5 @@ export type OpportunityInput = {
   status: StatusType;
   created_by: string;
   loss_reason?: string | null;
+  id_project?: number | null;
 };

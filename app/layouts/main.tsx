@@ -6,6 +6,8 @@ import { useAuth } from "~/context/AuthContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useContacts } from "~/context/ContactsContext";
+import ModalProgressive from "~/components/Specific/ModalProgressive";
+import ModalAlert from "~/components/Specific/ModalAlert";
 export default function MainLayout() {
   const { isLoadedContacts } = useContacts();
   const { modal, closeModal } = useUI();
@@ -21,6 +23,9 @@ export default function MainLayout() {
         <>
           <Header />
           <Outlet />
+          <ModalProgressive />
+          <ModalAlert />
+          {/* Modal para mensajes genéricos */}
           {modal && (
             <ModalBase
               title={modal.title}

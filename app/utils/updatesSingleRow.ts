@@ -26,7 +26,6 @@ export const updateSingleRow = async <T extends { id: number }>({
   );
 
   if (Object.keys(updatePayload).length === 0) return;
-console.log(updatePayload)
   const { error } = await onUpdate({
     id: formData.id,
     values: updatePayload,

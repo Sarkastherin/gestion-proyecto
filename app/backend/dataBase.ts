@@ -131,3 +131,66 @@ export const subcategoryApi = createCrud<SubCategoryType, SubCategoryInput>(
   "subcategories"
 );
 export const unitsApi = createCrud<UnitsType, UnitsInput>("units");
+export type ProjetcInput = {
+  name: string;
+  id_client: number;
+  scope?: string;
+  id_opportunity: number;
+  id_quote: number;
+  method_payment?: string;
+  guarantee?: string;
+  materials?: number;
+  labor?: number;
+  subcontracting?: number;
+  others?: number;
+  general?: number;
+  plan_start_date?: string;
+  plan_end_date?: string;
+  plan_duration?: number;
+  start_date?: string;
+  end_date?: string;
+  duration?: number;
+};
+export type ProjectsType = ProjetcInput & CommonTypesDataBase;
+export const projectsApi = createCrud<ProjectsType, ProjetcInput>("projects");
+export type PhasesProjectInput = {
+  name: string;
+  id_project: number;
+  created_by?: string;
+};
+export type PhasesProjectType = PhasesProjectInput & CommonTypesDataBase;
+export const phasesProjectApi = createCrud<
+  PhasesProjectType,
+  PhasesProjectInput
+>("phases_project");
+type BudgetItemInput = {
+  id_phase: number;
+  id_project: number;
+  type: "materiales" | "mano de obra" | "subcontratos" | "otros";
+  item: string;
+  quantity: number;
+  unit_cost: number;
+  notes?: string;
+  observations?: string;
+  created_by?: string;
+}
+type BudgetItemType = BudgetItemInput & CommonTypesDataBase;
+export const budgetItemsApi = createCrud<BudgetItemType, BudgetItemInput>("budget_details_items");
+export type BudgetMaterialInput = {
+  id_phase: number;
+  id_project: number;
+  type: "materiales";
+  id_material: number;
+  id_price: number;
+  quantity: number;
+  notes?: string;
+  observations?: string;
+  created_by?: string;
+};
+export type BudgetMaterialType = BudgetMaterialInput & CommonTypesDataBase & {
+  materials: MaterialsType;
+  prices: PricesType | {};
+};
+export const budgetMaterialsApi = createCrud<
+  BudgetMaterialType,
+  BudgetMaterialInput>("budget_details_materials");

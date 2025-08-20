@@ -2,6 +2,8 @@ import type { Route } from "../../+types/root";
 import OpportunityForm from "~/templates/OpportunityForm";
 import { useUI } from "~/context/UIContext";
 import { ContainerToForms } from "~/components/Generals/Containers";
+import { useOpportunityRealtime } from "~/backend/realTime";
+import { useOutletContext } from "react-router";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Información]" },
@@ -9,6 +11,10 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 export default function Information() {
+  const { selectedQuoteId } = useOutletContext<{
+    selectedQuoteId: number | null;
+  }>();
+  useOpportunityRealtime();
   const { selectedOpportunity } = useUI();
   if (selectedOpportunity) {
     const { phases, details_items, details_materials, quotes, ...dataOpportunity } = selectedOpportunity;
@@ -16,7 +22,7 @@ export default function Information() {
       <>
         {phases && (
           <ContainerToForms>
-            <OpportunityForm mode="view" defaultValues={dataOpportunity} />
+            <OpportunityForm mode="view" defaultValues={dataOpportunity} selectedQuoteId={selectedQuoteId}/>
           </ContainerToForms>
         )}
       </>

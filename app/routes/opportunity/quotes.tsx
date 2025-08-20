@@ -7,6 +7,7 @@ import { Button } from "~/components/Forms/Buttons";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router";
 import type { ChangeEventHandler } from "react";
+import { useOpportunityRealtime } from "~/backend/realTime";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -19,6 +20,7 @@ type PropsType = {
   label: string;
 };
 export default function Quotes() {
+  useOpportunityRealtime();
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
   }>();

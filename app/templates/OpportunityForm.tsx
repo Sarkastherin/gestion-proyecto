@@ -5,28 +5,49 @@ import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
 import ModalClientes from "~/components/Specific/ModalClientes";
 import { useEffect } from "react";
-import { opportunityApi } from "~/backend/dataBase";
+import {
+  opportunityApi,
+} from "~/backend/dataBase";
 import type { OpportunityInput, OpportunityType } from "~/types/database";
 import FooterForms from "./FooterForms";
 import { useNavigate } from "react-router";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { useFieldsChange } from "~/utils/fieldsChange";
+import type { OpportunityAll } from "~/context/UIContext";
+import { ButtonNavigate } from "~/components/Specific/Buttons";
+import { ProjectCreationError } from "~/utils/errors";
+import { useData } from "~/context/DataContext";
+import {
+  validateQuoteAndOpportunity,
+  buildProjectPayload,
+  createPhasesAndMap,
+  createProjectAndLinkToOpportunity,
+  insertBudgetItems,
+  insertBudgetMaterials,
+} from "~/utils/projectUtils";
+
+/* Modals */
+import { useUIModals, ModalType } from "~/context/ModalsContext";
+
 export default function OpportunityForm({
   defaultValues,
   mode,
+  selectedQuoteId,
 }: {
   defaultValues: OpportunityInput | OpportunityType;
   mode: "create" | "view";
+  selectedQuoteId?: number | null;
 }) {
+  const { openModal, closeModal, progressive, alert } = useUIModals();
   const navigate = useNavigate();
   const {
     setOpenClientModal,
     selectedClient,
-    showModal,
     isModeEdit,
     editByStatus,
-    getOpportunities
+    selectedOpportunity,
   } = useUI();
+  const { lastCreatedProjectId } = useData();
   const {
     register,
     watch,
@@ -48,38 +69,24 @@ export default function OpportunityForm({
     }
   }, [selectedClient]);
   const onSubmit = async (formData: OpportunityInput | OpportunityType) => {
-    showModal({
-      title: "Procesando",
-      message: `Procesando requerimiento`,
-      variant: "loanding",
-    });
-    if (mode === "create") {
-      try {
+    try {
+      progressive?.setSteps([
+        { label: "Guardando oportunidad", status: "in-progress" },
+      ]);
+      openModal(ModalType.PROGRESSIVE);
+      if (mode === "create") {
         const { data, error } = await opportunityApi.insertOne(formData);
-        if (error) throw new Error(String(error));
-
-        if (!data || !("id" in data)) {
-          throw new Error("No se pudo obtener el id de la oportunidad creada");
+        if (error || !data || !("id" in data)) {
+          throw new Error("Error al crear oportunidad");
         }
-        const { id } = data;
-        getOpportunities()
-        navigate(`/opportunity/${id}/resumen`);
-        showModal({
-          title: "Guardado con exito",
-          message: `Se ha guardado la oportunidad`,
-          variant: "success",
-        });
-      } catch (e) {
-        showModal({
-          title: "Error al guardar",
-          message: "No se pudo guardar la oportunidad. Error:",
-          code: String(e),
-          variant: "error",
-        });
+        progressive?.updateStep(0, "done");
+        alert?.setAlert("Oportunidad creada con éxito", "success");
+        navigate(`/opportunity/${data.id}/resumen`);
       }
-    }
-    if (mode === "view" && isModeEdit) {
-      try {
+      if (mode === "view" && isModeEdit) {
+        progressive?.setSteps([
+          { label: "Actualizando oportunidad", status: "in-progress" },
+        ]);
         await updateSingleRow({
           dirtyFields: Object.fromEntries(
             Object.entries(dirtyFields).filter(
@@ -89,18 +96,97 @@ export default function OpportunityForm({
           formData: formData as OpportunityType,
           onUpdate: opportunityApi.update,
         });
-        showModal({
-          title: "Actualizado con exito",
-          message: `Se ha actualizado la oportunidad`,
-          variant: "success",
-        });
-      } catch (e) {
-        showModal({
-          title: "Error al actualizar",
-          message: `No se pudo actualizar la oportunidad. Error:`,
-          code: String(e),
-          variant: "error",
-        });
+        if (
+          formData.status === "Ganada" &&
+          selectedQuoteId &&
+          selectedOpportunity
+        ) {
+          
+          progressive?.setSteps([
+            { label: "Creando proyecto", status: "in-progress" },
+            { label: "Creando fases", status: "pending" },
+            { label: "Agregando ítems", status: "pending" },
+            { label: "Agregando materiales", status: "pending" },
+          ]);
+
+          if ("id" in formData && "created_at" in formData) {
+            await createdProject({
+              formData: formData as OpportunityType,
+              selectedOpportunity,
+            });
+            alert?.setAlert("Proyecto creado con éxito", "success");
+          } else {
+            throw new Error(
+              "Los datos de la oportunidad no son válidos para crear un proyecto"
+            );
+          }
+        } else {
+          alert?.setAlert("Oportunidad actualizada", "success");
+        }
+      }
+    } catch (e) {
+      alert?.setAlert(String(e), "error");
+    } finally {
+      closeModal(); // Cierra el modal progresivo
+    }
+  };
+  interface CreatedProjectType {
+    formData: OpportunityType;
+    selectedOpportunity: OpportunityAll;
+  }
+  const createdProject = async ({
+    formData,
+    selectedOpportunity,
+  }: CreatedProjectType) => {
+    try {
+      progressive?.updateStep(0, "done"); // Creando proyecto
+
+      const quoteActive = validateQuoteAndOpportunity(
+        selectedQuoteId,
+        selectedOpportunity
+      );
+      const payload = buildProjectPayload(formData, quoteActive);
+      console.log("aqui");
+      const projectId = await createProjectAndLinkToOpportunity(
+        payload,
+        formData
+      );
+
+      progressive?.updateStep(1, "in-progress"); // Creando fases
+
+      const phaseMap = await createPhasesAndMap(
+        selectedOpportunity.phases,
+        selectedOpportunity.details_items,
+        selectedOpportunity.details_materials,
+        projectId
+      );
+
+      progressive?.updateStep(1, "done");
+      progressive?.updateStep(2, "in-progress"); // Ítems
+
+      const itemsQuoteActive = selectedOpportunity.details_items.filter(
+        (i) => i.id_quote === selectedQuoteId
+      );
+      await insertBudgetItems(itemsQuoteActive, phaseMap, projectId);
+
+      progressive?.updateStep(2, "done");
+      progressive?.updateStep(3, "in-progress"); // Materiales
+
+      const materialsQuoteActive = selectedOpportunity.details_materials.filter(
+        (m) => m.id_quote === selectedQuoteId
+      );
+      await insertBudgetMaterials(materialsQuoteActive, phaseMap, projectId);
+
+      progressive?.updateStep(3, "done");
+      alert?.setAlert(
+        `Proyecto creado con ID: ${lastCreatedProjectId}`,"success");
+    } catch (e) {
+      if (e instanceof ProjectCreationError) {
+        alert?.setAlert(`Error en ${e.step}: ${e.message}`, "error");
+      } else if (e instanceof Error) {
+        alert?.setAlert(`Error inesperado: ${e.message}`, "error");
+      } else {
+        alert?.setAlert("Ocurrió un error desconocido", "error");
       }
     }
   };
@@ -114,7 +200,7 @@ export default function OpportunityForm({
               <Input
                 label="Nombre de Oportunidad"
                 placeholder="Ingresa un nombre para la oportunidad"
-                disabled={!editByStatus && mode!= "create"}
+                disabled={!editByStatus && mode != "create"}
                 {...register("name", { required: "Campo requerido" })}
                 error={errors.name?.message}
               />
@@ -122,7 +208,7 @@ export default function OpportunityForm({
                 label="Cliente"
                 placeholder="Seleccione un cliente"
                 readOnly
-                disabled={!editByStatus && mode!= "create"}
+                disabled={!editByStatus && mode != "create"}
                 value={selectedClient?.nombre || ""}
                 onClick={() => setOpenClientModal(true)}
                 error={errors.id_client?.message}
@@ -135,7 +221,7 @@ export default function OpportunityForm({
                 })}
               />
               <Textarea
-                disabled={!editByStatus && mode!= "create"}
+                disabled={!editByStatus && mode != "create"}
                 label="Alcance"
                 {...register("scope")}
               />

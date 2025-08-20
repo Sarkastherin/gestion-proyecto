@@ -93,6 +93,8 @@ export default function ModalQuotes() {
           if (!original)
             throw new Error("No se encontró la oportunidad original.");
           if (!selectedOpportunity)
+
+            
             throw new Error("No hay oportunidad seleccionada.");
 
           const {

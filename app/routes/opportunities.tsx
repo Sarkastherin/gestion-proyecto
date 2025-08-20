@@ -13,6 +13,7 @@ import type { OpportunitiesTypeDB } from "~/context/UIContext";
 import { useState, useEffect } from "react";
 import { customStyles } from "~/components/Generals/Tables";
 import { Button } from "~/components/Forms/Buttons";
+import { useContacts } from "~/context/ContactsContext";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidades" },
@@ -65,6 +66,7 @@ type FilterOpportunityType = {
   status_opportunity: string;
 };
 export default function Opportunities() {
+  const { clients} = useContacts();
   const [hidden, setHidden] = useState(true);
   const [filterData, setFilterData] = useState<OpportunitiesTypeDB[] | null>(
     null

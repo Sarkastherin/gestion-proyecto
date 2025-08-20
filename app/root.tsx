@@ -14,7 +14,8 @@ import { UIProvider } from "./context/UIContext";
 import { ContactsProvider } from "./context/ContactsContext";
 import { useEffect, useState } from "react";
 import { Buffer } from "buffer";
-
+import { UIModalsProvider } from "./context/ModalsContext";
+import { DataProvider } from "./context/DataContext";
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
@@ -32,15 +33,22 @@ if (typeof window !== "undefined") {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setTheme(prefersDark ? 'dark' : 'light');
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
+    setTheme(prefersDark ? "dark" : "light");
   }, []);
 
   return (
-    <html lang="en" data-theme={theme} className={theme === 'dark' ? 'dark:bg-zinc-800' : ''} title="Gestión de Proyectos IM + Industrial">
+    <html
+      lang="en"
+      data-theme={theme}
+      className={theme === "dark" ? "dark:bg-zinc-800" : ""}
+      title="Gestión de Proyectos IM + Industrial"
+    >
       <title>Gestión de Proyectos IM + Industrial</title>
       <head>
         <meta charSet="utf-8" />
@@ -61,10 +69,15 @@ export default function App() {
   return (
     <AuthProvider>
       <ContactsProvider>
-        <UIProvider>
-          <div className="min-h-screen flex flex-col bg-neutral-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200"><Outlet />
-          </div>
-        </UIProvider>
+        <DataProvider>
+          <UIModalsProvider>
+            <UIProvider>
+              <div className="min-h-screen flex flex-col bg-neutral-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200">
+                <Outlet />
+              </div>
+            </UIProvider>
+          </UIModalsProvider>
+        </DataProvider>
       </ContactsProvider>
     </AuthProvider>
   );

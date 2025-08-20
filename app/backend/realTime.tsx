@@ -133,7 +133,6 @@ export function useOpportunityRealtime() {
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
           timeoutRef.current = setTimeout(() => {
-            console.log("refrescando oportunidad");
             refreshOpportunity();
             timeoutRef.current = null;
           }, 500);
