@@ -2,11 +2,11 @@ import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
 import { MaterialTable } from "~/templates/MaterialTable";
 import type { HandleRowClicked } from "~/templates/MaterialTable";
-import type { MaterialTypeDB } from "~/context/UIContext";
+import type { MaterialsUI } from "~/types/materialsType";
 import { LayoutModal } from "../Generals/Modals";
 type ModalPriceProps = {
   activeIndex: number | null;
-  onSelectMaterial: (index: number, material: MaterialTypeDB) => void;
+  onSelectMaterial: (index: number, material: MaterialsUI) => void;
 };
 export default function ModalMateriales({
   activeIndex,

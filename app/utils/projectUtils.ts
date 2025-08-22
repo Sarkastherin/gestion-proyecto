@@ -1,12 +1,4 @@
-import type { OpportunityAll } from "~/context/UIContext";
-import type { OpportunityType } from "~/types/database";
-import type {
-  ProjetcInput,
-  PhasesType,
-  DetailsItemsType,
-  DetailsMaterialsType,
-} from "~/backend/dataBase";
-import type { QuotesEnrichType } from "~/context/UIContext";
+import type { QuotesUI } from "~/types/opportunitiesType";
 import {
   projectsApi,
   opportunityApi,
@@ -16,9 +8,18 @@ import {
 } from "~/backend/dataBase";
 import { ProjectCreationError } from "./errors";
 import { useData } from "~/context/DataContext";
+import type { ProjectsDB, ProjectsProps } from "~/types/projectsType";
+import type {
+  OpportunityAndQuotesUI,
+  OpportunityDB,
+  PhasesDB,
+  DetailsItemsDB,
+  DetailsMaterialsDB,
+  DetailsMaterialsUI
+} from "~/types/opportunitiesType";
 export function validateQuoteAndOpportunity(
   selectedQuoteId: number | null | undefined,
-  selectedOpportunity: OpportunityAll
+  selectedOpportunity: OpportunityAndQuotesUI
 ) {
   if (!selectedQuoteId)
     throw new ProjectCreationError(
@@ -41,9 +42,9 @@ export function validateQuoteAndOpportunity(
   return quoteActive;
 }
 export function buildProjectPayload(
-  formData: OpportunityType,
-  quoteActive: QuotesEnrichType
-): ProjetcInput {
+  formData: OpportunityDB,
+  quoteActive: QuotesUI
+): ProjectsProps {
   const name = formData.name?.trim();
   if (!name)
     throw new ProjectCreationError(
@@ -66,11 +67,9 @@ export function buildProjectPayload(
   };
 }
 export async function createProjectAndLinkToOpportunity(
-  payload: ProjetcInput,
-  formData: OpportunityType
+  payload: ProjectsProps,
+  formData: OpportunityDB
 ) {
-  const { setLastCreatedProjectId } = useData();
-  
   const { data: projectData, error: projectError } =
     await projectsApi.insertOne(payload);
   if (projectError || !projectData || !("id" in projectData)) {
@@ -79,10 +78,8 @@ export async function createProjectAndLinkToOpportunity(
       "Error al crear proyecto"
     );
   }
-  console.log("projectError", projectError);
 
   const projectId = projectData.id;
-  setLastCreatedProjectId(projectId);
   const { error: oppError } = await opportunityApi.update({
     id: formData.id,
     values: { id_project: projectId },
@@ -92,13 +89,13 @@ export async function createProjectAndLinkToOpportunity(
       "Actualización de oportunidad",
       "Error al actualizar oportunidad"
     );
-    
+
   return projectId;
 }
 export async function createPhasesAndMap(
-  phases: PhasesType[],
-  items: DetailsItemsType[],
-  materials: DetailsMaterialsType[],
+  phases: PhasesDB[],
+  items: DetailsItemsDB[],
+  materials: DetailsMaterialsDB[],
   projectId: number
 ) {
   const quotePhaseIds = new Set(
@@ -136,7 +133,7 @@ export async function createPhasesAndMap(
   );
 }
 export async function insertBudgetItems(
-  items: DetailsItemsType[],
+  items: DetailsItemsDB[],
   phaseMap: Record<number, number>,
   projectId: number
 ) {
@@ -156,7 +153,7 @@ export async function insertBudgetItems(
     );
 }
 export async function insertBudgetMaterials(
-  materials: DetailsMaterialsType[],
+  materials: DetailsMaterialsUI[],
   phaseMap: Record<number, number>,
   projectId: number
 ) {

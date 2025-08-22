@@ -10,8 +10,8 @@ export const ContainerWithTitle = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <main className={`pt-12 pb-18 lg:px-8 sm:px-6 mx-auto `}>
+    <div className={`mx-auto ${width}`}>
+      <main className={`pt-12 pb-18 lg:px-8 px-6 mx-auto `}>
         <h2 className="text-2xl font-bold">{title}</h2>
         <div className="mt-4">{children}</div>
       </main>

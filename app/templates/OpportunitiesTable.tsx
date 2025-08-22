@@ -3,9 +3,9 @@ import { useUI } from "~/context/UIContext";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Input } from "~/components/Forms/Inputs";
 import DataTable from "react-data-table-component";
-import { customStyles } from "~/components/Generals/Tables";
+import { customStyles } from "~/components/Generals/EntityTable";
 import { supabase } from "~/backend/supabaseClient";
-import BadgeStatus from "~/components/Specific/Badge";
+import {BadgeStatus} from "~/components/Specific/Badge";
 import type { StatusType } from "~/types/database";
 type ViewType = {
   id_opportunity: number;
@@ -55,7 +55,7 @@ const columns: TableColumn<ViewType>[] = [
   },
 ];
 
-export const OpportunitiesTable = ({
+export const OpportunityDB = ({
   handleRowClicked,
 }: {
   handleRowClicked: HandleRowClicked;

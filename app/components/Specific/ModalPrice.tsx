@@ -1,10 +1,10 @@
 import { useUI } from "~/context/UIContext";
 import PricesForm from "~/templates/PricesForm";
-import type { PricesType } from "~/backend/dataBase";
+import type { PricesDB } from "~/types/materialsType";
 import { LayoutModal } from "../Generals/Modals";
 type PricesModalType = {
   activeIndex: number | null;
-  onSelectPrice?: (price: { id: number; price: PricesType }) => void;
+  onSelectPrice?: (price: { id: number; price: PricesDB }) => void;
 };
 export default function ModalPrice({
   activeIndex,

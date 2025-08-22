@@ -2,18 +2,21 @@ import { Input, Select, Textarea } from "~/components/Forms/Inputs";
 import { CardToggle, Card } from "~/components/Generals/Cards";
 import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
-import { quotesApi, type QuotesType } from "~/backend/dataBase";
+import { quotesApi} from "~/backend/dataBase";
 import FooterForms from "./FooterForms";
 import { useEffect } from "react";
 import { updateSingleRow, type DirtyMap } from "~/utils/updatesSingleRow";
 import { useFieldsChange } from "~/utils/fieldsChange";
-import type { QuotesEnrichType } from "~/context/UIContext";
+import type { QuotesUI } from "~/types/opportunitiesType";
+import { useData } from "~/context/DataContext";
+import type { QuotesDB } from "~/types/opportunitiesType";
 export default function ConditionsForm({
   quoteActive,
 }: {
   quoteActive: number;
 }) {
-  const { showModal, isModeEdit, selectedOpportunity, editByStatus } = useUI();
+  const { showModal, isModeEdit, editByStatus } = useUI();
+  const { selectedOpportunity } = useData();
   const { quotes } = selectedOpportunity || {};
   const {
     register,
@@ -22,10 +25,10 @@ export default function ConditionsForm({
     reset,
     watch,
     setValue,
-  } = useForm<QuotesEnrichType>({
+  } = useForm<QuotesUI>({
     defaultValues: {},
   });
-  const onSubmit = async (formData: QuotesEnrichType): Promise<void> => {
+  const onSubmit = async (formData: QuotesUI): Promise<void> => {
     showModal({
       title: "Procesando",
       message: `Procesando requerimiento`,
@@ -46,7 +49,7 @@ export default function ConditionsForm({
         ...propsQuote
       } = formData;
       await updateSingleRow({
-        dirtyFields: dirtyFields as DirtyMap<QuotesType>,
+        dirtyFields: dirtyFields as DirtyMap<QuotesDB>,
         formData: formData,
         onUpdate: quotesApi.update,
       });

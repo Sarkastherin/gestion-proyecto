@@ -13,6 +13,7 @@ import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useState, useEffect } from "react";
 import { details_itemsApi } from "~/backend/dataBase";
 import { useFieldsChange } from "~/utils/fieldsChange";
+import { useData } from "~/context/DataContext";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Cotización]" },
@@ -33,10 +34,10 @@ export default function Items() {
   const {
     showModal,
     selectedPhase,
-    selectedOpportunity,
     editByStatus,
     isModeEdit,
   } = useUI();
+  const { selectedOpportunity } = useData();
   const {
     register,
     formState: { errors, dirtyFields, isSubmitSuccessful, isDirty },

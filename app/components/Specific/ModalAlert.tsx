@@ -12,13 +12,13 @@ export default function ModalAlert() {
 
   const colorMap = {
     success: {
-      bg: "bg-green-100",
-      text: "text-green-800",
-      border: "border-green-400",
+      bg: "bg-lime-100 dark:bg-lime-200",
+      text: "text-lime-800",
+      border: "border-lime-400",
       title: "Éxito",
     },
     error: {
-      bg: "bg-red-100",
+      bg: "bg-red-100 dark:bg-red-200",
       text: "text-red-800",
       border: "border-red-400",
       title: "Error",
@@ -33,6 +33,7 @@ export default function ModalAlert() {
       title={styles.title}
       handleOpen={closeModal}
       justifyStyle="justify-end"
+      size="w-md min-w-xs"
       buttonsGroup={
         <div className="w-32">
           <Button type="button" onClick={closeModal} variant="secondary">
@@ -45,7 +46,7 @@ export default function ModalAlert() {
         className={`mt-4 p-4 border rounded ${styles.bg} ${styles.text} ${styles.border}`}
         role="alert"
       >
-        <p>{message}</p>
+        {message}
       </div>
     </LayoutModal>
   );

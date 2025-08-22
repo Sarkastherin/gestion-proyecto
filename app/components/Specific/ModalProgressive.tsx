@@ -19,6 +19,7 @@ export default function ModalProgressive() {
       title="Procesando..."
       handleOpen={closeModal}
       justifyStyle="justify-end"
+      size="w-md min-w-xs"
       buttonsGroup={
         <div className="w-32">
           <Button type="button" onClick={closeModal} variant="secondary">

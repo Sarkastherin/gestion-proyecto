@@ -1,9 +1,5 @@
 import { Input } from "~/components/Forms/Inputs";
-import {
-  pricesApi,
-  type PricesInput,
-  type PricesType,
-} from "~/backend/dataBase";
+import { pricesApi } from "~/backend/dataBase";
 import { useForm, useFieldArray } from "react-hook-form";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useUI } from "~/context/UIContext";
@@ -13,13 +9,10 @@ import { useContacts } from "~/context/ContactsContext";
 import FooterForms from "./FooterForms";
 import { Button } from "~/components/Forms/Buttons";
 import { dateUSFormatted } from "~/utils/functions";
-
-
 import { usePricesRealtime } from "~/backend/realTime";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
-export type PricesFormType = {
-  prices: Array<PricesType | PricesInput>;
-};
+import type { PricesDB } from "~/types/materialsType";
+type DefaulTypes = { prices: PricesDB[] | Omit<PricesDB, "id" | "created_at">[] }
 
 export default function PricesForm({
   defaultValues,
@@ -27,16 +20,16 @@ export default function PricesForm({
   modalMode,
   onSelectPrice, // <- NUEVO
 }: {
-  defaultValues: PricesFormType;
+  defaultValues: DefaulTypes;
   idMaterial: number | undefined;
   modalMode: boolean;
-  onSelectPrice?: (price: { id: number; price: PricesType }) => void;
+  onSelectPrice?: (price: { id: number; price: PricesDB }) => void;
 }) {
   usePricesRealtime(idMaterial);
   const today = dateUSFormatted(new Date());
   const { suppliers } = useContacts();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [pricesToDelete, setPricesToDelete] = useState<Array<PricesType["id"]>>(
+  const [pricesToDelete, setPricesToDelete] = useState<Array<PricesDB["id"]>>(
     []
   );
   const { setOpenSupplierModal, selectedSupplier, showModal, isModeEdit } =
@@ -49,7 +42,7 @@ export default function PricesForm({
     setValue,
     handleSubmit,
     reset,
-  } = useForm<PricesFormType>({
+  } = useForm<DefaulTypes>({
     defaultValues: defaultValues,
   });
   const { fields, append, remove } = useFieldArray({
@@ -65,7 +58,7 @@ export default function PricesForm({
       date: today,
     });
   };
-  const onSubmit = async (data: PricesFormType) => {
+  const onSubmit = async (data: DefaulTypes) => {
     const defaultPrices = data.prices.filter((p) => p.default);
     if (defaultPrices.length !== 1) {
       showModal({
@@ -89,7 +82,7 @@ export default function PricesForm({
         fieldsArray: prices,
         dirtyFields: dirtyFields as Record<
           string,
-          Partial<Record<keyof PricesType, boolean>>[]
+          Partial<Record<keyof PricesDB, boolean>>[]
         >,
         fieldName: "prices",
         fieldsDelete: pricesToDelete,
@@ -103,8 +96,7 @@ export default function PricesForm({
         variant: "success",
       });
       const oldData = prices.filter(
-        (item): item is PricesType =>
-          "id" in item && typeof item.id === "number"
+        (item): item is PricesDB => "id" in item && typeof item.id === "number"
       );
       reset({
         prices: [...oldData, ...(Array.isArray(newData) ? newData : [])],
@@ -267,13 +259,13 @@ export default function PricesForm({
                       <td className="px-1 py-2 whitespace-nowrap text-center">
                         <button
                           type="button"
-                          className={"text-xs dark:bg-blue-300 rounded-full px-2 py-1 text-blue-600 dark:text-blue-700 font-bold disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"}
+                          className={
+                            "text-xs dark:bg-blue-300 rounded-full px-2 py-1 text-blue-600 dark:text-blue-700 font-bold disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                          }
                           disabled={!watch(`prices.${index}.id`)}
                           onClick={() => {
                             const priceId = Number(watch(`prices.${index}.id`));
-                            const price = watch(
-                              `prices.${index}`
-                            ) as PricesType;
+                            const price = watch(`prices.${index}`) as PricesDB;
                             if (priceId > 0) {
                               onSelectPrice({ id: priceId, price: price });
                             }

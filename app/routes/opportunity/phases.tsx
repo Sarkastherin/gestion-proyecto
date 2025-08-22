@@ -3,6 +3,7 @@ import { useUI } from "~/context/UIContext";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import PhasesForm from "~/templates/PhasesForm";
 import { useOpportunityRealtime } from "~/backend/realTime";
+import { useData } from "~/context/DataContext";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -12,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
 }
 export default function Phases() {
   useOpportunityRealtime();
-  const { selectedOpportunity } = useUI();
+  const { selectedOpportunity } = useData();
   const { phases, id } = selectedOpportunity || {};
 
   return (

@@ -31,6 +31,9 @@ type Pages = {
   "/new-material": {
     params: {};
   };
+  "/projects": {
+    params: {};
+  };
   "/opportunity/:id/resumen": {
     params: {
       "id": string;
@@ -81,7 +84,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/material/:id" | "/material/:id/prices";
+    page: "/" | "/login" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/material/:id" | "/material/:id/prices";
   };
   "routes/login.tsx": {
     id: "routes/login";
@@ -89,7 +92,7 @@ type RouteFiles = {
   };
   "layouts/main.tsx": {
     id: "layouts/main";
-    page: "/" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/material/:id" | "/material/:id/prices";
+    page: "/" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/material/:id" | "/material/:id/prices";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -114,6 +117,10 @@ type RouteFiles = {
   "routes/newMaterial.tsx": {
     id: "routes/newMaterial";
     page: "/new-material";
+  };
+  "routes/projects.tsx": {
+    id: "routes/projects";
+    page: "/projects";
   };
   "layouts/opportunity.tsx": {
     id: "layouts/opportunity";

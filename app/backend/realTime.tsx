@@ -1,9 +1,11 @@
 import { supabase } from "./supabaseClient";
 import { useEffect, useRef } from "react";
 import { useUI } from "~/context/UIContext";
+import { useData } from "~/context/DataContext";
 
 export function useMaterialsRealtime() {
-  const { materials, selectedMaterial, refreshMaterial } = useUI();
+  const { selectedMaterial, refreshMaterial } = useUI();
+  const {materials} = useData();
   useEffect(() => {
     const channel = supabase
       .channel("realtime:materials")
@@ -72,7 +74,7 @@ export function useUnitsRealTime() {
   }, []);
 }
 export function useConfigRealTime() {
-  const { selectedOpportunity, refreshOpportunity } = useUI();
+  const { selectedOpportunity } = useData();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { getCategorizations } = useUI();
   useEffect(() => {
@@ -108,14 +110,11 @@ export function useConfigRealTime() {
   }, [selectedOpportunity]);
 }
 export function useOpportunityRealtime() {
-  const { selectedOpportunity, refreshOpportunity } = useUI();
+  const { selectedOpportunity, refreshOpportunity } = useData();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   useEffect(() => {
     if (!selectedOpportunity) return;
-
     const channel = supabase.channel("realtime:opportunity_realtime");
-
     const tablesToListen = [
       "opportunities",
       "quotes",
@@ -123,12 +122,12 @@ export function useOpportunityRealtime() {
       "details_materials",
       "phases",
     ];
-
     tablesToListen.forEach((table) => {
       channel.on(
         "postgres_changes",
         { event: "*", schema: "public", table },
         (payload) => {
+          console.log(`[${table.toUpperCase()}] Evento recibido:`, payload);
           // Reiniciamos el timer
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
@@ -141,10 +140,14 @@ export function useOpportunityRealtime() {
     });
 
     channel.subscribe();
+    channel.subscribe((status) => {
+      console.log("Estado de suscripción:", status);
+    });
 
     return () => {
       supabase.removeChannel(channel);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [selectedOpportunity]);
+  }, []);
 }
+

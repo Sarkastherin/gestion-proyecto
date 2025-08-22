@@ -16,7 +16,7 @@
     "@react-pdf/renderer": "^4.3.0",
     "@react-router/node": "^7.5.3",
     "@react-router/serve": "^7.5.3",
-    "@supabase/supabase-js": "^2.49.8",
+    "@supabase/supabase-js": "^2.55.0",
     "buffer": "^6.0.3",
     "clsx": "^2.1.1",
     "dotenv": "^16.5.0",

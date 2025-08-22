@@ -1,10 +1,8 @@
 import type { Route } from "../+types/conditions";
 import { useForm, useFieldArray } from "react-hook-form";
-import {
-  details_materialsApi,
-  type DetailsMaterialsType,
-} from "~/backend/dataBase";
-import { useUI, type MaterialTypeDB } from "~/context/UIContext";
+import { details_materialsApi } from "~/backend/dataBase";
+import { useUI } from "~/context/UIContext";
+import type { MaterialsUI } from "~/types/materialsType";
 import FooterForms from "~/templates/FooterForms";
 import { TableDetailsQuotes, Cell } from "~/templates/TableDetailsQuotes";
 import { Input } from "~/components/Forms/Inputs";
@@ -14,10 +12,15 @@ import ModalMateriales from "~/components/Specific/ModalMateriales";
 import { useOutletContext } from "react-router";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { roundToPrecision } from "~/utils/functions";
-import type { PricesType, MaterialsType } from "~/backend/dataBase";
+import type { PricesDB, MaterialsDB } from "~/types/materialsType";
 import { SelectUnits } from "~/components/Specific/SelectUnits";
 import ModalPrice from "~/components/Specific/ModalPrice";
 import { useFieldsChange } from "~/utils/fieldsChange";
+import { useData } from "~/context/DataContext";
+import type {
+  DetailsMaterialsDB,
+  DetailsMaterialsUI,
+} from "~/types/opportunitiesType";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Cotización]" },
@@ -25,32 +28,35 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export type DetailsMaterialForm = {
+/* export type DetailsMaterialFormV1 = {
   materials: Array<
-    DetailsMaterialsType & {
-      materials: MaterialsType;
-      prices: PricesType | {};
+    DetailsMaterialsDB & {
+      materials: MaterialsDB;
+      prices: PricesDB | {};
     }
   >;
+}; */
+export type DetailsMaterialForm = {
+  materials: DetailsMaterialsUI[];
 };
 export default function Materials() {
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
   }>();
   const [materialsToDelete, setMaterialsToDelete] = useState<
-    Array<DetailsMaterialsType["id"]>
+    Array<DetailsMaterialsDB["id"]>
   >([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const {
     showModal,
     selectedPhase,
     isModeEdit,
-    selectedOpportunity,
     setOpenMaterialsModal,
     setOpenPriceModal,
     materials,
     editByStatus,
   } = useUI();
+  const { selectedOpportunity } = useData();
   const {
     register,
     formState: { isSubmitSuccessful, isDirty, dirtyFields, errors },
@@ -88,10 +94,10 @@ export default function Materials() {
       );
       const newData = await updatesArrayFields({
         fieldName: "materials",
-        fieldsArray: cleanedMaterials as DetailsMaterialsType[],
+        fieldsArray: cleanedMaterials as DetailsMaterialsDB[],
         dirtyFields: dirtyFields as Record<
           string,
-          Partial<Record<keyof DetailsMaterialsType, boolean>>[]
+          Partial<Record<keyof DetailsMaterialsDB, boolean>>[]
         >,
         fieldsDelete: materialsToDelete,
         onInsert: details_materialsApi.insertOne,
@@ -99,7 +105,7 @@ export default function Materials() {
         onUpdate: details_materialsApi.update,
       });
       const oldData = cleanedMaterials.filter(
-        (item): item is DetailsMaterialsType =>
+        (item): item is DetailsMaterialsDB =>
           "id" in item && typeof item.id === "number"
       );
       reset({
@@ -132,10 +138,7 @@ export default function Materials() {
         id_price: 0,
         notes: "",
         observations: "",
-      } as DetailsMaterialsType & {
-        prices: PricesType;
-        materials: MaterialsType;
-      });
+      } as DetailsMaterialsUI);
     }
   };
   const handleRemove = (index: number) => {
@@ -183,7 +186,7 @@ export default function Materials() {
     setActiveIndex(index);
     setOpenMaterialsModal(true);
   };
-  const handleSelectMaterial = (index: number, material: MaterialTypeDB) => {
+  const handleSelectMaterial = (index: number, material: MaterialsUI) => {
     const { prices, ...propsMaterial } = material;
     const defaultPrice = prices.find((p) => p.default) || {};
     setValue(`materials.${index}.materials`, propsMaterial);
@@ -191,7 +194,7 @@ export default function Materials() {
     setValue(`materials.${index}.id_material`, propsMaterial.id);
     setValue(
       `materials.${index}.id_price`,
-      (defaultPrice as PricesType)?.id || 0
+      (defaultPrice as PricesDB)?.id || 0
     );
   };
   const handleSelectedPrice = ({
@@ -199,7 +202,7 @@ export default function Materials() {
     price,
   }: {
     id: number;
-    price: PricesType;
+    price: PricesDB;
   }) => {
     if (activeIndex !== null) {
       setValue(`materials.${activeIndex}.prices`, price);
@@ -257,7 +260,9 @@ export default function Materials() {
                               `materials.${index}.materials.description`
                             )}
                             onClick={() => handleOpenMaterials(index)}
-                            error={errors.materials?.[index]?.id_material?.message}
+                            error={
+                              errors.materials?.[index]?.id_material?.message
+                            }
                           />
                         </Cell>
                         {/* Unidad (no registrada, solo visible) */}
@@ -286,7 +291,6 @@ export default function Materials() {
                                   );
                                 },
                               },
-                              
                             })}
                             error={errors.materials?.[index]?.quantity?.message}
                           />

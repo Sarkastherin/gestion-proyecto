@@ -3,7 +3,7 @@ import { supabase } from "~/backend/supabaseClient";
 import { Button } from "../Forms/Buttons";
 import { ConfigFormModal } from "./ConfigFromModal";
 import DataTable from "react-data-table-component";
-import { customStyles } from "../Generals/Tables";
+import { customStyles } from "../Generals/EntityTable";
 import { useUI } from "~/context/UIContext";
 import type { TableColumn } from "react-data-table-component";
 import type { CrudMethod } from "~/backend/crudFactory";

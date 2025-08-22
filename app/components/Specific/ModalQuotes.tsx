@@ -1,8 +1,8 @@
 import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
-import type { HandleRowClicked } from "~/templates/OpportunitiesTable";
+import type { HandleRowClicked } from "~/templates/OpportunityDB";
 import { LayoutModal } from "../Generals/Modals";
-import { OpportunitiesTable } from "~/templates/OpportunitiesTable";
+import { OpportunityDB } from "~/templates/OpportunityDB";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import {
   phasesApi,
@@ -236,7 +236,7 @@ export default function ModalQuotes() {
       }
     >
       <div className="mt-4 overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
-        <OpportunitiesTable handleRowClicked={handleRowClicked} />
+        <OpportunityDB handleRowClicked={handleRowClicked} />
       </div>
     </LayoutModal>
   );

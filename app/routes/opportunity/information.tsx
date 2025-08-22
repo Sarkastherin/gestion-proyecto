@@ -1,6 +1,7 @@
 import type { Route } from "../../+types/root";
 import OpportunityForm from "~/templates/OpportunityForm";
 import { useUI } from "~/context/UIContext";
+import { useData } from "~/context/DataContext";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { useOutletContext } from "react-router";
@@ -15,9 +16,9 @@ export default function Information() {
     selectedQuoteId: number | null;
   }>();
   useOpportunityRealtime();
-  const { selectedOpportunity } = useUI();
+  const { selectedOpportunity } = useData();
   if (selectedOpportunity) {
-    const { phases, details_items, details_materials, quotes, ...dataOpportunity } = selectedOpportunity;
+  const { phases, quotes, ...dataOpportunity } = selectedOpportunity;
     return (
       <>
         {phases && (

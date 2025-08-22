@@ -1,17 +1,23 @@
 import { createCrud } from "./crudFactory";
 import type {
   CommonTypesDataBase,
-  OpportunityInput,
-  OpportunityType,
 } from "~/types/database";
-
-export type PhasesInput = {
+import type {
+  OpportunityDB,
+  PhasesDB,
+  QuotesDB,
+  DetailsItemsDB,
+  DetailsMaterialsDB,
+} from "~/types/opportunitiesType";
+import type { PricesDB, MaterialsDB, FamilyDB, CategoryDB, SubCategoryDB, UnitsDB } from "~/types/materialsType";
+import type { BudgetMaterialsDB, ProjectsDB, PhasesProjectDB, BudgetItemDB } from "~/types/projectsType";
+type PhasesInput = {
   name: string;
   id_opportunity: number;
   history_data?: object;
 };
-export type PhasesType = PhasesInput & CommonTypesDataBase;
-export type QuotesInput = {
+type PhasesType = PhasesInput & CommonTypesDataBase;
+type QuotesInput = {
   id_opportunity: number;
   method_payment?: string;
   validity?: string;
@@ -28,8 +34,8 @@ export type QuotesInput = {
   others?: number;
   general?: number;
 };
-export type QuotesType = QuotesInput & CommonTypesDataBase;
-export type DetailsItemsInput = {
+type QuotesType = QuotesInput & CommonTypesDataBase;
+type DetailsItemsInput = {
   id_quote: number;
   id_phase: number;
   type: "mano de obra" | "subcontratos" | "otros";
@@ -40,8 +46,8 @@ export type DetailsItemsInput = {
   observations?: string;
   total?: number;
 };
-export type DetailsItemsType = DetailsItemsInput & CommonTypesDataBase;
-export type DetailsMaterialsInput = {
+type DetailsItemsType = DetailsItemsInput & CommonTypesDataBase;
+type DetailsMaterialsInput = {
   id_quote: number;
   id_phase: number;
   type: "materiales";
@@ -51,21 +57,7 @@ export type DetailsMaterialsInput = {
   notes?: string;
   observations?: string;
 };
-export type DetailsMaterialsType = DetailsMaterialsInput &
-  CommonTypesDataBase & {
-    materials: MaterialsType;
-    prices: PricesType | {};
-  };
-export type PricesInput = {
-  id_material: number | null;
-  id_supplier: number | null;
-  price: number;
-  default: boolean;
-  date?: string;
-  history_data?: object;
-};
-export type PricesType = PricesInput & CommonTypesDataBase;
-export type MaterialsInput = {
+type MaterialsInput = {
   id_subcategory: number | null;
   description: string;
   id_unit: number | null;
@@ -73,64 +65,42 @@ export type MaterialsInput = {
   applycation?: string;
 };
 export type MaterialsType = MaterialsInput & CommonTypesDataBase;
-export type ProfitMarginInput = {
-  id_opportunity: number;
-  id_quote: number;
-  materials: number;
-  labor: number;
-  subcontracting: number;
-  others: number;
-  general: number;
-};
-export type FamilyInput = {
+
+type FamilyInput = {
   description: string;
 };
-export type FamilyType = FamilyInput & CommonTypesDataBase;
-export type CategoryInput = {
+type FamilyType = FamilyInput & CommonTypesDataBase;
+type CategoryInput = {
   description: string;
   id_family: number;
 };
-export type CategoryType = CategoryInput & CommonTypesDataBase;
-export type SubCategoryInput = {
+type CategoryType = CategoryInput & CommonTypesDataBase;
+type SubCategoryInput = {
   description: string;
   id_category: number;
 };
-export type SubCategoryType = SubCategoryInput & CommonTypesDataBase;
+type SubCategoryType = SubCategoryInput & CommonTypesDataBase;
 
-export type UnitsInput = {
+type UnitsInput = {
   description: string;
   abbreviation: string;
 };
-export type UnitsType = UnitsInput & CommonTypesDataBase;
+type UnitsType = UnitsInput & CommonTypesDataBase;
 
-export type ProfitMarginType = ProfitMarginInput & CommonTypesDataBase;
-export const opportunityApi = createCrud<OpportunityType, OpportunityInput>(
-  "opportunities"
-);
-export const phasesApi = createCrud<PhasesType, PhasesInput>("phases");
-export const quotesApi = createCrud<QuotesType, QuotesInput>("quotes");
-export const details_itemsApi = createCrud<DetailsItemsType, DetailsItemsInput>(
-  "details_items"
-);
-export const details_materialsApi = createCrud<
-  DetailsMaterialsType,
-  DetailsMaterialsInput
->("details_materials");
-export const pricesApi = createCrud<PricesType, PricesInput>("prices");
-export const materialsApi = createCrud<MaterialsType, MaterialsInput>(
+export const opportunityApi = createCrud<OpportunityDB>("opportunities");
+export const phasesApi = createCrud<PhasesDB>("phases");
+export const quotesApi = createCrud<QuotesDB>("quotes");
+export const details_itemsApi = createCrud<DetailsItemsDB>("details_items");
+export const details_materialsApi =
+  createCrud<DetailsMaterialsDB>("details_materials");
+export const pricesApi = createCrud<PricesDB>("prices");
+export const materialsApi = createCrud<MaterialsDB>(
   "materials"
 );
-export const profitMarginApi = createCrud<ProfitMarginType, ProfitMarginInput>(
-  "profit_margins"
-);
-export const familyApi = createCrud<FamilyType, FamilyInput>("families");
-export const categoryApi = createCrud<CategoryType, CategoryInput>(
-  "categories"
-);
-export const subcategoryApi = createCrud<SubCategoryType, SubCategoryInput>(
-  "subcategories"
-);
-export const unitsApi = createCrud<UnitsType, UnitsInput>("units");
+export const familyApi = createCrud<FamilyDB>("families");
+export const categoryApi = createCrud<CategoryDB>("categories");
+export const subcategoryApi = createCrud<SubCategoryDB>("subcategories");
+export const unitsApi = createCrud<UnitsDB>("units");
 export type ProjetcInput = {
   name: string;
   id_client: number;
@@ -152,17 +122,13 @@ export type ProjetcInput = {
   duration?: number;
 };
 export type ProjectsType = ProjetcInput & CommonTypesDataBase;
-export const projectsApi = createCrud<ProjectsType, ProjetcInput>("projects");
+export const projectsApi = createCrud<ProjectsDB>("projects");
 export type PhasesProjectInput = {
   name: string;
   id_project: number;
-  created_by?: string;
 };
 export type PhasesProjectType = PhasesProjectInput & CommonTypesDataBase;
-export const phasesProjectApi = createCrud<
-  PhasesProjectType,
-  PhasesProjectInput
->("phases_project");
+export const phasesProjectApi = createCrud<PhasesProjectDB>("phases_project");
 type BudgetItemInput = {
   id_phase: number;
   id_project: number;
@@ -173,24 +139,12 @@ type BudgetItemInput = {
   notes?: string;
   observations?: string;
   created_by?: string;
-}
+};
 type BudgetItemType = BudgetItemInput & CommonTypesDataBase;
-export const budgetItemsApi = createCrud<BudgetItemType, BudgetItemInput>("budget_details_items");
-export type BudgetMaterialInput = {
-  id_phase: number;
-  id_project: number;
-  type: "materiales";
-  id_material: number;
-  id_price: number;
-  quantity: number;
-  notes?: string;
-  observations?: string;
-  created_by?: string;
-};
-export type BudgetMaterialType = BudgetMaterialInput & CommonTypesDataBase & {
-  materials: MaterialsType;
-  prices: PricesType | {};
-};
-export const budgetMaterialsApi = createCrud<
-  BudgetMaterialType,
-  BudgetMaterialInput>("budget_details_materials");
+export const budgetItemsApi = createCrud<BudgetItemDB>(
+  "budget_details_items"
+);
+
+export const budgetMaterialsApi = createCrud<BudgetMaterialsDB>(
+  "budget_details_materials"
+);

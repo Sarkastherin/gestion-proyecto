@@ -4,13 +4,13 @@ import { useUI } from "~/context/UIContext";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Input } from "~/components/Forms/Inputs";
 import DataTable from "react-data-table-component";
-import type { MaterialTypeDB } from "~/context/UIContext";
-import { customStyles } from "~/components/Generals/Tables";
+import type { MaterialsUI } from "~/types/materialsType";
+import { customStyles } from "~/components/Generals/EntityTable";
 import { useMaterialsRealtime } from "~/backend/realTime";
 export type HandleRowClicked = {
-  (data: MaterialTypeDB): void;
+  (data: MaterialsUI): void;
 };
-const columns: TableColumn<MaterialTypeDB>[] = [
+const columns: TableColumn<MaterialsUI>[] = [
   {
     name: "Id",
     selector: (row) => row.id,
@@ -43,7 +43,7 @@ export const MaterialTable = ({
   handleRowClicked: HandleRowClicked;
   paginationPerPage?: number;
 }) => {
-  const [filterData, setFilterData] = useState<MaterialTypeDB[] | null>(null);
+  const [filterData, setFilterData] = useState<MaterialsUI[] | null>(null);
   const { getMaterials, materials, theme } = useUI();
   useEffect(() => {
     if (!materials) getMaterials();

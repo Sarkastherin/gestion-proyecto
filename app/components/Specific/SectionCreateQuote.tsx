@@ -7,6 +7,7 @@ import { ButtonNavigate } from "./Buttons";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { LayoutModal } from "../Generals/Modals";
 import ModalQuotes from "./ModalQuotes";
+import { useData } from "~/context/DataContext";
 const ContainerSection = ({
   title,
   message,
@@ -45,8 +46,8 @@ export function ButtonCreateQuote({
 }) {
   useOpportunityRealtime();
   const [open, setOpen] = useState<boolean>(false);
+  const { selectedOpportunity } = useData();
   const {
-    selectedOpportunity,
     showModal,
     openQuotesModal,
     setOpenQuotesModal,
@@ -133,7 +134,7 @@ export function ButtonCreateQuote({
 }
 
 export function ButtonNavigateDetails() {
-  const { selectedOpportunity } = useUI();
+  const { selectedOpportunity } = useData();
   return (
     <ContainerSection
       title="Cotización sin detalles"

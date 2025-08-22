@@ -21,15 +21,15 @@ type FilterOptions = {
   page?: number; // número de página, empezando desde 1
   pageSize?: number; // cantidad de registros por página
 };
-export type CrudMethod<TFull, TInsert = Partial<TFull>> = {
-  insertOne: (data: TInsert) => Promise<CommonResponse<TFull>>;
+export type CrudMethod<TFull> = {
+  insertOne: (data: Omit<TFull, "id" | "created_at">) => Promise<CommonResponse<TFull>>;
   update: (args: { id: number; values: Partial<TFull> }) => Promise<UpdateorDeleteResponse>;
   remove: (args: { id: number }) => Promise<UpdateorDeleteResponse>;
 };
 
-export const createCrud = <TFull, TInsert extends object>(table: string) => {
+export const createCrud = <TFull extends object>(table: string) => {
   return {
-    insertOne: async (payload: TInsert): Promise<CommonResponse<TFull>> => {
+    insertOne: async (payload: Omit<TFull, "id" | "created_at">): Promise<CommonResponse<TFull>> => {
       try {
         const { data, error } = await supabase
           .from(table)
@@ -52,7 +52,7 @@ export const createCrud = <TFull, TInsert extends object>(table: string) => {
         };
       }
     },
-    insert: async (payload: TInsert[]): Promise<CommonResponse<TFull[]>> => {
+    insert: async (payload: Omit<TFull, "id" | "created_at">[]): Promise<CommonResponse<TFull[]>> => {
       try {
         const { data, error } = await supabase
           .from(table)

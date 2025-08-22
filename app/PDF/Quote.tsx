@@ -1,6 +1,7 @@
 import { useUI } from "~/context/UIContext";
+import { useData } from "~/context/DataContext";
 import { useEffect, useState} from "react";
-import type { QuotesEnrichType } from "~/context/UIContext";
+import type { QuotesUI } from "~/types/opportunitiesType";
 import type { PropStateReport } from "~/routes/opportunity/report";
 import { PDFViewer } from "@react-pdf/renderer";
 import QuotePDFDocument from "./QuotePDFDocument";
@@ -12,9 +13,9 @@ export default function PDFQuote({
   quoteActive: number;
   settings: PropStateReport;
 }) {
-  const { selectedOpportunity } = useUI();
+  const { selectedOpportunity } = useData();
   const { quotes } = selectedOpportunity || {};
-  const [quote, setQuote] = useState<QuotesEnrichType | undefined>(
+  const [quote, setQuote] = useState<QuotesUI | undefined>(
     quotes?.find((q) => q.id === quoteActive)
   );
 

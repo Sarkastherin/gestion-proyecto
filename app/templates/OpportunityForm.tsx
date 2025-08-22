@@ -5,15 +5,13 @@ import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
 import ModalClientes from "~/components/Specific/ModalClientes";
 import { useEffect } from "react";
-import {
-  opportunityApi,
-} from "~/backend/dataBase";
-import type { OpportunityInput, OpportunityType } from "~/types/database";
+import { opportunityApi } from "~/backend/dataBase";
+//import type { OpportunityInput, OpportunityType } from "~/types/database";
 import FooterForms from "./FooterForms";
 import { useNavigate } from "react-router";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { useFieldsChange } from "~/utils/fieldsChange";
-import type { OpportunityAll } from "~/context/UIContext";
+import type {  } from "~/context/UIContext";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { ProjectCreationError } from "~/utils/errors";
 import { useData } from "~/context/DataContext";
@@ -25,6 +23,7 @@ import {
   insertBudgetItems,
   insertBudgetMaterials,
 } from "~/utils/projectUtils";
+import type { OpportunityAndQuotesUI, OpportunityProps, OpportunityDB } from "~/types/opportunitiesType";
 
 /* Modals */
 import { useUIModals, ModalType } from "~/context/ModalsContext";
@@ -34,7 +33,7 @@ export default function OpportunityForm({
   mode,
   selectedQuoteId,
 }: {
-  defaultValues: OpportunityInput | OpportunityType;
+  defaultValues: OpportunityDB | Omit<OpportunityDB, "id" | "created_at">;
   mode: "create" | "view";
   selectedQuoteId?: number | null;
 }) {
@@ -44,17 +43,16 @@ export default function OpportunityForm({
     setOpenClientModal,
     selectedClient,
     isModeEdit,
-    editByStatus,
-    selectedOpportunity,
+    editByStatus
   } = useUI();
-  const { lastCreatedProjectId } = useData();
+  const {selectedOpportunity, getOpportunities  } = useData();
   const {
     register,
     watch,
     formState: { errors, dirtyFields, isSubmitSuccessful, isDirty },
     setValue,
     handleSubmit,
-  } = useForm<OpportunityInput | OpportunityType>({
+  } = useForm<OpportunityDB>({
     defaultValues: defaultValues ?? {
       name: "",
       id_client: undefined,
@@ -68,7 +66,7 @@ export default function OpportunityForm({
       setValue("id_client", selectedClient.id, { shouldDirty: true });
     }
   }, [selectedClient]);
-  const onSubmit = async (formData: OpportunityInput | OpportunityType) => {
+  const onSubmit = async (formData: OpportunityDB) => {
     try {
       progressive?.setSteps([
         { label: "Guardando oportunidad", status: "in-progress" },
@@ -81,6 +79,7 @@ export default function OpportunityForm({
         }
         progressive?.updateStep(0, "done");
         alert?.setAlert("Oportunidad creada con éxito", "success");
+        getOpportunities();
         navigate(`/opportunity/${data.id}/resumen`);
       }
       if (mode === "view" && isModeEdit) {
@@ -93,15 +92,15 @@ export default function OpportunityForm({
               ([_, v]) => typeof v === "boolean"
             )
           ),
-          formData: formData as OpportunityType,
+          formData: formData,
           onUpdate: opportunityApi.update,
         });
         if (
           formData.status === "Ganada" &&
           selectedQuoteId &&
-          selectedOpportunity
+          selectedOpportunity &&
+          selectedOpportunity.id_project === null
         ) {
-          
           progressive?.setSteps([
             { label: "Creando proyecto", status: "in-progress" },
             { label: "Creando fases", status: "pending" },
@@ -110,11 +109,24 @@ export default function OpportunityForm({
           ]);
 
           if ("id" in formData && "created_at" in formData) {
-            await createdProject({
-              formData: formData as OpportunityType,
+            const projectId = await createdProject({
+              formData: formData,
               selectedOpportunity,
             });
-            alert?.setAlert("Proyecto creado con éxito", "success");
+            alert?.setAlert(
+            <>
+              <div className="mb-4">
+                <p>El proyecto se ha creado con éxito.</p>
+                <p>Puede ver los detalles en la sección de proyectos.</p>
+              </div>
+              <div className="w-48 mx-auto">
+                <ButtonNavigate route={`/project/${projectId}/resumen`} variant="green">
+                  Ir al Proyecto
+                </ButtonNavigate>
+              </div>
+            </>,
+            "success"
+          )
           } else {
             throw new Error(
               "Los datos de la oportunidad no son válidos para crear un proyecto"
@@ -126,18 +138,16 @@ export default function OpportunityForm({
       }
     } catch (e) {
       alert?.setAlert(String(e), "error");
-    } finally {
-      closeModal(); // Cierra el modal progresivo
     }
   };
   interface CreatedProjectType {
-    formData: OpportunityType;
-    selectedOpportunity: OpportunityAll;
+    formData: OpportunityDB;
+    selectedOpportunity: OpportunityAndQuotesUI;
   }
-  const createdProject = async ({
+  async function createdProject({
     formData,
     selectedOpportunity,
-  }: CreatedProjectType) => {
+  }: CreatedProjectType)  {
     try {
       progressive?.updateStep(0, "done"); // Creando proyecto
 
@@ -146,12 +156,10 @@ export default function OpportunityForm({
         selectedOpportunity
       );
       const payload = buildProjectPayload(formData, quoteActive);
-      console.log("aqui");
       const projectId = await createProjectAndLinkToOpportunity(
         payload,
         formData
       );
-
       progressive?.updateStep(1, "in-progress"); // Creando fases
 
       const phaseMap = await createPhasesAndMap(
@@ -179,7 +187,10 @@ export default function OpportunityForm({
 
       progressive?.updateStep(3, "done");
       alert?.setAlert(
-        `Proyecto creado con ID: ${lastCreatedProjectId}`,"success");
+        `Proyecto creado con ID: ${projectId}`,
+        "success"
+      );
+      return projectId;
     } catch (e) {
       if (e instanceof ProjectCreationError) {
         alert?.setAlert(`Error en ${e.step}: ${e.message}`, "error");
@@ -188,6 +199,7 @@ export default function OpportunityForm({
       } else {
         alert?.setAlert("Ocurrió un error desconocido", "error");
       }
+      return null;
     }
   };
   const isLost = watch("status") === "Perdida";

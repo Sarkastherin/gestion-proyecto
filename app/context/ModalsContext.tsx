@@ -20,9 +20,9 @@ type ModalContextType = {
   };
 
   alert?: {
-    message: string;
+    message: string | React.ReactNode;
     type: "success" | "error";
-    setAlert: (msg: string, type: "success" | "error") => void;
+    setAlert: (msg: string | React.ReactNode, type: "success" | "error") => void;
   };
 };
 const UIModalsContext = createContext<ModalContextType | undefined>(undefined);
@@ -34,13 +34,13 @@ export const UIModalsProvider = ({
 }) => {
   const [activeModal, setActiveModal] = useState<ModalType | null>(null);
   const [steps, setSteps] = useState<ProgressiveStep[]>([]);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState<string | React.ReactNode>("");
   const [alertType, setAlertType] = useState<"success" | "error">("success");
 
-  const setAlert = (msg: string, type: "success" | "error") => {
+  const setAlert = (msg: string | React.ReactNode, type: "success" | "error") => {
+    openModal(ModalType.ALERT);
     setAlertMessage(msg);
     setAlertType(type);
-    openModal(ModalType.ALERT);
   };
   const openModal = (type: ModalType) => setActiveModal(type);
   const closeModal = () => {

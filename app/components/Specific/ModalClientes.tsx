@@ -4,7 +4,7 @@ import type { ClientDataType } from "~/context/ContactsContext";
 import type { TableColumn } from "react-data-table-component";
 import { useContacts } from "~/context/ContactsContext";
 import DataTable from "react-data-table-component";
-import { customStyles } from "../Generals/Tables";
+import { customStyles } from "../Generals/EntityTable";
 import { useUI } from "~/context/UIContext";
 import { Input } from "../Forms/Inputs";
 import { LayoutModal } from "../Generals/Modals";

@@ -5,20 +5,16 @@ import type { FC } from "react";
 import type { Route } from "../../+types/root";
 
 import { useUI } from "~/context/UIContext";
+import { useData } from "~/context/DataContext";
 
 import { Card } from "~/components/Generals/Cards";
 import { ContainerToForms } from "~/components/Generals/Containers";
-import BadgeStatus from "~/components/Specific/Badge";
+import { BadgeStatus, Badge } from "~/components/Specific/Badge";
 
-import type {
-  DetailsItemsType,
-  DetailsMaterialsType,
-  UnitsType,
-  PricesType,
-} from "~/backend/dataBase";
-import type { OpportunityAll } from "~/context/UIContext";
 import { ButtonExport } from "~/components/Specific/Buttons";
-
+import { BriefcaseIcon } from "@heroicons/react/16/solid";
+import type { OpportunityAndQuotesUI, DetailsMaterialsUI, DetailsItemsDB } from "~/types/opportunitiesType";
+import type { PricesDB, UnitsDB } from "~/types/materialsType";
 // 📌 Meta
 export function meta({}: Route.MetaArgs) {
   return [
@@ -28,22 +24,22 @@ export function meta({}: Route.MetaArgs) {
 }
 
 // 🔍 Utilidad para filtrar y mapear detalles según cotización activa
-type ExtendedDetailsMaterials = DetailsMaterialsType & {
+type ExtendedDetailsMaterials = DetailsMaterialsUI & {
   unit: string | undefined;
 };
 
 const getActiveQuoteDetails = (
-  opportunity: OpportunityAll | null,
+  opportunity: OpportunityAndQuotesUI | null,
   quoteId: number | null,
-  units: UnitsType[]
-): (ExtendedDetailsMaterials | DetailsItemsType)[] => {
+  units: UnitsDB[]
+): (ExtendedDetailsMaterials | DetailsItemsDB)[] => {
   if (!opportunity || !quoteId || !units) return [];
 
   // Agrupar materiales por id_material + id_price
   const materialMap = new Map<string, ExtendedDetailsMaterials>();
 
   const materialsRaw = opportunity.details_materials.filter(
-    (m) => m.id_quote === quoteId
+  (m: any) => m.id_quote === quoteId
   );
 
   for (const m of materialsRaw) {
@@ -66,8 +62,8 @@ const getActiveQuoteDetails = (
 
   const groupedMaterials = Array.from(materialMap.values());
 
-  const items: DetailsItemsType[] = opportunity.details_items.filter(
-    (i) => i.id_quote === quoteId
+  const items: DetailsItemsDB[] = opportunity.details_items.filter(
+  (i: any) => i.id_quote === quoteId
   );
 
   return [...groupedMaterials, ...items];
@@ -75,23 +71,31 @@ const getActiveQuoteDetails = (
 
 // 🧩 Cabecera de la oportunidad
 const OpportunitySummaryHeader: FC<{
-  selectedOpportunity: OpportunityAll | null;
+  selectedOpportunity: OpportunityAndQuotesUI | null;
   totalQuote: number;
 }> = ({ selectedOpportunity, totalQuote }) => {
   if (!selectedOpportunity) return null;
 
   const { name, client, created_at, phases, quotes, status } =
     selectedOpportunity;
-
   return (
     <Card>
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
         <h2 className="text-2xl font-semibold">
           {name || "Oportunidad sin nombre"}
         </h2>
-        <BadgeStatus size="md" variant={status || "No status"}>
-          {status || "!"}
-        </BadgeStatus>
+        <div className="flex items-center gap-2 mt-2 md:mt-0">
+          {selectedOpportunity.id_project && (
+            <Badge size="md" variant="success">
+            <div className="flex items-center gap-1">
+              <BriefcaseIcon className="w-5" /> Proyecto creado
+            </div>
+          </Badge>
+          )}
+          <BadgeStatus size="md" variant={status || "No status"}>
+            {status || "!"}
+          </BadgeStatus>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-4 gap-x-6 text-sm">
@@ -107,7 +111,7 @@ const OpportunitySummaryHeader: FC<{
           <span className="font-medium block mb-1">Etapas:</span>
           <div className="flex flex-wrap gap-2">
             {phases?.length > 0 ? (
-              phases.map((phase) => (
+              phases.map((phase: any) => (
                 <span
                   key={phase.id}
                   className="px-3 py-0.5 rounded-full text-xs bg-indigo-100 text-indigo-700 font-medium"
@@ -139,7 +143,7 @@ const OpportunitySummaryHeader: FC<{
 };
 
 // 🧾 Tabla de detalles de cotización
-type DetailItem = ExtendedDetailsMaterials | DetailsItemsType;
+type DetailItem = ExtendedDetailsMaterials | DetailsItemsDB;
 
 interface Props {
   details: DetailItem[];
@@ -221,7 +225,7 @@ export const QuoteDetailsTable = ({ details }: Props) => {
               const isItem = "unit_cost" in item;
               const price = isItem
                 ? item.unit_cost ?? 0
-                : (item.prices as PricesType)?.price ?? 0;
+                : (item.prices as PricesDB)?.price ?? 0;
 
               const description = isItem
                 ? item.item ?? "-"
@@ -267,13 +271,14 @@ export const QuoteDetailsTable = ({ details }: Props) => {
 export default function Resumen() {
   const [totalQuote, setTotalQuote] = useState<number>(0);
   const [details, setDetails] = useState<
-    (ExtendedDetailsMaterials | DetailsItemsType)[] | null
+    (ExtendedDetailsMaterials | DetailsItemsDB)[] | null
   >(null);
 
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
   }>();
-  const { selectedOpportunity, units, getUnits } = useUI();
+  const { units, getUnits } = useUI();
+  const { selectedOpportunity } = useData();
   const { quotes } = selectedOpportunity || {};
 
   useEffect(() => {
@@ -302,4 +307,3 @@ export default function Resumen() {
     </ContainerToForms>
   );
 }
-//0200

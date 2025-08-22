@@ -7,9 +7,10 @@ import {
   StyleSheet,
   Image,
 } from "@react-pdf/renderer";
-import type { OpportunityAll, QuotesEnrichType } from "~/context/UIContext";
+import type { QuotesUI } from "~/types/opportunitiesType";
 import type { PropStateReport } from "~/routes/opportunity/report";
 import Logo from "public/logo_imindustrial.png";
+import type { OpportunityAndQuotesUI } from "~/types/opportunitiesType";
 import { currencies, modelOfTable } from "~/routes/opportunity/report";
 
 const styles = StyleSheet.create({
@@ -85,10 +86,10 @@ export default function QuotePDFDocument({
   settings,
   selectedOpportunity,
 }: {
-  quote: QuotesEnrichType;
+  quote: QuotesUI;
   quoteId: number;
   settings: PropStateReport;
-  selectedOpportunity: OpportunityAll | null;
+  selectedOpportunity: OpportunityAndQuotesUI | null;
 }) {
   const safeRate =
     isFinite(settings.exchangeRate) && settings.exchangeRate > 0

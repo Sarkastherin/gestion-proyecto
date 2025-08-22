@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, useOutletContext } from "react-router";
 import type { ChangeEventHandler } from "react";
 import { useOpportunityRealtime } from "~/backend/realTime";
+import { useData } from "~/context/DataContext";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -30,12 +31,12 @@ export default function Quotes() {
     "materiales" | "mano de obra" | "subcontratos" | "otros" | ""
   >("materiales");
   const {
-    selectedOpportunity,
     selectedPhase,
     setSelectedPhase,
     isFieldsChanged,
     setIsFieldsChanged,
   } = useUI();
+  const { selectedOpportunity } = useData();
   const { phases, quotes, details_materials, details_items } =
     selectedOpportunity || {};
   const shouldShowCreateQuote = quotes?.length === 0;

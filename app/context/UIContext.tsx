@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useContacts, type ClientDataType } from "./ContactsContext";
 import type { ModalBaseProps } from "~/components/Generals/Modals";
 import { supabase } from "~/backend/supabaseClient";
+import type { MaterialsUI } from "~/types/materialsType";
 import {
   categoryApi,
   familyApi,
@@ -10,16 +11,8 @@ import {
   unitsApi,
 } from "~/backend/dataBase";
 import type { OpportunityType } from "~/types/database";
-import {
-  getQuoteTotals,
-  roundToPrecision,
-  type Totals,
-} from "~/utils/functions";
+
 import type {
-  PhasesType,
-  QuotesType,
-  DetailsItemsType,
-  DetailsMaterialsType,
   UnitsType,
   MaterialsType,
   PricesType,
@@ -28,15 +21,6 @@ import type {
   SubCategoryType,
 } from "~/backend/dataBase";
 import type { MyUser } from "./AuthContext";
-export type QuotesEnrichType = QuotesType &
-  Totals & {
-    t_mg_materials: number;
-    t_mg_labor: number;
-    t_mg_subcontracting: number;
-    t_mg_others: number;
-    total: number;
-    t_mg_total: number;
-  };
 export type Categorization = {
   description_category: string;
   description_family: string;
@@ -44,10 +28,6 @@ export type Categorization = {
   id_category: number;
   id_family: number;
   id_subcategory: number;
-};
-export type MaterialTypeDB = MaterialsType & {
-  prices: PricesType[];
-  view_categorizations: Categorization;
 };
 export type OpportunitiesTypeDB = OpportunityType & {
   client: ClientDataType;
@@ -65,14 +45,6 @@ export type CategorizationsProps = {
 export type OpportunitiesWithClient = OpportunityType & {
   client: ClientDataType;
 };
-type QuotesDataTypes = {
-  details_items: DetailsItemsType[] | [];
-  details_materials: DetailsMaterialsType[] | [];
-};
-export type OpportunityAll = OpportunitiesTypeDB & {
-  phases: PhasesType[];
-  quotes: QuotesEnrichType[];
-} & QuotesDataTypes;
 type ModalProps = Omit<ModalBaseProps, "onClose">;
 type ThemeProps = "dark" | "light";
 
@@ -108,11 +80,6 @@ type UIContextType = {
   setSelectedSupplier: React.Dispatch<
     React.SetStateAction<ClientDataType | null>
   >;
-  selectedOpportunity: OpportunityAll | null;
-  setSelectedOpportunity: React.Dispatch<
-    React.SetStateAction<OpportunityAll | null>
-  >;
-  refreshOpportunity: () => Promise<void>;
   isModeEdit: boolean;
   setIsModeEdit: React.Dispatch<React.SetStateAction<boolean>>;
   isFieldsChanged: boolean;
@@ -126,29 +93,20 @@ type UIContextType = {
     React.SetStateAction<CategorizationsProps | null>
   >;
   getCategorizations: () => Promise<void>;
-  selectedMaterial: MaterialTypeDB | null;
+  selectedMaterial: MaterialsUI | null;
   setSelectedMaterial: React.Dispatch<
-    React.SetStateAction<MaterialTypeDB | null>
+    React.SetStateAction<MaterialsUI | null>
   >;
-  getMaterial: (id: number, materialsList: MaterialTypeDB[]) => void;
+  getMaterial: (id: number, materialsList: MaterialsUI[]) => void;
   refreshMaterial: (id?: number) => Promise<void>;
   selectedPhase: number | null;
   setSelectedPhase: React.Dispatch<React.SetStateAction<number | null>>;
 
-  materials: MaterialTypeDB[] | null;
-  setMaterials: React.Dispatch<React.SetStateAction<MaterialTypeDB[] | null>>;
-  getMaterials: () => Promise<MaterialTypeDB[]>;
+  materials: MaterialsUI[] | null;
+  setMaterials: React.Dispatch<React.SetStateAction<MaterialsUI[] | null>>;
+  getMaterials: () => Promise<MaterialsUI[]>;
   getUnits: () => Promise<void>;
   units: UnitsType[] | null;
-  getOpportunities: () => Promise<OpportunitiesTypeDB[]>;
-  opportunities: OpportunitiesTypeDB[] | null;
-  setOpportunities: React.Dispatch<
-    React.SetStateAction<OpportunitiesTypeDB[] | null>
-  >;
-  getOpportunityById: (
-    id: number,
-    onlyReturn?: boolean
-  ) => Promise<OpportunityAll | null>;
   families: FamilyType[] | null;
   setFamilies: React.Dispatch<React.SetStateAction<FamilyType[] | null>>;
   getFamilies: () => Promise<void>;
@@ -172,10 +130,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
     prefersDark ? "dark" : "light"
   );
   /* Datos */
-  const [materials, setMaterials] = useState<MaterialTypeDB[] | null>(null);
-  const [opportunities, setOpportunities] = useState<
-    OpportunitiesTypeDB[] | null
-  >(null);
+  const [materials, setMaterials] = useState<MaterialsUI[] | null>(null);
   const [units, setUnits] = useState<UnitsType[] | null>(null);
   const [families, setFamilies] = useState<FamilyType[] | null>(null);
   const [categories, setCategories] = useState<CategoryType[] | null>(null);
@@ -191,10 +146,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
     null
   );
   const [selectedMaterial, setSelectedMaterial] =
-    useState<MaterialTypeDB | null>(null);
+    useState<MaterialsUI | null>(null);
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
-  const [selectedOpportunity, setSelectedOpportunity] =
-    useState<OpportunityAll | null>(null);
 
   const [selectedSupplier, setSelectedSupplier] =
     useState<ClientDataType | null>(null);
@@ -270,8 +223,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
       });
     }
   };
-  const getMaterials = async (): Promise<MaterialTypeDB[]> => {
-    let allData: MaterialTypeDB[] = [];
+  const getMaterials = async (): Promise<MaterialsUI[]> => {
+    let allData: MaterialsUI[] = [];
     let from = 0;
     const pageSize = 1000;
 
@@ -293,7 +246,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
     setMaterials(allData);
     return allData;
   };
-  const getMaterial = (id: number, materialsList: MaterialTypeDB[]) => {
+  const getMaterial = (id: number, materialsList: MaterialsUI[]) => {
     const data = materialsList.find((item) => item.id === id);
     setSelectedMaterial(data || null);
   };
@@ -306,161 +259,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
     getMaterial(idMaterial, updatedMaterials);
   };
 
-  const getOpportunities = async (): Promise<OpportunitiesTypeDB[]> => {
-    let allData: OpportunitiesTypeDB[] = [];
-    let from = 0;
-    const pageSize = 1000;
-
-    while (true) {
-      const { data, error, count } = await supabase
-        .from("opportunities")
-        .select("*, users(*)")
-        .order("id", { ascending: false })
-        .range(from, from + pageSize - 1);
-
-      if (error) throw new Error("Error: " + error.message);
-
-      if (!data || data.length === 0) break;
-
-      allData = allData.concat(data);
-      from += pageSize;
-      if (data.length < pageSize) break;
-      
-    }
-    if (clients && clients.length > 0) {
-      setOpportunities(
-        allData
-          .map((item) => {
-            const client = clients.find((c) => c.id === item.id_client);
-            if (!client) return null; // filter out if no client found
-            return { ...item, client };
-          })
-          .filter((item): item is OpportunitiesTypeDB => item !== null)
-      );
-    }
-    return allData;
-  };
-  const getOpportunityById = async (
-    id: number,
-    onlyReturn?: boolean
-  ): Promise<OpportunityAll | null> => {
-    try {
-      const { data: opportunity, error } = await supabase
-        .from("opportunities")
-        .select("*, phases(*), quotes(*)")
-        .eq("id", id)
-        .single();
-
-      if (error || !opportunity)
-        throw new Error("No se pudo obtener la oportunidad");
-
-      const client = clients?.find((c) => c.id === opportunity.id_client);
-      if (!client) throw new Error("Cliente no encontrado");
-      const hasQuotes =
-        Array.isArray(opportunity.quotes) && opportunity.quotes.length > 0;
-
-      let dataQuotes: QuotesDataTypes = {
-        details_items: [],
-        details_materials: [],
-      };
-
-      if (hasQuotes) {
-        const idsQuotes = opportunity.quotes.map(
-          (quote: QuotesType) => quote.id
-        );
-        const { data, error } = await supabase
-          .from("quotes")
-          .select(
-            "details_items(*), details_materials(*,materials:id_material(*),prices:id_price(*))"
-          )
-          .in("id", idsQuotes);
-
-        if (error)
-          throw new Error(
-            `Error al obtener detalles de quotes: ${error.message}`
-          );
-        if (data?.length) {
-          const orifinalsQuotes: QuotesEnrichType[] = opportunity.quotes;
-          const updatedQuotes: QuotesEnrichType[] = orifinalsQuotes.map((q) => {
-            const match = data.find((d) => {
-              const id =
-                d.details_items[0]?.id_quote ??
-                d.details_materials[0]?.id_quote;
-              return id === q.id;
-            });
-
-            if (!match) return q;
-            const quoteTotals = getQuoteTotals(match);
-            const t_mg_materials = roundToPrecision(
-              quoteTotals.total_materials * ((q.materials ?? 0) / 100 + 1),
-              2
-            );
-            const t_mg_labor = roundToPrecision(
-              quoteTotals.total_labor * ((q.labor ?? 0) / 100 + 1),
-              2
-            );
-            const t_mg_subcontracting = roundToPrecision(
-              quoteTotals.total_subcontracting *
-                ((q.subcontracting ?? 0) / 100 + 1),
-              2
-            );
-            const t_mg_others = roundToPrecision(
-              quoteTotals.total_others * ((q.others ?? 0) / 100 + 1),
-              2
-            );
-            const total = roundToPrecision(
-              t_mg_materials + t_mg_labor + t_mg_subcontracting + t_mg_others,
-              2
-            );
-            const t_mg_total = roundToPrecision(
-              total * ((q.general ?? 0) / 100 + 1),
-              2
-            );
-            return {
-              ...q,
-              ...quoteTotals,
-              t_mg_materials: t_mg_materials,
-              t_mg_labor: t_mg_labor,
-              t_mg_subcontracting: t_mg_subcontracting,
-              t_mg_others: t_mg_others,
-              total: total,
-              t_mg_total: t_mg_total,
-            };
-          });
-
-          opportunity.quotes = updatedQuotes;
-
-          dataQuotes = {
-            details_items: data.flatMap((q) => q.details_items ?? []),
-            details_materials: data.flatMap((q) => q.details_materials ?? []),
-          };
-        }
-      }
-      const completedOpportunity: OpportunityAll = {
-        ...opportunity,
-        client,
-        ...dataQuotes,
-      };
-      if (!onlyReturn) setSelectedOpportunity(completedOpportunity);
-
-      return completedOpportunity;
-    } catch (err) {
-      console.error("Error en getOpportunityById:", err);
-      return null;
-    }
-  };
-  const refreshOpportunity = async () => {
-    if (!selectedOpportunity) return;
-    const { id } = selectedOpportunity;
-    const updatedOpportunity = await getOpportunityById(id);
-    if (!updatedOpportunity) return;
-    setOpportunities(
-      (prev) =>
-        prev?.map((opp) =>
-          opp.id === updatedOpportunity.id ? updatedOpportunity : opp
-        ) ?? []
-    );
-  };
   const handleSetIsFieldsChanged = (
     isSubmitSuccessful: boolean,
     isDirty: boolean
@@ -526,9 +324,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setOpenClientModal,
         selectedClient,
         setSelectedClient,
-        selectedOpportunity,
-        setSelectedOpportunity,
-        refreshOpportunity,
         isModeEdit,
         setIsModeEdit,
         isFieldsChanged,
@@ -556,10 +351,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setMaterials,
         getUnits,
         units,
-        getOpportunities,
-        opportunities,
-        setOpportunities,
-        getOpportunityById,
         families,
         setFamilies,
         getFamilies,

@@ -1,6 +1,5 @@
 import type { Route } from "./+types/home";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
-import { useAuth } from "~/context/AuthContext";
 import { MaterialForm } from "~/templates/MaterialForm";
 export function meta({}: Route.MetaArgs) {
   return [
@@ -10,7 +9,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function NewMaterial() {
-  const { user } = useAuth();
   return (
     <>
       <ContainerWithTitle title="Crear nuevo material">

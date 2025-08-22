@@ -15,6 +15,7 @@ export default [
     route("settings", "routes/settings.tsx"),
     route("new-opportunity", "routes/newOpportunity.tsx"),
     route("new-material", "routes/newMaterial.tsx"),
+    route("projects", "routes/projects.tsx"),
     ...prefix("opportunity", [
       layout("layouts/opportunity.tsx", [
         route(":id/resumen", "routes/opportunity/resumen.tsx"),
