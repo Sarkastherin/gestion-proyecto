@@ -1,5 +1,5 @@
 import { Input } from "~/components/Forms/Inputs";
-import { pricesApi } from "~/backend/dataBase";
+import { pricesApi } from "~/backend/cruds";
 import { useForm, useFieldArray } from "react-hook-form";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useUI } from "~/context/UIContext";
@@ -9,7 +9,7 @@ import { useContacts } from "~/context/ContactsContext";
 import FooterForms from "./FooterForms";
 import { Button } from "~/components/Forms/Buttons";
 import { dateUSFormatted } from "~/utils/functions";
-import { usePricesRealtime } from "~/backend/realTime";
+import { useMaterialsAndPricesRealtime } from "~/backend/realTime";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import type { PricesDB } from "~/types/materialsType";
 type DefaulTypes = { prices: PricesDB[] | Omit<PricesDB, "id" | "created_at">[] }
@@ -25,7 +25,7 @@ export default function PricesForm({
   modalMode: boolean;
   onSelectPrice?: (price: { id: number; price: PricesDB }) => void;
 }) {
-  usePricesRealtime(idMaterial);
+  useMaterialsAndPricesRealtime(idMaterial)
   const today = dateUSFormatted(new Date());
   const { suppliers } = useContacts();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);

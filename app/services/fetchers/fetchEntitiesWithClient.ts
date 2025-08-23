@@ -1,3 +1,4 @@
+import { data } from "react-router";
 import { supabase } from "~/backend/supabaseClient";
 import type { ClientDataType } from "~/context/ContactsContext";
 type EntityWithClient<T> = T & { client: ClientDataType };
@@ -40,18 +41,20 @@ export async function setEntities<T>({
   setData: (data: T[]) => void;
   clientKey?: keyof T;
   clients?: ClientDataType[];
-}): Promise<void> {
+}): Promise<T[]> {
   if (clients && clientKey) {
-    const data = await fetchEntitiesWithClient<T>({
+    const entities = await fetchEntitiesWithClient<T>({
       table,
       select,
       clientKey,
       clients,
     });
-    setData(data);
+    setData(entities);
+    return entities;
   } else {
-    const data = await fetchEntities<T>({ table, select });
-    setData(data);
+    const entities = await fetchEntities<T>({ table, select });
+    setData(entities);
+    return entities;
   }
 }
 export async function fetchEntitiesWithClient<T>({

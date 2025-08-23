@@ -1,6 +1,6 @@
 import type { Route } from "../+types/conditions";
 import { useForm, useFieldArray } from "react-hook-form";
-import { details_materialsApi } from "~/backend/dataBase";
+import { details_materialsApi } from "~/backend/cruds";
 import { useUI } from "~/context/UIContext";
 import type { MaterialsUI } from "~/types/materialsType";
 import FooterForms from "~/templates/FooterForms";
@@ -28,14 +28,6 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-/* export type DetailsMaterialFormV1 = {
-  materials: Array<
-    DetailsMaterialsDB & {
-      materials: MaterialsDB;
-      prices: PricesDB | {};
-    }
-  >;
-}; */
 export type DetailsMaterialForm = {
   materials: DetailsMaterialsUI[];
 };
@@ -53,10 +45,9 @@ export default function Materials() {
     isModeEdit,
     setOpenMaterialsModal,
     setOpenPriceModal,
-    materials,
     editByStatus,
   } = useUI();
-  const { selectedOpportunity } = useData();
+  const { selectedOpportunity, materials } = useData();
   const {
     register,
     formState: { isSubmitSuccessful, isDirty, dirtyFields, errors },

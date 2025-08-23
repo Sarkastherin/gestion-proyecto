@@ -5,8 +5,7 @@ import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
 import ModalClientes from "~/components/Specific/ModalClientes";
 import { useEffect } from "react";
-import { opportunityApi } from "~/backend/dataBase";
-//import type { OpportunityInput, OpportunityType } from "~/types/database";
+import { opportunityApi } from "~/backend/cruds";
 import FooterForms from "./FooterForms";
 import { useNavigate } from "react-router";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
@@ -23,7 +22,7 @@ import {
   insertBudgetItems,
   insertBudgetMaterials,
 } from "~/utils/projectUtils";
-import type { OpportunityAndQuotesUI, OpportunityProps, OpportunityDB } from "~/types/opportunitiesType";
+import type { OpportunityAndQuotesUI, OpportunityDB } from "~/types/opportunitiesType";
 
 /* Modals */
 import { useUIModals, ModalType } from "~/context/ModalsContext";
@@ -37,7 +36,7 @@ export default function OpportunityForm({
   mode: "create" | "view";
   selectedQuoteId?: number | null;
 }) {
-  const { openModal, closeModal, progressive, alert } = useUIModals();
+  const { openModal, progressive, alert } = useUIModals();
   const navigate = useNavigate();
   const {
     setOpenClientModal,

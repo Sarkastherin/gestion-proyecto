@@ -13,7 +13,8 @@ import {
 import { useUI } from "~/context/UIContext";
 import type { JSX } from "react";
 import { Button } from "~/components/Forms/Buttons";
-import { materialsApi } from "~/backend/dataBase";
+import { materialsApi } from "~/backend/cruds";
+import { useData } from "~/context/DataContext";
 
 const menuItems = (id: number) => {
   return [
@@ -32,14 +33,8 @@ const menuItems = (id: number) => {
 export default function OpportunityLayout() {
   const location = useLocation();
   const navigate = useNavigate();
-  const {
-    getMaterial,
-    isFieldsChanged,
-    selectedMaterial,
-    setIsFieldsChanged,
-    materials,
-    getMaterials,
-  } = useUI();
+  const { getMaterial, getMaterials, materials, selectedMaterial } = useData();
+  const { isFieldsChanged, setIsFieldsChanged } = useUI();
   const { id } = useParams();
   const menu = menuItems(Number(id));
   useEffect(() => {
@@ -118,7 +113,11 @@ export default function OpportunityLayout() {
             ))}
           </div>
           <div className="w-42">
-            <Button title="Eliminar material" variant="danger" onClick={handleDelete}>
+            <Button
+              title="Eliminar material"
+              variant="danger"
+              onClick={handleDelete}
+            >
               <div className="flex gap-1">
                 <TrashIcon className="size-4" />
                 <span>Eliminar Material</span>

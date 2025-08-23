@@ -6,15 +6,15 @@ import { useUI } from "~/context/UIContext";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { useState } from "react";
 import { Button } from "~/components/Forms/Buttons";
-import { quotesApi } from "~/backend/dataBase";
+import { quotesApi } from "~/backend/cruds";
 import { OpportunityHeader } from "~/components/Generals/OpportunityHeader";
+import { useData } from "~/context/DataContext";
 
 export default function OpportunityLayout() {
   useOpportunityRealtime();
   const [selectedQuoteId, setSelectedQuoteId] = useState<number | null>(null);
+  const { getOpportunityById, selectedOpportunity } = useData();
   const {
-    selectedOpportunity,
-    getOpportunityById,
     setSelectedClient,
     showModal,
     setEditByStatus,

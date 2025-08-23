@@ -3,58 +3,42 @@ import { useEffect, useRef } from "react";
 import { useUI } from "~/context/UIContext";
 import { useData } from "~/context/DataContext";
 
-export function useMaterialsRealtime() {
-  const { selectedMaterial, refreshMaterial } = useUI();
-  const {materials} = useData();
-  useEffect(() => {
-    const channel = supabase
-      .channel("realtime:materials")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "materials" },
-        (payload) => {
-          refreshMaterial();
-          console.log("Change received!", payload);
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [materials, selectedMaterial]);
-}
-
-export function usePricesRealtime(idMaterial?: number) {
-  const { refreshMaterial } = useUI();
+export function useMaterialsAndPricesRealtime(idMaterial?: number) {
+  const { refreshMaterial } = useData();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const debounceDelay = 500; // ajustar según el ritmo de tus eventos
+  const debounceDelay = 500;
 
   useEffect(() => {
-    const channel = supabase
-      .channel("realtime:prices")
-      .on(
+    const channel = supabase.channel("realtime:materials_prices");
+
+    const tablesToListen = ["materials", "prices"];
+
+    tablesToListen.forEach((table) => {
+      channel.on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "prices" },
-        () => {
-          // Reiniciar el timer con cada evento
+        { event: "*", schema: "public", table },
+        (payload) => {
+          console.log(`[${table.toUpperCase()}] Evento recibido:`, payload);
+
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
           timeoutRef.current = setTimeout(() => {
             refreshMaterial(idMaterial);
             timeoutRef.current = null;
           }, debounceDelay);
         }
-      )
-      .subscribe();
+      );
+    });
+
+    channel.subscribe();
 
     return () => {
       supabase.removeChannel(channel);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [idMaterial]);
 }
-
 export function useUnitsRealTime() {
-  const { getUnits } = useUI();
+  const { getUnits } = useData();
   useEffect(() => {
     const channel = supabase
       .channel("realtime:units")
@@ -130,7 +114,6 @@ export function useOpportunityRealtime() {
           console.log(`[${table.toUpperCase()}] Evento recibido:`, payload);
           // Reiniciamos el timer
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
           timeoutRef.current = setTimeout(() => {
             refreshOpportunity();
             timeoutRef.current = null;
@@ -138,11 +121,7 @@ export function useOpportunityRealtime() {
         }
       );
     });
-
     channel.subscribe();
-    channel.subscribe((status) => {
-      console.log("Estado de suscripción:", status);
-    });
 
     return () => {
       supabase.removeChannel(channel);
@@ -150,4 +129,3 @@ export function useOpportunityRealtime() {
     };
   }, []);
 }
-

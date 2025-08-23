@@ -22,7 +22,7 @@ type ViewType = {
   gain_others: number;
   total_quote: number;
 };
-export type HandleRowClicked = {
+export type HandleRowClickedOpp = {
   (data: ViewType): void;
 };
 const columns: TableColumn<ViewType>[] = [
@@ -58,7 +58,7 @@ const columns: TableColumn<ViewType>[] = [
 export const OpportunityDB = ({
   handleRowClicked,
 }: {
-  handleRowClicked: HandleRowClicked;
+  handleRowClicked: HandleRowClickedOpp;
 }) => {
   const [data, setData] = useState<ViewType[] | null>(null);
   const [filterData, setFilterData] = useState<ViewType[] | null>(null);

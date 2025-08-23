@@ -1,22 +1,22 @@
-import type { MaterialsInput, MaterialsType } from "~/backend/dataBase";
-import { materialsApi } from "~/backend/dataBase";
+import { materialsApi } from "~/backend/cruds";
 import { useForm } from "react-hook-form";
-import type {
-  Categorization,
-  CategoriesProps,
-} from "~/context/UIContext";
+import type { Categorization, CategoriesProps } from "~/context/UIContext";
 import { useUI } from "~/context/UIContext";
 import { CardToggle } from "~/components/Generals/Cards";
 import { Input, Select } from "~/components/Forms/Inputs";
 import FooterForms from "./FooterForms";
 import { useEffect, useState, type ChangeEventHandler } from "react";
-import { useNavigate, useParams } from "react-router";
-import { useMaterialsRealtime } from "~/backend/realTime";
+import { useNavigate } from "react-router";
+import { useMaterialsAndPricesRealtime } from "~/backend/realTime";
 import { SelectUnits } from "~/components/Specific/SelectUnits";
+import type { MaterialsDB } from "~/types/materialsType";
+import { useData } from "~/context/DataContext";
+import { updateSingleRow } from "~/utils/updatesSingleRow";
+/* Modals */
+import { useUIModals, ModalType } from "~/context/ModalsContext";
 
-export type MaterialFormType = MaterialsInput | MaterialsType;
 type MaterialFormProps = {
-  defaultValues: MaterialFormType;
+  defaultValues: MaterialsDB | Omit<MaterialsDB, "id" | "created_at">;
   mode: "create" | "view";
   categorization?: Categorization;
 };
@@ -26,8 +26,9 @@ export const MaterialForm = ({
   mode,
   categorization,
 }: MaterialFormProps) => {
-  useMaterialsRealtime();
-  const { id } = useParams();
+  const { setSelectedMaterial, selectedMaterial } = useData();
+  useMaterialsAndPricesRealtime(selectedMaterial?.id)
+  const { openModal, progressive, alert } = useUIModals();
   const navigate = useNavigate();
   const [filterCategories, setFilterCategories] = useState<
     CategoriesProps[] | null
@@ -36,89 +37,51 @@ export const MaterialForm = ({
     CategoriesProps[] | null
   >(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const {
-    isModeEdit,
-    showModal,
-    getCategorizations,
-    categorizations,
-    setSelectedMaterial,
-  } = useUI();
+  const { isModeEdit, getCategorizations, categorizations } = useUI();
+  
   const {
     register,
-    formState: { errors, dirtyFields, isSubmitSuccessful },
+    formState: { errors, dirtyFields },
     handleSubmit,
-  } = useForm<MaterialFormType>({
+  } = useForm<MaterialsDB>({
     defaultValues: defaultValues ?? {
       id_subcategory: null,
       description: "",
       id_unit: null,
     },
   });
-  const onSubmit = async (formData: MaterialFormType) => {
-    showModal({
-      title: "Procesando",
-      message: `Procesando requerimiento`,
-      variant: "loanding",
-    });
-    if (mode === "create") {
-      try {
+  const onSubmit = async (formData: MaterialsDB) => {
+    try {
+      progressive?.setSteps([
+        { label: "Guardando material", status: "in-progress" },
+      ]);
+      openModal(ModalType.PROGRESSIVE);
+      if (mode === "create") {
         const { data, error } = await materialsApi.insertOne(formData);
-        if (error) throw new Error(String(error));
+        if (error || !data || !("id" in data))
+          throw new Error("Error al crear oportunidad");
+        progressive?.updateStep(0, "done");
+        alert?.setAlert("Material creado con éxito", "success");
         setSelectedMaterial(null);
-        //getMaterials();
         navigate(`/material/${data?.id}`);
-        showModal({
-          title: "Guardado con exito",
-          message: `Se ha guardado la oportunidad`,
-          variant: "success",
-        });
-      } catch (e) {
-        showModal({
-          title: "Error al guardar",
-          message: "No se pudo guardar la oportunidad. Error:",
-          code: String(e),
-          variant: "error",
-        });
       }
-    }
-    if (mode === "view" && isModeEdit) {
-      try {
-        const updatePayload: Record<string, unknown> = {};
-        const attributeToUpdates = Object.keys(dirtyFields) as Array<
-          keyof MaterialFormType
-        >;
-        attributeToUpdates.forEach((attribute) => {
-          if (
-            dirtyFields[attribute] &&
-            formData[attribute] !== undefined &&
-            formData[attribute] !== null
-          ) {
-            updatePayload[attribute as string] = formData[attribute];
-          }
+      if (mode === "view" && isModeEdit) {
+        progressive?.setSteps([
+          { label: "Actualizando material", status: "in-progress" },
+        ]);
+        await updateSingleRow({
+          dirtyFields: Object.fromEntries(
+            Object.entries(dirtyFields).filter(
+              ([_, v]) => typeof v === "boolean"
+            )
+          ),
+          formData: formData,
+          onUpdate: materialsApi.update,
         });
-        const { error } = await materialsApi.update({
-          id: Number(id),
-          values: updatePayload,
-        });
-        if (error)
-          throw new Error(
-            `No se pudo actualizar el material. Error: ${String(error)}`
-          );
-        showModal({
-          title: "Actualizado con exito",
-          message: `Se ha actualizado la oportunidad`,
-          variant: "success",
-        });
-      } catch (e) {
-        showModal({
-          title: "Error al actualizar",
-          message: `No se pudo actualizar la oportunidad. Error:`,
-          code: String(e),
-          variant: "error",
-        });
-      } finally {
-        //refreshMaterial();
+        alert?.setAlert("Material actualizado", "success");
       }
+    } catch (e) {
+      alert?.setAlert(String(e), "error");
     }
   };
   useEffect(() => {
@@ -157,12 +120,13 @@ export const MaterialForm = ({
     loadSubcategoryByCategory(Number(value));
   };
   useEffect(() => {
+    if(!categorizations) return;
     if (mode === "view" && categorization) {
       loadCategorysByFamily(categorization.id_family);
       loadSubcategoryByCategory(categorization.id_category);
     }
     setIsLoaded(true);
-  }, [categorization]);
+  }, [categorization, categorizations]);
   return (
     <>
       {isLoaded && (

@@ -23,7 +23,7 @@ type Props<T extends { id: number }, TInsert = Partial<T>> = {
   columns: TableColumn<T>[];
   formFields: FormField<T>[];
   data: T[];
-  method: CrudMethod<T, TInsert>;
+  method: CrudMethod<T>;
 };
 
 export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({

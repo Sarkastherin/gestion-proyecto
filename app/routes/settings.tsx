@@ -1,43 +1,34 @@
 import type { Route } from "./+types/home";
 import { useState, useEffect } from "react";
 import { ConfigTable } from "~/components/Specific/ConfigTable";
-import { useUI, type CategorizationsProps } from "~/context/UIContext";
+import { useUI } from "~/context/UIContext";
 import type { TableColumn } from "react-data-table-component";
 import { Button } from "~/components/Forms/Buttons";
-import type {
-  UnitsType,
-  UnitsInput,
-  FamilyInput,
-  FamilyType,
-  CategoryInput,
-  CategoryType,
-  SubCategoryInput,
-  SubCategoryType,
-} from "~/backend/dataBase";
 import {
   unitsApi,
   familyApi,
   categoryApi,
   subcategoryApi,
-} from "~/backend/dataBase";
+} from "~/backend/cruds";
+import { useData } from "~/context/DataContext";
 import { useUnitsRealTime, useConfigRealTime } from "~/backend/realTime";
+import type { UnitsDB, FamilyDB, CategoryDB, SubCategoryDB } from "~/types/materialsType";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Configuraciones" },
     { name: "Configuraciones", content: "Configuraciones" },
   ];
 }
-const colsUnits: TableColumn<UnitsType>[] = [
+const colsUnits: TableColumn<UnitsDB>[] = [
   { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
   { name: "Abreviatura", selector: (row) => row.abbreviation, width: "180px" },
   { name: "Descripción", selector: (row) => row.description },
 ];
 
-const colsFamilies: TableColumn<FamilyType>[] = [
+const colsFamilies: TableColumn<FamilyDB>[] = [
   { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
   { name: "Familia", selector: (row) => row.description },
 ];
-
 
 export default function Settings() {
   useUnitsRealTime();
@@ -45,16 +36,15 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("unidades");
   const {
     units,
+    getUnits,
     families,
     categories,
     subcategories,
     getCategories,
     getFamilies,
-    getUnits,
     getSubcategories,
-    getCategorizations,
-    categorizations,
-  } = useUI();
+  } = useData();
+  const { getCategorizations, categorizations } = useUI();
 
   useEffect(() => {
     if (!families) getFamilies();
@@ -63,9 +53,9 @@ export default function Settings() {
     if (!categorizations) getCategorizations();
     if (!units) getUnits();
   }, []);
-  const colsCategories: TableColumn<CategoryType>[] = [
-  { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
-  {
+  const colsCategories: TableColumn<CategoryDB>[] = [
+    { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
+    {
       name: "Familia",
       selector: (row) => {
         const family = families?.find(
@@ -75,9 +65,9 @@ export default function Settings() {
       },
       width: "230px",
     },
-  { name: "Rubro", selector: (row) => row.description },
-];
-  const colsSubcategories: TableColumn<SubCategoryType>[] = [
+    { name: "Rubro", selector: (row) => row.description },
+  ];
+  const colsSubcategories: TableColumn<SubCategoryDB>[] = [
     { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
     { name: "Subrubro", selector: (row) => row.description },
     {
@@ -92,15 +82,13 @@ export default function Settings() {
     {
       name: "Familia",
       selector: (row) => {
-        const id_family = categories?.find(c => c.id === row.id_category)?.id_family
-        const family = families?.find(
-          (c) => c.id === id_family
-        )?.description;
+        const id_family = categories?.find(
+          (c) => c.id === row.id_category
+        )?.id_family;
+        const family = families?.find((c) => c.id === id_family)?.description;
         return family ?? "";
       },
     },
-    
-    
   ];
   return (
     <div className="flex flex-1 gap-6 min-h-[calc(100vh-64px)]">
@@ -122,7 +110,7 @@ export default function Settings() {
       {/* Secciones */}
       <div className="flex-1 py-4 mx-auto pe-10">
         {activeTab === "unidades" && (
-          <ConfigTable<UnitsType, UnitsInput>
+          <ConfigTable<UnitsDB, Omit<UnitsDB, "id" | "created_at">>
             table="units"
             title="Unidades"
             columns={colsUnits}
@@ -146,11 +134,11 @@ export default function Settings() {
         )}
 
         {activeTab === "familias" && (
-          <ConfigTable<FamilyType, FamilyInput>
+          <ConfigTable<FamilyDB, Omit<FamilyDB, "id" | "created_at">>
             table="families"
             title="Familias"
             columns={colsFamilies}
-            data={(families as FamilyType[]) || []}
+            data={(families as FamilyDB[]) || []}
             method={familyApi}
             formFields={[
               {
@@ -164,11 +152,11 @@ export default function Settings() {
         )}
 
         {activeTab === "rubros" && (
-          <ConfigTable<CategoryType, CategoryInput>
+          <ConfigTable<CategoryDB, Omit<CategoryDB, "id" | "created_at">>
             table="categories"
             title="Rubros"
             columns={colsCategories}
-            data={(categories as CategoryType[]) || []}
+            data={(categories as CategoryDB[]) || []}
             method={categoryApi}
             formFields={[
               {
@@ -191,11 +179,11 @@ export default function Settings() {
         )}
 
         {activeTab === "subrubros" && (
-          <ConfigTable<SubCategoryType, SubCategoryInput>
+          <ConfigTable<SubCategoryDB, Omit<SubCategoryDB, "id" | "created_at">>
             table="subcategories"
             title="Subrubros"
             columns={colsSubcategories}
-            data={(subcategories as SubCategoryType[]) || []}
+            data={(subcategories as SubCategoryDB[]) || []}
             method={subcategoryApi}
             formFields={[
               {
@@ -209,8 +197,13 @@ export default function Settings() {
                 label: "Rubro",
                 type: "select",
                 options: categories?.map((c) => {
-                  const family = families?.find(f => f.id ===c.id_family )?.description
-                  return { value: c.id, label: `${c.description}-[🧩${family}]` };
+                  const family = families?.find(
+                    (f) => f.id === c.id_family
+                  )?.description;
+                  return {
+                    value: c.id,
+                    label: `${c.description}-[🧩${family}]`,
+                  };
                 }),
                 required: true,
               },

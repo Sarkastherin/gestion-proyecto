@@ -1,5 +1,5 @@
 import type { TableColumn } from "react-data-table-component";
-import type { MaterialsType } from "~/backend/dataBase";
+import type { MaterialsType } from "~/backend/cruds";
 import { useUI } from "~/context/UIContext";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Input } from "~/components/Forms/Inputs";

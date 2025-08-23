@@ -1,6 +1,6 @@
 import type { Route } from "../+types/conditions";
 import { useForm, useFieldArray } from "react-hook-form";
-import type { DetailsItemsInput, DetailsItemsType } from "~/backend/dataBase";
+import type { DetailsItemsInput, DetailsItemsType } from "~/backend/cruds";
 import { useUI } from "~/context/UIContext";
 import FooterForms from "~/templates/FooterForms";
 import { TableDetailsQuotes, Cell } from "~/templates/TableDetailsQuotes";
@@ -11,7 +11,7 @@ import { roundToPrecision } from "~/utils/functions";
 import { useOutletContext } from "react-router";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useState, useEffect } from "react";
-import { details_itemsApi } from "~/backend/dataBase";
+import { details_itemsApi } from "~/backend/cruds";
 import { useFieldsChange } from "~/utils/fieldsChange";
 import { useData } from "~/context/DataContext";
 export function meta({}: Route.MetaArgs) {

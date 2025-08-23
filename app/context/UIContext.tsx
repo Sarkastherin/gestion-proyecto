@@ -4,22 +4,9 @@ import { useContacts, type ClientDataType } from "./ContactsContext";
 import type { ModalBaseProps } from "~/components/Generals/Modals";
 import { supabase } from "~/backend/supabaseClient";
 import type { MaterialsUI } from "~/types/materialsType";
-import {
-  categoryApi,
-  familyApi,
-  subcategoryApi,
-  unitsApi,
-} from "~/backend/dataBase";
 import type { OpportunityType } from "~/types/database";
 
-import type {
-  UnitsType,
-  MaterialsType,
-  PricesType,
-  FamilyType,
-  CategoryType,
-  SubCategoryType,
-} from "~/backend/dataBase";
+import type { PricesDB } from "~/types/materialsType";
 import type { MyUser } from "./AuthContext";
 export type Categorization = {
   description_category: string;
@@ -29,31 +16,21 @@ export type Categorization = {
   id_family: number;
   id_subcategory: number;
 };
-export type OpportunitiesTypeDB = OpportunityType & {
-  client: ClientDataType;
-  users: MyUser | null;
-};
 export type CategoriesProps = {
   id: number;
   description: string;
 };
-export type CategorizationsProps = {
+type CategorizationsProps = {
   families: CategoriesProps[] | null;
   categories: Array<CategoriesProps & { id_family: number }> | null;
   subcategories: Array<CategoriesProps & { id_category: number }> | null;
 };
-export type OpportunitiesWithClient = OpportunityType & {
-  client: ClientDataType;
-};
 type ModalProps = Omit<ModalBaseProps, "onClose">;
 type ThemeProps = "dark" | "light";
 
-export type SelectedMaterialType = MaterialsType & {
-  prices: PricesType[] | [];
-};
 type PropsModalPrice = {
   open: boolean;
-  data: PricesType[] | null;
+  data: PricesDB[] | null;
   idMaterial: number | null;
 };
 type UIContextType = {
@@ -93,31 +70,8 @@ type UIContextType = {
     React.SetStateAction<CategorizationsProps | null>
   >;
   getCategorizations: () => Promise<void>;
-  selectedMaterial: MaterialsUI | null;
-  setSelectedMaterial: React.Dispatch<
-    React.SetStateAction<MaterialsUI | null>
-  >;
-  getMaterial: (id: number, materialsList: MaterialsUI[]) => void;
-  refreshMaterial: (id?: number) => Promise<void>;
   selectedPhase: number | null;
   setSelectedPhase: React.Dispatch<React.SetStateAction<number | null>>;
-
-  materials: MaterialsUI[] | null;
-  setMaterials: React.Dispatch<React.SetStateAction<MaterialsUI[] | null>>;
-  getMaterials: () => Promise<MaterialsUI[]>;
-  getUnits: () => Promise<void>;
-  units: UnitsType[] | null;
-  families: FamilyType[] | null;
-  setFamilies: React.Dispatch<React.SetStateAction<FamilyType[] | null>>;
-  getFamilies: () => Promise<void>;
-  categories: CategoryType[] | null;
-  setCategories: React.Dispatch<React.SetStateAction<CategoryType[] | null>>;
-  getCategories: () => Promise<void>;
-  subcategories: SubCategoryType[] | null;
-  setSubcategories: React.Dispatch<
-    React.SetStateAction<SubCategoryType[] | null>
-  >;
-  getSubcategories: () => Promise<void>;
   editByStatus: boolean;
   setEditByStatus: React.Dispatch<React.SetStateAction<boolean>>;
 };
@@ -130,13 +84,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
     prefersDark ? "dark" : "light"
   );
   /* Datos */
-  const [materials, setMaterials] = useState<MaterialsUI[] | null>(null);
-  const [units, setUnits] = useState<UnitsType[] | null>(null);
-  const [families, setFamilies] = useState<FamilyType[] | null>(null);
-  const [categories, setCategories] = useState<CategoryType[] | null>(null);
-  const [subcategories, setSubcategories] = useState<SubCategoryType[] | null>(
-    null
-  );
   const [categorizations, setCategorizations] =
     useState<CategorizationsProps | null>(null);
   const { clients } = useContacts();
@@ -145,8 +92,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [selectedClient, setSelectedClient] = useState<ClientDataType | null>(
     null
   );
-  const [selectedMaterial, setSelectedMaterial] =
-    useState<MaterialsUI | null>(null);
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
 
   const [selectedSupplier, setSelectedSupplier] =
@@ -223,42 +168,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       });
     }
   };
-  const getMaterials = async (): Promise<MaterialsUI[]> => {
-    let allData: MaterialsUI[] = [];
-    let from = 0;
-    const pageSize = 1000;
-
-    while (true) {
-      const { data, error, count } = await supabase
-        .from("materials")
-        .select("*, prices(*), view_categorizations(*)", { count: "exact" })
-        .order("id", { ascending: true })
-        .range(from, from + pageSize - 1);
-
-      if (error) throw new Error("Error: " + error.message);
-      if (!data || data.length === 0) break;
-
-      allData = allData.concat(data);
-      from += pageSize;
-
-      if (data.length < pageSize) break;
-    }
-    setMaterials(allData);
-    return allData;
-  };
-  const getMaterial = (id: number, materialsList: MaterialsUI[]) => {
-    const data = materialsList.find((item) => item.id === id);
-    setSelectedMaterial(data || null);
-  };
-  const refreshMaterial = async (id?: number) => {
-    const { id: idSelected } = selectedMaterial || {};
-    const idMaterial = idSelected ? idSelected : id;
-    if (!idMaterial) return;
-    const updatedMaterials = await getMaterials();
-    if (!updatedMaterials) return;
-    getMaterial(idMaterial, updatedMaterials);
-  };
-
+  
   const handleSetIsFieldsChanged = (
     isSubmitSuccessful: boolean,
     isDirty: boolean
@@ -268,50 +178,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
       setIsFieldsChanged(false);
     }
   };
-  const getUnits = async () => {
-    const { data, error } = await unitsApi.getAll({});
-    if (error)
-      showModal({
-        title: "Error",
-        message: "Hubo un problema la traer las unidades",
-        code: String(error.message),
-        variant: "error",
-      });
-    setUnits(data);
-  };
-  const getFamilies = async () => {
-    const { data, error } = await familyApi.getAll({});
-    if (error)
-      showModal({
-        title: "Error",
-        message: "Hubo un problema la traer las unidades",
-        code: String(error.message),
-        variant: "error",
-      });
-    setFamilies(data);
-  };
-  const getCategories = async () => {
-    const { data, error } = await categoryApi.getAll({});
-    if (error)
-      showModal({
-        title: "Error",
-        message: "Hubo un problema la traer las unidades",
-        code: String(error.message),
-        variant: "error",
-      });
-    setCategories(data);
-  };
-  const getSubcategories = async () => {
-    const { data, error } = await subcategoryApi.getAll({});
-    if (error)
-      showModal({
-        title: "Error",
-        message: "Hubo un problema la traer las unidades",
-        code: String(error.message),
-        variant: "error",
-      });
-    setSubcategories(data);
-  };
+  
   return (
     <UIContext.Provider
       value={{
@@ -332,34 +199,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
         categorizations,
         setCategorizations,
         getCategorizations,
-        selectedMaterial,
-        setSelectedMaterial,
         propsPriceModal,
         setOpenPriceModal,
         openSupplierModal,
         setOpenSupplierModal,
         selectedSupplier,
         setSelectedSupplier,
-        getMaterial,
-        refreshMaterial,
         selectedPhase,
         setSelectedPhase,
         openMaterialsModal,
         setOpenMaterialsModal,
-        getMaterials,
-        materials,
-        setMaterials,
-        getUnits,
-        units,
-        families,
-        setFamilies,
-        getFamilies,
-        categories,
-        setCategories,
-        getCategories,
-        subcategories,
-        setSubcategories,
-        getSubcategories,
         setEditByStatus,
         editByStatus,
         openQuotesModal,

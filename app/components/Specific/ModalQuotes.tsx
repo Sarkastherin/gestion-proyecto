@@ -1,17 +1,18 @@
 import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
-import type { HandleRowClicked } from "~/templates/OpportunityDB";
+//import type { HandleRowClicked } from "~/templates/OpportunityDB";
 import { LayoutModal } from "../Generals/Modals";
-import { OpportunityDB } from "~/templates/OpportunityDB";
 import { useOpportunityRealtime } from "~/backend/realTime";
+import { useData } from "~/context/DataContext";
+import type { QuotesProps } from "~/types/opportunitiesType";
+import type { HandleRowClickedOpp } from "~/templates/OpportunitiesTable";
+import { OpportunityDB } from "~/templates/OpportunitiesTable"; //table
 import {
   phasesApi,
   quotesApi,
   details_itemsApi,
   details_materialsApi,
-} from "~/backend/dataBase";
-import { supabase } from "~/backend/supabaseClient";
-import type { QuotesInput } from "~/backend/dataBase";
+} from "~/backend/cruds";
 
 export default function ModalQuotes() {
   useOpportunityRealtime()
@@ -20,10 +21,9 @@ export default function ModalQuotes() {
     setOpenQuotesModal,
     showModal,
     closeModal,
-    getOpportunityById,
-    selectedOpportunity,
   } = useUI();
-  const handleRowClicked: HandleRowClicked = (data) => {
+  const {getOpportunityById, selectedOpportunity} = useData();
+  const handleRowClicked: HandleRowClickedOpp = (data) => {
     if (data.total_quote <= 0) return;
     showModal({
       title: "Confirmar",
@@ -141,7 +141,7 @@ export default function ModalQuotes() {
             if (updateError) throw new Error(updateError.message);
           }
           //2.2 Crear cotización vacía
-          const newQuote: QuotesInput = {
+          const newQuote: QuotesProps = {
             id_opportunity: selectedOpportunity.id,
             status: "Abierta",
             active: true,

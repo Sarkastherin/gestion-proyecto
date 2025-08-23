@@ -1,13 +1,13 @@
 import { Select } from "../Forms/Inputs";
-import { useUI } from "~/context/UIContext";
 import { useEffect } from "react";
-import type { UnitsType } from "~/backend/dataBase";
 import type { SelectProps } from "../Forms/Inputs";
+import { useData } from "~/context/DataContext";
+import type { UnitsDB } from "~/types/materialsType";
 
 export type Props = {} & SelectProps;
 
 export const SelectUnits = ({ ...selectProps }) => {
-  const { units, getUnits } = useUI();
+  const { units, getUnits } = useData();
   useEffect(() => {
     if (!units) getUnits();
   }, []);
@@ -15,7 +15,7 @@ export const SelectUnits = ({ ...selectProps }) => {
     <>
       {units && (
         <Select selectText="Selecciona unidad" {...selectProps}>
-          {units?.map((unit: UnitsType) => (
+          {units?.map((unit: UnitsDB) => (
             <option key={unit.id} value={unit.id}>
               {unit.description}
             </option>

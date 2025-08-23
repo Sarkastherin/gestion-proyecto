@@ -3,6 +3,8 @@ import { appVersion } from "~/utils/functions";
 import { KpiCard } from "~/components/Dashboard/KpiCard";
 import { Input } from "~/components/Forms/Inputs";
 import { dateUSFormatted } from "~/utils/functions";
+import { supabase } from "~/backend/supabaseClient";
+import { useEffect } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [

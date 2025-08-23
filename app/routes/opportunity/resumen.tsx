@@ -277,7 +277,7 @@ export default function Resumen() {
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
   }>();
-  const { units, getUnits } = useUI();
+  const { units, getUnits } = useData();
   const { selectedOpportunity } = useData();
   const { quotes } = selectedOpportunity || {};
 

@@ -1,5 +1,5 @@
 import { useUI } from "~/context/UIContext";
-import { quotesApi, type QuotesInput } from "~/backend/dataBase";
+import { quotesApi } from "~/backend/cruds";
 import { Button } from "../Forms/Buttons";
 import { Card } from "../Generals/Cards";
 import React, { useState } from "react";
@@ -8,6 +8,7 @@ import { useOpportunityRealtime } from "~/backend/realTime";
 import { LayoutModal } from "../Generals/Modals";
 import ModalQuotes from "./ModalQuotes";
 import { useData } from "~/context/DataContext";
+import type { QuotesProps } from "~/types/opportunitiesType";
 const ContainerSection = ({
   title,
   message,
@@ -72,7 +73,7 @@ export function ButtonCreateQuote({
           if (updateError) throw new Error(updateError.message);
         }
         showModal({ title: "Procesando", message: "Creando cotización" });
-        const newQuote: QuotesInput = {
+        const newQuote: QuotesProps = {
           id_opportunity: selectedOpportunity.id,
           status: "Abierta",
           active: true,

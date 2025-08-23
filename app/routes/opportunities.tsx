@@ -8,6 +8,7 @@ import type { OpportunityUITable } from "~/types/opportunitiesType";
 import { useData } from "~/context/DataContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
+import FooterUITables from "~/components/Generals/FooterUITable";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidades" },
@@ -87,15 +88,13 @@ export default function Opportunities() {
           ]}
         />
       )}
-      <span className="fixed bottom-0 w-full">
-        <div className="flex justify-end w-full px-10 py-5 hover:bg-zinc-200 hover:dark:bg-zinc-900">
-          <div className="w-42">
-            <ButtonNavigate variant="yellow" route="/new-opportunity">
-              Nueva Oportunidad
-            </ButtonNavigate>
-          </div>
-        </div>
-      </span>
+      <FooterUITables
+        justify="justify-end"
+        buttonNavigate={{
+          title: "Nueva Oportunidad",
+          route: "/new-opportunity",
+        }}
+      ></FooterUITables>
     </>
   );
 }

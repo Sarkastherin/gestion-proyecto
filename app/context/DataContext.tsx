@@ -6,12 +6,12 @@ import type {
   QuotesDB,
   QuotesUI,
   OpportunityAndQuotesUI,
-  OpportunityUITable
+  OpportunityUITable,
 } from "~/types/opportunitiesType";
 import { supabase } from "~/backend/supabaseClient";
 import { useContacts } from "./ContactsContext";
 import { setEntities } from "~/services/fetchers/fetchEntitiesWithClient";
-import type { MaterialsUI } from "~/types/materialsType";
+import type { MaterialsUI, UnitsDB, FamilyDB, CategoryDB, SubCategoryDB } from "~/types/materialsType";
 import { getQuoteTotals, roundToPrecision } from "~/utils/functions";
 type DataContextType = {
   projects: ProjectsUI[] | null;
@@ -19,21 +19,43 @@ type DataContextType = {
   opportunities: OpportunityUITable[] | null;
   getOpportunities: () => Promise<void>;
   materials: MaterialsUI[] | null;
-  getMaterials: () => Promise<void>;
-  getOpportunityById: (id: number) => Promise<OpportunityAndQuotesUI | null>;
+  getMaterials: () => Promise<MaterialsUI[]>;
+  getOpportunityById: (id: number, onlyReturn?: boolean) => Promise<OpportunityAndQuotesUI | null>;
   selectedOpportunity: OpportunityAndQuotesUI | null;
   refreshOpportunity: () => Promise<void>;
   setSelectedOpportunity: (opportunity: OpportunityAndQuotesUI | null) => void;
+  refreshMaterial: (id?: number) => Promise<void>;
+  getMaterial: (id: number, materialsList: MaterialsUI[]) => void;
+  getUnits: () => Promise<UnitsDB[]>;
+  units: UnitsDB[] | null;
+  getFamilies: () => Promise<FamilyDB[]>;
+  families: FamilyDB[] | null;
+  getCategories: () => Promise<CategoryDB[]>;
+  categories: CategoryDB[] | null;
+  getSubcategories: () => Promise<SubCategoryDB[]>;
+  subcategories: SubCategoryDB[] | null;
+  selectedMaterial: MaterialsUI | null;
+  setSelectedMaterial: (material: MaterialsUI | null) => void;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const { clients } = useContacts();
   const [projects, setProjects] = useState<ProjectsUI[] | null>(null);
-  const [opportunities, setOpportunities] = useState<OpportunityUITable[] | null>(
+  const [opportunities, setOpportunities] = useState<
+    OpportunityUITable[] | null
+  >(null);
+  const [units, setUnits] = useState<UnitsDB[] | null>(null);
+  const [families, setFamilies] = useState<FamilyDB[] | null>(null);
+  const [categories, setCategories] = useState<CategoryDB[] | null>(null);
+  const [subcategories, setSubcategories] = useState<SubCategoryDB[] | null>(
     null
   );
   const [materials, setMaterials] = useState<MaterialsUI[] | null>(null);
-  const [selectedOpportunity, setSelectedOpportunity] = useState<OpportunityAndQuotesUI | null>(null);
+  const [selectedOpportunity, setSelectedOpportunity] =
+    useState<OpportunityAndQuotesUI | null>(null);
+  const [selectedMaterial, setSelectedMaterial] = useState<MaterialsUI | null>(
+    null
+  );
   const getProjects = async (): Promise<void> => {
     if (clients) {
       setEntities<ProjectsUI>({
@@ -56,11 +78,39 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       });
     }
   };
-  const getMaterials = async (): Promise<void> => {
-    setEntities<MaterialsUI>({
+  const getMaterials = async (): Promise<MaterialsUI[]> => {
+    return setEntities<MaterialsUI>({
       table: "materials",
       select: "*, prices(*), view_categorizations(*)",
       setData: setMaterials,
+    });
+  };
+  const getUnits = async (): Promise<UnitsDB[]> => {
+    return setEntities<UnitsDB>({
+      table: "units",
+      select: "*",
+      setData: setUnits,
+    });
+  };
+  const getFamilies = async (): Promise<FamilyDB[]> => {
+    return setEntities<FamilyDB>({
+      table: "families",
+      select: "*",
+      setData: setFamilies,
+    });
+  };
+  const getCategories = async (): Promise<CategoryDB[]> => {
+    return setEntities<CategoryDB>({
+      table: "categories",
+      select: "*",
+      setData: setCategories,
+    });
+  };
+  const getSubcategories = async (): Promise<SubCategoryDB[]> => {
+    return setEntities<SubCategoryDB>({
+      table: "subcategories",
+      select: "*",
+      setData: setSubcategories,
     });
   };
   const getOpportunityById = async (
@@ -91,9 +141,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
       if (hasQuotes) {
-        const idsQuotes = opportunity.quotes.map(
-          (quote: QuotesDB) => quote.id
-        );
+        const idsQuotes = opportunity.quotes.map((quote: QuotesDB) => quote.id);
         const { data, error } = await supabase
           .from("quotes")
           .select(
@@ -175,6 +223,10 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       return null;
     }
   };
+  const getMaterial = (id: number, materialsList: MaterialsUI[]) => {
+    const data = materialsList.find((item) => item.id === id);
+    setSelectedMaterial(data || null);
+  };
   const refreshOpportunity = async () => {
     if (!selectedOpportunity) return;
     const { id } = selectedOpportunity;
@@ -186,6 +238,14 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
           opp.id === updatedOpportunity.id ? updatedOpportunity : opp
         ) ?? []
     );
+  };
+  const refreshMaterial = async (id?: number) => {
+    const { id: idSelected } = selectedMaterial || {};
+    const idMaterial = idSelected ? idSelected : id;
+    if (!idMaterial) return;
+    const updatedMaterials = await getMaterials();
+    if (!updatedMaterials || updatedMaterials.length === 0) return;
+    getMaterial(idMaterial, updatedMaterials);
   };
   return (
     <DataContext.Provider
@@ -199,7 +259,19 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         getOpportunityById,
         selectedOpportunity,
         refreshOpportunity,
-        setSelectedOpportunity
+        setSelectedOpportunity,
+        refreshMaterial,
+        getMaterial,
+        getUnits,
+        units,
+        getFamilies,
+        families,
+        getCategories,
+        categories,
+        getSubcategories,
+        subcategories,
+        selectedMaterial,
+        setSelectedMaterial
       }}
     >
       {children}
