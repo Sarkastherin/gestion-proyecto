@@ -9,14 +9,15 @@ import { Button } from "~/components/Forms/Buttons";
 import { quotesApi } from "~/backend/cruds";
 import { OpportunityHeader } from "~/components/Generals/OpportunityHeader";
 import { useData } from "~/context/DataContext";
+import { useUIModals } from "~/context/ModalsContext";
 
 export default function OpportunityLayout() {
   useOpportunityRealtime();
+  const { openModal } = useUIModals();
   const [selectedQuoteId, setSelectedQuoteId] = useState<number | null>(null);
   const { getOpportunityById, selectedOpportunity, setSelectedOpportunity } = useData();
   const {
     setSelectedClient,
-    showModal,
     setEditByStatus,
   } = useUI();
   const { id } = useParams();
@@ -118,11 +119,7 @@ export default function OpportunityLayout() {
                       onChange={async () => {
                         if (q.active) return;
                         setHidden(true);
-                        showModal({
-                          title: "Actualizando...",
-                          message: "Aplicando cambio de cotización activa.",
-                          variant: "information",
-                        });
+                        openModal("LOADING", {title: "Actualizando...", message: "Aplicando cambio de cotización activa."})
                         const currentActive = selectedOpportunity?.quotes.find(
                           (q) => q.active
                         );
@@ -137,16 +134,13 @@ export default function OpportunityLayout() {
                             });
 
                           if (deactivateError) {
-                            showModal({
-                              title: "Error",
+                            openModal("ERROR", {
                               message:
                                 "No se pudo desactivar la cotización anterior.",
-                              variant: "error",
                             });
                             return;
                           }
                         }
-
                         // Activar la nueva
                         const { error: activateError } = await quotesApi.update(
                           {
@@ -156,16 +150,12 @@ export default function OpportunityLayout() {
                         );
 
                         if (activateError) {
-                          showModal({
-                            title: "Error",
+                          openModal("ERROR", {
                             message: "No se pudo activar la nueva cotización.",
-                            variant: "error",
                           });
                         } else {
-                          showModal({
-                            title: "¡Todo OK!",
+                          openModal("SUCCESS", {
                             message: "Cotización cambiada.",
-                            variant: "success",
                           });
                         }
                       }}

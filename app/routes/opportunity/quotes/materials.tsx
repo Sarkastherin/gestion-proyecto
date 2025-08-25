@@ -18,6 +18,7 @@ import { useData } from "~/context/DataContext";
 import MaterialsModal from "~/components/modals/particularsModals/MaterialsModal";
 import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import PriceModal from "~/components/modals/particularsModals/PriceModal";
+import { useUIModals } from "~/context/ModalsContext";
 import type {
   DetailsMaterialsDB,
   DetailsMaterialsUI,
@@ -38,6 +39,7 @@ type PriceModalPayload = {
 };
 
 export default function Materials() {
+  const { openModal } = useUIModals();
   const materialsModal = useModalState<MaterialsUI>();
   const priceModal = useModalState<PriceModalPayload>();
   const { selectedQuoteId } = useOutletContext<{
@@ -48,7 +50,6 @@ export default function Materials() {
   >([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const {
-    showModal,
     selectedPhase,
     isModeEdit,
     setOpenMaterialsModal,
@@ -74,18 +75,13 @@ export default function Materials() {
 
   const onSubmit = async (formData: DetailsMaterialForm): Promise<void> => {
     if (!isDirty) {
-      showModal({
+      openModal("INFORMATION", {
         title: "Formulario sin cambios",
         message: "No hay cambios para actualizar'",
-        variant: "information",
       });
       return;
     }
-    showModal({
-      title: "Procesando",
-      message: `Procesando requerimiento`,
-      variant: "loanding",
-    });
+    openModal("LOADING");
     try {
       const { materials } = formData;
       const cleanedMaterials = materials.map(
@@ -111,17 +107,12 @@ export default function Materials() {
         materials: [...oldData, ...(Array.isArray(newData) ? newData : [])],
       });
       setMaterialsToDelete([]);
-      showModal({
-        title: "¡Todo OK!",
+      openModal("SUCCESS", {
         message: "Se han guardado los datos",
-        variant: "success",
       });
     } catch (e) {
-      showModal({
-        title: "Error al actualizar",
-        message: `No se pudo actualizar la oportunidad. Error:`,
-        code: String(e),
-        variant: "error",
+      openModal("ERROR", {
+        message: `No se pudo actualizar la oportunidad. Error: ${String(e)}`,
       });
     }
   };

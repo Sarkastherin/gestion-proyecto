@@ -14,6 +14,7 @@ import type { PricesDB } from "~/types/materialsType";
 import ContactsModal from "~/components/modals/particularsModals/ContactsModal";
 import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
+import { useUIModals } from "~/context/ModalsContext";
 type DefaulTypes = {
   prices: PricesDB[] | Omit<PricesDB, "id" | "created_at">[];
 };
@@ -30,6 +31,7 @@ export default function PricesForm({
   onSelectPrice?: (price: { id: number; price: PricesDB }) => void;
 }) {
   useMaterialsAndPricesRealtime(idMaterial);
+  const { openModal } = useUIModals();
   const supplierModal = useModalState<ContactsDataType>();
   const today = dateUSFormatted(new Date());
   const { suppliers } = useContacts();
@@ -37,7 +39,7 @@ export default function PricesForm({
   const [pricesToDelete, setPricesToDelete] = useState<Array<PricesDB["id"]>>(
     []
   );
-  const { setOpenSupplierModal, selectedSupplier, showModal, isModeEdit } =
+  const { setOpenSupplierModal, selectedSupplier, isModeEdit } =
     useUI();
   const {
     register,
@@ -66,18 +68,16 @@ export default function PricesForm({
   const onSubmit = async (data: DefaulTypes) => {
     const defaultPrices = data.prices.filter((p) => p.default);
     if (defaultPrices.length !== 1) {
-      showModal({
+      openModal("INFORMATION", {
         title: "Formulario inválido",
         message: "Debe haber al menos un precio marcado como 'default'",
-        variant: "warning",
       });
       return;
     }
     if (!isDirty) {
-      showModal({
+      openModal("INFORMATION", {
         title: "Formulario sin cambios",
         message: "No hay cambios para actualizar'",
-        variant: "information",
       });
       return;
     }
@@ -95,10 +95,8 @@ export default function PricesForm({
         onInsert: pricesApi.insertOne,
         onRemove: (id: number) => pricesApi.remove({ id }),
       });
-      showModal({
-        title: "¡Todo OK!",
+      openModal("SUCCESS", {
         message: "Se han guardado los datos",
-        variant: "success",
       });
       const oldData = prices.filter(
         (item): item is PricesDB => "id" in item && typeof item.id === "number"
@@ -108,12 +106,9 @@ export default function PricesForm({
       });
       setPricesToDelete([]);
     } catch (e) {
-      showModal({
-        title: "Error en envío de formulario",
+      openModal("ERROR", {
         message:
           "Hubieron algunos problemas al intentar procesar la información",
-        variant: "error",
-        code: String(e),
       });
     }
   };

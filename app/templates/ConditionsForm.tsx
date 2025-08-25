@@ -10,12 +10,14 @@ import { useFieldsChange } from "~/utils/fieldsChange";
 import type { QuotesUI } from "~/types/opportunitiesType";
 import { useData } from "~/context/DataContext";
 import type { QuotesDB } from "~/types/opportunitiesType";
+import { useUIModals } from "~/context/ModalsContext";
 export default function ConditionsForm({
   quoteActive,
 }: {
   quoteActive: number;
 }) {
-  const { showModal, isModeEdit, editByStatus } = useUI();
+  const { openModal } = useUIModals();
+  const { isModeEdit, editByStatus } = useUI();
   const { selectedOpportunity } = useData();
   const { quotes } = selectedOpportunity || {};
   const {
@@ -29,11 +31,7 @@ export default function ConditionsForm({
     defaultValues: {},
   });
   const onSubmit = async (formData: QuotesUI): Promise<void> => {
-    showModal({
-      title: "Procesando",
-      message: `Procesando requerimiento`,
-      variant: "loanding",
-    });
+    openModal("LOADING");
     try {
       const {
         t_mg_materials,
@@ -53,17 +51,12 @@ export default function ConditionsForm({
         formData: formData,
         onUpdate: quotesApi.update,
       });
-      showModal({
-        title: "¡Todo OK!",
+      openModal("SUCCESS", {
         message: `Oportunidad actualizada correctamente`,
-        variant: "success",
       });
     } catch (e) {
-      showModal({
-        title: "Error al actualizar",
-        message: `No se pudo actualizar la oportunidad. Error:`,
-        code: String(e),
-        variant: "error",
+      openModal("ERROR", {
+        message: `No se pudo actualizar la oportunidad. Error: ${String(e)}`,
       });
     }
   };

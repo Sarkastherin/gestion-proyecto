@@ -5,6 +5,7 @@ import {
   ModalSuccess,
   ModalError,
   ModalProgressive,
+  ModalInformation
 } from "./ModalsGlobal";
 export function ModalManager() {
   const { modal, closeModal, progressiveSteps, setProgressiveSteps, updateStep } = useUIModals();
@@ -50,6 +51,14 @@ export function ModalManager() {
         <ModalProgressive
           onClose={closeModal}
           steps={progressiveSteps}
+        />
+      );
+    case "INFORMATION":
+      return (
+        <ModalInformation
+          onClose={closeModal}
+          message={props?.message}
+          title={props?.title}
         />
       );
     default:

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router";
 import { useAuth } from "~/context/AuthContext";
 import { useUI } from "~/context/UIContext";
 import { useEffect } from "react";
-
+import { useUIModals } from "~/context/ModalsContext";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Inicio de sesión" },
@@ -18,7 +18,7 @@ type FormValues = {
   password: string;
 };
 export default function Login() {
-  const { showModal } = useUI();
+  const { openModal } = useUIModals();
   const navigate = useNavigate();
   const { signIn, auth, session } = useAuth();
   const {
@@ -29,11 +29,8 @@ export default function Login() {
   const onSubmit = async (login: FormValues) => {
     const { data, error } = await signIn(login);
     if (error) {
-      showModal({
-        title: "Error al iniciar sesión",
+      openModal("ERROR", {
         message: error.message || "Hubo un problema al intentar ingresar.",
-        code: error.message,
-        variant: "error",
       });
     }
     navigate("/");

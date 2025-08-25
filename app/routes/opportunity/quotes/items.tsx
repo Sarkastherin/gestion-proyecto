@@ -1,6 +1,5 @@
 import type { Route } from "../+types/conditions";
 import { useForm, useFieldArray } from "react-hook-form";
-import type { DetailsItemsInput, DetailsItemsType } from "~/backend/cruds";
 import { useUI } from "~/context/UIContext";
 import FooterForms from "~/templates/FooterForms";
 import { TableDetailsQuotes, Cell } from "~/templates/TableDetailsQuotes";
@@ -14,6 +13,8 @@ import { useState, useEffect } from "react";
 import { details_itemsApi } from "~/backend/cruds";
 import { useFieldsChange } from "~/utils/fieldsChange";
 import { useData } from "~/context/DataContext";
+import { useUIModals } from "~/context/ModalsContext";
+import type { DetailsItemsProps, DetailsItemsDB, DetailsMaterialsDB, DetailsMaterialsUI } from "~/types/opportunitiesType";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Cotización]" },
@@ -21,7 +22,7 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 type DetailsItemsFormType = {
-  items: Array<DetailsItemsType | DetailsItemsInput>;
+  items: Array<DetailsItemsDB | DetailsItemsProps>;
 };
 export default function Items() {
   const { selectedQuoteId, activeType } = useOutletContext<{
@@ -29,10 +30,10 @@ export default function Items() {
     activeType: "materiales" | "mano de obra" | "subcontratos" | "otros" | "";
   }>();
   const [itemsToDelete, setItemsToDelete] = useState<
-    Array<DetailsItemsType["id"]>
+    Array<DetailsItemsDB["id"]>
   >([]);
+  const { openModal } = useUIModals();
   const {
-    showModal,
     selectedPhase,
     editByStatus,
     isModeEdit,
@@ -40,7 +41,7 @@ export default function Items() {
   const { selectedOpportunity } = useData();
   const {
     register,
-    formState: { errors, dirtyFields, isSubmitSuccessful, isDirty },
+    formState: { dirtyFields, isSubmitSuccessful, isDirty },
     handleSubmit,
     control,
     watch,
@@ -52,29 +53,23 @@ export default function Items() {
   });
   const onSubmit = async (formData: DetailsItemsFormType): Promise<void> => {
     if (!isDirty) {
-      showModal({
-        title: "Formulario sin cambios",
-        message: "No hay cambios para actualizar'",
-        variant: "information",
+      openModal("INFORMATION", {
+        message: "No hay cambios para actualizar'"
       });
       return;
     }
-    showModal({
-      title: "Procesando",
-      message: `Procesando requerimiento`,
-      variant: "loanding",
+    openModal("LOADING", {
+      message: "Procesando requerimiento",
     });
     try {
-      const { items } = formData;
-      const cleanedItems = items.map(
-        ({ total, ...rest }) => rest
-      );
+      const { items: cleanedItems } = formData;
+      
       const newData = await updatesArrayFields({
         fieldName: "items",
-        fieldsArray: cleanedItems as DetailsItemsType[],
+        fieldsArray: cleanedItems as DetailsItemsDB[],
         dirtyFields: dirtyFields as Record<
           string,
-          Partial<Record<keyof DetailsItemsType, boolean>>[]
+          Partial<Record<keyof DetailsItemsDB, boolean>>[]
         >,
         fieldsDelete: itemsToDelete,
         onInsert: details_itemsApi.insertOne,
@@ -82,24 +77,19 @@ export default function Items() {
         onUpdate: details_itemsApi.update,
       });
       const oldData = cleanedItems.filter(
-        (item): item is DetailsItemsType =>
+        (item): item is DetailsItemsDB =>
           "id" in item && typeof item.id === "number"
       );
       reset({
         items: [...oldData, ...(Array.isArray(newData) ? newData : [])],
       });
       setItemsToDelete([]);
-      showModal({
-        title: "¡Todo OK!",
+      openModal("SUCCESS", {
         message: "Se han guardado los datos",
-        variant: "success",
       });
     } catch (e) {
-      showModal({
-        title: "Error al actualizar",
-        message: `No se pudo actualizar la oportunidad. Error:`,
-        code: String(e),
-        variant: "error",
+      openModal("ERROR", {
+        message: `No se pudo actualizar la oportunidad.`,
       });
     }
   };
@@ -114,7 +104,7 @@ export default function Items() {
         unit_cost: 0,
         notes: "",
         observations: "",
-      } as DetailsItemsType);
+      } as DetailsItemsDB);
     }
   };
   const handleRemove = (index: number) => {

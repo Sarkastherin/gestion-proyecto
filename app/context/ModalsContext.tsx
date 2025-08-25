@@ -5,7 +5,8 @@ export type ModalType =
   | "SUCCESS"
   | "ERROR"
   | "CONFIRMATION"
-  | "PROGRESSIVE";
+  | "PROGRESSIVE"
+  | "INFORMATION";
 
 type ModalState = {
   type: ModalType | null;

@@ -30,9 +30,9 @@ export function ModalConfirmation({
       }}
     >
       <div className="flex flex-col items-center justify-center py-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
-        <p className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
+        <div className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
           {message}
-        </p>
+        </div>
       </div>
     </ModalBase>
   );
@@ -40,6 +40,26 @@ export function ModalConfirmation({
 export function ModalLoading({
   title = "⏳ Un momento...",
   message = "Se está procesando su requerimiento",
+  onClose,
+}: {
+  title?: string;
+  message?: string;
+  onClose: () => void;
+}) {
+  return (
+    <ModalBase title={title} open zIndex={50} onClose={onClose}>
+      <div className="flex flex-col items-center justify-center py-6 gap-4">
+        <ClipLoader color="#4F46E5" size={40} />
+        <p className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
+          {message}
+        </p>
+      </div>
+    </ModalBase>
+  );
+}
+export function ModalInformation({
+  title = "ℹ️ Información",
+  message,
   onClose,
 }: {
   title?: string;

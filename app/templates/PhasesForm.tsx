@@ -8,12 +8,12 @@ import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useFieldsChange } from "~/utils/fieldsChange";
 import {
   phasesApi,
-  type PhasesInput,
-  type PhasesType,
 } from "~/backend/cruds";
 import FooterForms from "./FooterForms";
+import type { PhasesDB, PhasesProps } from "~/types/opportunitiesType";
+import { useUIModals } from "~/context/ModalsContext";
 type PhasesFormType = {
-  phases: Array<PhasesType | PhasesInput>;
+  phases: Array<PhasesDB | PhasesProps>;
 };
 export default function PhasesForm({
   defaultValues,
@@ -24,14 +24,14 @@ export default function PhasesForm({
   idOpportunity: number;
   mode: "create" | "view";
 }) {
-  const [phasesToDelete, setPhasesToDelete] = useState<Array<PhasesType["id"]>>(
+  const [phasesToDelete, setPhasesToDelete] = useState<Array<PhasesDB["id"]>>(
     []
   );
   const {
-    showModal,
     isModeEdit,
     editByStatus
   } = useUI();
+  const { openModal } = useUIModals();
   const {
     register,
     formState: { errors, dirtyFields, isSubmitSuccessful, isDirty },
@@ -48,18 +48,13 @@ export default function PhasesForm({
 
   const onSubmit = async (data: PhasesFormType) => {
     if (!isDirty) {
-      showModal({
+      openModal("INFORMATION", {
         title: "Formulario sin cambios",
         message: "No hay cambios para actualizar'",
-        variant: "information",
       });
       return;
     }
-    showModal({
-      title: "Procesando",
-      message: `Procesando requerimiento`,
-      variant: "loanding",
-    });
+    openModal("LOADING");
     {
       try {
         const { phases } = data;
@@ -68,20 +63,18 @@ export default function PhasesForm({
           fieldsArray: phases,
           dirtyFields: dirtyFields as Record<
             string,
-            Partial<Record<keyof PhasesType, boolean>>[]
+            Partial<Record<keyof PhasesDB, boolean>>[]
           >,
           fieldsDelete: phasesToDelete,
           onInsert: phasesApi.insertOne,
           onRemove: (id: number) => phasesApi.remove({ id }),
           onUpdate: phasesApi.update,
         });
-        showModal({
-          title: "Actualizado con exito",
+        openModal("SUCCESS", {
           message: `Se ha actualizado la oportunidad`,
-          variant: "success",
         });
         const oldData = phases.filter(
-          (item): item is PhasesType =>
+          (item): item is PhasesDB =>
             "id" in item && typeof item.id === "number"
         );
         reset({
@@ -89,11 +82,8 @@ export default function PhasesForm({
         });
         setPhasesToDelete([]);
       } catch (e) {
-        showModal({
-          title: "Error al actualizar",
-          message: `No se pudo actualizar la oportunidad. Error:`,
-          code: String(e),
-          variant: "error",
+        openModal("ERROR", {
+          message: `No se pudo actualizar la oportunidad. Error: ${String(e)}`,
         });
       }
     }

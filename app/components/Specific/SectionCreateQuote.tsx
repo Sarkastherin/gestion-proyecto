@@ -97,12 +97,12 @@ export function ButtonCreateQuote({
   };
   const handleCopyQuote = () => {
     setOpen(false);
-    setOpenQuotesModal(true);
+    duplicateQuoteModal.openModal();
   };
   return (
     <>
       <div className="w-42">
-        <Button onClick={() => duplicateQuoteModal.openModal()}>{label}</Button>
+        <Button onClick={() => setOpen(true)}>{label}</Button>
       </div>
       <LayoutModal
         open={open}

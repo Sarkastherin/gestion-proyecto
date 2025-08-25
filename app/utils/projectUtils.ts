@@ -7,8 +7,7 @@ import {
   budgetMaterialsApi,
 } from "~/backend/cruds";
 import { ProjectCreationError } from "./errors";
-import { useData } from "~/context/DataContext";
-import type { ProjectsDB, ProjectsProps } from "~/types/projectsType";
+import type { ProjectsProps } from "~/types/projectsType";
 import type {
   OpportunityAndQuotesUI,
   OpportunityDB,
