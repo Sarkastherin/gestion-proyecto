@@ -1,6 +1,5 @@
 import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
-//import type { HandleRowClicked } from "~/templates/OpportunityDB";
 import { LayoutModal } from "../Generals/Modals";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { useData } from "~/context/DataContext";
@@ -235,8 +234,8 @@ export default function ModalQuotes() {
         </div>
       }
     >
-      <div className="mt-4 overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
-        <OpportunityDB handleRowClicked={handleRowClicked} />
+      <div className="overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
+        <OpportunityDB />
       </div>
     </LayoutModal>
   );

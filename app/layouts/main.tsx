@@ -1,16 +1,12 @@
 import { Outlet } from "react-router";
-import ModalBase from "~/components/Generals/Modals";
-import { useUI } from "~/context/UIContext";
 import Header from "~/components/Generals/Header";
 import { useAuth } from "~/context/AuthContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useContacts } from "~/context/ContactsContext";
-import ModalProgressive from "~/components/Specific/ModalProgressive";
-import ModalAlert from "~/components/Specific/ModalAlert";
+import { ModalManager } from "~/components/modals/ModalManager";
 export default function MainLayout() {
-  const { isLoadedContacts } = useContacts();
-  const { modal, closeModal } = useUI();
+  const { isLoadedContacts, setIsLoadedContacts } = useContacts();
   const { auth, session } = useAuth();
   const navigate = useNavigate();
   useEffect(() => {
@@ -23,19 +19,7 @@ export default function MainLayout() {
         <>
           <Header />
           <Outlet />
-          <ModalProgressive />
-          <ModalAlert />
-          {/* Modal para mensajes genéricos */}
-          {modal && (
-            <ModalBase
-              title={modal.title}
-              message={modal.message}
-              code={modal.code}
-              onClose={closeModal}
-              variant={modal.variant}
-              handleAccept={modal.handleAccept}
-            />
-          )}
+          <ModalManager />
         </>
       ) : (
         <div className="flex justify-center items-center h-screen w-full font-medium text-lg">

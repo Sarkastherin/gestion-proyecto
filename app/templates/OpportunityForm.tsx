@@ -3,17 +3,19 @@ import { StatusOptions } from "~/components/Specific/StatusOptions";
 import { CardToggle } from "~/components/Generals/Cards";
 import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
-import ModalClientes from "~/components/Specific/ModalClientes";
 import { useEffect } from "react";
 import { opportunityApi } from "~/backend/cruds";
 import FooterForms from "./FooterForms";
 import { useNavigate } from "react-router";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { useFieldsChange } from "~/utils/fieldsChange";
-import type {  } from "~/context/UIContext";
-import { ButtonNavigate } from "~/components/Specific/Buttons";
+import type {} from "~/context/UIContext";
 import { ProjectCreationError } from "~/utils/errors";
 import { useData } from "~/context/DataContext";
+import type { Step } from "~/context/ModalsContext";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import type { ContactsDataType } from "~/context/ContactsContext";
+import ContactsModal from "~/components/modals/particularsModals/ContactsModal";
 import {
   validateQuoteAndOpportunity,
   buildProjectPayload,
@@ -22,11 +24,13 @@ import {
   insertBudgetItems,
   insertBudgetMaterials,
 } from "~/utils/projectUtils";
-import type { OpportunityAndQuotesUI, OpportunityDB } from "~/types/opportunitiesType";
+import type {
+  OpportunityAndQuotesUI,
+  OpportunityDB,
+} from "~/types/opportunitiesType";
 
 /* Modals */
-import { useUIModals, ModalType } from "~/context/ModalsContext";
-
+import { useUIModals } from "~/context/ModalsContext";
 export default function OpportunityForm({
   defaultValues,
   mode,
@@ -36,15 +40,11 @@ export default function OpportunityForm({
   mode: "create" | "view";
   selectedQuoteId?: number | null;
 }) {
-  const { openModal, progressive, alert } = useUIModals();
+  const clientModal = useModalState<ContactsDataType>();
+  const { openModal, setProgressiveSteps, updateStep } = useUIModals();
   const navigate = useNavigate();
-  const {
-    setOpenClientModal,
-    selectedClient,
-    isModeEdit,
-    editByStatus
-  } = useUI();
-  const {selectedOpportunity, getOpportunities  } = useData();
+  const { selectedClient, isModeEdit, editByStatus } = useUI();
+  const { selectedOpportunity, getOpportunities } = useData();
   const {
     register,
     watch,
@@ -59,32 +59,42 @@ export default function OpportunityForm({
       created_by: "",
     },
   });
+  const initialSteps: Step[] = [
+    { label: "Creando proyecto", status: "pending" },
+    { label: "Creando fases", status: "pending" },
+    { label: "Insertando ítems", status: "pending" },
+    { label: "Insertando materiales", status: "pending" },
+  ];
   useFieldsChange({ isSubmitSuccessful, isDirty });
   useEffect(() => {
     if (selectedClient && selectedClient.id !== watch("id_client")) {
       setValue("id_client", selectedClient.id, { shouldDirty: true });
     }
   }, [selectedClient]);
+
   const onSubmit = async (formData: OpportunityDB) => {
     try {
-      progressive?.setSteps([
-        { label: "Guardando oportunidad", status: "in-progress" },
-      ]);
-      openModal(ModalType.PROGRESSIVE);
       if (mode === "create") {
+        openModal("LOADING", {
+          title: "Guardando oportunidad",
+          message: "Por favor, espere...",
+        });
         const { data, error } = await opportunityApi.insertOne(formData);
         if (error || !data || !("id" in data)) {
           throw new Error("Error al crear oportunidad");
         }
-        progressive?.updateStep(0, "done");
-        alert?.setAlert("Oportunidad creada con éxito", "success");
+        openModal("SUCCESS", {
+          title: "Oportunidad creada con éxito",
+          message: "La oportunidad se ha creado correctamente.",
+        });
         getOpportunities();
         navigate(`/opportunity/${data.id}/resumen`);
       }
       if (mode === "view" && isModeEdit) {
-        progressive?.setSteps([
-          { label: "Actualizando oportunidad", status: "in-progress" },
-        ]);
+        openModal("LOADING", {
+          title: "Actualizando oportunidad",
+          message: "Por favor, espere...",
+        });
         await updateSingleRow({
           dirtyFields: Object.fromEntries(
             Object.entries(dirtyFields).filter(
@@ -100,43 +110,42 @@ export default function OpportunityForm({
           selectedOpportunity &&
           selectedOpportunity.id_project === null
         ) {
-          progressive?.setSteps([
-            { label: "Creando proyecto", status: "in-progress" },
-            { label: "Creando fases", status: "pending" },
-            { label: "Agregando ítems", status: "pending" },
-            { label: "Agregando materiales", status: "pending" },
-          ]);
+          setProgressiveSteps(initialSteps);
+          openModal("PROGRESSIVE");
 
           if ("id" in formData && "created_at" in formData) {
             const projectId = await createdProject({
               formData: formData,
               selectedOpportunity,
             });
-            alert?.setAlert(
-            <>
-              <div className="mb-4">
-                <p>El proyecto se ha creado con éxito.</p>
-                <p>Puede ver los detalles en la sección de proyectos.</p>
-              </div>
-              <div className="w-48 mx-auto">
-                <ButtonNavigate route={`/project/${projectId}/resumen`} variant="green">
-                  Ir al Proyecto
-                </ButtonNavigate>
-              </div>
-            </>,
-            "success"
-          )
+            openModal("SUCCESS", {
+              title: "✅ Proyecto creado con éxito",
+              message: "El proyecto se ha creado correctamente.",
+              btnPrimary: {
+                label: "Ir al Proyecto",
+                handleOnClick: () => {
+                  navigate(`/project/${projectId}/resumen`);
+                },
+                variant: "green",
+              },
+            });
           } else {
             throw new Error(
               "Los datos de la oportunidad no son válidos para crear un proyecto"
             );
           }
         } else {
-          alert?.setAlert("Oportunidad actualizada", "success");
+          openModal("SUCCESS", {
+            title: "Oportunidad actualizada",
+            message: "La oportunidad se ha actualizado correctamente.",
+          });
         }
       }
     } catch (e) {
-      alert?.setAlert(String(e), "error");
+      openModal("ERROR", {
+        title: "Error al guardar oportunidad",
+        message: String(e),
+      });
     }
   };
   interface CreatedProjectType {
@@ -146,9 +155,9 @@ export default function OpportunityForm({
   async function createdProject({
     formData,
     selectedOpportunity,
-  }: CreatedProjectType)  {
+  }: CreatedProjectType) {
     try {
-      progressive?.updateStep(0, "done"); // Creando proyecto
+      updateStep(0, "done"); // Creando proyecto
 
       const quoteActive = validateQuoteAndOpportunity(
         selectedQuoteId,
@@ -159,7 +168,7 @@ export default function OpportunityForm({
         payload,
         formData
       );
-      progressive?.updateStep(1, "in-progress"); // Creando fases
+      updateStep(1, "in-progress"); // Creando fases
 
       const phaseMap = await createPhasesAndMap(
         selectedOpportunity.phases,
@@ -168,39 +177,41 @@ export default function OpportunityForm({
         projectId
       );
 
-      progressive?.updateStep(1, "done");
-      progressive?.updateStep(2, "in-progress"); // Ítems
+      updateStep(1, "done");
+      updateStep(2, "in-progress"); // Ítems
 
       const itemsQuoteActive = selectedOpportunity.details_items.filter(
         (i) => i.id_quote === selectedQuoteId
       );
       await insertBudgetItems(itemsQuoteActive, phaseMap, projectId);
 
-      progressive?.updateStep(2, "done");
-      progressive?.updateStep(3, "in-progress"); // Materiales
+      updateStep(2, "done");
+      updateStep(3, "in-progress"); // Materiales
 
       const materialsQuoteActive = selectedOpportunity.details_materials.filter(
         (m) => m.id_quote === selectedQuoteId
       );
       await insertBudgetMaterials(materialsQuoteActive, phaseMap, projectId);
 
-      progressive?.updateStep(3, "done");
-      alert?.setAlert(
-        `Proyecto creado con ID: ${projectId}`,
-        "success"
-      );
+      updateStep(3, "done");
       return projectId;
     } catch (e) {
+      let errorMessage = "Ocurrió un error desconocido";
+
       if (e instanceof ProjectCreationError) {
-        alert?.setAlert(`Error en ${e.step}: ${e.message}`, "error");
+        errorMessage = `Error en ${e.step}: ${e.message}`;
       } else if (e instanceof Error) {
-        alert?.setAlert(`Error inesperado: ${e.message}`, "error");
-      } else {
-        alert?.setAlert("Ocurrió un error desconocido", "error");
+        errorMessage = `Error inesperado: ${e.message}`;
       }
+
+      openModal("ERROR", {
+        title: "Error al crear el proyecto",
+        message: errorMessage,
+      });
+
       return null;
     }
-  };
+  }
   const isLost = watch("status") === "Perdida";
   return (
     <>
@@ -221,7 +232,9 @@ export default function OpportunityForm({
                 readOnly
                 disabled={!editByStatus && mode != "create"}
                 value={selectedClient?.nombre || ""}
-                onClick={() => setOpenClientModal(true)}
+                onClick={() => {
+                  clientModal.openModal();
+                }}
                 error={errors.id_client?.message}
               />
               <Input
@@ -261,7 +274,11 @@ export default function OpportunityForm({
         </fieldset>
         <FooterForms mode={mode} />
       </form>
-      <ModalClientes />
+      <ContactsModal
+        open={clientModal.open}
+        onClose={clientModal.closeModal}
+        type="client"
+      />
     </>
   );
 }

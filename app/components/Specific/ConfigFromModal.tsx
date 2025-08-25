@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
-import { supabase } from "~/backend/supabaseClient";
+import { useEffect } from "react";
 import { Button } from "../Forms/Buttons";
 import { useForm } from "react-hook-form";
 import { Input, Select } from "../Forms/Inputs";
 import { LayoutModal } from "../Generals/Modals";
 import type { DefaultValues, Path } from "react-hook-form";
-import { useUI } from "~/context/UIContext";
 import { updateSingleRow, type DirtyMap } from "~/utils/updatesSingleRow";
 import type { CrudMethod } from "~/backend/crudFactory";
+import { useUIModals } from "~/context/ModalsContext";
 
 type Field<T> = {
   name: Path<T>;
@@ -23,18 +22,14 @@ type Props<T extends { id: number }, TInsert = Partial<T>> = {
   fields: Field<T>[];
   onClose: () => void;
   initialValues: DefaultValues<T>;
-  method: CrudMethod<T, TInsert>;
+  method: CrudMethod<T>;
 };
 
-export function ConfigFormModal<T extends { id: number }, TInsert = Partial<T>>({
-  open,
-  table,
-  fields,
-  initialValues,
-  method,
-  onClose,
-}: Props<T, TInsert>) {
-  const { showModal } = useUI();
+export function ConfigFormModal<
+  T extends { id: number },
+  TInsert = Partial<T>
+>({ open, fields, initialValues, method, onClose }: Props<T, TInsert>) {
+  const { openModal } = useUIModals();
   const {
     register,
     handleSubmit,
@@ -46,7 +41,7 @@ export function ConfigFormModal<T extends { id: number }, TInsert = Partial<T>>(
     reset(initialValues);
   }, [initialValues]);
 
-  const onSubmit = async (data: T | TInsert) => {
+  const onSubmit = async (data: T) => {
     try {
       if (initialValues?.id) {
         await updateSingleRow<T>({
@@ -55,24 +50,22 @@ export function ConfigFormModal<T extends { id: number }, TInsert = Partial<T>>(
           onUpdate: method.update,
         });
       } else {
-        const {error} = await method.insertOne(data as TInsert);
-        if (error) throw new Error(error.message)
+        const { error } = await method.insertOne(data);
+        if (error) throw new Error(error.message);
       }
-      showModal({
+      openModal("SUCCESS", {
         title: "¡Todo OK!",
         message: `Configuracion actualizada`,
         variant: "success",
       });
     } catch (err) {
-      showModal({
+      openModal("ERROR", {
         title: "Error al actualizar",
-        message: `No se pudo actualizar la configuración:`,
-        code: String(err),
+        message: `No se pudo actualizar la configuración: ${String(err)}`,
         variant: "error",
       });
-    }
-    finally {
-      onClose()
+    } finally {
+      onClose();
     }
   };
 

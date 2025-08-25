@@ -1,4 +1,4 @@
-import type { ClientDataType } from "~/context/ContactsContext";
+import type { ContactsDataType } from "~/context/ContactsContext";
 import type { MyUser } from "~/context/AuthContext";
 import type { CommonPropsDB } from "./sharedTypes";
 import type { PricesDB, MaterialsDB } from "~/types/materialsType";
@@ -26,7 +26,7 @@ export type ProjectsProps = {
 };
 export type ProjectsDB = CommonPropsDB & ProjectsProps;
 export type ProjectsUI = ProjectsDB & {
-  client: ClientDataType;
+  client: ContactsDataType;
   users: MyUser;
 };
 /* Phases project */

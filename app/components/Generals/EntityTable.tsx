@@ -38,7 +38,6 @@ type FilterField = {
 };
 
 type EntityTableProps<T> = {
-  title: string;
   data: T[];
   columns: TableColumn<T>[];
   filterFields?: FilterField[];
@@ -46,7 +45,6 @@ type EntityTableProps<T> = {
 };
 
 export function EntityTable<T>({
-  title,
   data,
   columns,
   filterFields = [],
@@ -72,7 +70,7 @@ export function EntityTable<T>({
   }, [data]);
 
   return (
-    <ContainerWithTitle title={title} width="w-full">
+    <>
       {filterFields.length > 0 && (
         <form className="flex gap-2 items-baseline md:flex-row flex-col" onSubmit={handleSubmit(onFilter)}>
           {filterFields.map(({ key, label, type = "text", options }) => (
@@ -100,6 +98,6 @@ export function EntityTable<T>({
         pointerOnHover
         highlightOnHover
       />
-    </ContainerWithTitle>
+    </>
   );
 }

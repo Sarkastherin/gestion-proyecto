@@ -1,4 +1,4 @@
-import type { ClientDataType } from "~/context/ContactsContext";
+import type { ContactsDataType } from "~/context/ContactsContext";
 import type { MyUser } from "~/context/AuthContext";
 import type { CommonPropsDB } from "./sharedTypes";
 import type { Totals } from "~/utils/functions";
@@ -23,7 +23,7 @@ export type OpportunityProps = {
 };
 export type OpportunityDB = CommonPropsDB & OpportunityProps;
 export type OpportunityUITable = OpportunityDB & {
-  client: ClientDataType;
+  client: ContactsDataType;
   users: MyUser;
 };
 export type OpportunityAndQuotesUI = OpportunityUITable & {

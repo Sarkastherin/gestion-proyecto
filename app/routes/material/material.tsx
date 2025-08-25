@@ -1,7 +1,6 @@
 import type { Route } from "../+types/home";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import { MaterialForm } from "~/templates/MaterialForm";
-import { useMaterialsRealtime } from "~/backend/realTime";
 import { useData } from "~/context/DataContext";
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,7 +10,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Material() {
-  //useMaterialsRealtime()
   const { selectedMaterial } = useData();
   if (selectedMaterial) {
     const {

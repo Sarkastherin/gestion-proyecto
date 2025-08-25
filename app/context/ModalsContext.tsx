@@ -1,78 +1,61 @@
 import React, { createContext, useContext, useState } from "react";
 
-export enum ModalType {
-  PROGRESSIVE = "PROGRESSIVE",
-  ALERT = "ALERT",
-}
-type ProgressiveStep = {
+export type ModalType =
+  | "LOADING"
+  | "SUCCESS"
+  | "ERROR"
+  | "CONFIRMATION"
+  | "PROGRESSIVE";
+
+type ModalState = {
+  type: ModalType | null;
+  props?: Record<string, any>;
+};
+export type Step = {
   label: string;
-  status: "pending" | "in-progress" | "done" | "error";
+  status: "done" | "in-progress" | "error" | "pending";
 };
-type ModalContextType = {
-  activeModal: ModalType | null;
-  openModal: (type: ModalType) => void;
-  closeModal: () => void;
-
-  progressive?: {
-    steps: ProgressiveStep[];
-    setSteps: React.Dispatch<React.SetStateAction<ProgressiveStep[]>>;
-    updateStep: (index: number, status: ProgressiveStep["status"]) => void;
-  };
-
-  alert?: {
-    message: string | React.ReactNode;
-    type: "success" | "error";
-    setAlert: (msg: string | React.ReactNode, type: "success" | "error") => void;
-  };
-};
-const UIModalsContext = createContext<ModalContextType | undefined>(undefined);
+const UIModalsContext = createContext<
+  | {
+      modal: ModalState;
+      openModal: (type: ModalType, props?: Record<string, any>) => void;
+      closeModal: () => void;
+      progressiveSteps: Step[];
+      setProgressiveSteps: React.Dispatch<React.SetStateAction<Step[]>>;
+      updateStep: (index: number, status: Step["status"]) => void;
+    }
+  | undefined
+>(undefined);
 
 export const UIModalsProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [activeModal, setActiveModal] = useState<ModalType | null>(null);
-  const [steps, setSteps] = useState<ProgressiveStep[]>([]);
-  const [alertMessage, setAlertMessage] = useState<string | React.ReactNode>("");
-  const [alertType, setAlertType] = useState<"success" | "error">("success");
+  const [modal, setModal] = useState<ModalState>({ type: null });
+  const [progressiveSteps, setProgressiveSteps] = useState<Step[]>([]);
 
-  const setAlert = (msg: string | React.ReactNode, type: "success" | "error") => {
-    openModal(ModalType.ALERT);
-    setAlertMessage(msg);
-    setAlertType(type);
+  const openModal = (type: ModalType, props?: Record<string, any>) => {
+    setModal({ type, props });
   };
-  const openModal = (type: ModalType) => setActiveModal(type);
-  const closeModal = () => {
-  setActiveModal(null);
-  setSteps([]);
-  setAlertMessage("");
-};
 
-  const updateStep = (index: number, status: ProgressiveStep["status"]) => {
-    setSteps((prev) =>
+  const closeModal = () => {
+    setModal({ type: null });
+  };
+  const updateStep = (index: number, status: Step["status"]) => {
+    setProgressiveSteps((prev) =>
       prev.map((step, i) => (i === index ? { ...step, status } : step))
     );
   };
-  const progressive = {
-    steps,
-    setSteps,
-    updateStep,
-  };
-  const alert = {
-    message: alertMessage,
-    type: alertType,
-    setAlert,
-  };
-
   return (
     <UIModalsContext.Provider
       value={{
-        activeModal,
+        modal,
         openModal,
         closeModal,
-        progressive,
-        alert,
+        progressiveSteps,
+        setProgressiveSteps,
+        updateStep
       }}
     >
       {children}
@@ -82,8 +65,7 @@ export const UIModalsProvider = ({
 
 export const useUIModals = () => {
   const context = useContext(UIModalsContext);
-  if (context === undefined) {
-    throw new Error("useUIModals must be used within a UIModalsProvider");
-  }
+  if (!context)
+    throw new Error("useUIModals must be used within UIModalsProvider");
   return context;
 };

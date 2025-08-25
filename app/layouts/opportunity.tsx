@@ -13,14 +13,14 @@ import { useData } from "~/context/DataContext";
 export default function OpportunityLayout() {
   useOpportunityRealtime();
   const [selectedQuoteId, setSelectedQuoteId] = useState<number | null>(null);
-  const { getOpportunityById, selectedOpportunity } = useData();
+  const { getOpportunityById, selectedOpportunity, setSelectedOpportunity } = useData();
   const {
     setSelectedClient,
     showModal,
     setEditByStatus,
   } = useUI();
   const { id } = useParams();
-  useEffect(() => {
+  useEffect(() => {    
     getOpportunityById(Number(id));
   }, []);
   useEffect(() => {

@@ -9,6 +9,7 @@ import { useData } from "~/context/DataContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import FooterUITables from "~/components/Generals/FooterUITable";
+import { ContainerWithTitle } from "~/components/Generals/Containers";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidades" },
@@ -61,7 +62,7 @@ const columns: TableColumn<OpportunityUITable>[] = [
   },
 ];
 export default function Opportunities() {
-  const { getOpportunities, opportunities } = useData();
+  const { getOpportunities, opportunities, setSelectedOpportunity } = useData();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -71,11 +72,14 @@ export default function Opportunities() {
   return (
     <>
       {opportunities && (
+        <ContainerWithTitle title={"Oportunidades"} width="w-full">
         <EntityTable
-          title="Oportunidades"
           data={opportunities}
           columns={columns}
-          onRowClick={(row) => navigate(`/opportunity/${row.id}/resumen`)}
+          onRowClick={(row) => {
+            setSelectedOpportunity(null);
+            navigate(`/opportunity/${row.id}/resumen`);
+          }}
           filterFields={[
             { key: "name", label: "Buscar por descripción" },
             { key: "client.nombre", label: "Buscar por cliente" },
@@ -87,6 +91,7 @@ export default function Opportunities() {
             },
           ]}
         />
+        </ContainerWithTitle>
       )}
       <FooterUITables
         justify="justify-end"

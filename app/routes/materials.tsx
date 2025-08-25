@@ -10,13 +10,14 @@ import { ButtonExport } from "~/components/Specific/Buttons";
 import { Modal } from "~/components/Generals/Modals";
 import { ImportCsvInput } from "~/utils/import";
 import FooterUITables from "~/components/Generals/FooterUITable";
+import { ContainerWithTitle } from "~/components/Generals/Containers";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Materiales" },
     { name: "description", content: "Materiales" },
   ];
 }
-const columns: TableColumn<MaterialsUI>[] = [
+export const columnsMaterials: TableColumn<MaterialsUI>[] = [
   {
     name: "Id",
     selector: (row) => row.id,
@@ -27,24 +28,29 @@ const columns: TableColumn<MaterialsUI>[] = [
     name: "Descripcion",
     selector: (row) => row.description,
     sortable: true,
+    width: "450px",
+    wrap: true,
   },
   {
     name: "Sub-rubro",
     selector: (row) => row.view_categorizations.description_subcategory,
-    width: "250px",
+    width: "150px",
     sortable: true,
+    wrap: true,
   },
   {
     name: "Rubro",
     selector: (row) => row.view_categorizations.description_category,
-    width: "250px",
+    width: "150px",
     sortable: true,
+    wrap: true,
   },
   {
     name: "Familia",
     selector: (row) => row.view_categorizations.description_family,
-    width: "250px",
+    width: "150px",
     sortable: true,
+    wrap: true,
   },
 ];
 export default function Materials() {
@@ -69,16 +75,16 @@ export default function Materials() {
     <>
       {!materials && <div>Cargando materiales...</div>}
       {materials && (
-        <EntityTable
-          title="Materiales"
-          data={materials}
-          columns={columns}
-          onRowClick={(row) => navigate(`/material/${row.id}`)}
-          filterFields={[
-            { key: "name", label: "Buscar por descripción" },
-            { key: "client.nombre", label: "Buscar por cliente" },
-          ]}
-        />
+        <ContainerWithTitle title={"Materiales"} width="w-full">
+          <EntityTable
+            data={materials}
+            columns={columnsMaterials}
+            onRowClick={(row) => navigate(`/material/${row.id}`)}
+            filterFields={[
+              { key: "description", label: "Buscar por descripción" },
+            ]}
+          />
+        </ContainerWithTitle>
       )}
       <FooterUITables
         justify="justify-between"

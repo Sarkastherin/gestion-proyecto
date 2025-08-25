@@ -9,6 +9,9 @@ import { LayoutModal } from "../Generals/Modals";
 import ModalQuotes from "./ModalQuotes";
 import { useData } from "~/context/DataContext";
 import type { QuotesProps } from "~/types/opportunitiesType";
+import DuplicateQuoteModal from "../modals/particularsModals/DuplicateQuoteModal";
+import { useModalState } from "../modals/particularsModals/useModalState";
+import type { ViewType } from "../modals/particularsModals/DuplicateQuoteModal";
 const ContainerSection = ({
   title,
   message,
@@ -46,13 +49,10 @@ export function ButtonCreateQuote({
   label?: string;
 }) {
   useOpportunityRealtime();
+  const duplicateQuoteModal = useModalState<ViewType>();
   const [open, setOpen] = useState<boolean>(false);
   const { selectedOpportunity } = useData();
-  const {
-    showModal,
-    openQuotesModal,
-    setOpenQuotesModal,
-  } = useUI();
+  const { showModal, setOpenQuotesModal } = useUI();
   const { quotes } = selectedOpportunity || {};
 
   const handleCreateQuote = async () => {
@@ -96,13 +96,13 @@ export function ButtonCreateQuote({
     }
   };
   const handleCopyQuote = () => {
-    setOpen(false)
+    setOpen(false);
     setOpenQuotesModal(true);
   };
   return (
     <>
       <div className="w-42">
-        <Button onClick={() => setOpen(true)}>{label}</Button>
+        <Button onClick={() => duplicateQuoteModal.openModal()}>{label}</Button>
       </div>
       <LayoutModal
         open={open}
@@ -129,7 +129,10 @@ export function ButtonCreateQuote({
           </span>
         </div>
       </LayoutModal>
-      <ModalQuotes />
+      <DuplicateQuoteModal
+        open={duplicateQuoteModal.open}
+        onClose={duplicateQuoteModal.closeModal}
+      />
     </>
   );
 }

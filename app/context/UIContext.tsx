@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import { useContacts, type ClientDataType } from "./ContactsContext";
+import { useContacts, type ContactsDataType } from "./ContactsContext";
 import type { ModalBaseProps } from "~/components/Generals/Modals";
 import { supabase } from "~/backend/supabaseClient";
 import type { MaterialsUI } from "~/types/materialsType";
@@ -49,13 +49,13 @@ type UIContextType = {
   setOpenSupplierModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenMaterialsModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenQuotesModal: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedClient: ClientDataType | null;
+  selectedClient: ContactsDataType | null;
   setSelectedClient: React.Dispatch<
-    React.SetStateAction<ClientDataType | null>
+    React.SetStateAction<ContactsDataType | null>
   >;
-  selectedSupplier: ClientDataType | null;
+  selectedSupplier: ContactsDataType | null;
   setSelectedSupplier: React.Dispatch<
-    React.SetStateAction<ClientDataType | null>
+    React.SetStateAction<ContactsDataType | null>
   >;
   isModeEdit: boolean;
   setIsModeEdit: React.Dispatch<React.SetStateAction<boolean>>;
@@ -89,13 +89,13 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const { clients } = useContacts();
   const [editByStatus, setEditByStatus] = useState<boolean>(false);
   /* Seleccionados */
-  const [selectedClient, setSelectedClient] = useState<ClientDataType | null>(
+  const [selectedClient, setSelectedClient] = useState<ContactsDataType | null>(
     null
   );
   const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
 
   const [selectedSupplier, setSelectedSupplier] =
-    useState<ClientDataType | null>(null);
+    useState<ContactsDataType | null>(null);
   /* Booleans */
   const [isFieldsChanged, setIsFieldsChanged] = useState<boolean>(false);
   const [isModeEdit, setIsModeEdit] = useState<boolean>(false);

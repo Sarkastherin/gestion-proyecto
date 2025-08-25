@@ -13,7 +13,7 @@ import type { MaterialsDB } from "~/types/materialsType";
 import { useData } from "~/context/DataContext";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 /* Modals */
-import { useUIModals, ModalType } from "~/context/ModalsContext";
+import { useUIModals } from "~/context/ModalsContext";
 
 type MaterialFormProps = {
   defaultValues: MaterialsDB | Omit<MaterialsDB, "id" | "created_at">;
@@ -27,8 +27,8 @@ export const MaterialForm = ({
   categorization,
 }: MaterialFormProps) => {
   const { setSelectedMaterial, selectedMaterial } = useData();
-  useMaterialsAndPricesRealtime(selectedMaterial?.id)
-  const { openModal, progressive, alert } = useUIModals();
+  useMaterialsAndPricesRealtime(selectedMaterial?.id);
+  const { openModal } = useUIModals();
   const navigate = useNavigate();
   const [filterCategories, setFilterCategories] = useState<
     CategoriesProps[] | null
@@ -38,7 +38,7 @@ export const MaterialForm = ({
   >(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const { isModeEdit, getCategorizations, categorizations } = useUI();
-  
+
   const {
     register,
     formState: { errors, dirtyFields },
@@ -52,23 +52,26 @@ export const MaterialForm = ({
   });
   const onSubmit = async (formData: MaterialsDB) => {
     try {
-      progressive?.setSteps([
-        { label: "Guardando material", status: "in-progress" },
-      ]);
-      openModal(ModalType.PROGRESSIVE);
       if (mode === "create") {
+        openModal("LOADING", {
+          title: "Guardando material",
+          message: "Por favor, espere...",
+        });
         const { data, error } = await materialsApi.insertOne(formData);
         if (error || !data || !("id" in data))
           throw new Error("Error al crear oportunidad");
-        progressive?.updateStep(0, "done");
-        alert?.setAlert("Material creado con éxito", "success");
+        openModal("SUCCESS", {
+          title: "Material creado con éxito",
+          message: "El material se ha creado correctamente.",
+        });
         setSelectedMaterial(null);
         navigate(`/material/${data?.id}`);
       }
       if (mode === "view" && isModeEdit) {
-        progressive?.setSteps([
-          { label: "Actualizando material", status: "in-progress" },
-        ]);
+        openModal("LOADING", {
+          title: "Actualizando material",
+          message: "Por favor, espere...",
+        });
         await updateSingleRow({
           dirtyFields: Object.fromEntries(
             Object.entries(dirtyFields).filter(
@@ -78,10 +81,16 @@ export const MaterialForm = ({
           formData: formData,
           onUpdate: materialsApi.update,
         });
-        alert?.setAlert("Material actualizado", "success");
+        openModal("SUCCESS", {
+          title: "Material actualizado con éxito",
+          message: "El material se ha actualizado correctamente.",
+        });
       }
     } catch (e) {
-      alert?.setAlert(String(e), "error");
+      openModal("ERROR", {
+        title: "Error al actualizar material",
+        message: String(e),
+      });
     }
   };
   useEffect(() => {
@@ -120,7 +129,7 @@ export const MaterialForm = ({
     loadSubcategoryByCategory(Number(value));
   };
   useEffect(() => {
-    if(!categorizations) return;
+    if (!categorizations) return;
     if (mode === "view" && categorization) {
       loadCategorysByFamily(categorization.id_family);
       loadSubcategoryByCategory(categorization.id_category);

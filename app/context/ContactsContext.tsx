@@ -5,7 +5,7 @@ import {
   useEffect,
   type ReactNode,
 } from "react";
-export type ClientDataType = {
+export type ContactsDataType = {
   cuenta_deud_venta2_id?: number;
   cuenta_deud_venta_id?: number;
   cuenta_proveedores2_id?: number;
@@ -27,9 +27,10 @@ export type ClientDataType = {
   tipo?: string;
 };
 type ContactsContextType = {
-  clients: ClientDataType[] | null;
-  suppliers: ClientDataType[] | null;
-  isLoadedContacts: boolean | null
+  clients: ContactsDataType[] | null;
+  suppliers: ContactsDataType[] | null;
+  isLoadedContacts: boolean | null;
+  setIsLoadedContacts: (value: boolean | null) => void;
 };
 type ContactsProviderProps = {
   children: ReactNode;
@@ -45,8 +46,8 @@ export const useContacts = (): ContactsContextType => {
   return context;
 };
 export const ContactsProvider = ({ children }: ContactsProviderProps) => {
-  const [clients, setClients] = useState<Array<ClientDataType> | null>(null);
-  const [suppliers, setSuppliers] = useState<Array<ClientDataType> | null>(
+  const [clients, setClients] = useState<Array<ContactsDataType> | null>(null);
+  const [suppliers, setSuppliers] = useState<Array<ContactsDataType> | null>(
     null
   );
   const [isLoadedContacts, setIsLoadedContacts] = useState<boolean | null>(null)
@@ -124,7 +125,7 @@ export const ContactsProvider = ({ children }: ContactsProviderProps) => {
     fetching()
   }, []);
   return (
-    <ContactsContext.Provider value={{ clients, suppliers, isLoadedContacts }}>
+    <ContactsContext.Provider value={{ clients, suppliers, isLoadedContacts, setIsLoadedContacts }}>
       {children}
     </ContactsContext.Provider>
   );

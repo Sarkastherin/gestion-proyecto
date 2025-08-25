@@ -3,7 +3,6 @@ import { pricesApi } from "~/backend/cruds";
 import { useForm, useFieldArray } from "react-hook-form";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useUI } from "~/context/UIContext";
-import ModalProveedores from "~/components/Specific/ModalProveedores";
 import { useEffect, useState } from "react";
 import { useContacts } from "~/context/ContactsContext";
 import FooterForms from "./FooterForms";
@@ -12,7 +11,12 @@ import { dateUSFormatted } from "~/utils/functions";
 import { useMaterialsAndPricesRealtime } from "~/backend/realTime";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import type { PricesDB } from "~/types/materialsType";
-type DefaulTypes = { prices: PricesDB[] | Omit<PricesDB, "id" | "created_at">[] }
+import ContactsModal from "~/components/modals/particularsModals/ContactsModal";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import type { ContactsDataType } from "~/context/ContactsContext";
+type DefaulTypes = {
+  prices: PricesDB[] | Omit<PricesDB, "id" | "created_at">[];
+};
 
 export default function PricesForm({
   defaultValues,
@@ -25,7 +29,8 @@ export default function PricesForm({
   modalMode: boolean;
   onSelectPrice?: (price: { id: number; price: PricesDB }) => void;
 }) {
-  useMaterialsAndPricesRealtime(idMaterial)
+  useMaterialsAndPricesRealtime(idMaterial);
+  const supplierModal = useModalState<ContactsDataType>();
   const today = dateUSFormatted(new Date());
   const { suppliers } = useContacts();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -114,7 +119,7 @@ export default function PricesForm({
   };
   const handlerSupplier = (index: number) => {
     setActiveIndex(index);
-    setOpenSupplierModal(true);
+    supplierModal.openModal();
   };
 
   useEffect(() => {
@@ -297,7 +302,11 @@ export default function PricesForm({
           <FooterForms mode={"view"} />
         )}
       </form>
-      <ModalProveedores />
+      <ContactsModal
+        open={supplierModal.open}
+        onClose={supplierModal.closeModal}
+        type="supplier"
+      />
     </>
   );
 }

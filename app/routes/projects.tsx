@@ -6,6 +6,7 @@ import { StatusOptions } from "~/components/Specific/StatusOptions";
 import type { ProjectsUI } from "~/types/projectsType";
 import type { TableColumn } from "react-data-table-component";
 import { useEffect } from "react";
+import { ContainerWithTitle } from "~/components/Generals/Containers";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Proyectos" },
@@ -40,8 +41,8 @@ export default function Projects() {
   return (
     <>
       {projects && (
+        <ContainerWithTitle title={"Proyectos"} width="w-full">
         <EntityTable
-          title="Proyectos"
           data={projects}
           columns={columns}
           onRowClick={(row) => navigate(`/project/${row.id}/resumen`)}
@@ -50,7 +51,7 @@ export default function Projects() {
             { key: "client.nombre", label: "Buscar por cliente" },
             { key: "status", label: "Estado", type: "select", options: <StatusOptions /> },
           ]}
-        />
+        /></ContainerWithTitle>
       )}
     </>
   );

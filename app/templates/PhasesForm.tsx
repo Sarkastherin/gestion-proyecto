@@ -3,7 +3,6 @@ import { CardToggle } from "~/components/Generals/Cards";
 import { useForm, useFieldArray } from "react-hook-form";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useUI } from "~/context/UIContext";
-import ModalClientes from "~/components/Specific/ModalClientes";
 import { useEffect, useState } from "react";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useFieldsChange } from "~/utils/fieldsChange";
@@ -175,7 +174,6 @@ export default function PhasesForm({
         </fieldset>
         <FooterForms mode={mode} />
       </form>
-      <ModalClientes />
     </>
   );
 }

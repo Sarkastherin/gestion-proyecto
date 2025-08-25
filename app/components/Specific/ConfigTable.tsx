@@ -8,6 +8,7 @@ import { useUI } from "~/context/UIContext";
 import type { TableColumn } from "react-data-table-component";
 import type { CrudMethod } from "~/backend/crudFactory";
 import type { Path } from "react-hook-form";
+import { useUIModals } from "~/context/ModalsContext";
 
 type FormField<T> = {
   name: Path<T>;
@@ -34,7 +35,8 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
   data,
   method,
 }: Props<T, TInsert>) => {
-  const { theme, showModal } = useUI();
+  const { openModal } = useUIModals();
+  const { theme } = useUI();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -69,15 +71,14 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
     if (!ok) return;
     const { error } = await method.remove({ id: row.id });
     if (error) {
-      showModal({
+      openModal("ERROR", {
         title: "Error",
-        message: "No se pudo eliminar el elmento",
-        code: error.message,
+        message: `No se pudo eliminar el elemento ${error.message}`,
         variant: "error",
       });
       return;
     }
-    showModal({
+    openModal("SUCCESS", {
       title: "¡Todo Ok!",
       message: "El elemento fue eliminado",
       variant: "success",

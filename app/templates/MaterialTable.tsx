@@ -1,12 +1,11 @@
 import type { TableColumn } from "react-data-table-component";
-import type { MaterialsType } from "~/backend/cruds";
 import { useUI } from "~/context/UIContext";
 import { useEffect, useState, type ChangeEvent } from "react";
 import { Input } from "~/components/Forms/Inputs";
 import DataTable from "react-data-table-component";
 import type { MaterialsUI } from "~/types/materialsType";
 import { customStyles } from "~/components/Generals/EntityTable";
-import { useMaterialsRealtime } from "~/backend/realTime";
+import { useData } from "~/context/DataContext";
 export type HandleRowClicked = {
   (data: MaterialsUI): void;
 };
@@ -44,7 +43,7 @@ export const MaterialTable = ({
   paginationPerPage?: number;
 }) => {
   const [filterData, setFilterData] = useState<MaterialsUI[] | null>(null);
-  const { getMaterials, materials, theme } = useUI();
+  const { getMaterials, materials } = useData();
   useEffect(() => {
     if (!materials) getMaterials();
   }, []);
@@ -75,7 +74,7 @@ export const MaterialTable = ({
           columns={columns}
           data={filterData}
           customStyles={customStyles}
-          theme={theme}
+          theme={"dark"}
           pagination
           paginationPerPage={paginationPerPage}
           onRowClicked={handleRowClicked}

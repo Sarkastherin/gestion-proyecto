@@ -12,6 +12,7 @@ export const ContainerWithTitle = ({
   return (
     <div className={`mx-auto ${width}`}>
       <main className={`pt-12 pb-18 lg:px-8 px-6 mx-auto `}>
+        
         <h2 className="text-2xl font-bold">{title}</h2>
         <div className="mt-4">{children}</div>
       </main>

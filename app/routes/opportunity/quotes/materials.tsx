@@ -8,15 +8,16 @@ import { TableDetailsQuotes, Cell } from "~/templates/TableDetailsQuotes";
 import { Input } from "~/components/Forms/Inputs";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useEffect, useState } from "react";
-import ModalMateriales from "~/components/Specific/ModalMateriales";
 import { useOutletContext } from "react-router";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { roundToPrecision } from "~/utils/functions";
-import type { PricesDB, MaterialsDB } from "~/types/materialsType";
+import type { PricesDB } from "~/types/materialsType";
 import { SelectUnits } from "~/components/Specific/SelectUnits";
-import ModalPrice from "~/components/Specific/ModalPrice";
 import { useFieldsChange } from "~/utils/fieldsChange";
 import { useData } from "~/context/DataContext";
+import MaterialsModal from "~/components/modals/particularsModals/MaterialsModal";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import PriceModal from "~/components/modals/particularsModals/PriceModal";
 import type {
   DetailsMaterialsDB,
   DetailsMaterialsUI,
@@ -31,7 +32,14 @@ export function meta({}: Route.MetaArgs) {
 export type DetailsMaterialForm = {
   materials: DetailsMaterialsUI[];
 };
+type PriceModalPayload = {
+  prices: PricesDB[];
+  idMaterial: number;
+};
+
 export default function Materials() {
+  const materialsModal = useModalState<MaterialsUI>();
+  const priceModal = useModalState<PriceModalPayload>();
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
   }>();
@@ -165,17 +173,13 @@ export default function Materials() {
     setActiveIndex(index);
     const id_material = watch(`materials.${index}.id_material`);
     const material = materials?.find((m) => m.id === id_material);
-    const prices = material?.prices;
-    setOpenPriceModal({
-      open: true,
-      data: prices ?? [],
-      idMaterial: id_material,
-    });
+    const prices = material?.prices ?? [];
+    priceModal.openModal({ prices, idMaterial: id_material });
   };
   /* Materiales */
   const handleOpenMaterials = (index: number) => {
     setActiveIndex(index);
-    setOpenMaterialsModal(true);
+    materialsModal.openModal();
   };
   const handleSelectMaterial = (index: number, material: MaterialsUI) => {
     const { prices, ...propsMaterial } = material;
@@ -351,13 +355,18 @@ export default function Materials() {
             </fieldset>
             <FooterForms mode="view" />
           </form>
-          <ModalMateriales
+          <MaterialsModal
             activeIndex={activeIndex}
             onSelectMaterial={handleSelectMaterial}
+            open={materialsModal.open}
+            onClose={materialsModal.closeModal}
           />
-          <ModalPrice
-            activeIndex={activeIndex}
+          <PriceModal
+            open={priceModal.open}
+            onClose={priceModal.closeModal}
             onSelectPrice={handleSelectedPrice}
+            prices={priceModal.data?.prices ?? []}
+            idMaterial={priceModal.data?.idMaterial ?? 0}
           />
         </>
       )}
