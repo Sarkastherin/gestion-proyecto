@@ -23,7 +23,7 @@ export default function Information() {
       <>
         {phases && (
           <ContainerToForms>
-            <OpportunityForm mode="view" defaultValues={dataOpportunity} selectedQuoteId={selectedQuoteId}/>
+            <OpportunityForm initialEditMode={false} isNew={false} defaultValues={dataOpportunity} selectedQuoteId={selectedQuoteId}/>
           </ContainerToForms>
         )}
       </>

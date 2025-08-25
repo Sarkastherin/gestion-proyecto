@@ -20,7 +20,7 @@ export default [
       layout("layouts/opportunity.tsx", [
         route(":id/resumen", "routes/opportunity/resumen.tsx"),
         route(":id/information", "routes/opportunity/information.tsx"),
-        route(":id/phases","routes/opportunity/phases.tsx"),
+        route(":id/phases", "routes/opportunity/phases.tsx"),
         route(":id/conditions", "routes/opportunity/conditions.tsx"),
         route(":id/report", "routes/opportunity/report.tsx"),
         layout("routes/opportunity/quotes.tsx", [
@@ -29,6 +29,16 @@ export default [
             ":id/quotes/materials",
             "routes/opportunity/quotes/materials.tsx"
           ),
+        ]),
+      ]),
+    ]),
+    ...prefix("project", [
+      layout("layouts/project.tsx", [
+        route(":id/resumen", "routes/project/resumen.tsx"),
+        route(":id/information", "routes/project/information.tsx"),
+        layout("routes/project/budget.tsx", [
+          route(":id/budget/items", "routes/project/budget/items.tsx"),
+          route(":id/budget/materials", "routes/project/budget/materials.tsx"),
         ]),
       ]),
     ]),

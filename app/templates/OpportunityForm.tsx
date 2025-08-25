@@ -3,7 +3,7 @@ import { StatusOptions } from "~/components/Specific/StatusOptions";
 import { CardToggle } from "~/components/Generals/Cards";
 import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { opportunityApi } from "~/backend/cruds";
 import FooterForms from "./FooterForms";
 import { useNavigate } from "react-router";
@@ -33,17 +33,20 @@ import type {
 import { useUIModals } from "~/context/ModalsContext";
 export default function OpportunityForm({
   defaultValues,
-  mode,
+  isNew,
   selectedQuoteId,
+  initialEditMode
 }: {
   defaultValues: OpportunityDB | Omit<OpportunityDB, "id" | "created_at">;
-  mode: "create" | "view";
+  isNew: boolean;
   selectedQuoteId?: number | null;
+  initialEditMode: boolean;
 }) {
   const clientModal = useModalState<ContactsDataType>();
+  const [isEditMode, setIsEditMode] = useState(initialEditMode);
   const { openModal, setProgressiveSteps, updateStep } = useUIModals();
   const navigate = useNavigate();
-  const { selectedClient, isModeEdit, editByStatus } = useUI();
+  const { selectedClient, editByStatus } = useUI();
   const { selectedOpportunity, getOpportunities } = useData();
   const {
     register,
@@ -74,7 +77,7 @@ export default function OpportunityForm({
 
   const onSubmit = async (formData: OpportunityDB) => {
     try {
-      if (mode === "create") {
+      if (isNew) {
         openModal("LOADING", {
           title: "Guardando oportunidad",
           message: "Por favor, espere...",
@@ -90,7 +93,7 @@ export default function OpportunityForm({
         getOpportunities();
         navigate(`/opportunity/${data.id}/resumen`);
       }
-      if (mode === "view" && isModeEdit) {
+      if (!isNew) {
         openModal("LOADING", {
           title: "Actualizando oportunidad",
           message: "Por favor, espere...",
@@ -216,13 +219,13 @@ export default function OpportunityForm({
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={!isModeEdit}>
+        <fieldset disabled={!isEditMode}>
           <CardToggle title="Datos de la Oportunidad">
             <div className="flex flex-col gap-4">
               <Input
                 label="Nombre de Oportunidad"
                 placeholder="Ingresa un nombre para la oportunidad"
-                disabled={!editByStatus && mode != "create"}
+                disabled={!editByStatus && !isEditMode}
                 {...register("name", { required: "Campo requerido" })}
                 error={errors.name?.message}
               />
@@ -230,7 +233,7 @@ export default function OpportunityForm({
                 label="Cliente"
                 placeholder="Seleccione un cliente"
                 readOnly
-                disabled={!editByStatus && mode != "create"}
+                disabled={!editByStatus && !isEditMode}
                 value={selectedClient?.nombre || ""}
                 onClick={() => {
                   clientModal.openModal();
@@ -245,7 +248,7 @@ export default function OpportunityForm({
                 })}
               />
               <Textarea
-                disabled={!editByStatus && mode != "create"}
+                disabled={!editByStatus && !isEditMode}
                 label="Alcance"
                 {...register("scope")}
               />
@@ -272,7 +275,7 @@ export default function OpportunityForm({
             </div>
           </CardToggle>
         </fieldset>
-        <FooterForms mode={mode} />
+        <FooterForms isNew={isNew} isEditMode={isEditMode} onToggleEdit={() => setIsEditMode((prev) => !prev)}/>
       </form>
       <ContactsModal
         open={clientModal.open}

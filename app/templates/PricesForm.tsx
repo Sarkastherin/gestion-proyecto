@@ -30,6 +30,7 @@ export default function PricesForm({
   modalMode: boolean;
   onSelectPrice?: (price: { id: number; price: PricesDB }) => void;
 }) {
+  const [isEditMode, setIsEditMode] = useState(false);
   useMaterialsAndPricesRealtime(idMaterial);
   const { openModal } = useUIModals();
   const supplierModal = useModalState<ContactsDataType>();
@@ -39,8 +40,7 @@ export default function PricesForm({
   const [pricesToDelete, setPricesToDelete] = useState<Array<PricesDB["id"]>>(
     []
   );
-  const { setOpenSupplierModal, selectedSupplier, isModeEdit } =
-    useUI();
+  const { setOpenSupplierModal, selectedSupplier, isModeEdit } = useUI();
   const {
     register,
     watch,
@@ -294,7 +294,11 @@ export default function PricesForm({
             </Button>
           </div>
         ) : (
-          <FooterForms mode={"view"} />
+          <FooterForms
+            isNew={false}
+            isEditMode={isEditMode}
+            onToggleEdit={() => setIsEditMode((prev) => !prev)}
+          />
         )}
       </form>
       <ContactsModal

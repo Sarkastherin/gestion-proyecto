@@ -13,7 +13,8 @@ export default function NewMaterial() {
     <>
       <ContainerWithTitle title="Crear nuevo material">
         <MaterialForm
-          mode="create"
+          isNew={true}
+          initialEditMode={true}
           defaultValues={{
             id_subcategory: null,
             description: "",

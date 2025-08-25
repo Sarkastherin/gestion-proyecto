@@ -6,9 +6,7 @@ import { useUI } from "~/context/UIContext";
 import { useEffect, useState } from "react";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useFieldsChange } from "~/utils/fieldsChange";
-import {
-  phasesApi,
-} from "~/backend/cruds";
+import { phasesApi } from "~/backend/cruds";
 import FooterForms from "./FooterForms";
 import type { PhasesDB, PhasesProps } from "~/types/opportunitiesType";
 import { useUIModals } from "~/context/ModalsContext";
@@ -24,13 +22,11 @@ export default function PhasesForm({
   idOpportunity: number;
   mode: "create" | "view";
 }) {
+  const [isEditMode, setIsEditMode] = useState(false);
   const [phasesToDelete, setPhasesToDelete] = useState<Array<PhasesDB["id"]>>(
     []
   );
-  const {
-    isModeEdit,
-    editByStatus
-  } = useUI();
+  const { isModeEdit, editByStatus } = useUI();
   const { openModal } = useUIModals();
   const {
     register,
@@ -101,7 +97,7 @@ export default function PhasesForm({
       setPhasesToDelete((prev) => [...prev, phasesIndex.id as number]);
     }
   };
-  useFieldsChange({isSubmitSuccessful, isDirty})
+  useFieldsChange({ isSubmitSuccessful, isDirty });
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
@@ -146,7 +142,10 @@ export default function PhasesForm({
                       </td>
 
                       <td className="px-3 py-2 whitespace-nowrap">
-                        <ButtonDeleteIcon onClick={() => handleRemove(index)} disabled={!editByStatus}/>
+                        <ButtonDeleteIcon
+                          onClick={() => handleRemove(index)}
+                          disabled={!editByStatus}
+                        />
                       </td>
                     </tr>
                   ))}
@@ -162,7 +161,11 @@ export default function PhasesForm({
             </div>
           </CardToggle>
         </fieldset>
-        <FooterForms mode={mode} />
+        <FooterForms
+          isNew={false}
+          isEditMode={isEditMode}
+          onToggleEdit={() => setIsEditMode((prev) => !prev)}
+        />
       </form>
     </>
   );

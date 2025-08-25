@@ -16,10 +16,16 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Oportunidad [Cotizaciones]" },
   ];
 }
-type PropsType = {
+export type PropsType = {
   key: "materiales" | "mano de obra" | "subcontratos" | "otros";
   label: string;
 };
+export const typesQuotes: PropsType[] = [
+    { key: "materiales", label: "Materiales" },
+    { key: "mano de obra", label: "Mano de Obra" },
+    { key: "subcontratos", label: "Subcontratos" },
+    { key: "otros", label: "Otros" },
+  ];
 export default function Quotes() {
   useOpportunityRealtime();
   const { selectedQuoteId } = useOutletContext<{
@@ -56,12 +62,7 @@ export default function Quotes() {
       setActiveType(t.key);
     }
   };
-  const types: PropsType[] = [
-    { key: "materiales", label: "Materiales" },
-    { key: "mano de obra", label: "Mano de Obra" },
-    { key: "subcontratos", label: "Subcontratos" },
-    { key: "otros", label: "Otros" },
-  ];
+  
   const handleChangePhases: ChangeEventHandler<HTMLSelectElement> = (e) => {
     const target = e.target;
     const value = target.value;
@@ -115,7 +116,7 @@ export default function Quotes() {
               </div>
               {/* Tabs por tipo */}
               <div className="w-full flex gap-2">
-                {types.map((t) => (
+                {typesQuotes.map((t) => (
                   <div className="w-1/4" key={t.key}>
                     <Button
                       type="button"

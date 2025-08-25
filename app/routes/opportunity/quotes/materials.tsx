@@ -39,6 +39,7 @@ type PriceModalPayload = {
 };
 
 export default function Materials() {
+  const [isEditMode, setIsEditMode] = useState(false);
   const { openModal } = useUIModals();
   const materialsModal = useModalState<MaterialsUI>();
   const priceModal = useModalState<PriceModalPayload>();
@@ -344,7 +345,11 @@ export default function Materials() {
                 />
               </div>
             </fieldset>
-            <FooterForms mode="view" />
+            <FooterForms
+              isNew={false}
+              isEditMode={isEditMode}
+              onToggleEdit={() => setIsEditMode((prev) => !prev)}
+            />
           </form>
           <MaterialsModal
             activeIndex={activeIndex}

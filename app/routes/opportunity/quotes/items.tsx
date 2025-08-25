@@ -25,6 +25,7 @@ type DetailsItemsFormType = {
   items: Array<DetailsItemsDB | DetailsItemsProps>;
 };
 export default function Items() {
+   const [isEditMode, setIsEditMode] = useState(false);
   const { selectedQuoteId, activeType } = useOutletContext<{
     selectedQuoteId: number | null;
     activeType: "materiales" | "mano de obra" | "subcontratos" | "otros" | "";
@@ -206,7 +207,7 @@ export default function Items() {
               <ButtonAdd title="Agregar Item" disabled={!editByStatus} onClick={handleAdd} />
             </div>
           </fieldset>
-          <FooterForms mode="view" />
+          <FooterForms isNew={false} isEditMode={isEditMode} onToggleEdit={() => setIsEditMode((prev) => !prev)} />
         </form>
       )}
     </>

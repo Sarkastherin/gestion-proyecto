@@ -23,7 +23,8 @@ export default function Material() {
           <>
             <ContainerToForms>
               <MaterialForm
-                mode="view"
+                isNew={false}
+                initialEditMode={false}
                 defaultValues={materialProps}
                 categorization={categorization}
               />

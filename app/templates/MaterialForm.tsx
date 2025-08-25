@@ -17,16 +17,19 @@ import { useUIModals } from "~/context/ModalsContext";
 
 type MaterialFormProps = {
   defaultValues: MaterialsDB | Omit<MaterialsDB, "id" | "created_at">;
-  mode: "create" | "view";
+  isNew: boolean;
   categorization?: Categorization;
+  initialEditMode: boolean;
 };
 
 export const MaterialForm = ({
   defaultValues,
-  mode,
+  isNew,
   categorization,
+  initialEditMode
 }: MaterialFormProps) => {
-  const { setSelectedMaterial, selectedMaterial } = useData();
+  const [isEditMode, setIsEditMode] = useState(initialEditMode);
+  const { setSelectedMaterial, selectedMaterial, getMaterials } = useData();
   useMaterialsAndPricesRealtime(selectedMaterial?.id);
   const { openModal } = useUIModals();
   const navigate = useNavigate();
@@ -37,7 +40,7 @@ export const MaterialForm = ({
     CategoriesProps[] | null
   >(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const { isModeEdit, getCategorizations, categorizations } = useUI();
+  const { getCategorizations, categorizations } = useUI();
 
   const {
     register,
@@ -52,7 +55,7 @@ export const MaterialForm = ({
   });
   const onSubmit = async (formData: MaterialsDB) => {
     try {
-      if (mode === "create") {
+      if (isNew) {
         openModal("LOADING", {
           title: "Guardando material",
           message: "Por favor, espere...",
@@ -64,10 +67,10 @@ export const MaterialForm = ({
           title: "Material creado con éxito",
           message: "El material se ha creado correctamente.",
         });
-        setSelectedMaterial(null);
+        getMaterials();
         navigate(`/material/${data?.id}`);
       }
-      if (mode === "view" && isModeEdit) {
+      if (!isNew && isEditMode) {
         openModal("LOADING", {
           title: "Actualizando material",
           message: "Por favor, espere...",
@@ -130,7 +133,7 @@ export const MaterialForm = ({
   };
   useEffect(() => {
     if (!categorizations) return;
-    if (mode === "view" && categorization) {
+    if (!isNew && categorization) {
       loadCategorysByFamily(categorization.id_family);
       loadSubcategoryByCategory(categorization.id_category);
     }
@@ -143,7 +146,7 @@ export const MaterialForm = ({
           className=" flex flex-col gap-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <fieldset disabled={!isModeEdit}>
+          <fieldset disabled={!isEditMode}>
             <CardToggle title="Datos del material">
               <div className="flex flex-col gap-4">
                 <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-2">
@@ -153,7 +156,7 @@ export const MaterialForm = ({
                     selectText="Selecciona familia"
                     onChange={handleChangeFamily}
                     defaultValue={
-                      mode === "view" ? categorization?.id_family : ""
+                      isNew ? "" : categorization?.id_family
                     }
                     error={errors.id_subcategory?.message}
                   >
@@ -170,7 +173,7 @@ export const MaterialForm = ({
                     onChange={handleChangeCategory}
                     error={errors.id_subcategory?.message}
                     defaultValue={
-                      mode === "view" ? categorization?.id_category : ""
+                      isNew ? "" : categorization?.id_category
                     }
                   >
                     {filterCategories?.map((category) => (
@@ -226,7 +229,11 @@ export const MaterialForm = ({
               </div>
             </CardToggle>
           </fieldset>
-          <FooterForms mode={mode} />
+          <FooterForms
+            isNew={isNew}
+            isEditMode={isEditMode}
+            onToggleEdit={() => setIsEditMode((prev) => !prev)}
+          />
         </form>
       )}
     </>

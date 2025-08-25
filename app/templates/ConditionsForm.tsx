@@ -2,7 +2,7 @@ import { Input, Select, Textarea } from "~/components/Forms/Inputs";
 import { CardToggle, Card } from "~/components/Generals/Cards";
 import { useForm } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
-import { quotesApi} from "~/backend/cruds";
+import { quotesApi } from "~/backend/cruds";
 import FooterForms from "./FooterForms";
 import { useEffect } from "react";
 import { updateSingleRow, type DirtyMap } from "~/utils/updatesSingleRow";
@@ -11,11 +11,23 @@ import type { QuotesUI } from "~/types/opportunitiesType";
 import { useData } from "~/context/DataContext";
 import type { QuotesDB } from "~/types/opportunitiesType";
 import { useUIModals } from "~/context/ModalsContext";
+import { useState } from "react";
+export const formaPago = [
+    { description: "15 días fecha de factura por transferencia bancaria" },
+    { description: "15 días fecha de factura por e-cheq a 15 días" },
+    { description: "30 días fecha de factura por transferencia bancaria" },
+    { description: "30 días fecha de factura por e-cheq a 15 días" },
+    { description: "contra envio de factura por transferencia bancaria" },
+    { description: "contra envio de factura por e-cheq a 15 días" },
+    { description: "contra envio de factura por e-cheq a 30 días" },
+    { description: "Otro" },
+  ];
 export default function ConditionsForm({
   quoteActive,
 }: {
   quoteActive: number;
 }) {
+  const [isEditMode, setIsEditMode] = useState(false);
   const { openModal } = useUIModals();
   const { isModeEdit, editByStatus } = useUI();
   const { selectedOpportunity } = useData();
@@ -60,16 +72,7 @@ export default function ConditionsForm({
       });
     }
   };
-  const formaPago = [
-    { description: "15 días fecha de factura por transferencia bancaria" },
-    { description: "15 días fecha de factura por e-cheq a 15 días" },
-    { description: "30 días fecha de factura por transferencia bancaria" },
-    { description: "30 días fecha de factura por e-cheq a 15 días" },
-    { description: "contra envio de factura por transferencia bancaria" },
-    { description: "contra envio de factura por e-cheq a 15 días" },
-    { description: "contra envio de factura por e-cheq a 30 días" },
-    { description: "Otro" },
-  ];
+  
   useFieldsChange({ isSubmitSuccessful, isDirty });
   useEffect(() => {
     const quote = quotes?.find((q) => q.id === quoteActive);
@@ -393,7 +396,11 @@ export default function ConditionsForm({
             </table>
           </Card>
         </fieldset>
-        <FooterForms mode="view" />
+        <FooterForms
+          isNew={false}
+          isEditMode={isEditMode}
+          onToggleEdit={() => setIsEditMode((prev) => !prev)}
+        />
       </form>
     </>
   );

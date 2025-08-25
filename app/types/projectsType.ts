@@ -66,3 +66,9 @@ export type BudgetItemProps = {
   created_by?: string;
 };
 export type BudgetItemDB = BudgetItemProps & CommonPropsDB;
+export type ProjectAndBudget = ProjectsDB & {
+  phases_project: PhasesProjectDB[];
+  budget_items: BudgetItemDB[];
+  budget_materials: BudgetMaterialsDB[];
+  client: ContactsDataType;
+}

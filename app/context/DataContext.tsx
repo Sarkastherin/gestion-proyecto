@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import type { ProjectsUI } from "~/types/projectsType";
+import type { ProjectsUI, ProjectAndBudget } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
   DetailsMaterialsDB,
@@ -36,6 +36,8 @@ type DataContextType = {
   subcategories: SubCategoryDB[] | null;
   selectedMaterial: MaterialsUI | null;
   setSelectedMaterial: (material: MaterialsUI | null) => void;
+  getProjectById: (id: number) => Promise<ProjectAndBudget | null>;
+  selectedProject: ProjectAndBudget | null;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -53,6 +55,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [materials, setMaterials] = useState<MaterialsUI[] | null>(null);
   const [selectedOpportunity, setSelectedOpportunity] =
     useState<OpportunityAndQuotesUI | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectAndBudget | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsUI | null>(
     null
   );
@@ -223,6 +226,35 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       return null;
     }
   };
+  const getProjectById = async (
+    id: number,
+    onlyReturn?: boolean
+  ): Promise<ProjectAndBudget | null> => {
+    try {
+      const { data: project, error } = await supabase
+        .from("projects")
+        .select("*, phases_project(*), budget_details_items(*), budget_details_materials(*)")
+        .eq("id", id)
+        .single();
+
+      if (error || !project)
+        throw new Error("No se pudo obtener el proyecto");
+
+      const client = clients?.find((c) => c.id === project.id_client);
+      if (!client) throw new Error("Cliente no encontrado");
+      
+      const completedProject: ProjectAndBudget = {
+        ...project,
+        client,
+      };
+      //if (!onlyReturn) setSelectedOpportunity(completedProject);
+      setSelectedProject(completedProject);
+      return completedProject;
+    } catch (err) {
+      console.error("Error en getProjectById:", err);
+      return null;
+    }
+  };
   const getMaterial = (id: number, materialsList: MaterialsUI[]) => {
     const data = materialsList.find((item) => item.id === id);
     setSelectedMaterial(data || null);
@@ -271,7 +303,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         getSubcategories,
         subcategories,
         selectedMaterial,
-        setSelectedMaterial
+        setSelectedMaterial,
+        getProjectById,
+        selectedProject
       }}
     >
       {children}

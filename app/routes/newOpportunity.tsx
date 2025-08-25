@@ -27,7 +27,8 @@ export default function NewOpportunity() {
     <>
       <ContainerWithTitle title="Creando nueva oportunidad" width="max-w-7xl w-full">
         <OpportunityForm
-          mode="create"
+          isNew={true}
+          initialEditMode={true}
           defaultValues={{
             name: "",
             id_client: 0,
