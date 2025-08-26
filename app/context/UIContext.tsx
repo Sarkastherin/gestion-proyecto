@@ -1,13 +1,10 @@
 import React, { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import { useContacts, type ContactsDataType } from "./ContactsContext";
-import type { ModalBaseProps } from "~/components/Generals/Modals";
+import { type ContactsDataType } from "./ContactsContext";
 import { supabase } from "~/backend/supabaseClient";
-import type { MaterialsUI } from "~/types/materialsType";
-import type { OpportunityType } from "~/types/database";
+import { useUIModals } from "./ModalsContext";
 
 import type { PricesDB } from "~/types/materialsType";
-import type { MyUser } from "./AuthContext";
 export type Categorization = {
   description_category: string;
   description_family: string;
@@ -25,7 +22,6 @@ type CategorizationsProps = {
   categories: Array<CategoriesProps & { id_family: number }> | null;
   subcategories: Array<CategoriesProps & { id_category: number }> | null;
 };
-type ModalProps = Omit<ModalBaseProps, "onClose">;
 type ThemeProps = "dark" | "light";
 
 type PropsModalPrice = {
@@ -34,20 +30,15 @@ type PropsModalPrice = {
   idMaterial: number | null;
 };
 type UIContextType = {
-  showModal: (modal: ModalProps) => void;
-  closeModal: () => void;
-  modal: ModalProps | null;
   toggleTheme: () => void;
   theme: ThemeProps;
   openClientModal: boolean;
   openSupplierModal: boolean;
   propsPriceModal: PropsModalPrice;
-  openMaterialsModal: boolean;
   openQuotesModal: boolean;
   setOpenPriceModal: React.Dispatch<React.SetStateAction<PropsModalPrice>>;
   setOpenClientModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenSupplierModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenMaterialsModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenQuotesModal: React.Dispatch<React.SetStateAction<boolean>>;
   selectedClient: ContactsDataType | null;
   setSelectedClient: React.Dispatch<
@@ -57,8 +48,6 @@ type UIContextType = {
   setSelectedSupplier: React.Dispatch<
     React.SetStateAction<ContactsDataType | null>
   >;
-  isModeEdit: boolean;
-  setIsModeEdit: React.Dispatch<React.SetStateAction<boolean>>;
   isFieldsChanged: boolean;
   setIsFieldsChanged: React.Dispatch<React.SetStateAction<boolean>>;
   handleSetIsFieldsChanged: (
@@ -79,6 +68,7 @@ type UIContextType = {
 const UIContext = createContext<UIContextType | undefined>(undefined);
 
 export function UIProvider({ children }: { children: ReactNode }) {
+  const { openModal } = useUIModals();
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
   const [theme, setTheme] = useState<ThemeProps>(
     prefersDark ? "dark" : "light"
@@ -86,7 +76,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   /* Datos */
   const [categorizations, setCategorizations] =
     useState<CategorizationsProps | null>(null);
-  const { clients } = useContacts();
   const [editByStatus, setEditByStatus] = useState<boolean>(false);
   /* Seleccionados */
   const [selectedClient, setSelectedClient] = useState<ContactsDataType | null>(
@@ -98,14 +87,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
     useState<ContactsDataType | null>(null);
   /* Booleans */
   const [isFieldsChanged, setIsFieldsChanged] = useState<boolean>(false);
-  const [isModeEdit, setIsModeEdit] = useState<boolean>(false);
   /* Modales */
-  const [modal, setModal] = useState<ModalProps | null>(null);
-  const showModal = (modal: ModalProps) => setModal(modal);
-  const closeModal = () => setModal(null);
   /* Modales Específicos */
   const [openClientModal, setOpenClientModal] = useState<boolean>(false);
-  const [openMaterialsModal, setOpenMaterialsModal] = useState<boolean>(false);
   const [openQuotesModal, setOpenQuotesModal] = useState<boolean>(false);
   const [propsPriceModal, setOpenPriceModal] = useState<PropsModalPrice>({
     open: false,
@@ -160,15 +144,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
         subcategories: subcategories ?? null,
       });
     } catch (e) {
-      showModal({
-        title: "Error",
-        message: "Problemas al obtener datos",
-        code: String(e),
-        variant: "error",
-      });
+      openModal("ERROR");
     }
   };
-  
+
   const handleSetIsFieldsChanged = (
     isSubmitSuccessful: boolean,
     isDirty: boolean
@@ -178,21 +157,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
       setIsFieldsChanged(false);
     }
   };
-  
+
   return (
     <UIContext.Provider
       value={{
-        showModal,
-        closeModal,
-        modal,
         toggleTheme,
         theme,
         openClientModal,
         setOpenClientModal,
         selectedClient,
         setSelectedClient,
-        isModeEdit,
-        setIsModeEdit,
         isFieldsChanged,
         setIsFieldsChanged,
         handleSetIsFieldsChanged,
@@ -207,8 +181,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setSelectedSupplier,
         selectedPhase,
         setSelectedPhase,
-        openMaterialsModal,
-        setOpenMaterialsModal,
         setEditByStatus,
         editByStatus,
         openQuotesModal,

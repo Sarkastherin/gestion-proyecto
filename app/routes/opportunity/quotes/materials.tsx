@@ -50,13 +50,7 @@ export default function Materials() {
     Array<DetailsMaterialsDB["id"]>
   >([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const {
-    selectedPhase,
-    isModeEdit,
-    setOpenMaterialsModal,
-    setOpenPriceModal,
-    editByStatus,
-  } = useUI();
+  const { selectedPhase, setOpenPriceModal, editByStatus } = useUI();
   const { selectedOpportunity, materials } = useData();
   const {
     register,
@@ -192,8 +186,8 @@ export default function Materials() {
     price: PricesDB;
   }) => {
     if (activeIndex !== null) {
-      setValue(`materials.${activeIndex}.prices`, price);
-      setValue(`materials.${activeIndex}.id_price`, id);
+      setValue(`materials.${activeIndex}.prices`, price, {shouldDirty: true});
+      setValue(`materials.${activeIndex}.id_price`, id, {shouldDirty: true});
       setOpenPriceModal({ open: false, data: null, idMaterial: null });
     }
   };
@@ -205,7 +199,7 @@ export default function Materials() {
             className=" flex flex-col gap-6"
             onSubmit={handleSubmit(onSubmit)}
           >
-            <fieldset disabled={!isModeEdit}>
+            <fieldset disabled={!isEditMode}>
               <div className="overflow-x-auto">
                 <TableDetailsQuotes
                   title="Tabla Materiales"
@@ -243,9 +237,11 @@ export default function Materials() {
                             disabled={!editByStatus}
                             readOnly
                             placeholder="Material"
-                            value={watch(
-                              `materials.${index}.materials.description`
-                            )}
+                            value={
+                              watch(
+                                `materials.${index}.materials.description`
+                              ) ?? ""
+                            }
                             onClick={() => handleOpenMaterials(index)}
                             error={
                               errors.materials?.[index]?.id_material?.message
@@ -256,7 +252,7 @@ export default function Materials() {
                         <Cell>
                           <SelectUnits
                             value={Number(
-                              watch(`materials.${index}.materials.id_unit`)
+                              watch(`materials.${index}.materials.id_unit`) ?? 0
                             )}
                             disabled
                           />
@@ -301,11 +297,9 @@ export default function Materials() {
                           <Input
                             disabled={!editByStatus}
                             readOnly
-                            value={
-                              Number(
-                                watch(`materials.${index}.prices.price`)
-                              ) || 0
-                            }
+                            value={Number(
+                              watch(`materials.${index}.prices.price`) ?? 0
+                            )}
                             placeholder="$ 0.00"
                             onClick={() => handleOpenPrices(index)}
                             error={errors.materials?.[index]?.id_price?.message}
@@ -318,13 +312,11 @@ export default function Materials() {
                             type="number"
                             placeholder="Total"
                             readOnly
-                            value={
-                              roundToPrecision(
-                                watch(`materials.${index}.quantity`) *
-                                  watch(`materials.${index}.prices.price`),
-                                2
-                              ) || 0
-                            }
+                            value={roundToPrecision(
+                              (watch(`materials.${index}.quantity`) ?? 0) *
+                                (watch(`materials.${index}.prices.price`) ?? 0),
+                              2
+                            )}
                           />
                         </Cell>
 

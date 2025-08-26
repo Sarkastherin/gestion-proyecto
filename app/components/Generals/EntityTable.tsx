@@ -1,6 +1,9 @@
 import React, { useState, useEffect, type JSX } from "react";
 import { useForm } from "react-hook-form";
-import DataTable, {createTheme,  type TableColumn } from "react-data-table-component";
+import DataTable, {
+  createTheme,
+  type TableColumn,
+} from "react-data-table-component";
 import { Input, Select } from "../Forms/Inputs";
 import { Button } from "../Forms/Buttons";
 import { ContainerWithTitle } from "../Generals/Containers";
@@ -35,6 +38,7 @@ type FilterField = {
   label: string;
   type?: "text" | "select";
   options?: React.ReactNode;
+  autoFilter?: boolean; // ← nuevo
 };
 
 type EntityTableProps<T> = {
@@ -43,21 +47,24 @@ type EntityTableProps<T> = {
   filterFields?: FilterField[];
   onRowClick?: (row: T) => void;
 };
-
+const options = {
+  rowsPerPageText: "Filas por página",
+  rangeSeparatorText: "de",
+};
 export function EntityTable<T>({
   data,
   columns,
   filterFields = [],
   onRowClick,
 }: EntityTableProps<T>) {
-  const {theme} =useUI()
-  const { register, handleSubmit } = useForm<Record<string, string>>();
+  const { theme } = useUI();
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  //const { register, handleSubmit } = useForm<Record<string, string>>();
   const [filteredData, setFilteredData] = useState<T[]>(data);
-
-  const onFilter = (filters: Record<string, string>) => {
+  const onFilter = (newFilters: Record<string, string>) => {
     const result = data.filter((item) =>
       filterFields.every(({ key }) => {
-        const value = filters[key]?.toLowerCase() ?? "";
+        const value = newFilters[key]?.toLowerCase() ?? "";
         const itemValue = String((item as any)[key] ?? "").toLowerCase();
         return itemValue.includes(value);
       })
@@ -65,6 +72,11 @@ export function EntityTable<T>({
     setFilteredData(result);
   };
 
+  const handleChange = (key: string, value: string, auto?: boolean) => {
+    const updated = { ...filters, [key]: value };
+    setFilters(updated);
+    if (auto) onFilter(updated);
+  };
   useEffect(() => {
     setFilteredData(data);
   }, [data]);
@@ -72,19 +84,45 @@ export function EntityTable<T>({
   return (
     <>
       {filterFields.length > 0 && (
-        <form className="flex gap-2 items-baseline md:flex-row flex-col" onSubmit={handleSubmit(onFilter)}>
-          {filterFields.map(({ key, label, type = "text", options }) => (
-            <div key={key} className="w-full">
-              {type === "select" ? (
-                <Select {...register(key)}>{options}</Select>
-              ) : (
-                <Input type="search" placeholder={label} {...register(key)} />
-              )}
+        <form
+          className="flex gap-2 items-baseline md:flex-row flex-col"
+          onSubmit={(e) => {
+            e.preventDefault();
+            onFilter(filters);
+          }}
+        >
+          {filterFields.map(
+            ({ key, label, type = "text", options, autoFilter }) => (
+              <div key={key} className="w-full">
+                {type === "select" ? (
+                  <Select
+                    value={filters[key] ?? ""}
+                    onChange={(e) =>
+                      handleChange(key, e.target.value, autoFilter)
+                    }
+                  >
+                    {options}
+                  </Select>
+                ) : (
+                  <Input
+                    type="search"
+                    placeholder={label}
+                    value={filters[key] ?? ""}
+                    onChange={(e) =>
+                      handleChange(key, e.target.value, autoFilter)
+                    }
+                  />
+                )}
+              </div>
+            )
+          )}
+          {!filterFields.every((f) => f.autoFilter) && (
+            <div className="w-32">
+              <Button variant="yellow" type="submit">
+                Filtrar
+              </Button>
             </div>
-          ))}
-          <div className="w-32">
-            <Button variant="yellow" type="submit">Filtrar</Button>
-          </div>
+          )}
         </form>
       )}
       <DataTable
@@ -97,6 +135,7 @@ export function EntityTable<T>({
         onRowClicked={onRowClick}
         pointerOnHover
         highlightOnHover
+        paginationComponentOptions={options}
       />
     </>
   );

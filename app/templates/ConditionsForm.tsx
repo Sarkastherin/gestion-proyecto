@@ -29,7 +29,7 @@ export default function ConditionsForm({
 }) {
   const [isEditMode, setIsEditMode] = useState(false);
   const { openModal } = useUIModals();
-  const { isModeEdit, editByStatus } = useUI();
+  const { editByStatus } = useUI();
   const { selectedOpportunity } = useData();
   const { quotes } = selectedOpportunity || {};
   const {
@@ -124,7 +124,7 @@ export default function ConditionsForm({
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={!isModeEdit}>
+        <fieldset disabled={!isEditMode}>
           <CardToggle title="Formas y metodos de pago">
             <div className="grid lg:grid-cols-2 md:grid-cols-1 gap-2">
               <Select
@@ -197,7 +197,7 @@ export default function ConditionsForm({
             </div>
           </CardToggle>
         </fieldset>
-        <fieldset disabled={!isModeEdit}>
+        <fieldset disabled={!isEditMode}>
           <CardToggle title="Margenes de Ganancias">
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto divide-y-2 divide-zinc-200 dark:divide-zinc-700">
@@ -351,7 +351,7 @@ export default function ConditionsForm({
             </div>
           </CardToggle>
         </fieldset>
-        <fieldset disabled={!isModeEdit}>
+        <fieldset disabled={!isEditMode}>
           <Card>
             <table className="min-w-full table-auto ">
               <colgroup>

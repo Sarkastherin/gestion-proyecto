@@ -19,6 +19,7 @@ export function BadgeStatus({
     Revisión: "bg-orange-200 text-orange-700",
     Ganada: "bg-green-200 text-green-700",
     Perdida: "bg-red-200 text-red-700",
+    Vencida: "bg-orange-200 text-orange-700",
     "No status": "bg-red-200 text-red-700",
   };
   const sizes = {

@@ -1,6 +1,6 @@
 import { Input } from "~/components/Forms/Inputs";
 import { pricesApi } from "~/backend/cruds";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, set } from "react-hook-form";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useUI } from "~/context/UIContext";
 import { useEffect, useState } from "react";
@@ -40,11 +40,11 @@ export default function PricesForm({
   const [pricesToDelete, setPricesToDelete] = useState<Array<PricesDB["id"]>>(
     []
   );
-  const { setOpenSupplierModal, selectedSupplier, isModeEdit } = useUI();
+  const { selectedSupplier } = useUI();
   const {
     register,
     watch,
-    formState: { errors, dirtyFields, isSubmitSuccessful, isDirty },
+    formState: { errors, dirtyFields, isDirty },
     control,
     setValue,
     handleSubmit,
@@ -67,7 +67,7 @@ export default function PricesForm({
   };
   const onSubmit = async (data: DefaulTypes) => {
     const defaultPrices = data.prices.filter((p) => p.default);
-    if (defaultPrices.length !== 1) {
+    if (defaultPrices.length !== 1 && data.prices.length > 0) {
       openModal("INFORMATION", {
         title: "Formulario inválido",
         message: "Debe haber al menos un precio marcado como 'default'",
@@ -82,6 +82,10 @@ export default function PricesForm({
       return;
     }
     try {
+      openModal("LOADING", {
+        title: "Guardando precios",
+        message: "Por favor, espere...",
+      });
       const { prices } = data;
       const newData = await updatesArrayFields({
         fieldsArray: prices,
@@ -132,6 +136,9 @@ export default function PricesForm({
   }, [selectedSupplier]);
   useEffect(() => {
     reset(defaultValues);
+    if(modalMode) {
+      setIsEditMode(true);
+    }
   }, []);
   useEffect(() => {
     if (fields.length > 0) {
@@ -156,7 +163,7 @@ export default function PricesForm({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="">
-        <fieldset disabled={!isModeEdit}>
+        <fieldset disabled={!isEditMode}>
           <div className="overflow-x-auto">
             <table className="min-w-full table-auto divide-y-2 divide-zinc-200 dark:divide-zinc-700">
               <colgroup>

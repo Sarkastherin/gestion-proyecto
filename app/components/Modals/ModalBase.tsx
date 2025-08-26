@@ -14,7 +14,7 @@ type ModalProps = {
   title: string;
   zIndex: number;
   children: React.ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
   footer?: FooterModal;
   icon?: React.ReactNode;
   width?: string;
@@ -54,7 +54,8 @@ export default function ModalBase({
           >
             {title}
           </h2>
-          <button
+          {onClose && (
+            <button
             type="button"
             onClick={onClose}
             className="-me-4 -mt-4 rounded-full p-2 text-zinc-400 transition-colors hover:bg-zinc-50 hover:text-zinc-600 focus:outline-none dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-red-400 cursor-pointer"
@@ -75,6 +76,7 @@ export default function ModalBase({
               />
             </svg>
           </button>
+          )}
         </div>
 
         <div className="mt-4">{children}</div>

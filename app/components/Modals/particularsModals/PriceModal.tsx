@@ -16,21 +16,15 @@ export default function PriceModal({
 }) {
   return (
     <ModalBase
-      title="Listado de Materiales"
+      title={`Listado de Precios ${idMaterial ? `- ID: ${idMaterial}` : ""}`}
       open={open}
       zIndex={40}
       onClose={onClose}
       width="max-w-4xl"
-      footer={{
-        btnSecondary: {
-          label: "Cancelar",
-          handleOnClick: onClose,
-        },
-      }}
     >
       <div
         className="px-6 pt-6 overflow-y-auto"
-        style={{ height: "calc(100vh - 270px)" }}
+        style={{ maxHeight: "calc(100vh - 270px)" }}
       >
         {prices && idMaterial && (
           <PricesForm

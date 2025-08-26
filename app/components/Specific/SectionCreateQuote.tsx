@@ -1,17 +1,16 @@
-import { useUI } from "~/context/UIContext";
 import { quotesApi } from "~/backend/cruds";
 import { Button } from "../Forms/Buttons";
 import { Card } from "../Generals/Cards";
 import React, { useState } from "react";
 import { ButtonNavigate } from "./Buttons";
 import { useOpportunityRealtime } from "~/backend/realTime";
-import { LayoutModal } from "../Generals/Modals";
-import ModalQuotes from "./ModalQuotes";
 import { useData } from "~/context/DataContext";
 import type { QuotesProps } from "~/types/opportunitiesType";
 import DuplicateQuoteModal from "../modals/particularsModals/DuplicateQuoteModal";
 import { useModalState } from "../modals/particularsModals/useModalState";
 import type { ViewType } from "../modals/particularsModals/DuplicateQuoteModal";
+import { useUIModals } from "~/context/ModalsContext";
+import ModalBase from "../modals/ModalBase";
 const ContainerSection = ({
   title,
   message,
@@ -49,10 +48,10 @@ export function ButtonCreateQuote({
   label?: string;
 }) {
   useOpportunityRealtime();
+  const { openModal } = useUIModals();
   const duplicateQuoteModal = useModalState<ViewType>();
   const [open, setOpen] = useState<boolean>(false);
   const { selectedOpportunity } = useData();
-  const { showModal, setOpenQuotesModal } = useUI();
   const { quotes } = selectedOpportunity || {};
 
   const handleCreateQuote = async () => {
@@ -72,7 +71,7 @@ export function ButtonCreateQuote({
           });
           if (updateError) throw new Error(updateError.message);
         }
-        showModal({ title: "Procesando", message: "Creando cotización" });
+        openModal("LOADING", { message: "Creando cotización" });
         const newQuote: QuotesProps = {
           id_opportunity: selectedOpportunity.id,
           status: "Abierta",
@@ -80,18 +79,14 @@ export function ButtonCreateQuote({
         };
         const { error: insertError } = await quotesApi.insertOne(newQuote);
         if (insertError) throw new Error(insertError.message);
-        showModal({
-          title: "¡Todo OK!",
+        openModal("SUCCESS", {
           message: "Cotización inicializada",
-          variant: "success",
         });
       }
     } catch (e) {
-      showModal({
-        title: "Error al actualizar",
+      openModal("ERROR", {
         message: `Problemas al intentar crear la cotización`,
         code: String(e),
-        variant: "error",
       });
     }
   };
@@ -104,11 +99,11 @@ export function ButtonCreateQuote({
       <div className="w-42">
         <Button onClick={() => setOpen(true)}>{label}</Button>
       </div>
-      <LayoutModal
+      <ModalBase
         open={open}
-        handleOpen={() => setOpen(false)}
+        onClose={() => setOpen(false)}
         title="Crear nueva cotización"
-        size="w-md min-w-xs"
+        zIndex={50}
       >
         <div className="flex flex-col gap-4 mt-6">
           <p className="text-sm">Puedes comenzar una cotización desde cero:</p>
@@ -128,7 +123,7 @@ export function ButtonCreateQuote({
             </Button>
           </span>
         </div>
-      </LayoutModal>
+      </ModalBase>
       <DuplicateQuoteModal
         open={duplicateQuoteModal.open}
         onClose={duplicateQuoteModal.closeModal}

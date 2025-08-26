@@ -15,7 +15,6 @@ export function ModalManager() {
     case "LOADING":
       return (
         <ModalLoading
-          onClose={closeModal}
           message={props?.message}
           title={props?.title}
         />
@@ -27,7 +26,7 @@ export function ModalManager() {
           message={props?.message}
           title={props?.title}
           btnPrimary={props?.btnPrimary}
-          btnSecondary={{ label: "Cerrar", handleOnClick: closeModal }}
+          btnSecondary={{ label: "Aceptar", handleOnClick: closeModal, variant: "green" }}
         />
       );
     case "ERROR":
@@ -36,6 +35,7 @@ export function ModalManager() {
           onClose={closeModal}
           message={props?.message}
           title={props?.title}
+          btnSecondary={{ label: "Aceptar", handleOnClick: closeModal, variant: "danger" }}
         />
       );
     case "CONFIRMATION":
@@ -59,6 +59,7 @@ export function ModalManager() {
           onClose={closeModal}
           message={props?.message}
           title={props?.title}
+          btnSecondary={{ label: "Aceptar", handleOnClick: closeModal, variant: "blue" }}
         />
       );
     default:

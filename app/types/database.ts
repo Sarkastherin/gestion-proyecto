@@ -6,6 +6,7 @@ export type StatusType =
   | "Revisión"
   | "Ganada"
   | "Perdida"
+  | "Vencida"
   | "No status";
 
 export type CommonTypesDataBase = {

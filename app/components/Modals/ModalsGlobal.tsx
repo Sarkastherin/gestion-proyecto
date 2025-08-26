@@ -1,3 +1,4 @@
+import type { variants } from "../Forms/Buttons";
 import ModalBase from "./ModalBase";
 import { ClipLoader } from "react-spinners";
 
@@ -40,14 +41,12 @@ export function ModalConfirmation({
 export function ModalLoading({
   title = "⏳ Un momento...",
   message = "Se está procesando su requerimiento",
-  onClose,
 }: {
   title?: string;
   message?: string;
-  onClose: () => void;
 }) {
   return (
-    <ModalBase title={title} open zIndex={50} onClose={onClose}>
+    <ModalBase title={title} open zIndex={50}>
       <div className="flex flex-col items-center justify-center py-6 gap-4">
         <ClipLoader color="#4F46E5" size={40} />
         <p className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
@@ -61,18 +60,31 @@ export function ModalInformation({
   title = "ℹ️ Información",
   message,
   onClose,
+btnSecondary,
 }: {
   title?: string;
   message?: string;
   onClose: () => void;
-}) {
+  btnPrimary?: {
+    label: string;
+    handleOnClick: () => void;
+    variant?: keyof typeof variants;
+  };
+  btnSecondary: {
+    label: string;
+    handleOnClick: () => void;
+    variant?: keyof typeof variants;
+  };
+}) {/*  */
+  const footer = {
+    btnSecondary,
+  };
   return (
-    <ModalBase title={title} open zIndex={50} onClose={onClose}>
-      <div className="flex flex-col items-center justify-center py-6 gap-4">
-        <ClipLoader color="#4F46E5" size={40} />
-        <p className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
+    <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
+      <div className="flex flex-col items-center justify-center py-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
+        <div className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
           {message}
-        </p>
+        </div>
       </div>
     </ModalBase>
   );
@@ -90,10 +102,12 @@ export function ModalSuccess({
   btnPrimary?: {
     label: string;
     handleOnClick: () => void;
+    variant?: keyof typeof variants;
   };
   btnSecondary: {
     label: string;
     handleOnClick: () => void;
+    variant?: keyof typeof variants;
   };
 }) {
   const footer = {
@@ -102,8 +116,8 @@ export function ModalSuccess({
   };
   return (
     <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
-      <div className="flex flex-col items-center justify-center py-4 bg-lime-100 dark:bg-lime-200 rounded-lg">
-        <p className="text-sm text-zinc-700 text-center max-w-xs">{message}</p>
+      <div className="flex flex-col items-center justify-center py-4 rounded-lg bg-zinc-700/50">
+        <p className="text-sm text-zinc-300 text-center max-w-xs">{message}</p>
       </div>
     </ModalBase>
   );
@@ -112,27 +126,29 @@ export function ModalError({
   title = "❌ Algo salió mal...",
   message = "Ocurrió un error al realizar la operación.",
   onClose,
+  btnSecondary,
 }: {
   title?: string;
   message?: string;
   onClose: () => void;
+  btnPrimary?: {
+    label: string;
+    handleOnClick: () => void;
+    variant?: keyof typeof variants;
+  };
+  btnSecondary: {
+    label: string;
+    handleOnClick: () => void;
+    variant?: keyof typeof variants;
+  };
 }) {
+  const footer = {
+    btnSecondary,
+  };
   return (
-    <ModalBase
-      title={title}
-      open
-      zIndex={50}
-      onClose={onClose}
-      footer={{
-        btnPrimary: {
-          label: "Aceptar",
-          handleOnClick: onClose,
-          variant: "secondary",
-        },
-      }}
-    >
-      <div className="flex flex-col items-center justify-center py-4 bg-red-200 rounded-lg">
-        <p className="text-sm text-zinc-700 text-center max-w-xs">{message}</p>
+    <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
+      <div className="flex flex-col items-center justify-center py-4 rounded-lg bg-zinc-700/50">
+        <p className="text-sm text-zinc-300 text-center max-w-xs">{message}</p>
       </div>
     </ModalBase>
   );

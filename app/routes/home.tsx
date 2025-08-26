@@ -1,6 +1,8 @@
 import type { Route } from "./+types/home";
 import { appVersion } from "~/utils/functions";
 import { dateUSFormatted } from "~/utils/functions";
+import { Button } from "~/components/Forms/Buttons";
+import { useUIModals } from "~/context/ModalsContext";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Bienvenido" },
@@ -8,13 +10,15 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-
 export default function Home() {
+  const { openModal } = useUIModals();
   const to = dateUSFormatted(new Date());
   const fromArray = to.split("-");
   fromArray[2] = "01";
   const from = fromArray.join("-");
-
+  const handleTestModals = () => {
+    openModal("LOADING");
+  };
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full text-center text-zinc-600 dark:text-zinc-400 mt-20">
@@ -27,7 +31,7 @@ export default function Home() {
           conversiones y más, todo desde un solo lugar.
         </p>
       </div>
-      
+
       <div className="fixed bottom-0 w-full bg-zinc-200 dark:bg-zinc-900 py-2 px-4">
         <p className="text-end text-xs text-zinc-400 dark:text-zinc-600">
           Versión: <span className="font-mono">{appVersion}</span>

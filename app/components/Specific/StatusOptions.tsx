@@ -6,6 +6,7 @@ export const StatusOptions = () => {
       <option value={"En proceso"}>⏳ En proceso</option>
       <option value={"Enviada"}>📧 Enviada</option>
       <option value={"Revisión"}>⚠️ Revisión</option>
+      <option value={"Vencida"}>❗ Vencida</option>
       <option value={"Ganada"}>✅ Ganada</option>
       <option value={"Perdida"}>❌ Perdida</option>
     </>

@@ -13,7 +13,6 @@ import {
   duplicateItems,
   duplicateMaterials,
   duplicatePhases,
-  getQuoteById,
   mapPhases,
 } from "~/utils/duplicateQuote";
 import type { OpportunityAndQuotesUI } from "~/types/opportunitiesType";
@@ -69,7 +68,7 @@ export default function DuplicateQuoteModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { getOpportunityById, selectedOpportunity } = useData();
+  const { getOpportunityById, selectedOpportunity, refreshOpportunity } = useData();
   const { openModal, setProgressiveSteps, updateStep } = useUIModals();
   const [data, setData] = useState<ViewType[] | null>(null);
   const [filterData, setFilterData] = useState<ViewType[]>([]);
@@ -97,7 +96,6 @@ export default function DuplicateQuoteModal({
     { label: "Duplicando materiales", status: "pending" },
   ];
   const handleRowClicked = (data: ViewType) => {
-    console.log(data);
     openModal("CONFIRMATION", {
       title: "Confirmar Duplicación",
       message: (
@@ -160,6 +158,7 @@ export default function DuplicateQuoteModal({
           id_opportunity: data.id_opportunity,
           selectedOpportunity: selectedOpportunity,
         });
+        refreshOpportunity();
         openModal("SUCCESS", {
           title: "✅ Cotización duplicada con éxito",
           message: "La cotización se ha duplicado correctamente.",
@@ -234,14 +233,14 @@ export default function DuplicateQuoteModal({
     >
       <div
         className="px-6 pt-6 overflow-y-auto"
-        style={{ height: "calc(100vh - 270px)" }}
+        style={{ maxHeight: "calc(100vh - 270px)" }}
       >
         <EntityTable
           columns={columns}
           data={filterData}
           onRowClick={handleRowClicked}
           filterFields={[
-            { key: "opportunity_name", label: "Buscar por descripción" },
+            { key: "opportunity_name", label: "Buscar por descripción", autoFilter: true },
           ]}
         />
       </div>

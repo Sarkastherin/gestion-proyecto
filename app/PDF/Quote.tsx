@@ -24,7 +24,7 @@ export default function PDFQuote({
   }, [quoteActive]);
 
   return (
-    <div style={{ height: "calc(100vh - 270px)" }}>
+    <div style={{ maxHeight: "calc(100vh - 270px)" }}>
       <PDFViewer key={JSON.stringify(settings)} width="100%" height="100%">
         {quote && (
           <QuotePDFDocument

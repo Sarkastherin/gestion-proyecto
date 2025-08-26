@@ -7,10 +7,10 @@ import { EntityTable } from "~/components/Generals/EntityTable";
 import { Button } from "~/components/Forms/Buttons";
 import type { MaterialsUI } from "~/types/materialsType";
 import { ButtonExport } from "~/components/Specific/Buttons";
-import { Modal } from "~/components/Generals/Modals";
 import { ImportCsvInput } from "~/utils/import";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
+import ModalBase from "~/components/modals/ModalBase";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Materiales" },
@@ -28,7 +28,6 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
     name: "Descripcion",
     selector: (row) => row.description,
     sortable: true,
-    width: "450px",
     wrap: true,
   },
   {
@@ -54,7 +53,7 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
   },
 ];
 export default function Materials() {
-  const [hidden, setHidden] = useState(true);
+  const [open, setOpen] = useState(true);
   const { getMaterials, materials } = useData();
   const navigate = useNavigate();
 
@@ -62,7 +61,7 @@ export default function Materials() {
     if (!materials) getMaterials();
   }, []);
   const handleUploadFile = () => {
-    setHidden(false);
+    setOpen(true);
   };
   const headers = [
     { label: "ID", key: "id" },
@@ -104,15 +103,15 @@ export default function Materials() {
           />
         </div>
       </FooterUITables>
-      <Modal hidden={hidden} setHidden={setHidden} title="Seleccionar archivo">
+      <ModalBase open={open} onClose={() => setOpen(false)} zIndex={10} title="Seleccionar archivo">
         <div className="text-zinc-700 dark:text-zinc-300 mb-10 space-y-3">
-          <p className="text-lg font-semibold">Herramienta de Importación</p>
+          <p className="text-md font-semibold">Herramienta de Importación</p>
           <p>
             Para ayudarte a preparar los materiales de forma correcta, puedes
             usar una hoja de Google Sheets que genera el formato compatible con
             esta importación.
           </p>
-          <ul className="list-disc list-inside text-sm text-zinc-600 dark:text-zinc-400">
+          <ul className="list-disc list-inside text-sm text-zinc-700 dark:text-zinc-300 p-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
             <li>
               Seleccioná familia, rubro y subrubro desde listas predefinidas.
             </li>
@@ -147,7 +146,7 @@ export default function Materials() {
           className="block text-sm text-zinc-700 file:border-none file:bg-indigo-600 file:text-white file:rounded file:px-4 file:py-1 hover:file:bg-indigo-500"
           onSuccess={getMaterials}
         />
-      </Modal>
+      </ModalBase>
     </>
   );
 }

@@ -26,7 +26,7 @@ export default function PhasesForm({
   const [phasesToDelete, setPhasesToDelete] = useState<Array<PhasesDB["id"]>>(
     []
   );
-  const { isModeEdit, editByStatus } = useUI();
+  const { editByStatus } = useUI();
   const { openModal } = useUIModals();
   const {
     register,
@@ -101,7 +101,7 @@ export default function PhasesForm({
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={!isModeEdit}>
+        <fieldset disabled={!isEditMode}>
           <CardToggle title="Etapas">
             <div className="overflow-x-auto">
               <table className="min-w-full table-auto divide-y-2 divide-zinc-200 dark:divide-zinc-700">

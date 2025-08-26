@@ -1,12 +1,11 @@
 import { useEffect } from "react";
-import { Button } from "../Forms/Buttons";
 import { useForm } from "react-hook-form";
 import { Input, Select } from "../Forms/Inputs";
-import { LayoutModal } from "../Generals/Modals";
 import type { DefaultValues, Path } from "react-hook-form";
 import { updateSingleRow, type DirtyMap } from "~/utils/updatesSingleRow";
 import type { CrudMethod } from "~/backend/crudFactory";
 import { useUIModals } from "~/context/ModalsContext";
+import ModalBase from "../modals/ModalBase";
 
 type Field<T> = {
   name: Path<T>;
@@ -71,11 +70,15 @@ export function ConfigFormModal<
 
   if (!open) return null;
   return (
-    <LayoutModal
+    <ModalBase
       open={open}
       title={`${initialValues?.id ? "Editar" : "Agregar"} registro`}
-      handleOpen={onClose}
-      size="w-md min-w-xs"
+      onClose={onClose}
+      zIndex={10}
+      footer={{
+        btnPrimary: { label: "Guardar", handleOnClick: handleSubmit(onSubmit)},
+        btnSecondary: { label: "Cancelar", handleOnClick: onClose, variant: "secondary" },
+      }}
     >
       <form className="space-y-4 mt-4" onSubmit={handleSubmit(onSubmit)}>
         {fields.map((f) => (
@@ -117,16 +120,7 @@ export function ConfigFormModal<
             )}
           </div>
         ))}
-
-        <div className="mt-6 flex justify-end gap-2">
-          <Button type="button" variant="secondary_outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button type="submit">
-            {initialValues?.id ? "Actualizar" : "Crear"}
-          </Button>
-        </div>
       </form>
-    </LayoutModal>
+    </ModalBase>
   );
 }

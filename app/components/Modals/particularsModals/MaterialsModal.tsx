@@ -49,7 +49,7 @@ export default function MaterialsModal({
     >
       <div
         className="px-6 pt-6 overflow-y-auto"
-        style={{ height: "calc(100vh - 270px)" }}
+        style={{ maxHeight: "calc(100vh - 270px)" }}
       >
         <EntityTable
           columns={columnsMaterials}

@@ -10,6 +10,7 @@ import { Button } from "~/components/Forms/Buttons";
 import { materialsApi } from "~/backend/cruds";
 import { useData } from "~/context/DataContext";
 import ItemsHeader from "~/components/Generals/ItemsHeader";
+import { useUIModals } from "~/context/ModalsContext";
 
 const menuItems = (id: number) => {
   return [
@@ -28,6 +29,7 @@ const menuItems = (id: number) => {
 export default function MaterialLayout() {
   const navigate = useNavigate();
   const { getMaterial, getMaterials, materials, selectedMaterial } = useData();
+  const { openModal } = useUIModals();
   const { id } = useParams();
   const menu = menuItems(Number(id));
   useEffect(() => {
@@ -37,14 +39,24 @@ export default function MaterialLayout() {
     if (materials) getMaterial(Number(id), materials);
   }, [materials]);
   const handleDelete = async () => {
-    if (confirm("¿Está seguro de eliminar este material?")) {
-      const { error } = await materialsApi.remove({ id: Number(id) });
-      if (error) {
-        alert(error.message);
-        return;
-      }
-      navigate("materials");
-    }
+    openModal("CONFIRMATION", {
+      title: "Confirmar eliminación",
+      message: "¿Está seguro de eliminar este material?",
+      onConfirm: async () => {
+        const { error } = await materialsApi.remove({ id: Number(id) });
+        if (error) {
+          openModal("ERROR", {
+            message: error.message,
+          });
+          return;
+        }
+        openModal("SUCCESS", {
+          message: "Material eliminado correctamente",
+        });
+        getMaterials();
+        navigate("materials");
+      },
+    });
   };
   return (
     <>

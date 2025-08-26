@@ -45,16 +45,27 @@ export default function ProjectLayout() {
   return (
     <>
       {selectedProject && (
-        <ItemsHeader
-          iconTitle={
-            <BriefcaseIcon className="w-5 text-white dark:text-zinc-900" />
-          }
-          color="bg-fuchsia-500"
-          title={selectedProject?.name}
-          menu={menu}
-        />
+        <>
+          <ItemsHeader
+            iconTitle={
+              <BriefcaseIcon className="w-5 text-white dark:text-zinc-900" />
+            }
+            color="bg-fuchsia-500"
+            title={selectedProject?.name}
+            menu={menu}
+          />
+          <div className="flex flex-col items-center justify-center h-full text-center text-zinc-600 dark:text-zinc-400 mt-20">
+            <span className="text-2xl font-semibold mb-2">
+              🛠️ En construcción
+            </span>
+            <p className="max-w-md">
+              Se esta creando la interfaz de cada proyecto individual. Muy pronto vas a poder
+              gestionar tus proyectos de manera más eficiente.
+            </p>
+          </div>
+          {/* <Outlet /> */}
+        </>
       )}
-      <Outlet />
     </>
   );
 }

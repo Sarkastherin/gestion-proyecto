@@ -63,14 +63,14 @@ export default function ContactsModal({
         },
       }}
     >
-      <div className="px-6 pt-6 overflow-y-auto" style={{ height: "calc(100vh - 270px)" }}>
+      <div className="px-6 pt-6 overflow-y-auto" style={{ maxHeight: "calc(100vh - 270px)" }}>
         <EntityTable
           columns={columns}
           data={filterData}
           onRowClick={handleRowClicked}
           filterFields={[
-            { key: "nombre", label: `${type === "client" ? "Cliente" : "Proveedor"}` },
-            { key: "cuit", label: "CUIT" },
+            { key: "nombre", label: `${type === "client" ? "Cliente" : "Proveedor"}`, autoFilter: true },
+            { key: "cuit", label: "CUIT", autoFilter: true },
           ]}
         />
       </div>

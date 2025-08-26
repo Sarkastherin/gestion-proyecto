@@ -37,7 +37,6 @@ export default function Items() {
   const {
     selectedPhase,
     editByStatus,
-    isModeEdit,
   } = useUI();
   const { selectedOpportunity } = useData();
   const {
@@ -142,7 +141,7 @@ export default function Items() {
           className=" flex flex-col gap-6"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <fieldset disabled={!isModeEdit}>
+          <fieldset disabled={!isEditMode}>
             <div className="overflow-x-auto">
               <TableDetailsQuotes title="Tabla Items" columns={columnsItems}>
                 {fields
