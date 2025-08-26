@@ -10,7 +10,7 @@ import { ButtonExport } from "~/components/Specific/Buttons";
 import { ImportCsvInput } from "~/utils/import";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
-import ModalBase from "~/components/modals/ModalBase";
+import ModalBase from "~/components/modals_temp/ModalBase";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Materiales" },

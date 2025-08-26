@@ -5,7 +5,7 @@ import type { DefaultValues, Path } from "react-hook-form";
 import { updateSingleRow, type DirtyMap } from "~/utils/updatesSingleRow";
 import type { CrudMethod } from "~/backend/crudFactory";
 import { useUIModals } from "~/context/ModalsContext";
-import ModalBase from "../modals/ModalBase";
+import ModalBase from "../modals_temp/ModalBase";
 
 type Field<T> = {
   name: Path<T>;

@@ -4,7 +4,7 @@ import { useAuth } from "~/context/AuthContext";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useContacts } from "~/context/ContactsContext";
-import { ModalManager } from "~/components/modals/ModalManager";
+import { ModalManager } from "~/components/modals_temp/ModalManager";
 export default function MainLayout() {
   const { isLoadedContacts, setIsLoadedContacts } = useContacts();
   const { auth, session } = useAuth();
