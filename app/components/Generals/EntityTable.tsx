@@ -1,12 +1,10 @@
 import React, { useState, useEffect, type JSX } from "react";
-import { useForm } from "react-hook-form";
 import DataTable, {
   createTheme,
   type TableColumn,
 } from "react-data-table-component";
 import { Input, Select } from "../Forms/Inputs";
 import { Button } from "../Forms/Buttons";
-import { ContainerWithTitle } from "../Generals/Containers";
 import { useUI } from "~/context/UIContext";
 export const customStyles = {
   headCells: {
