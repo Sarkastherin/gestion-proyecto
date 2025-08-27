@@ -27,7 +27,7 @@ export function InformationForms({
   const onSubmit = (data: ProjectsDB) => {
     console.log(data);
   };
-  console.log(defaultValues);
+  //console.log(defaultValues);
   return (
     <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
       <fieldset disabled={!isEditMode}>

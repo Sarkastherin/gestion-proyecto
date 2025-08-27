@@ -53,7 +53,7 @@ export async function duplicatePhases({
   if (!data || data.length !== filtered.length)
     throw new Error("Cantidad de fases duplicadas no coincide.");
 
-  return data;
+  return { insertedPhases: data, filteredPhases: filtered };
 }
 export async function createNewQuote(opportunity: OpportunityAndQuotesUI) {
   const activeQuote = opportunity.quotes?.find((q) => q.active);
@@ -79,10 +79,16 @@ export async function createNewQuote(opportunity: OpportunityAndQuotesUI) {
   return data;
 }
 export function mapPhases(
-  oldPhases: PhasesDB[],
+  filteredPhases: PhasesDB[],
   insertedPhases: PhasesDB[]
 ): Record<number, number> {
-  return oldPhases.reduce<Record<number, number>>((map, old, i) => {
+  if (filteredPhases.length !== insertedPhases.length) {
+    throw new Error(
+      "Cantidad de fases insertadas no coincide con las fases filtradas"
+    );
+  }
+
+  return filteredPhases.reduce<Record<number, number>>((map, old, i) => {
     map[old.id] = insertedPhases[i].id;
     return map;
   }, {});
@@ -117,7 +123,8 @@ export async function duplicateMaterials(
       id_quote: quoteId,
     })
   );
-
+  console.log(newMaterials);
   const { error } = await details_materialsApi.insert(newMaterials);
+  console.log(error);
   if (error) throw new Error(`Error al duplicar materiales: ${error.message}`);
 }

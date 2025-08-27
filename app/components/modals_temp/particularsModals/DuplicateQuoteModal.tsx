@@ -68,7 +68,8 @@ export default function DuplicateQuoteModal({
   open: boolean;
   onClose: () => void;
 }) {
-  const { getOpportunityById, selectedOpportunity, refreshOpportunity } = useData();
+  const { getOpportunityById, selectedOpportunity, refreshOpportunity } =
+    useData();
   const { openModal, setProgressiveSteps, updateStep } = useUIModals();
   const [data, setData] = useState<ViewType[] | null>(null);
   const [filterData, setFilterData] = useState<ViewType[]>([]);
@@ -176,11 +177,11 @@ export default function DuplicateQuoteModal({
     selectedOpportunity: OpportunityAndQuotesUI;
   }) {
     try {
+      console.log("Ejecutando duplicación de cotización...");
       const original = await getOpportunityById(id_opportunity, true);
       if (!original) throw new Error("No se encontró la oportunidad original.");
       validateOpportunityDuplication(original, selectedOpportunity);
 
-      //const quoteActive = getQuoteById(original, quote_id);
       const { phases, details_items, details_materials } = original;
 
       const oldItems = details_items.filter((i) => i.id_quote === quote_id);
@@ -188,23 +189,26 @@ export default function DuplicateQuoteModal({
         (m) => m.id_quote === quote_id
       );
       updateStep(0, "done");
-
-      const insertedPhases = await duplicatePhases({
+      console.log("Ejecutando duplicación de fases...");
+      const { insertedPhases, filteredPhases } = await duplicatePhases({
         oldPhases: phases,
         oldItems,
         oldMaterials,
         id_opportunity: selectedOpportunity.id,
       });
       updateStep(1, "done");
-      
+      console.log("Ejecutando duplicación de cotización...");
       const createdQuote = await createNewQuote(selectedOpportunity);
       updateStep(2, "done");
-      const phaseMap = mapPhases(phases, insertedPhases);
-
+      const phaseMap = mapPhases(filteredPhases, insertedPhases);
+      console.log(phaseMap)
+      console.log("Ejecutando duplicación de ítems...");
       await duplicateItems(oldItems, phaseMap, createdQuote.id);
       updateStep(3, "done");
+      console.log("Ejecutando duplicación de materiales...");
       await duplicateMaterials(oldMaterials, phaseMap, createdQuote.id);
-      updateStep(4, "done");/*  */
+      console.log("finalizado duplicateMaterials...");
+      updateStep(4, "done");
 
       openModal("SUCCESS", {
         title: "¡Todo OK!",
@@ -240,7 +244,11 @@ export default function DuplicateQuoteModal({
           data={filterData}
           onRowClick={handleRowClicked}
           filterFields={[
-            { key: "opportunity_name", label: "Buscar por descripción", autoFilter: true },
+            {
+              key: "opportunity_name",
+              label: "Buscar por descripción",
+              autoFilter: true,
+            },
           ]}
         />
       </div>
