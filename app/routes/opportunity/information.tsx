@@ -1,6 +1,5 @@
 import type { Route } from "../../+types/root";
 import OpportunityForm from "~/templates/OpportunityForm";
-import { useUI } from "~/context/UIContext";
 import { useData } from "~/context/DataContext";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import { useOpportunityRealtime } from "~/backend/realTime";

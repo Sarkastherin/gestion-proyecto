@@ -1,1 +1,0 @@
-import{r as t}from"./chunk-PVWAREVJ-xN2wnjH-.js";function p(){const[o,e]=t.useState(!1),[s,a]=t.useState(void 0),[n,r]=t.useState("view");return{open:o,data:s,variant:n,openModal:(c,l="view")=>{a(c),r(l),e(!0)},closeModal:()=>{e(!1),a(void 0)}}}export{p as u};

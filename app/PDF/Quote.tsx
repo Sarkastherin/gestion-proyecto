@@ -1,4 +1,4 @@
-import { useUI } from "~/context/UIContext";
+
 import { useData } from "~/context/DataContext";
 import { useEffect, useState} from "react";
 import type { QuotesUI } from "~/types/opportunitiesType";
@@ -24,7 +24,7 @@ export default function PDFQuote({
   }, [quoteActive]);
 
   return (
-    <div style={{ maxHeight: "calc(100vh - 270px)" }}>
+    <div style={{ height: "calc(100vh - 270px)" }}>
       <PDFViewer key={JSON.stringify(settings)} width="100%" height="100%">
         {quote && (
           <QuotePDFDocument
