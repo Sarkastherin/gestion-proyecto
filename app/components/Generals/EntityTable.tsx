@@ -6,6 +6,9 @@ import DataTable, {
 import { Input, Select } from "../Forms/Inputs";
 import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
+function getNestedValue(obj: any, path: string): any {
+  return path.split(".").reduce((acc, part) => acc?.[part], obj);
+}
 export const customStyles = {
   headCells: {
     style: {
@@ -57,13 +60,12 @@ export function EntityTable<T>({
 }: EntityTableProps<T>) {
   const { theme } = useUI();
   const [filters, setFilters] = useState<Record<string, string>>({});
-  //const { register, handleSubmit } = useForm<Record<string, string>>();
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const onFilter = (newFilters: Record<string, string>) => {
     const result = data.filter((item) =>
       filterFields.every(({ key }) => {
         const value = newFilters[key]?.toLowerCase() ?? "";
-        const itemValue = String((item as any)[key] ?? "").toLowerCase();
+        const itemValue = String(getNestedValue(item, key) ?? "").toLowerCase();
         return itemValue.includes(value);
       })
     );
