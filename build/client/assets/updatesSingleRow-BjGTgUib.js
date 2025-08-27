@@ -1,0 +1,1 @@
+const u=async({dirtyFields:n,formData:e,onUpdate:o})=>{const r=Object.entries(n).reduce((a,[i,s])=>(s&&(a[i]=e[i]),a),{});if(Object.keys(r).length===0)return;const{error:t}=await o({id:e.id,values:r});if(t)throw new Error(`No se pudo actualizar la fila. Error: ${String(t.message)}`)};export{u};
