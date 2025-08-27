@@ -1,0 +1,1 @@
+import{w as n,j as e}from"./chunk-PVWAREVJ-xN2wnjH-.js";function o({}){return[{title:"Resumen"},{name:"description",content:"Resumen del proyecto"}]}const r=n(function(){return e.jsx("div",{children:e.jsx("h1",{children:"Resumen"})})});export{r as default,o as meta};
