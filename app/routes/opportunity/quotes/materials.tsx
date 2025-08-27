@@ -50,7 +50,7 @@ export default function Materials() {
     Array<DetailsMaterialsDB["id"]>
   >([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const { selectedPhase, setOpenPriceModal, editByStatus } = useUI();
+  const { selectedPhase, editByStatus } = useUI();
   const { selectedOpportunity, materials } = useData();
   const {
     register,
@@ -188,7 +188,7 @@ export default function Materials() {
     if (activeIndex !== null) {
       setValue(`materials.${activeIndex}.prices`, price, {shouldDirty: true});
       setValue(`materials.${activeIndex}.id_price`, id, {shouldDirty: true});
-      setOpenPriceModal({ open: false, data: null, idMaterial: null });
+      priceModal.closeModal();
     }
   };
   return (

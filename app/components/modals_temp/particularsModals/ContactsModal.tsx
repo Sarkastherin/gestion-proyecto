@@ -37,8 +37,8 @@ export default function ContactsModal({
   const { clients, suppliers } = useContacts();
   const [filterData, setFilterData] = useState<ContactsDataType[]>([]);
   const handleRowClicked = (data: ContactsDataType) => {
-    if(type === "client") setSelectedClient(data);
-    if(type === "supplier") setSelectedSupplier(data);
+    if(type === "client") setSelectedClient({...data});
+    if(type === "supplier") setSelectedSupplier({...data});
     onClose();
   };
   useEffect(() => {

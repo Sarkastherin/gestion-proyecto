@@ -40,7 +40,7 @@ export default function PricesForm({
   const [pricesToDelete, setPricesToDelete] = useState<Array<PricesDB["id"]>>(
     []
   );
-  const { selectedSupplier } = useUI();
+  const { selectedSupplier, setSelectedSupplier } = useUI();
   const {
     register,
     watch,
@@ -118,6 +118,7 @@ export default function PricesForm({
   };
   const handlerSupplier = (index: number) => {
     setActiveIndex(index);
+    setSelectedSupplier(null);
     supplierModal.openModal();
   };
 

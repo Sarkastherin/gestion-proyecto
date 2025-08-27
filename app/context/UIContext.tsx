@@ -34,9 +34,7 @@ type UIContextType = {
   theme: ThemeProps;
   openClientModal: boolean;
   openSupplierModal: boolean;
-  propsPriceModal: PropsModalPrice;
   openQuotesModal: boolean;
-  setOpenPriceModal: React.Dispatch<React.SetStateAction<PropsModalPrice>>;
   setOpenClientModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenSupplierModal: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenQuotesModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -91,11 +89,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   /* Modales Específicos */
   const [openClientModal, setOpenClientModal] = useState<boolean>(false);
   const [openQuotesModal, setOpenQuotesModal] = useState<boolean>(false);
-  const [propsPriceModal, setOpenPriceModal] = useState<PropsModalPrice>({
-    open: false,
-    data: null,
-    idMaterial: null,
-  });
   const [openSupplierModal, setOpenSupplierModal] = useState<boolean>(false);
   /* Funcines */
   const toggleTheme = () => {
@@ -173,8 +166,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         categorizations,
         setCategorizations,
         getCategorizations,
-        propsPriceModal,
-        setOpenPriceModal,
         openSupplierModal,
         setOpenSupplierModal,
         selectedSupplier,
