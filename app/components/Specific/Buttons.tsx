@@ -45,8 +45,9 @@ export const ButtonDeleteIcon = ({
   );
 };
 export const ButtonAdd = ({
+  label = "Agregar",
   ...buttonProps
-}: ButtonHTMLAttributes<HTMLButtonElement>) => {
+}: { label?: string } & ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button
       className="cursor-pointer text-sm font-semibold border rounded-full py-2 px-4 text-indigo-500  border-indigo-400 hover:bg-zinc-200 hover:border-zinc-200 dark:text-indigo-300  dark:border-indigo-300 dark:hover:bg-zinc-700 dark:hover:border-zinc-700 disabled:cursor-not-allowed disabled:border-none disabled:text-gray-400 disabled:bg-gray-300 dark:disabled:text-zinc-500 dark:disabled:bg-zinc-700"
@@ -55,7 +56,7 @@ export const ButtonAdd = ({
     >
       <div className="flex gap-2">
         <PlusCircleIcon className="w-4" />
-        <span>Agregar</span>
+        <span>{label}</span>
       </div>
     </button>
   );

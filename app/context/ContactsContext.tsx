@@ -26,11 +26,39 @@ export type ContactsDataType = {
   telefono?: string;
   tipo?: string;
 };
+export type EmployeesDataType = {
+  id: number;
+  contacto_id: number;
+  legajo: string;
+  puesto: string;
+  fecha_ingreso: string;
+  fecha_egreso: string;
+  tipo_contrato: string;
+  categoria: string;
+  salario_basico: number;
+  fecha_nacimiento: string;
+  estado_civil: string;
+  nivel_estudios: string;
+  contacto_emergencia: string;
+  banco: string;
+  cbu: string;
+  alias_cbu: string;
+  observaciones: string;
+  created_at: string;
+  updated_at: string;
+  contacto_nombre: string;
+  contacto_cuit: string;
+  contacto_email: string;
+  contacto_telefono: string;
+  is_precarga: boolean;
+
+}
 type ContactsContextType = {
   clients: ContactsDataType[] | null;
   suppliers: ContactsDataType[] | null;
   isLoadedContacts: boolean | null;
   setIsLoadedContacts: (value: boolean | null) => void;
+  employees: EmployeesDataType[] | null;
 };
 type ContactsProviderProps = {
   children: ReactNode;
@@ -48,6 +76,9 @@ export const useContacts = (): ContactsContextType => {
 export const ContactsProvider = ({ children }: ContactsProviderProps) => {
   const [clients, setClients] = useState<Array<ContactsDataType> | null>(null);
   const [suppliers, setSuppliers] = useState<Array<ContactsDataType> | null>(
+    null
+  );
+  const [employees, setEmployees] = useState<Array<EmployeesDataType> | null>(
     null
   );
   const [isLoadedContacts, setIsLoadedContacts] = useState<boolean | null>(null)
@@ -108,15 +139,49 @@ export const ContactsProvider = ({ children }: ContactsProviderProps) => {
       return {success: false, error: error}
     }
   };
+  const getEmployees = async () => {
+    const myEmployeeData = [];
+    try {
+      let page = 1;
+      const page_size = 100;
+      let has_more = true;
+      while (has_more) {
+        const response = await fetch("/.netlify/functions/empleados", {
+          method: "POST",
+          body: JSON.stringify({ page, page_size }),
+        });
+        if (!response.ok)
+          throw new Error(
+            `⛔ Problemas obteniendo contactos de base de datos extena 🗄️. Mensaje: ${
+              response.statusText
+            }. | Status: ${500}`
+          );
+        const data = await response.json();
+        myEmployeeData.push(...data.data);
+        has_more = data.has_more;
+        page++;
+      }
+      setEmployees(myEmployeeData);
+      return {success: true}
+    } catch (error) {
+      //alert(error);
+      return {success: false, error: error}
+    }
+  };
   useEffect(() => {
     const fetching = async () => {
-      const {success: successClients, error: errorClient} = await getClients();
+      const {error: errorClient} = await getClients();
       if(errorClient) {
         setIsLoadedContacts(false)
       return
       }
-      const {success: successSuppliers, error: errorSuppliers} = await getSuppliers();
+      const {error: errorSuppliers} = await getSuppliers();
       if(errorSuppliers) {
+        setIsLoadedContacts(false)
+      return
+      }
+      const {error: errorEmployees} = await getEmployees();
+      if(errorEmployees) {
         setIsLoadedContacts(false)
       return
       }
@@ -125,7 +190,7 @@ export const ContactsProvider = ({ children }: ContactsProviderProps) => {
     fetching()
   }, []);
   return (
-    <ContactsContext.Provider value={{ clients, suppliers, isLoadedContacts, setIsLoadedContacts }}>
+    <ContactsContext.Provider value={{ clients, suppliers, isLoadedContacts, setIsLoadedContacts, employees }}>
       {children}
     </ContactsContext.Provider>
   );

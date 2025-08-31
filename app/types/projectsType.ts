@@ -1,8 +1,14 @@
-import type { ContactsDataType } from "~/context/ContactsContext";
+import type { ContactsDataType, EmployeesDataType } from "~/context/ContactsContext";
 import type { MyUser } from "~/context/AuthContext";
 import type { CommonPropsDB } from "./sharedTypes";
 import type { PricesDB, MaterialsDB } from "~/types/materialsType";
-export type StatusProjectsType = "Nuevo" | "Planificado" | "En proceso" | "Ejecutado"
+import type { Totals } from "~/utils/functions";
+import type { TotalsMargens } from "./opportunitiesType";
+export type StatusProjectsType =
+  | "Nuevo"
+  | "Planificado"
+  | "En proceso"
+  | "Ejecutado";
 export type ProjectsProps = {
   name: string;
   id_client: number;
@@ -22,10 +28,10 @@ export type ProjectsProps = {
   start_date?: string;
   end_date?: string;
   duration?: number;
-  status?: StatusProjectsType
+  status?: StatusProjectsType;
 };
 export type ProjectsDB = CommonPropsDB & ProjectsProps;
-export type ProjectsUI = ProjectsDB & {
+export type ProjectsUITable = ProjectsDB & {
   client: ContactsDataType;
   users: MyUser;
 };
@@ -48,7 +54,7 @@ export type BudgetMaterialsProps = {
   observations?: string;
   created_by?: string;
 };
-export type BudgetMaterialsDB= BudgetMaterialsProps & CommonPropsDB
+export type BudgetMaterialsDB = BudgetMaterialsProps & CommonPropsDB;
 export type BudgetMaterialsUI = BudgetMaterialsDB & {
   materials: MaterialsDB;
   prices: PricesDB | {};
@@ -66,9 +72,21 @@ export type BudgetItemProps = {
   created_by?: string;
 };
 export type BudgetItemDB = BudgetItemProps & CommonPropsDB;
-export type ProjectAndBudget = ProjectsDB & {
-  phases_project: PhasesProjectDB[];
-  budget_items: BudgetItemDB[];
-  budget_materials: BudgetMaterialsDB[];
-  client: ContactsDataType;
-}
+export type ProjectAndBudgetUI = ProjectsUITable &
+  TotalsMargens &
+  Omit<Totals, "id_quote"> & {
+    phases_project: PhasesProjectDB[];
+    budget_details_items: BudgetItemDB[];
+    budget_details_materials: BudgetMaterialsDB[];
+    client: ContactsDataType;
+  };
+
+export type TaskProps = {
+  name: string;
+  id_project: number;
+  id_phase: number;
+  id_supervisor: number;
+  progress: number;
+  duration: number;
+};
+export type TaskDB = TaskProps & CommonPropsDB;

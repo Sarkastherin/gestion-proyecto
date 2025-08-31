@@ -4,7 +4,6 @@ import { type ContactsDataType } from "./ContactsContext";
 import { supabase } from "~/backend/supabaseClient";
 import { useUIModals } from "./ModalsContext";
 
-import type { PricesDB } from "~/types/materialsType";
 export type Categorization = {
   description_category: string;
   description_family: string;
@@ -23,21 +22,18 @@ type CategorizationsProps = {
   subcategories: Array<CategoriesProps & { id_category: number }> | null;
 };
 type ThemeProps = "dark" | "light";
-
-type PropsModalPrice = {
-  open: boolean;
-  data: PricesDB[] | null;
-  idMaterial: number | null;
+export type QuoteTypes =
+  | "materiales"
+  | "mano de obra"
+  | "subcontratos"
+  | "otros";
+type PropsQuoteAndBudget = {
+  selsectedPhase: number;
+  activeType: QuoteTypes;
 };
 type UIContextType = {
   toggleTheme: () => void;
   theme: ThemeProps;
-  openClientModal: boolean;
-  openSupplierModal: boolean;
-  openQuotesModal: boolean;
-  setOpenClientModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenSupplierModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenQuotesModal: React.Dispatch<React.SetStateAction<boolean>>;
   selectedClient: ContactsDataType | null;
   setSelectedClient: React.Dispatch<
     React.SetStateAction<ContactsDataType | null>
@@ -57,10 +53,12 @@ type UIContextType = {
     React.SetStateAction<CategorizationsProps | null>
   >;
   getCategorizations: () => Promise<void>;
-  selectedPhase: number | null;
-  setSelectedPhase: React.Dispatch<React.SetStateAction<number | null>>;
   editByStatus: boolean;
   setEditByStatus: React.Dispatch<React.SetStateAction<boolean>>;
+  propsQuoteAndBudget: PropsQuoteAndBudget | null;
+  setPropsQuoteAndBudget: React.Dispatch<
+    React.SetStateAction<PropsQuoteAndBudget>
+  >;
 };
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
@@ -71,26 +69,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeProps>(
     prefersDark ? "dark" : "light"
   );
-  /* Datos */
   const [categorizations, setCategorizations] =
     useState<CategorizationsProps | null>(null);
   const [editByStatus, setEditByStatus] = useState<boolean>(false);
-  /* Seleccionados */
   const [selectedClient, setSelectedClient] = useState<ContactsDataType | null>(
     null
   );
-  const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
 
   const [selectedSupplier, setSelectedSupplier] =
     useState<ContactsDataType | null>(null);
-  /* Booleans */
   const [isFieldsChanged, setIsFieldsChanged] = useState<boolean>(false);
-  /* Modales */
-  /* Modales Específicos */
-  const [openClientModal, setOpenClientModal] = useState<boolean>(false);
-  const [openQuotesModal, setOpenQuotesModal] = useState<boolean>(false);
-  const [openSupplierModal, setOpenSupplierModal] = useState<boolean>(false);
-  /* Funcines */
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
     document.documentElement.setAttribute(
@@ -150,14 +138,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
       setIsFieldsChanged(false);
     }
   };
-
+  const [propsQuoteAndBudget, setPropsQuoteAndBudget] =
+    useState<PropsQuoteAndBudget>({
+      activeType: "materiales",
+      selsectedPhase: 0,
+    });
   return (
     <UIContext.Provider
       value={{
         toggleTheme,
         theme,
-        openClientModal,
-        setOpenClientModal,
         selectedClient,
         setSelectedClient,
         isFieldsChanged,
@@ -166,16 +156,12 @@ export function UIProvider({ children }: { children: ReactNode }) {
         categorizations,
         setCategorizations,
         getCategorizations,
-        openSupplierModal,
-        setOpenSupplierModal,
         selectedSupplier,
         setSelectedSupplier,
-        selectedPhase,
-        setSelectedPhase,
         setEditByStatus,
         editByStatus,
-        openQuotesModal,
-        setOpenQuotesModal,
+        propsQuoteAndBudget,
+        setPropsQuoteAndBudget,
       }}
     >
       {children}

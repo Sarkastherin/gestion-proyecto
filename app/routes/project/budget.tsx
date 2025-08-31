@@ -1,16 +1,10 @@
 import type { Route } from "../../+types/root";
-import { ContainerToForms } from "~/components/Generals/Containers";
-import { InformationForms } from "~/templates/Projects/InformationForms";
 import { useData } from "~/context/DataContext";
-import { Outlet } from "react-router";
-import { Select } from "~/components/Forms/Inputs";
+import { Outlet, useParams, useNavigate } from "react-router";
+import QuotesAndBudgetLayout from "~/components/QuotesAndBudgets/QuotesAndBudgetLayout";
+import { useEffect } from "react";
 import { useUI } from "~/context/UIContext";
-import { useState, type ChangeEventHandler } from "react";
-import { typesQuotes } from "../opportunity/quotes";
-import type { PropsType } from "../opportunity/quotes";
-import { Button } from "~/components/Forms/Buttons";
-import { useParams } from "react-router";
-import { useNavigate } from "react-router";
+import { useProjectRealtime } from "~/backend/realTime";
 // 📌 Meta
 export function meta({}: Route.MetaArgs) {
   return [
@@ -20,75 +14,52 @@ export function meta({}: Route.MetaArgs) {
 }
 // 🧩 Página principal
 export default function Budget() {
+  useProjectRealtime();
   const { selectedProject } = useData();
+  const { setPropsQuoteAndBudget } = useUI();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [activeType, setActiveType] = useState<
-      "materiales" | "mano de obra" | "subcontratos" | "otros" | ""
-    >("materiales");
-  const {
-    selectedPhase,
-    setSelectedPhase,
-    isFieldsChanged,
-    setIsFieldsChanged,
-  } = useUI();
   if (!selectedProject) return null;
-  const { phases_project, budget_items, budget_materials, client, ...project } =
-    selectedProject;
-  const handleChangePhases: ChangeEventHandler<HTMLSelectElement> = (e) => {
-    const target = e.target;
-    const value = target.value;
-    setSelectedPhase(Number(value));
-  };
-  const handleNavigate = (t: PropsType) => {
-    const href = `project/${id}/budget/${
-      t.key === "materiales" ? "materials" : "items"
-    }`;
-    if (isFieldsChanged) {
-      if (confirm("Tienes cambios sin guardar, ¿deseas continuar?")) {
-        setIsFieldsChanged(false);
-        navigate(href);
-        setActiveType(t.key);
-      }
+  const {
+    phases_project,
+    budget_details_items,
+    budget_details_materials,
+    client,
+    ...project
+  } = selectedProject;
+  useEffect(() => {
+    getDefaultPhase();
+  }, [selectedProject]);
+  const getDefaultPhase = () => {
+    if (budget_details_materials && budget_details_materials.length > 0) {
+      budget_details_materials.sort((a, b) => a.id_phase - b.id_phase);
+      setPropsQuoteAndBudget({
+        activeType: "materiales",
+        selsectedPhase: budget_details_materials[0].id_phase || 0,
+      });
+    } else if (budget_details_items && budget_details_items.length > 0) {
+      budget_details_items.sort((a, b) => a.id_phase - b.id_phase);
+      setPropsQuoteAndBudget({
+        activeType: budget_details_items[0].type as
+          | "mano de obra"
+          | "subcontratos"
+          | "otros",
+        selsectedPhase: budget_details_items[0].id_phase || 0,
+      });
+      navigate(`project/${id}/budget/items`);
     } else {
-      navigate(href);
-      setActiveType(t.key);
+      setPropsQuoteAndBudget({
+        activeType: "materiales",
+        selsectedPhase:
+          phases_project && phases_project.length > 0
+            ? phases_project[0].id
+            : 0,
+      });
     }
   };
   return (
-    <div className="w-full px-8 mt-8 mx-auto pb-18">
-      <section className="flex gap-4">
-        {/* Selector de fase */}
-        <div className="w-2/3">
-          <Select
-            value={String(selectedPhase)}
-            id="id_phase"
-            onChange={(e) => handleChangePhases(e)}
-            disabled={isFieldsChanged}
-          >
-            {phases_project?.map((phase) => (
-              <option key={phase.id} value={phase.id}>
-                {`[${phase.id}] ${phase.name}`}
-              </option>
-            ))}
-          </Select>
-        </div>
-        <div className="w-full flex gap-2">
-          {typesQuotes.map((t) => (
-            <div className="w-1/4" key={t.key}>
-              <Button
-                type="button"
-                onClick={() => handleNavigate(t)}
-                variant={activeType === t.key ? "primary" : "secondary"}
-                className="w-full"
-              >
-                {t.label}
-              </Button>
-            </div>
-          ))}
-        </div>
-      </section>
+    <QuotesAndBudgetLayout phases={phases_project} type="budget">
       <Outlet />
-    </div>
+    </QuotesAndBudgetLayout>
   );
 }

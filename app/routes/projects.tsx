@@ -3,7 +3,7 @@ import { EntityTable } from "~/components/Generals/EntityTable";
 import { useData } from "~/context/DataContext";
 import { useNavigate } from "react-router";
 import { StatusOptions } from "~/components/Specific/StatusOptions";
-import type { ProjectsUI } from "~/types/projectsType";
+import type { ProjectsUITable } from "~/types/projectsType";
 import type { TableColumn } from "react-data-table-component";
 import { useEffect } from "react";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
@@ -13,7 +13,7 @@ export function meta({}: Route.MetaArgs) {
     { name: "description", content: "Proyectos" },
   ];
 }
-const columns: TableColumn<ProjectsUI>[] = [
+const columns: TableColumn<ProjectsUITable>[] = [
   { name: "Id", selector: (row) => row.id, width: "80px", sortable: true },
   {
     name: "Fecha",

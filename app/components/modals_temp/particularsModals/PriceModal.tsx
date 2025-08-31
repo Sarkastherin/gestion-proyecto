@@ -6,7 +6,7 @@ export default function PriceModal({
   onClose,
   onSelectPrice,
   prices,
-  idMaterial
+  idMaterial,
 }: {
   open: boolean;
   onClose: () => void;

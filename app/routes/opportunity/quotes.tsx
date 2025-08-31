@@ -1,15 +1,11 @@
 import type { Route } from "../../+types/root";
 import { useUI } from "~/context/UIContext";
 import { SectionCreateQuote } from "~/components/Specific/SectionCreateQuote";
-import { Outlet } from "react-router";
-import { Select } from "~/components/Forms/Inputs";
-import { Button } from "~/components/Forms/Buttons";
-import { useEffect, useState } from "react";
-import { useParams, useNavigate, useOutletContext } from "react-router";
-import type { ChangeEventHandler } from "react";
+import { useEffect } from "react";
+import { useParams, useNavigate, useOutletContext, Outlet } from "react-router";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { useData } from "~/context/DataContext";
-
+import QuotesAndBudgetLayout from "~/components/QuotesAndBudgets/QuotesAndBudgetLayout";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Cotizaciones]" },
@@ -21,11 +17,11 @@ export type PropsType = {
   label: string;
 };
 export const typesQuotes: PropsType[] = [
-    { key: "materiales", label: "Materiales" },
-    { key: "mano de obra", label: "Mano de Obra" },
-    { key: "subcontratos", label: "Subcontratos" },
-    { key: "otros", label: "Otros" },
-  ];
+  { key: "materiales", label: "Materiales" },
+  { key: "mano de obra", label: "Mano de Obra" },
+  { key: "subcontratos", label: "Subcontratos" },
+  { key: "otros", label: "Otros" },
+];
 export default function Quotes() {
   useOpportunityRealtime();
   const { selectedQuoteId } = useOutletContext<{
@@ -33,42 +29,16 @@ export default function Quotes() {
   }>();
   const { id } = useParams();
   const navigate = useNavigate();
-  const [activeType, setActiveType] = useState<
-    "materiales" | "mano de obra" | "subcontratos" | "otros" | ""
-  >("materiales");
-  const {
-    selectedPhase,
-    setSelectedPhase,
-    isFieldsChanged,
-    setIsFieldsChanged,
-  } = useUI();
+  const { setPropsQuoteAndBudget } = useUI();
   const { selectedOpportunity } = useData();
   const { phases, quotes, details_materials, details_items } =
     selectedOpportunity || {};
   const shouldShowCreateQuote = quotes?.length === 0;
-  
-  const handleNavigate = (t: PropsType) => {
-    const href = `opportunity/${id}/quotes/${
-      t.key === "materiales" ? "materials" : "items"
-    }`;
-    if (isFieldsChanged) {
-      if (confirm("Tienes cambios sin guardar, ¿deseas continuar?")) {
-        setIsFieldsChanged(false);
-        navigate(href);
-        setActiveType(t.key);
-      }
-    } else {
-      navigate(href);
-      setActiveType(t.key);
-    }
-  };
-  
-  const handleChangePhases: ChangeEventHandler<HTMLSelectElement> = (e) => {
-    const target = e.target;
-    const value = target.value;
-    setSelectedPhase(Number(value));
-  };
+
   useEffect(() => {
+    getDefaultPhase();
+  }, [selectedQuoteId]);
+  const getDefaultPhase = () => {
     if (!selectedQuoteId) return;
     const materials_list = details_materials?.filter(
       (q) => q.id_quote === selectedQuoteId
@@ -76,62 +46,35 @@ export default function Quotes() {
     const items_list = details_items?.filter(
       (q) => q.id_quote === selectedQuoteId
     );
-    if (
-      activeType === "materiales" &&
-      materials_list &&
-      materials_list.length > 0
-    ) {
-      const defaultPhase = materials_list[0].id_phase ?? null;
-      setSelectedPhase(defaultPhase || null);
+    if (materials_list && materials_list.length > 0) {
+      materials_list.sort((a, b) => a.id_phase - b.id_phase);
+      setPropsQuoteAndBudget({
+        activeType: "materiales",
+        selsectedPhase: materials_list[0].id_phase || 0,
+      });
+    } else if (items_list && items_list.length > 0) {
+      items_list.sort((a, b) => a.id_phase - b.id_phase);
+      setPropsQuoteAndBudget(() => ({
+        activeType: items_list[0].type as PropsType["key"],
+        selsectedPhase: items_list[0].id_phase || 0,
+      }));
+      navigate(`opportunity/${id}/quotes/items`);
+    } else {
+      setPropsQuoteAndBudget({
+        activeType: "materiales",
+        selsectedPhase: 0,
+      });
     }
-    else if (activeType !== "materiales" && items_list && items_list.length > 0) {
-      const firstItem = items_list.find((item) => item.type === activeType);
-      const defaultPhase = firstItem?.id_phase ?? null;
-      setSelectedPhase(defaultPhase || null);
-    }
-    else {setSelectedPhase(null)}
-  }, [activeType, selectedQuoteId]);
+  };
   return (
     <>
       {shouldShowCreateQuote ? (
         <SectionCreateQuote />
       ) : (
         selectedQuoteId && (
-          <div className="w-full px-8 mt-8 mx-auto pb-18">
-            <section className="flex gap-4">
-              {/* Selector de fase */}
-              <div className="w-2/3">
-                <Select
-                  value={String(selectedPhase)}
-                  id="id_phase"
-                  onChange={(e) => handleChangePhases(e)}
-                  disabled={isFieldsChanged}
-                >
-                  {phases?.map((phase) => (
-                    <option key={phase.id} value={phase.id}>
-                      {`[${phase.id}] ${phase.name}`}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-              {/* Tabs por tipo */}
-              <div className="w-full flex gap-2">
-                {typesQuotes.map((t) => (
-                  <div className="w-1/4" key={t.key}>
-                    <Button
-                      type="button"
-                      onClick={() => handleNavigate(t)}
-                      variant={activeType === t.key ? "primary" : "secondary"}
-                      className="w-full"
-                    >
-                      {t.label}
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </section>
-            <Outlet context={{ selectedQuoteId, activeType, setActiveType }} />
-          </div>
+          <QuotesAndBudgetLayout phases={phases} type="quotes">
+            <Outlet context={{ selectedQuoteId }} />
+          </QuotesAndBudgetLayout>
         )
       )}
     </>

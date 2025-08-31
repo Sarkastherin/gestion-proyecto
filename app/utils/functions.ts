@@ -66,6 +66,54 @@ export function getQuoteTotals(data: {
     total_others,
   };
 }
+export function getBudgetTotals(data: {
+  details_items: Array<{
+    type: string;
+    total: number;
+    unit_cost: number;
+    quantity: number;
+  }>;
+  details_materials: Array<{
+    quantity: number;
+    prices: { price: number };
+  }>;
+}): Omit<Totals, "id_quote"> {
+
+  const total_materials = roundToPrecision(
+    data.details_materials.reduce((sum, m) => {
+      return sum + m.quantity * (m.prices?.price || 0);
+    }, 0),
+    2
+  );
+
+  const total_labor = roundToPrecision(
+    data.details_items
+      .filter((item) => item.type === "mano de obra")
+      .reduce((sum, item) => sum + (item.quantity * item.unit_cost || 0), 0),
+    2
+  );
+
+  const total_subcontracting = roundToPrecision(
+    data.details_items
+      .filter((item) => item.type === "subcontratos")
+      .reduce((sum, item) => sum + (item.quantity * item.unit_cost || 0), 0),
+    2
+  );
+
+  const total_others = roundToPrecision(
+    data.details_items
+      .filter((item) => item.type === "otros")
+      .reduce((sum, item) => sum + (item.quantity * item.unit_cost || 0), 0),
+    2
+  );
+
+  return {
+    total_materials,
+    total_labor,
+    total_subcontracting,
+    total_others,
+  };
+}
 export const dateUSFormatted = (date: Date) => {
   const day = date.getDate();
   const month = date.getMonth() + 1;

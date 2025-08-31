@@ -56,16 +56,16 @@ export type QuotesProps = {
   others?: number;
   general?: number;
 };
+export type TotalsMargens = {
+  t_mg_materials: number;
+  t_mg_labor: number;
+  t_mg_subcontracting: number;
+  t_mg_others: number;
+  total: number;
+  t_mg_total: number;
+};
 export type QuotesDB = CommonPropsDB & QuotesProps;
-export type QuotesUI = QuotesDB &
-  Totals & {
-    t_mg_materials: number;
-    t_mg_labor: number;
-    t_mg_subcontracting: number;
-    t_mg_others: number;
-    total: number;
-    t_mg_total: number;
-  };
+export type QuotesUI = QuotesDB & Totals & TotalsMargens;
 /* Details Quotes */
 export type DetailsItemsProps = {
   id_quote: number;

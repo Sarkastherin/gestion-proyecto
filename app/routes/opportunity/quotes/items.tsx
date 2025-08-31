@@ -2,7 +2,7 @@ import type { Route } from "../+types/conditions";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
 import FooterForms from "~/templates/FooterForms";
-import { TableDetailsQuotes, Cell } from "~/templates/TableDetailsQuotes";
+import { TableDetailsQuotes, Cell } from "~/components/QuotesAndBudgets/TableDetailsQuotes";
 import { Input } from "~/components/Forms/Inputs";
 import { ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { ButtonAdd } from "~/components/Specific/Buttons";
@@ -14,7 +14,10 @@ import { details_itemsApi } from "~/backend/cruds";
 import { useFieldsChange } from "~/utils/fieldsChange";
 import { useData } from "~/context/DataContext";
 import { useUIModals } from "~/context/ModalsContext";
-import type { DetailsItemsProps, DetailsItemsDB, DetailsMaterialsDB, DetailsMaterialsUI } from "~/types/opportunitiesType";
+import type {
+  DetailsItemsProps,
+  DetailsItemsDB,
+} from "~/types/opportunitiesType";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Cotización]" },
@@ -25,8 +28,8 @@ type DetailsItemsFormType = {
   items: Array<DetailsItemsDB | DetailsItemsProps>;
 };
 export default function Items() {
-   const [isEditMode, setIsEditMode] = useState(false);
-  const { selectedQuoteId, activeType } = useOutletContext<{
+  const [isEditMode, setIsEditMode] = useState(false);
+  const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
     activeType: "materiales" | "mano de obra" | "subcontratos" | "otros" | "";
   }>();
@@ -34,10 +37,7 @@ export default function Items() {
     Array<DetailsItemsDB["id"]>
   >([]);
   const { openModal } = useUIModals();
-  const {
-    selectedPhase,
-    editByStatus,
-  } = useUI();
+  const { propsQuoteAndBudget, editByStatus } = useUI();
   const { selectedOpportunity } = useData();
   const {
     register,
@@ -54,7 +54,7 @@ export default function Items() {
   const onSubmit = async (formData: DetailsItemsFormType): Promise<void> => {
     if (!isDirty) {
       openModal("INFORMATION", {
-        message: "No hay cambios para actualizar'"
+        message: "No hay cambios para actualizar'",
       });
       return;
     }
@@ -63,7 +63,7 @@ export default function Items() {
     });
     try {
       const { items: cleanedItems } = formData;
-      
+
       const newData = await updatesArrayFields({
         fieldName: "items",
         fieldsArray: cleanedItems as DetailsItemsDB[],
@@ -94,11 +94,11 @@ export default function Items() {
     }
   };
   const handleAdd = () => {
-    if (selectedPhase && selectedPhase > 0) {
+    if (propsQuoteAndBudget && propsQuoteAndBudget.selsectedPhase > 0) {
       append({
         id_quote: selectedQuoteId, // Este valor se asignará al guardar la cotización
-        id_phase: selectedPhase,
-        type: activeType,
+        id_phase: propsQuoteAndBudget.selsectedPhase,
+        type: propsQuoteAndBudget.activeType,
         item: "",
         quantity: 0,
         unit_cost: 0,
@@ -133,81 +133,92 @@ export default function Items() {
     { groupColsClass: "w-[10%]", label: "Total" },
     { groupColsClass: "w-[1%]", label: "🗑️" },
   ];
-  useFieldsChange({isSubmitSuccessful, isDirty})
+  useFieldsChange({ isSubmitSuccessful, isDirty });
   return (
     <>
-      {selectedPhase && (
-        <form
-          className=" flex flex-col gap-6"
-          onSubmit={handleSubmit(onSubmit)}
+      {propsQuoteAndBudget?.selsectedPhase && (
+        <TableDetailsQuotes
+          title="Tabla Items"
+          columns={columnsItems}
+          handleSubmit={handleSubmit(onSubmit)}
+          isEditMode={isEditMode}
+          addElement={
+            <ButtonAdd
+              disabled={!editByStatus}
+              title="Agregar Item"
+              onClick={handleAdd}
+            />
+          }
+          footerElement={
+            <FooterForms
+              isNew={false}
+              isEditMode={isEditMode}
+              onToggleEdit={() => setIsEditMode((prev) => !prev)}
+            />
+          }
         >
-          <fieldset disabled={!isEditMode}>
-            <div className="overflow-x-auto">
-              <TableDetailsQuotes title="Tabla Items" columns={columnsItems}>
-                {fields
-                  .map((field, index) => ({ ...field, index }))
-                  .filter(
-                    (item) =>
-                      item.type === activeType &&
-                      item.id_phase === selectedPhase
-                  )
-                  .map(({ index, id }) => (
-                    <tr
-                      key={id}
-                      className="*:text-zinc-900 *:first:font-medium dark:*:text-white"
-                    >
-                      <Cell>{index + 1}</Cell>
-                      <Cell>
-                        <Input
-                          {...register(`items.${index}.item`)}
-                          placeholder="Ítem"
-                          disabled={!editByStatus}
-                        />
-                      </Cell>
-                      <Cell>
-                        <Input
-                          type="number"
-                          disabled={!editByStatus}
-                          step={0.01}
-                          {...register(`items.${index}.quantity`, {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </Cell>
-                      <Cell>
-                        <Input
-                        disabled={!editByStatus}
-                          type="number"
-                          {...register(`items.${index}.unit_cost`, {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </Cell>
-                      <Cell>
-                        <Input
-                          type="number"
-                          placeholder="Total"
-                          readOnly
-                          value={
-                            roundToPrecision(
-                              watch(`items.${index}.quantity`) *
-                                watch(`items.${index}.unit_cost`),
-                              2
-                            ) || 0
-                          }
-                        />
-                      </Cell>
-                      <Cell>
-                        <ButtonDeleteIcon disabled={!editByStatus} onClick={() => handleRemove(index)} />
-                      </Cell>
-                    </tr>
-                  ))}
-              </TableDetailsQuotes>
-              <ButtonAdd title="Agregar Item" disabled={!editByStatus} onClick={handleAdd} />
-            </div>
-          </fieldset>
-          <FooterForms isNew={false} isEditMode={isEditMode} onToggleEdit={() => setIsEditMode((prev) => !prev)} />
-        </form>
+          {fields
+            .map((field, index) => ({ ...field, index }))
+            .filter(
+              (item) =>
+                item.type === propsQuoteAndBudget.activeType &&
+                item.id_phase === propsQuoteAndBudget.selsectedPhase
+            )
+            .map(({ index, id }) => (
+              <tr
+                key={id}
+                className="*:text-zinc-900 *:first:font-medium dark:*:text-white"
+              >
+                <Cell>{index + 1}</Cell>
+                <Cell>
+                  <Input
+                    {...register(`items.${index}.item`)}
+                    placeholder="Ítem"
+                    disabled={!editByStatus}
+                  />
+                </Cell>
+                <Cell>
+                  <Input
+                    type="number"
+                    disabled={!editByStatus}
+                    step={0.01}
+                    {...register(`items.${index}.quantity`, {
+                      valueAsNumber: true,
+                    })}
+                  />
+                </Cell>
+                <Cell>
+                  <Input
+                    disabled={!editByStatus}
+                    type="number"
+                    {...register(`items.${index}.unit_cost`, {
+                      valueAsNumber: true,
+                    })}
+                  />
+                </Cell>
+                <Cell>
+                  <Input
+                    type="number"
+                    placeholder="Total"
+                    readOnly
+                    value={
+                      roundToPrecision(
+                        watch(`items.${index}.quantity`) *
+                          watch(`items.${index}.unit_cost`),
+                        2
+                      ) || 0
+                    }
+                  />
+                </Cell>
+                <Cell>
+                  <ButtonDeleteIcon
+                    disabled={!editByStatus}
+                    onClick={() => handleRemove(index)}
+                  />
+                </Cell>
+              </tr>
+            ))}
+        </TableDetailsQuotes>
       )}
     </>
   );

@@ -1,13 +1,17 @@
 import { useForm } from "react-hook-form";
-import { CardToggle } from "~/components/Generals/Cards";
+import { CardToggle, Card } from "~/components/Generals/Cards";
 import { Input, Textarea, Select } from "~/components/Forms/Inputs";
 import FooterForms from "../FooterForms";
-import type { ProjectsDB } from "~/types/projectsType";
+import type { ProjectsDB, ProjectAndBudgetUI } from "~/types/projectsType";
 import { useState } from "react";
 import { useUI } from "~/context/UIContext";
 import { useModalState } from "~/components/modals_temp/particularsModals/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
 import { formaPago } from "../ConditionsForm";
+import { MarginsForm } from "../MarginsForm";
+import { useUIModals } from "~/context/ModalsContext";
+import { updateSingleRow } from "~/utils/updatesSingleRow";
+import { projectsApi } from "~/backend/cruds";
 export function InformationForms({
   defaultValues,
 }: {
@@ -16,18 +20,33 @@ export function InformationForms({
   const [isEditMode, setIsEditMode] = useState(false);
   const { selectedClient } = useUI();
   const clientModal = useModalState<ContactsDataType>();
+  const { openModal } = useUIModals();
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
-  } = useForm<ProjectsDB>({
+    setValue,
+    formState: { errors, dirtyFields },
+  } = useForm<ProjectAndBudgetUI>({
     defaultValues: defaultValues,
   });
-  const onSubmit = (data: ProjectsDB) => {
-    console.log(data);
+  const onSubmit = async (data: ProjectsDB) => {
+    openModal("LOADING");
+    try {
+      await updateSingleRow({
+        dirtyFields: dirtyFields,
+        formData: data,
+        onUpdate: projectsApi.update,
+      });
+      openModal("SUCCESS", {
+        message: `Proyecto actualizado correctamente`,
+      });
+    } catch (e) {
+      openModal("ERROR", {
+        message: `No se pudo actualizar el proyecto. Error: ${String(e)}`,
+      });
+    }
   };
-  //console.log(defaultValues);
   return (
     <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
       <fieldset disabled={!isEditMode}>
@@ -35,7 +54,6 @@ export function InformationForms({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input
               label="Nombre del Proyecto"
-              disabled={!isEditMode}
               {...register("name", { required: "Campo requerido" })}
               error={errors.name?.message}
             />
@@ -43,7 +61,6 @@ export function InformationForms({
               label="Cliente"
               placeholder="Seleccione un cliente"
               readOnly
-              disabled={!isEditMode}
               value={selectedClient?.nombre || ""}
               onClick={() => {
                 clientModal.openModal();
@@ -58,11 +75,7 @@ export function InformationForms({
               })}
             />
             <div className="col-span-2">
-              <Textarea
-                disabled={!isEditMode}
-                label="Alcance"
-                {...register("scope")}
-              />
+              <Textarea label="Alcance" {...register("scope")} />
             </div>
           </div>
         </CardToggle>
@@ -72,7 +85,6 @@ export function InformationForms({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="col-span-3">
               <Select
-                disabled={!isEditMode}
                 label="Forma de pago"
                 {...register("method_payment", {
                   required: true,
@@ -89,7 +101,6 @@ export function InformationForms({
               <Input
                 label="Garantía"
                 {...register("guarantee")}
-                disabled={!isEditMode}
                 error={errors.guarantee?.message}
               />
             </div>
@@ -97,54 +108,29 @@ export function InformationForms({
               label="Fecha de inicio [Plan]"
               type="date"
               {...register("plan_start_date")}
-              disabled={!isEditMode}
               error={errors.plan_start_date?.message}
             />
             <Input
               label="Fecha de fin [Plan]"
               type="date"
               {...register("plan_end_date")}
-              disabled={!isEditMode}
               error={errors.plan_end_date?.message}
             />
             <Input
               label="Duración [Plan]"
               type="date"
               {...register("plan_duration")}
-              disabled={!isEditMode}
               error={errors.plan_duration?.message}
             />
           </div>
         </CardToggle>
       </fieldset>
-      <fieldset>
-        {" "}
-        <CardToggle title="Margenes de Ganancias">
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto divide-y-2 divide-zinc-200 dark:divide-zinc-700">
-              <colgroup>
-                <col />
-                <col className="w-[1%]" />
-                <col className="w-[1%]" />
-                <col className="w-[20%]" />
-                <col className="w-[1%]" />
-              </colgroup>
-              <thead className="ltr:text-left rtl:text-right">
-                <tr className="*:font-medium *:text-zinc-900 dark:*:text-white">
-                  <th className="px-3 py-2 whitespace-nowrap">
-                    Categoria de Cotización
-                  </th>
-                  <th className="px-3 py-2 whitespace-nowrap">Total</th>
-                  <th className="px-3 py-2 whitespace-nowrap">INC %</th>
-                  <th className="px-3 py-2 whitespace-nowrap">Márgen/Comp</th>
-                  <th className="px-3 py-2 whitespace-nowrap">Total con M/S</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-700"></tbody>
-            </table>
-          </div>
-        </CardToggle>
-      </fieldset>
+      <MarginsForm
+        watch={watch}
+        register={register}
+        setValue={setValue}
+        disabled={!isEditMode}
+      />
       <FooterForms
         isNew={false}
         isEditMode={isEditMode}

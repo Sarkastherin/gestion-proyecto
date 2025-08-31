@@ -3,6 +3,7 @@ import { ContainerToForms } from "~/components/Generals/Containers";
 import ConditionsForm from "~/templates/ConditionsForm";
 import { SectionCreateQuote } from "~/components/Specific/SectionCreateQuote";
 import { useOutletContext } from "react-router";
+import { useOpportunityRealtime } from "~/backend/realTime";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Condiciones]" },
@@ -11,6 +12,7 @@ export function meta({}: Route.MetaArgs) {
 }
 //probando script
 export default function Conditions() {
+  useOpportunityRealtime();
   const { selectedQuoteId } = useOutletContext<{
     selectedQuoteId: number | null;
   }>();

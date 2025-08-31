@@ -40,6 +40,7 @@ export default [
           route(":id/budget/items", "routes/project/budget/items.tsx"),
           route(":id/budget/materials", "routes/project/budget/materials.tsx"),
         ]),
+        route(":id/planning", "routes/project/planning.tsx"),
       ]),
     ]),
     ...prefix("material", [

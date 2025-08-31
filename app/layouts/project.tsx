@@ -9,6 +9,7 @@ import {
   PresentationChartBarIcon,
   BriefcaseIcon,
 } from "@heroicons/react/16/solid";
+import { FaTasks } from "react-icons/fa";
 const menuItems = (id: number) => {
   return [
     {
@@ -25,6 +26,11 @@ const menuItems = (id: number) => {
       title: "Presupuesto",
       href: `/project/${id}/budget/materials`,
       icon: <InformationCircleIcon className="w-4" />,
+    },
+    {
+      title: "Planificación",
+      href: `/project/${id}/planning`,
+      icon: <FaTasks className="w-4" />,
     },
   ];
 };

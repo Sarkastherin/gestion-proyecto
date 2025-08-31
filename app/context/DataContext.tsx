@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import type { ProjectsUI, ProjectAndBudget } from "~/types/projectsType";
+import type { ProjectsUITable, ProjectAndBudgetUI } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
   DetailsMaterialsDB,
@@ -11,16 +11,29 @@ import type {
 import { supabase } from "~/backend/supabaseClient";
 import { useContacts } from "./ContactsContext";
 import { setEntities } from "~/services/fetchers/fetchEntitiesWithClient";
-import type { MaterialsUI, UnitsDB, FamilyDB, CategoryDB, SubCategoryDB } from "~/types/materialsType";
-import { getQuoteTotals, roundToPrecision } from "~/utils/functions";
+import type {
+  MaterialsUI,
+  UnitsDB,
+  FamilyDB,
+  CategoryDB,
+  SubCategoryDB,
+} from "~/types/materialsType";
+import {
+  getQuoteTotals,
+  roundToPrecision,
+  getBudgetTotals,
+} from "~/utils/functions";
 type DataContextType = {
-  projects: ProjectsUI[] | null;
+  projects: ProjectsUITable[] | null;
   getProjects: () => Promise<void>;
   opportunities: OpportunityUITable[] | null;
   getOpportunities: () => Promise<void>;
   materials: MaterialsUI[] | null;
   getMaterials: () => Promise<MaterialsUI[]>;
-  getOpportunityById: (id: number, onlyReturn?: boolean) => Promise<OpportunityAndQuotesUI | null>;
+  getOpportunityById: (
+    id: number,
+    onlyReturn?: boolean
+  ) => Promise<OpportunityAndQuotesUI | null>;
   selectedOpportunity: OpportunityAndQuotesUI | null;
   refreshOpportunity: () => Promise<void>;
   setSelectedOpportunity: (opportunity: OpportunityAndQuotesUI | null) => void;
@@ -36,13 +49,14 @@ type DataContextType = {
   subcategories: SubCategoryDB[] | null;
   selectedMaterial: MaterialsUI | null;
   setSelectedMaterial: (material: MaterialsUI | null) => void;
-  getProjectById: (id: number) => Promise<ProjectAndBudget | null>;
-  selectedProject: ProjectAndBudget | null;
+  getProjectById: (id: number) => Promise<ProjectAndBudgetUI | null>;
+  selectedProject: ProjectAndBudgetUI | null;
+  refreshProject: (id?: number) => Promise<void>;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const { clients } = useContacts();
-  const [projects, setProjects] = useState<ProjectsUI[] | null>(null);
+  const [projects, setProjects] = useState<ProjectsUITable[] | null>(null);
   const [opportunities, setOpportunities] = useState<
     OpportunityUITable[] | null
   >(null);
@@ -55,13 +69,14 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [materials, setMaterials] = useState<MaterialsUI[] | null>(null);
   const [selectedOpportunity, setSelectedOpportunity] =
     useState<OpportunityAndQuotesUI | null>(null);
-  const [selectedProject, setSelectedProject] = useState<ProjectAndBudget | null>(null);
+  const [selectedProject, setSelectedProject] =
+    useState<ProjectAndBudgetUI | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsUI | null>(
     null
   );
   const getProjects = async (): Promise<void> => {
     if (clients) {
-      setEntities<ProjectsUI>({
+      setEntities<ProjectsUITable>({
         table: "projects",
         select: "*, users(*)",
         clientKey: "id_client",
@@ -157,8 +172,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
             `Error al obtener detalles de quotes: ${error.message}`
           );
         if (data?.length) {
-          const orifinalsQuotes: QuotesUI[] = opportunity.quotes;
-          const updatedQuotes: QuotesUI[] = orifinalsQuotes.map((q) => {
+          const originalsQuotes: QuotesUI[] = opportunity.quotes;
+          const updatedQuotes: QuotesUI[] = originalsQuotes.map((q) => {
             const match = data.find((d) => {
               const id =
                 d.details_items[0]?.id_quote ??
@@ -219,8 +234,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         ...dataQuotes,
       };
       if (!onlyReturn) setSelectedOpportunity(completedOpportunity);
-
       return completedOpportunity;
+      
     } catch (err) {
       console.error("Error en getOpportunityById:", err);
       return null;
@@ -229,22 +244,60 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const getProjectById = async (
     id: number,
     onlyReturn?: boolean
-  ): Promise<ProjectAndBudget | null> => {
+  ): Promise<ProjectAndBudgetUI | null> => {
     try {
       const { data: project, error } = await supabase
         .from("projects")
-        .select("*, phases_project(*), budget_details_items(*), budget_details_materials(*)")
+        .select(
+          "*, phases_project(*), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*))"
+        )
         .eq("id", id)
         .single();
 
-      if (error || !project)
-        throw new Error("No se pudo obtener el proyecto");
-
+      if (error || !project) throw new Error("No se pudo obtener el proyecto");
+      /* ***** */
+      const budget = {
+        details_items: project.budget_details_items ?? [],
+        details_materials: project.budget_details_materials ?? [],
+      };
+      const budgetTotals = getBudgetTotals(budget);
+      const t_mg_materials = roundToPrecision(
+        budgetTotals.total_materials * ((project.materials ?? 0) / 100 + 1),
+        2
+      );
+      const t_mg_labor = roundToPrecision(
+        budgetTotals.total_labor * ((project.labor ?? 0) / 100 + 1),
+        2
+      );
+      const t_mg_subcontracting = roundToPrecision(
+        budgetTotals.total_subcontracting *
+          ((project.subcontracting ?? 0) / 100 + 1),
+        2
+      );
+      const t_mg_others = roundToPrecision(
+        budgetTotals.total_others * ((project.others ?? 0) / 100 + 1),
+        2
+      );
+      const total = roundToPrecision(
+        t_mg_materials + t_mg_labor + t_mg_subcontracting + t_mg_others,
+        2
+      );
+      const t_mg_total = roundToPrecision(
+        total * ((project.general ?? 0) / 100 + 1),
+        2
+      );
       const client = clients?.find((c) => c.id === project.id_client);
       if (!client) throw new Error("Cliente no encontrado");
-      
-      const completedProject: ProjectAndBudget = {
+
+      const completedProject: ProjectAndBudgetUI = {
         ...project,
+        ...budgetTotals,
+        t_mg_materials: t_mg_materials,
+        t_mg_labor: t_mg_labor,
+        t_mg_subcontracting: t_mg_subcontracting,
+        t_mg_others: t_mg_others,
+        total: total,
+        t_mg_total: t_mg_total,
         client,
       };
       //if (!onlyReturn) setSelectedOpportunity(completedProject);
@@ -279,6 +332,18 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     if (!updatedMaterials || updatedMaterials.length === 0) return;
     getMaterial(idMaterial, updatedMaterials);
   };
+  const refreshProject = async () => {
+    if (!selectedProject) return;
+    const { id } = selectedProject;
+    const updateProject = await getProjectById(id);
+    if (!updateProject) return;
+    setProjects(
+      (prev) =>
+        prev?.map((proj) =>
+          proj.id === updateProject.id ? updateProject : proj
+        ) ?? []
+    );
+  };
   return (
     <DataContext.Provider
       value={{
@@ -305,7 +370,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         selectedMaterial,
         setSelectedMaterial,
         getProjectById,
-        selectedProject
+        selectedProject,
+        refreshProject
       }}
     >
       {children}

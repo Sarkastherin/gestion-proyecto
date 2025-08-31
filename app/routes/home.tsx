@@ -16,14 +16,6 @@ export default function Home() {
   const fromArray = to.split("-");
   fromArray[2] = "01";
   const from = fromArray.join("-");
-  const handleTestModals = () => {
-    openModal("LOADING");
-  };
-  if (import.meta.env.VITE_SHOW_DEBUG === "true") {
-    console.log("🛠 Debug activo");
-  } else {
-    console.log("🛠 Debug inactivo");
-  }
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full text-center text-zinc-600 dark:text-zinc-400 mt-20">
