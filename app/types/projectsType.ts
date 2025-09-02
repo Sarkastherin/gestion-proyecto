@@ -79,7 +79,11 @@ export type ProjectAndBudgetUI = ProjectsUITable &
     budget_details_items: BudgetItemDB[];
     budget_details_materials: BudgetMaterialsDB[];
     client: ContactsDataType;
+    tasks: (TaskDB & {
+      task_assignments: TaskAssignmentDB[];
+    })[];
   };
+
 
 export type TaskProps = {
   name: string;
@@ -90,3 +94,9 @@ export type TaskProps = {
   duration: number;
 };
 export type TaskDB = TaskProps & CommonPropsDB;
+export type TaskAssignmentProps = {
+  id_task: number;
+  id_employee: number;
+  active: boolean;
+};
+export type TaskAssignmentDB = TaskAssignmentProps & CommonPropsDB;

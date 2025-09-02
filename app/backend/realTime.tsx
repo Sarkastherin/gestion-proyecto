@@ -165,3 +165,37 @@ export function useProjectRealtime() {
     };
   }, []);
 }
+export function useTasksRealtime() {
+  const { selectedProject, refreshProject } = useData();
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  useEffect(() => {
+    if (!selectedProject) return;
+    const channel = supabase.channel("realtime:tasks_realtime");
+    const tablesToListen = [
+      "tasks",
+      "task_assignments"
+    ];
+    tablesToListen.forEach((table) => {
+      channel.on(
+        "postgres_changes",
+        { event: "*", schema: "public", table },
+        (payload) => {
+          console.log(`[${table.toUpperCase()}] Evento recibido:`, payload);
+          // Reiniciamos el timer
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          timeoutRef.current = setTimeout(() => {
+            refreshProject();
+            timeoutRef.current = null;
+          }, 500);
+        }
+      );
+
+    });
+    channel.subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+}

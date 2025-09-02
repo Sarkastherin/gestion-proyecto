@@ -1,6 +1,7 @@
 import ModalBase from "../ModalBase";
 import { useContacts } from "~/context/ContactsContext";
 import type { UseFormSetValue } from "react-hook-form";
+import type { TaskAssignmentProps } from "~/types/projectsType";
 export default function PersonalModal({
   open,
   onClose,
@@ -12,22 +13,34 @@ export default function PersonalModal({
   open: boolean;
   onClose: () => void;
   taskIndex: number | null;
-  selected: number[];
+  selected: TaskAssignmentProps[];
   setValue: UseFormSetValue<any>;
   watch?: any;
 }) {
   const { employees } = useContacts();
   const toggleEmployee = (id: number) => {
-    if (taskIndex === null || taskIndex === undefined) return;
-    const current = selected || [];
-    const updated = current.includes(id)
-      ? current.filter((e) => e !== id)
-      : [...current, id];
+  if (taskIndex === null || taskIndex === undefined) return;
 
-    setValue(`tasks.${taskIndex}.employee_assigned`, updated, {
-      shouldDirty: true,
-    });
-  };
+  const current = selected || [];
+
+  const updated = (() => {
+    const existing = current.find((e) => e.id_employee === id);
+
+    if (!existing) {
+      // No existe → lo agregamos como activo
+      return [...current, { id_employee: id, active: true }];
+    }
+
+    // Existe → alternamos el estado
+    return current.map((e) =>
+      e.id_employee === id ? { ...e, active: !e.active } : e
+    );
+  })();
+
+  setValue(`tasks.${taskIndex}.task_assignments`, updated, {
+    shouldDirty: true,
+  });
+};
   return (
     <ModalBase
       title="Listado de Personal"
@@ -61,7 +74,7 @@ export default function PersonalModal({
                   type="checkbox"
                   className="size-5 rounded border-zinc-300 shadow-sm dark:border-zinc-600 dark:bg-zinc-900 dark:ring-offset-zinc-900 dark:checked:bg-blue-600"
                   id={`employee-${employee.id}`}
-                  checked={selected?.includes(employee.id)}
+                  checked={selected?.some((e) => e.id_employee === employee.id && e.active)}
                   onChange={() => toggleEmployee(employee.id)}
                 />
                 <span className="font-medium text-zinc-700 dark:text-zinc-200">

@@ -29,7 +29,7 @@ export const MaterialForm = ({
   initialEditMode
 }: MaterialFormProps) => {
   const [isEditMode, setIsEditMode] = useState(initialEditMode);
-  const { setSelectedMaterial, selectedMaterial, getMaterials } = useData();
+  const { selectedMaterial, getMaterials } = useData();
   useMaterialsAndPricesRealtime(selectedMaterial?.id);
   const { openModal } = useUIModals();
   const navigate = useNavigate();

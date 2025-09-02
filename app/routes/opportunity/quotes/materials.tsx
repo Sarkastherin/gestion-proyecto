@@ -69,50 +69,7 @@ export default function Materials() {
     name: "materials",
   });
 
-  const onSubmit = async (formData: DetailsMaterialForm): Promise<void> => {
-    console.log("hola");
-    if (!isDirty) {
-      openModal("INFORMATION", {
-        title: "Formulario sin cambios",
-        message: "No hay cambios para actualizar'",
-      });
-      return;
-    }
-    openModal("LOADING");
-    try {
-      const { materials } = formData;
-      const cleanedMaterials = materials.map(
-        ({ materials, prices, ...rest }) => rest
-      );
-      const newData = await updatesArrayFields({
-        fieldName: "materials",
-        fieldsArray: cleanedMaterials as DetailsMaterialsDB[],
-        dirtyFields: dirtyFields as Record<
-          string,
-          Partial<Record<keyof DetailsMaterialsDB, boolean>>[]
-        >,
-        fieldsDelete: materialsToDelete,
-        onInsert: details_materialsApi.insertOne,
-        onRemove: (id: number) => details_materialsApi.remove({ id }),
-        onUpdate: details_materialsApi.update,
-      });
-      const oldData = cleanedMaterials.filter(
-        (item): item is DetailsMaterialsDB =>
-          "id" in item && typeof item.id === "number"
-      );
-      reset({
-        materials: [...oldData, ...(Array.isArray(newData) ? newData : [])],
-      });
-      setMaterialsToDelete([]);
-      openModal("SUCCESS", {
-        message: "Se han guardado los datos",
-      });
-    } catch (e) {
-      openModal("ERROR", {
-        message: `No se pudo actualizar la oportunidad. Error: ${String(e)}`,
-      });
-    }
-  };
+  
 
   const handleAdd = () => {
     if (propsQuoteAndBudget && propsQuoteAndBudget.selsectedPhase > 0) {
@@ -184,6 +141,49 @@ export default function Materials() {
       setValue(`materials.${activeIndex}.prices`, price, { shouldDirty: true });
       setValue(`materials.${activeIndex}.id_price`, id, { shouldDirty: true });
       priceModal.closeModal();
+    }
+  };
+  const onSubmit = async (formData: DetailsMaterialForm): Promise<void> => {
+    if (!isDirty) {
+      openModal("INFORMATION", {
+        title: "Formulario sin cambios",
+        message: "No hay cambios para actualizar'",
+      });
+      return;
+    }
+    openModal("LOADING");
+    try {
+      const { materials } = formData;
+      const cleanedMaterials = materials.map(
+        ({ materials, prices, ...rest }) => rest
+      );
+      const newData = await updatesArrayFields({
+        fieldName: "materials",
+        fieldsArray: cleanedMaterials as DetailsMaterialsDB[],
+        dirtyFields: dirtyFields as Record<
+          string,
+          Partial<Record<keyof DetailsMaterialsDB, boolean>>[]
+        >,
+        fieldsDelete: materialsToDelete,
+        onInsert: details_materialsApi.insertOne,
+        onRemove: (id: number) => details_materialsApi.remove({ id }),
+        onUpdate: details_materialsApi.update,
+      });
+      const oldData = cleanedMaterials.filter(
+        (item): item is DetailsMaterialsDB =>
+          "id" in item && typeof item.id === "number"
+      );
+      reset({
+        materials: [...oldData, ...(Array.isArray(newData) ? newData : [])],
+      });
+      setMaterialsToDelete([]);
+      openModal("SUCCESS", {
+        message: "Se han guardado los datos",
+      });
+    } catch (e) {
+      openModal("ERROR", {
+        message: `No se pudo actualizar la oportunidad. Error: ${String(e)}`,
+      });
     }
   };
   return (

@@ -249,7 +249,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       const { data: project, error } = await supabase
         .from("projects")
         .select(
-          "*, phases_project(*), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*))"
+          "*, phases_project(*), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*)), tasks(*, task_assignments(*))"
         )
         .eq("id", id)
         .single();
