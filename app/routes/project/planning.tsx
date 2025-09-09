@@ -6,7 +6,7 @@ import { CardToggle } from "~/components/Generals/Cards";
 import { Input, Select } from "~/components/Forms/Inputs";
 import { useUI } from "~/context/UIContext";
 import { ButtonAdd } from "~/components/Specific/Buttons";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, set } from "react-hook-form";
 import type {
   TaskDB,
   TaskAssignmentProps,
@@ -20,8 +20,12 @@ import FooterForms from "~/templates/FooterForms";
 import { ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { useUIModals } from "~/context/ModalsContext";
 import { useFieldsChange } from "~/utils/fieldsChange";
-import { tasksApi, taskAssignmentsApi } from "~/backend/cruds";
-import { useTasksRealtime } from "~/backend/realTime";
+import {
+  tasksApi,
+  taskAssignmentsApi,
+  phasesProjectApi,
+} from "~/backend/cruds";
+import { useTasksRealtime, useOpportunityRealtime } from "~/backend/realTime";
 // 📌 Meta
 export function meta({}: Route.MetaArgs) {
   return [
@@ -38,22 +42,25 @@ type TasksFormArray = {
 type PersonalModalPayload = {
   activeIndex: number | null;
 };
-
+type PropsPhases = {
+  id_phase: number;
+  id_supervisor: number;
+};
 // 🧩 Página principal
 export default function Planning() {
+  useOpportunityRealtime();
   useTasksRealtime();
   const [isEditMode, setIsEditMode] = useState(false);
   const personalModal = useModalState<PersonalModalPayload>();
   const { selectedProject } = useData();
   const { phases_project } = selectedProject || {};
-  const { tasks } = selectedProject || {};
+  const tasks = phases_project?.flatMap((phase) => phase.tasks) || [];
   const { employees } = useContacts();
-  const [selectedPhase, setSelectedPhase] = useState<number | null>(null);
+  const [propsPhases, setPropsPhases] = useState<PropsPhases | null>(null);
   const { isFieldsChanged } = useUI();
   const { openModal } = useUIModals();
   const [tasksToDelete, setTasksToDelete] = useState<Array<TaskDB["id"]>>([]);
   if (!selectedProject) return null;
-
   const {
     control,
     register,
@@ -71,23 +78,38 @@ export default function Planning() {
   });
   useFieldsChange({ isSubmitSuccessful, isDirty });
   const handleAdd = () => {
-    if (selectedProject && selectedPhase && employees && employees.length > 0) {
+    if (
+      selectedProject &&
+      propsPhases?.id_phase &&
+      employees &&
+      employees.length > 0
+    ) {
       append({
         id: 0, // default value for new task, will be replaced by DB
         created_at: new Date().toISOString(), // or "" if you prefer
         name: "",
-        id_project: selectedProject.id,
-        id_phase: selectedPhase,
-        id_supervisor: 0,
+        id_phase: propsPhases.id_phase,
         duration: 0,
-        progress: 0,
         task_assignments: [],
       });
     }
   };
   const handleChangePhases = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const phaseId = Number(e.target.value);
-    setSelectedPhase(phaseId);
+    const selectedPhase = phases_project?.find((phase) => phase.id === phaseId);
+    if (selectedPhase) {
+      setPropsPhases({
+        id_phase: selectedPhase.id,
+        id_supervisor:
+          selectedPhase.id_supervisor != null ? selectedPhase.id_supervisor : 0,
+      });
+    }
+  };
+  const handleChangeSupervisors = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const supervisorId = Number(e.target.value);
+    setPropsPhases((prev) =>
+      prev ? { ...prev, id_supervisor: supervisorId } : null
+    );
   };
   const handleOpenPersonal = (index: number) => {
     personalModal.openModal({ activeIndex: index });
@@ -101,7 +123,12 @@ export default function Planning() {
     remove(index);
   };
   const onSubmit = async (data: TasksFormArray) => {
-    if (!isDirty) {
+    const selectedPhase = selectedProject.phases_project.find(
+      (phase) => phase.id === propsPhases?.id_phase
+    );
+    const hasChangedSupervisor =
+      selectedPhase?.id_supervisor !== propsPhases?.id_supervisor;
+    if (!isDirty && !hasChangedSupervisor) {
       openModal("INFORMATION", {
         title: "Formulario sin cambios",
         message: "No hay cambios para actualizar'",
@@ -112,6 +139,20 @@ export default function Planning() {
     try {
       const { tasks } = data;
       const dirtyArray = dirtyFields.tasks ?? [];
+
+      if (!selectedPhase)
+        throw new Error("No se encontró la fase seleccionada");
+      if (!propsPhases?.id_supervisor)
+        throw new Error("No se ha seleccionado un supervisor");
+
+      if (hasChangedSupervisor) {
+        const { error: errorUpdate } = await phasesProjectApi.update({
+          id: selectedPhase.id,
+          values: { id_supervisor: propsPhases.id_supervisor },
+        });
+        if (errorUpdate) throw new Error(errorUpdate.message);
+      }
+
       await Promise.all(
         tasks.map(async (task, i) => {
           const hasId = task.id > 0;
@@ -187,13 +228,21 @@ export default function Planning() {
     }
   };
   useEffect(() => {
-    if (phases_project && phases_project.length > 0 && !selectedPhase) {
-      setSelectedPhase(phases_project[0].id);
+    if (phases_project && phases_project.length > 0 && !propsPhases?.id_phase) {
+      const firstPhaseWithTasks = phases_project.findIndex(
+        (phase) => phase.tasks.length > 0
+      );
+      if (firstPhaseWithTasks !== -1) {
+        setPropsPhases({
+          id_phase: phases_project[firstPhaseWithTasks].id,
+          id_supervisor: phases_project[firstPhaseWithTasks].id_supervisor || 0,
+        });
+      }
     }
   }, [phases_project]);
   useEffect(() => {
     reset({ tasks });
-  }, [tasks]);
+  }, [phases_project, reset]);
   const employeesById = useMemo(
     () => new Map(employees?.map((e) => [e.id, e.contacto_nombre])),
     [employees]
@@ -201,13 +250,14 @@ export default function Planning() {
   return (
     <ContainerToForms>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset disabled={!isEditMode} className="flex items-center gap-4">
-          <div className="flex-1">
+        <fieldset disabled={!isEditMode} className="">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <Select
+              label="Etapa"
               id="id_phase"
               onChange={(e) => handleChangePhases(e)}
               disabled={isFieldsChanged}
-              value={selectedPhase || undefined}
+              value={propsPhases?.id_phase || ""}
             >
               {phases_project?.map((phase) => (
                 <option key={phase.id} value={phase.id}>
@@ -215,15 +265,26 @@ export default function Planning() {
                 </option>
               ))}
             </Select>
+            <Select
+              label="Supervisor"
+              id="id_supervisor"
+              selectText="Seleccionar Supervisor"
+              value={propsPhases?.id_supervisor || ""}
+              onChange={(e) => handleChangeSupervisors(e)}
+            >
+              {employees?.map((employee) => (
+                <option key={employee.id} value={employee.id}>
+                  {employee.contacto_nombre}
+                </option>
+              ))}
+            </Select>
           </div>
-          <div className="">
-            <ButtonAdd
-              disabled={false}
-              title="Agregar Tarea"
-              onClick={handleAdd}
-              label="Agregar Tarea"
-            />
-          </div>
+          <ButtonAdd
+            disabled={false}
+            title="Agregar Tarea"
+            onClick={handleAdd}
+            label="Agregar Tarea"
+          />
         </fieldset>
         <fieldset
           className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-2"
@@ -231,7 +292,7 @@ export default function Planning() {
         >
           {fields
             .map((field, index) => ({ ...field, index }))
-            .filter((item) => item.id_phase === selectedPhase)
+            .filter((item) => item.id_phase === propsPhases?.id_phase)
             .map(({ index, id }) => (
               <div className="flex-1 relative" key={id}>
                 <CardToggle
@@ -240,38 +301,27 @@ export default function Planning() {
                   <div className="flex flex-col gap-2">
                     <Input
                       label="Descripción"
-                      {...register(`tasks.${index}.name`, {required: {value: true, message: "Este campo es requerido"} })}
+                      {...register(`tasks.${index}.name`, {
+                        required: {
+                          value: true,
+                          message: "Este campo es requerido",
+                        },
+                      })}
                       placeholder="Nombre de la tarea"
                     />
                     <div className="flex flex-col md:flex-row gap-2">
-                      <div className="flex-2">
-                        <Select
-                          label="Supervisor"
-                          {...register(`tasks.${index}.id_supervisor`, {
-                            valueAsNumber: true,
-                            validate: (value) => value > 0
-                          })}
-                          selectText="Seleccionar Supervisor"
-                        >
-                          {employees?.map((employee) => (
-                            <option key={employee.id} value={employee.id}>
-                              {employee.contacto_nombre}
-                            </option>
-                          ))}
-                        </Select>
-                      </div>
                       <div className="flex-1">
                         <Input
                           label="Duración en días"
                           type="number"
                           {...register(`tasks.${index}.duration`, {
                             valueAsNumber: true,
-                            validate: (value) => value > 0
+                            validate: (value) => value > 0,
                           })}
                           placeholder="Duración (en días)"
                         />
                       </div>
-                      <div className="flex-1">
+                      {/* <div className="flex-1">
                         <Select
                           label="Avance"
                           {...register(`tasks.${index}.progress`, {
@@ -285,16 +335,16 @@ export default function Planning() {
                           <option value="0.75">75 %</option>
                           <option value="1">100 %</option>
                         </Select>
-                      </div>
+                      </div> */}
                     </div>
-                    <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5 ">
+                    {/* <div className="mt-2 w-full bg-gray-200 rounded-full h-2.5 ">
                       <div
                         className="bg-green-500 h-2.5 rounded-full transition-all duration-300 ease-out"
                         style={{
                           width: `${watch(`tasks.${index}.progress`) * 100 || 0}%`,
                         }}
                       />
-                    </div>
+                    </div> */}
                     <div className="">
                       <h5 className="font-semibold">Personal asignado</h5>
                       {watch(`tasks.${index}.task_assignments`)?.length > 0 ? (

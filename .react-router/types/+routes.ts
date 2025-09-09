@@ -34,6 +34,9 @@ type Pages = {
   "/projects": {
     params: {};
   };
+  "/daily_reports": {
+    params: {};
+  };
   "/opportunity/:id/resumen": {
     params: {
       "id": string;
@@ -94,6 +97,11 @@ type Pages = {
       "id": string;
     };
   };
+  "/project/:id/daily_reports": {
+    params: {
+      "id": string;
+    };
+  };
   "/material/:id": {
     params: {
       "id": string;
@@ -109,7 +117,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/material/:id" | "/material/:id/prices";
+    page: "/" | "/login" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/daily_reports" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/project/:id/daily_reports" | "/material/:id" | "/material/:id/prices";
   };
   "routes/login.tsx": {
     id: "routes/login";
@@ -117,7 +125,7 @@ type RouteFiles = {
   };
   "layouts/main.tsx": {
     id: "layouts/main";
-    page: "/" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/material/:id" | "/material/:id/prices";
+    page: "/" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/daily_reports" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/project/:id/daily_reports" | "/material/:id" | "/material/:id/prices";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -146,6 +154,10 @@ type RouteFiles = {
   "routes/projects.tsx": {
     id: "routes/projects";
     page: "/projects";
+  };
+  "routes/daily_reports.tsx": {
+    id: "routes/daily_reports";
+    page: "/daily_reports";
   };
   "layouts/opportunity.tsx": {
     id: "layouts/opportunity";
@@ -185,7 +197,7 @@ type RouteFiles = {
   };
   "layouts/project.tsx": {
     id: "layouts/project";
-    page: "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning";
+    page: "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/project/:id/daily_reports";
   };
   "routes/project/resumen.tsx": {
     id: "routes/project/resumen";
@@ -210,6 +222,10 @@ type RouteFiles = {
   "routes/project/planning.tsx": {
     id: "routes/project/planning";
     page: "/project/:id/planning";
+  };
+  "routes/project/daily_reports.tsx": {
+    id: "routes/project/daily_reports";
+    page: "/project/:id/daily_reports";
   };
   "layouts/material.tsx": {
     id: "layouts/material";

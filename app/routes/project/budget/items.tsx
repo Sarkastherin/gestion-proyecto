@@ -51,6 +51,7 @@ export default function Items() {
       });
       return;
     }
+    
     openModal("LOADING", {
       message: "Procesando requerimiento",
     });

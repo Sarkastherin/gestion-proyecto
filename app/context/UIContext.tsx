@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import type { ReactNode } from "react";
-import { type ContactsDataType } from "./ContactsContext";
+import type { ContactsDataType, EmployeesDataType } from "./ContactsContext";
 import { supabase } from "~/backend/supabaseClient";
 import { useUIModals } from "./ModalsContext";
 
@@ -59,6 +59,10 @@ type UIContextType = {
   setPropsQuoteAndBudget: React.Dispatch<
     React.SetStateAction<PropsQuoteAndBudget>
   >;
+  selectedEmployee: EmployeesDataType | null;
+  setSelectedEmployee: React.Dispatch<
+    React.SetStateAction<EmployeesDataType | null>
+  >;
 };
 
 const UIContext = createContext<UIContextType | undefined>(undefined);
@@ -78,6 +82,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
 
   const [selectedSupplier, setSelectedSupplier] =
     useState<ContactsDataType | null>(null);
+  const [selectedEmployee, setSelectedEmployee] =
+    useState<EmployeesDataType | null>(null);
   const [isFieldsChanged, setIsFieldsChanged] = useState<boolean>(false);
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
@@ -162,6 +168,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
         editByStatus,
         propsQuoteAndBudget,
         setPropsQuoteAndBudget,
+        selectedEmployee,
+        setSelectedEmployee,
       }}
     >
       {children}

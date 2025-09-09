@@ -1,4 +1,7 @@
-import type { ContactsDataType, EmployeesDataType } from "~/context/ContactsContext";
+import type {
+  ContactsDataType,
+  EmployeesDataType,
+} from "~/context/ContactsContext";
 import type { MyUser } from "~/context/AuthContext";
 import type { CommonPropsDB } from "./sharedTypes";
 import type { PricesDB, MaterialsDB } from "~/types/materialsType";
@@ -39,6 +42,7 @@ export type ProjectsUITable = ProjectsDB & {
 export type PhasesProjectProps = {
   name: string;
   id_project: number;
+  id_supervisor?: number;
 };
 export type PhasesProjectDB = PhasesProjectProps & CommonPropsDB;
 
@@ -75,23 +79,25 @@ export type BudgetItemDB = BudgetItemProps & CommonPropsDB;
 export type ProjectAndBudgetUI = ProjectsUITable &
   TotalsMargens &
   Omit<Totals, "id_quote"> & {
-    phases_project: PhasesProjectDB[];
+    phases_project: (PhasesProjectDB & {
+      tasks: (TaskDB & {
+        task_assignments: TaskAssignmentDB[];
+      })[];
+      daily_reports: (DailyReportDB & {
+        report_tasks: ReportTaskDB[];
+        report_employees: ReportEmployeeDB[];
+      })[];
+    })[];
     budget_details_items: BudgetItemDB[];
     budget_details_materials: BudgetMaterialsDB[];
     client: ContactsDataType;
-    tasks: (TaskDB & {
-      task_assignments: TaskAssignmentDB[];
-    })[];
   };
-
 
 export type TaskProps = {
   name: string;
-  id_project: number;
   id_phase: number;
-  id_supervisor: number;
-  progress: number;
   duration: number;
+  planned?: boolean;
 };
 export type TaskDB = TaskProps & CommonPropsDB;
 export type TaskAssignmentProps = {
@@ -100,3 +106,29 @@ export type TaskAssignmentProps = {
   active: boolean;
 };
 export type TaskAssignmentDB = TaskAssignmentProps & CommonPropsDB;
+export type DailyReportProps = {
+  id_phase: number;
+  date_report: string;
+  status: string;
+};
+export type DailyReportDB = DailyReportProps & CommonPropsDB;
+export type ReportTaskProps = {
+  id_task: number;
+  id_daily_report: number;
+  progress: number;
+}
+export type ReportTaskDB = ReportTaskProps & CommonPropsDB;
+export type ViewTasks = {
+  id: number;
+  id_phase: number;
+  name: string;
+  progress_total: number;
+}
+export type ReportEmployeeProps = {
+  id_daily_report: number;
+  id_employee: number;
+  hour_start: string;
+  hour_end: string;
+  observation?: string;
+}
+export type ReportEmployeeDB = ReportEmployeeProps & CommonPropsDB;

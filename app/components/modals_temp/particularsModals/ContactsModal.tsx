@@ -1,12 +1,15 @@
 import ModalBase from "../ModalBase";
-import type { ContactsDataType } from "~/context/ContactsContext";
+import type {
+  ContactsDataType,
+  EmployeesDataType,
+} from "~/context/ContactsContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
 import type { TableColumn } from "react-data-table-component";
 import { useState, useEffect } from "react";
 import { useUI } from "~/context/UIContext";
 import { useContacts } from "~/context/ContactsContext";
 
-const columns: TableColumn<ContactsDataType>[] = [
+const columnsContact: TableColumn<ContactsDataType | EmployeesDataType>[] = [
   {
     name: "Id",
     selector: (row) => row.id,
@@ -14,12 +17,29 @@ const columns: TableColumn<ContactsDataType>[] = [
   },
   {
     name: "Cliente",
-    selector: (row) => row.nombre,
+    selector: (row) => (row as ContactsDataType).nombre,
     wrap: true,
   },
   {
     name: "CUIT",
-    selector: (row) => row.cuit || "",
+    selector: (row) => (row as ContactsDataType).cuit || "",
+    width: "150px",
+  },
+];
+const columnsEmployees: TableColumn<ContactsDataType | EmployeesDataType>[] = [
+  {
+    name: "Id",
+    selector: (row) => row.id,
+    width: "80px",
+  },
+  {
+    name: "Cliente",
+    selector: (row) => (row as EmployeesDataType).contacto_nombre,
+    wrap: true,
+  },
+  {
+    name: "CUIT",
+    selector: (row) => (row as EmployeesDataType).puesto || "",
     width: "150px",
   },
 ];
@@ -27,28 +47,37 @@ const columns: TableColumn<ContactsDataType>[] = [
 export default function ContactsModal({
   open,
   onClose,
-  type
+  type,
 }: {
   open: boolean;
   onClose: () => void;
-  type: "client" | "supplier";
+  type: "client" | "supplier" | "employee";
 }) {
-  const { setSelectedClient, setSelectedSupplier } = useUI();
-  const { clients, suppliers } = useContacts();
-  const [filterData, setFilterData] = useState<ContactsDataType[]>([]);
-  const handleRowClicked = (data: ContactsDataType) => {
-    if(type === "client") setSelectedClient({...data});
-    if(type === "supplier") setSelectedSupplier({...data});
+  const { setSelectedClient, setSelectedSupplier, setSelectedEmployee } =
+    useUI();
+  const { clients, suppliers, employees } = useContacts();
+  const [filterData, setFilterData] = useState<
+    ContactsDataType[] | EmployeesDataType[]
+  >([]);
+  const handleRowClicked = (data: ContactsDataType | EmployeesDataType) => {
+    if (type === "client") setSelectedClient({ ...(data as ContactsDataType) });
+    if (type === "supplier")
+      setSelectedSupplier({ ...(data as ContactsDataType) });
+    if (type === "employee")
+      setSelectedEmployee({ ...(data as EmployeesDataType) });
     onClose();
   };
   useEffect(() => {
-    if(type === "client" && clients && clients.length > 0) {
+    if (type === "client" && clients && clients.length > 0) {
       setFilterData(clients);
     }
     if (type === "supplier" && suppliers && suppliers.length > 0) {
       setFilterData(suppliers);
     }
-  }, [clients, suppliers]);
+    if (type === "employee" && employees && employees.length > 0) {
+      setFilterData(employees);
+    }
+  }, [clients, suppliers, employees]);
   return (
     <ModalBase
       title={`Listado de ${type === "client" ? "Clientes" : "Proveedores"}`}
@@ -63,13 +92,20 @@ export default function ContactsModal({
         },
       }}
     >
-      <div className="px-6 pt-6 overflow-y-auto" style={{ maxHeight: "calc(100vh - 270px)" }}>
+      <div
+        className="px-6 pt-6 overflow-y-auto"
+        style={{ maxHeight: "calc(100vh - 270px)" }}
+      >
         <EntityTable
-          columns={columns}
+          columns={type === "employee" ? columnsEmployees : columnsContact}
           data={filterData}
           onRowClick={handleRowClicked}
           filterFields={[
-            { key: "nombre", label: `${type === "client" ? "Cliente" : "Proveedor"}`, autoFilter: true },
+            {
+              key: "nombre",
+              label: `${type === "client" ? "Cliente" : "Proveedor"}`,
+              autoFilter: true,
+            },
             { key: "cuit", label: "CUIT", autoFilter: true },
           ]}
         />

@@ -16,6 +16,7 @@ export default [
     route("new-opportunity", "routes/newOpportunity.tsx"),
     route("new-material", "routes/newMaterial.tsx"),
     route("projects", "routes/projects.tsx"),
+    route("daily_reports", "routes/daily_reports.tsx"),
     ...prefix("opportunity", [
       layout("layouts/opportunity.tsx", [
         route(":id/resumen", "routes/opportunity/resumen.tsx"),
@@ -41,6 +42,7 @@ export default [
           route(":id/budget/materials", "routes/project/budget/materials.tsx"),
         ]),
         route(":id/planning", "routes/project/planning.tsx"),
+        route(":id/daily_reports", "routes/project/daily_reports.tsx"),
       ]),
     ]),
     ...prefix("material", [

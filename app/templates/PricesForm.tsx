@@ -23,7 +23,7 @@ export default function PricesForm({
   defaultValues,
   idMaterial,
   modalMode,
-  onSelectPrice, // <- NUEVO
+  onSelectPrice,
 }: {
   defaultValues: DefaulTypes;
   idMaterial: number | undefined;

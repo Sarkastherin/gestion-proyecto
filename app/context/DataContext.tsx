@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import type { ProjectsUITable, ProjectAndBudgetUI } from "~/types/projectsType";
+import type { ProjectsUITable, ProjectAndBudgetUI, ViewTasks } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
   DetailsMaterialsDB,
@@ -52,6 +52,9 @@ type DataContextType = {
   getProjectById: (id: number) => Promise<ProjectAndBudgetUI | null>;
   selectedProject: ProjectAndBudgetUI | null;
   refreshProject: (id?: number) => Promise<void>;
+  getTasksByIdPhase: (id: number) => Promise<ViewTasks[] | null>;
+  tasksProgress: ViewTasks[] | null;
+  setTasksProgress: React.Dispatch<React.SetStateAction<ViewTasks[] | null>>;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -74,6 +77,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsUI | null>(
     null
   );
+  const [tasksProgress, setTasksProgress] = useState<ViewTasks[] | null>(null);
   const getProjects = async (): Promise<void> => {
     if (clients) {
       setEntities<ProjectsUITable>({
@@ -235,7 +239,6 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       };
       if (!onlyReturn) setSelectedOpportunity(completedOpportunity);
       return completedOpportunity;
-      
     } catch (err) {
       console.error("Error en getOpportunityById:", err);
       return null;
@@ -249,13 +252,11 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       const { data: project, error } = await supabase
         .from("projects")
         .select(
-          "*, phases_project(*), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*)), tasks(*, task_assignments(*))"
+          "*, phases_project(*, tasks(*, task_assignments(*)), daily_reports(*, report_tasks(*), report_employees(*))), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*))"
         )
         .eq("id", id)
         .single();
-
       if (error || !project) throw new Error("No se pudo obtener el proyecto");
-      /* ***** */
       const budget = {
         details_items: project.budget_details_items ?? [],
         details_materials: project.budget_details_materials ?? [],
@@ -307,6 +308,16 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error en getProjectById:", err);
       return null;
     }
+  };
+  const getTasksByIdPhase = async (id: number): Promise<ViewTasks[] | null> => {
+    const {data, error} = await supabase.from('view_tasks_progress').select('*').eq('id_phase', id);
+    if (error) {
+      console.error("Error en getTasksByIdPhase:", error);
+      return null;
+    }
+    setTasksProgress
+    (data);
+    return data;
   };
   const getMaterial = (id: number, materialsList: MaterialsUI[]) => {
     const data = materialsList.find((item) => item.id === id);
@@ -371,7 +382,10 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         setSelectedMaterial,
         getProjectById,
         selectedProject,
-        refreshProject
+        refreshProject,
+        getTasksByIdPhase,
+        tasksProgress,
+        setTasksProgress,
       }}
     >
       {children}

@@ -38,6 +38,9 @@ export default function Header() {
               <li>
                 <MyLink to="/projects">✨ Proyectos</MyLink>
               </li>
+              <li>
+                <MyLink to="/daily_reports">📰 Partes Diarios</MyLink>
+              </li>
 
               <li>
                 <MyLink to="/materials">Materiales</MyLink>

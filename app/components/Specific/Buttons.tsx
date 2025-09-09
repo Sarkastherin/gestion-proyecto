@@ -36,7 +36,7 @@ export const ButtonDeleteIcon = ({
              transition-colors duration-400 ease-in-out 
              dark:border-gray-500 dark:text-gray-500 
              dark:hover:text-red-400 dark:hover:border-red-400 
-             dark:focus:text-zinc-700 dark:focus:bg-red-400 dark:focus:border-red-400"
+             dark:focus:text-zinc-700 dark:focus:bg-red-400 dark:focus:border-red-400 disabled:cursor-not-allowed disabled:border-gray-300 disabled:dark:border-gray-500 disabled:text-gray-300 disabled:dark:text-gray-500 disabled:bg-gray-200 disabled:dark:bg-gray-700"
       {...buttonProps}
     >
       <span className="sr-only">Delete</span>

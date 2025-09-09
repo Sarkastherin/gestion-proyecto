@@ -176,6 +176,7 @@ export function useTasksRealtime() {
       "task_assignments"
     ];
     tablesToListen.forEach((table) => {
+      console.log("Listening to table:", table);
       channel.on(
         "postgres_changes",
         { event: "*", schema: "public", table },

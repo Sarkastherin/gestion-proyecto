@@ -177,7 +177,6 @@ export default function DuplicateQuoteModal({
     selectedOpportunity: OpportunityAndQuotesUI;
   }) {
     try {
-      console.log("Ejecutando duplicación de cotización...");
       const original = await getOpportunityById(id_opportunity, true);
       if (!original) throw new Error("No se encontró la oportunidad original.");
       validateOpportunityDuplication(original, selectedOpportunity);

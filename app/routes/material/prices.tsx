@@ -1,6 +1,5 @@
 import type { Route } from "../+types/home";
 import { ContainerToForms } from "~/components/Generals/Containers";
-import { useUI } from "~/context/UIContext";
 import PricesForm from "~/templates/PricesForm";
 import { useData } from "~/context/DataContext";
 export function meta({}: Route.MetaArgs) {

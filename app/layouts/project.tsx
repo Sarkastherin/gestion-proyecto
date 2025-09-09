@@ -8,8 +8,10 @@ import {
   InformationCircleIcon,
   PresentationChartBarIcon,
   BriefcaseIcon,
+  ListBulletIcon,
+  ClipboardDocumentCheckIcon,
+  CurrencyDollarIcon
 } from "@heroicons/react/16/solid";
-import { FaTasks } from "react-icons/fa";
 const menuItems = (id: number) => {
   return [
     {
@@ -25,12 +27,17 @@ const menuItems = (id: number) => {
     {
       title: "Presupuesto",
       href: `/project/${id}/budget/materials`,
-      icon: <InformationCircleIcon className="w-4" />,
+      icon: <CurrencyDollarIcon className="w-4" />,
     },
     {
       title: "Planificación",
       href: `/project/${id}/planning`,
-      icon: <FaTasks className="w-4" />,
+      icon: <ListBulletIcon className="w-4" />,
+    },
+    {
+      title: "Partes Diarios",
+      href: `/project/${id}/daily_reports`,
+      icon: <ClipboardDocumentCheckIcon className="w-4" />,
     },
   ];
 };
