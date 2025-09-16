@@ -72,7 +72,7 @@ export default function MaterialLayout() {
             <div className="w-42">
               <Button
                 title="Eliminar material"
-                variant="danger"
+                variant="red"
                 onClick={handleDelete}
               >
                 <div className="flex gap-1">

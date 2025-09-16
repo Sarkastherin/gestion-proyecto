@@ -1,3 +1,4 @@
+import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 import type { Route } from "./+types/home";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { MaterialForm } from "~/templates/MaterialForm";
@@ -10,7 +11,7 @@ export function meta({}: Route.MetaArgs) {
 
 export default function NewMaterial() {
   return (
-    <>
+    <ProtectedRoute allowed={["administrador", "dueño"]}>
       <ContainerWithTitle title="Crear nuevo material">
         <MaterialForm
           isNew={true}
@@ -22,6 +23,6 @@ export default function NewMaterial() {
           }}
         />
       </ContainerWithTitle>
-    </>
+    </ProtectedRoute>
   );
 }

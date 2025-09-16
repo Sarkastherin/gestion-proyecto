@@ -77,8 +77,8 @@ export function ReportMaterialsForm({
         <h2 className="text-lg font-medium text-red-500">
           Reporte de Materiales
         </h2>
-        <div className="mt-4 w-28 float-end">
-          <Button type="submit">Siguiente</Button>
+        <div className="mt-4 float-end">
+          <Button variant="outlineGreen" type="submit">Finalizar</Button>
         </div>
       </form>
     </>

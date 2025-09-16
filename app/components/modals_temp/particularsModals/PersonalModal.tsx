@@ -43,15 +43,15 @@ export default function PersonalModal({
 };
   return (
     <ModalBase
-      title="Listado de Personal"
+      title="Listado de Operarios"
       open={open}
-      zIndex={40}
+      zIndex={50}
       onClose={onClose}
       width="max-w-lg"
       footer={{
         btnPrimary: {
           label: "Cerrar",
-          variant: "secondary",
+          variant: "light",
           handleOnClick: onClose,
         },
       }}
@@ -64,7 +64,7 @@ export default function PersonalModal({
           <legend className="sr-only">Checkboxes</legend>
 
           <div className="flex flex-col items-start gap-3">
-            {employees?.map((employee) => (
+            {employees?.filter(e => e.puesto === "Operario").map((employee) => (
               <label
                 key={employee.id}
                 htmlFor={`employee-${employee.id}`}

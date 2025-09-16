@@ -4,4 +4,69 @@ input:-webkit-autofill {
   -webkit-text-fill-color: #e4e4e7 !important;         /* texto claro */
   transition: background-color 9999s ease-in-out 0s;   /* hack visual */
 }
+/* 
+bg-blue-700 
+bg-blue-800 
+blue-300 
+dark:bg-blue-600 
+dark:hover:bg-blue-700  
+dark:focus:ring-blue-800"
+*/
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@theme {
+  /* Primary */
+  --color-primary: var(--color-indigo-700);
+  --color-primary-hover: var(--color-indigo-800);
+  --color-primary-focus: var(--color-indigo-300);
+  --color-primary-text: var(--color-indigo-400);
+  /* Green */
+  --color-green: var(--color-green-700);
+  --color-green-hover: var(--color-green-800);
+  --color-green-focus: var(--color-green-300);
+  /* Red */
+  --color-red: var(--color-red-700);
+  --color-red-hover: var(--color-red-800);
+  --color-red-focus: var(--color-red-300);
+  /* Yellow */
+  --color-yellow: var(--color-yellow-400);
+  --color-yellow-hover: var(--color-yellow-500);
+  --color-yellow-focus: var(--color-yellow-300);
+  /* Purple */
+  --color-purple: var(--color-purple-700);
+  --color-purple-hover: var(--color-purple-800);
+  --color-purple-focus: var(--color-purple-300);
+  /* Blue */
+  --color-blue: var(--color-blue-700);
+  --color-blue-hover: var(--color-blue-800);
+  --color-blue-focus: var(--color-blue-300);
+}
+
+@layer theme {
+  :root,
+  :host {
+    @variant dark {
+      /* Primary */
+      --color-primary: var(--color-indigo-600);
+      --color-primary-hover: var(--color-indigo-700);
+      --color-primary-focus: var(--color-indigo-800);
+      /* Green */
+      --color-green: var(--color-green-600);
+      --color-green-hover: var(--color-green-700);
+      --color-green-focus: var(--color-green-800);
+      /* Red */
+      --color-red: var(--color-red-600);
+      --color-red-hover: var(--color-red-700);
+      --color-red-focus: var(--color-red-800);
+      /* Yellow */
+      --color-yellow-focus: var(--color-yellow-900);
+      /* Purple */
+      --color-purple: var(--color-purple-600);
+      --color-purple-hover: var(--color-purple-700);
+      --color-purple-focus: var(--color-purple-800);
+      /* Blue */
+      --color-blue: var(--color-blue-600);
+      --color-blue-hover: var(--color-blue-700);
+      --color-blue-focus: var(--color-blue-800);
+    }
+  }
+}

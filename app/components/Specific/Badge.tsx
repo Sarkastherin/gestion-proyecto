@@ -1,60 +1,60 @@
 import type React from "react";
-import type { StatusType } from "~/types/database";
+import type { StatusOpportunityType } from "~/types/opportunitiesType";
 
-type BadgeStatusType = {
-  variant: StatusType;
-  size?: "sm" | "md";
-  children: React.ReactNode;
-};
-export function BadgeStatus({
+const variants = {
+    blue: "bg-blue-200/90 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+    dark: "bg-gray-200/90 text-gray-800 dark:bg-gray-700 dark:text-gray-300",
+    red: "bg-red-200/90 text-red-800 dark:bg-red-900 dark:text-red-300",
+    green: "bg-green-200/90 text-green-800 dark:bg-green-900 dark:text-green-300",
+    yellow: "bg-yellow-200/90 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+    indigo: "bg-indigo-200/90 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300",
+    purple: "bg-purple-200/90 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+    pink: "bg-pink-200/90 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
+    orange: "bg-orange-200/90 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+  };
+
+export function Badge({
   variant,
-  size = "sm",
   children,
-}: BadgeStatusType) {
-  const variants = {
-    Nuevo: "bg-blue-200 text-blue-700",
-    Desestimada: "bg-gray-200 text-gray-700",
-    "En proceso": "bg-amber-200 text-amber-700",
-    Enviada: "bg-purple-300 text-purple-700",
-    Revisión: "bg-orange-200 text-orange-700",
-    Ganada: "bg-green-200 text-green-700",
-    Perdida: "bg-red-200 text-red-700",
-    Vencida: "bg-orange-200 text-orange-700",
-    "No status": "bg-red-200 text-red-700",
-  };
-  const sizes = {
-    sm: "px-2.5 py-0.5 text-xs",
-    md: "px-3 py-1 text-sm",
-  };
+}: {
+  variant: keyof typeof variants;
+  children: React.ReactNode;
+}) {
   return (
     <span
-      className={`rounded-full font-semibold whitespace-nowrap ${sizes[size]} ${variants[variant]}`}
+      className={`text-xs font-medium px-2.5 py-0.5 rounded-sm ${variants[variant]}`}
     >
       {children}
     </span>
   );
 }
-export function Badge({
-  variant,
-  size = "sm",
+export function BadgeStatus({
+  status,
   children,
 }: {
-  variant: "success";
-  size?: "sm" | "md";
+  status: StatusOpportunityType;
   children: React.ReactNode;
 }) {
-  const variants = {
-    success: "bg-lime-200 text-lime-700",
-  };
-  const sizes = {
-    sm: "px-2.5 py-0.5 text-xs",
-    md: "px-3 py-1 text-sm",
+  //Crear una función switch para asignar el variant según el status
+  const variant = () => {
+    switch (status) {
+      case "Nuevo":
+        return "blue";
+      case "En proceso":
+        return "yellow";
+      case "Ganada":
+        return "green";
+      case "Perdida":
+        return "red";
+      case "Revisión":
+        return "orange";
+      case "Enviada":
+        return "purple";
+      default:
+        return "dark";
+    }
   };
   return (
-    <span
-      className={`rounded-full font-semibold whitespace-nowrap ${sizes[size]} ${variants[variant]}`}
-    >
-      {children}
-    </span>
+    <Badge variant={variant()}>{children}</Badge>
   );
 }

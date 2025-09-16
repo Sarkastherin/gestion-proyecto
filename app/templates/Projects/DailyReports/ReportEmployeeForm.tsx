@@ -1,5 +1,5 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import type { ReportEmployeeDB } from "~/types/projectsType";
+import type { DailyReportUI, ReportEmployeeDB } from "~/types/projectsType";
 import { useContacts, type EmployeesDataType } from "~/context/ContactsContext";
 import { Input, Select } from "~/components/Forms/Inputs";
 import { useMemo, useState, useEffect } from "react";
@@ -10,19 +10,22 @@ import { useModalState } from "~/components/modals_temp/particularsModals/useMod
 import { useUI } from "~/context/UIContext";
 import { reportEmployeesApi } from "~/backend/cruds";
 import { useUIModals } from "~/context/ModalsContext";
+import { updatesArrayFields } from "~/utils/updatesArraysFields";
 type ReportEmployeeFormProps = {
   idDailyReport: number;
-  selectedPhase: number;
   idsEmployees: number[];
   onSuccess: () => void;
+  type: "new" | "edit";
+  data?: DailyReportUI;
 };
 type ReportEmployeeForm = {
   reportEmployees: ReportEmployeeDB[];
 };
 export function ReportEmployeeForm({
   idDailyReport,
-  selectedPhase,
   idsEmployees,
+  type,
+  data,
   onSuccess,
 }: ReportEmployeeFormProps) {
   const { openModal } = useUIModals();
@@ -30,13 +33,20 @@ export function ReportEmployeeForm({
   const { employees } = useContacts();
   const { setSelectedEmployee, selectedEmployee } = useUI();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const { report_employees } = data || {};
+  const idsInReportEmployees = report_employees?.map(re => re.id_employee)
+  const allIdsEmployees = new Set([...idsEmployees, ...(idsInReportEmployees || [])])
+  const getOldDataReportEmployees = (id: number) => {
+    return report_employees?.find((re) => re.id_employee === id);
+  };
   const defaultValues = {
-    reportEmployees: idsEmployees.map((id) => ({
+    reportEmployees: Array.from(allIdsEmployees).map((id) => ({
+      id: getOldDataReportEmployees(id)?.id || null,
       id_daily_report: idDailyReport,
       id_employee: id,
-      hour_start: "",
-      hour_end: "",
-      observation: "",
+      hour_start: getOldDataReportEmployees(id)?.hour_start || "",
+      hour_end: getOldDataReportEmployees(id)?.hour_end || "",
+      observation: getOldDataReportEmployees(id)?.observation || "",
     })) as ReportEmployeeDB[],
   };
   const {
@@ -107,17 +117,63 @@ export function ReportEmployeeForm({
     employeeModal.openModal();
   };
   const onSubmit = async (data: ReportEmployeeForm) => {
-    const { reportEmployees } = data;
-    openModal("LOADING", {
-      message: "Procesando requerimiento",
-    });
     try {
-      const { data: createdData, error } =
-        await reportEmployeesApi.insert(reportEmployees);
-      if (error) throw new Error(error.message);
-      if (createdData) {
-        onSuccess();
-        openModal("SUCCESS", { message: "Operarios guardados correctamente" });
+      const { reportEmployees } = data;
+      if (type === "new") {
+        openModal("LOADING", {
+          message: "Procesando requerimiento",
+        });
+        const cleanedReportEmployees = reportEmployees.map(re => {
+          const {id, ...rest} = re;
+          return rest
+        })
+        const { data: createdData, error } =
+          await reportEmployeesApi.insert(cleanedReportEmployees);
+          console.log(error, cleanedReportEmployees)
+        if (error) throw new Error(error.message);
+        if (createdData) {
+          onSuccess();
+          openModal("INFORMATION", {
+            title: "⏱️ Horas cargadas",
+            message: (
+              <>
+                <p>✅ Las horas trabajadas han sido cargadas correctamente</p>
+                <p>➡️ continue con los materiales</p>
+              </>
+            ),
+          });
+        }
+      } else {
+        if (Object.keys(dirtyFields).length > 0) {
+          
+          const cleanedReportEmployees = reportEmployees.map((re) => {
+            if(re.id === null) {
+              const {id, ...rest} = re;
+              return rest
+            }
+            else { return re }
+          })
+          await updatesArrayFields({
+            fieldName: "reportEmployees",
+            dirtyFields: dirtyFields,
+            fieldsArray: cleanedReportEmployees as ReportEmployeeDB[],
+            fieldsDelete: [],
+            onInsert: reportEmployeesApi.insertOne,
+            onRemove: (id: number) => reportEmployeesApi.remove({ id }),
+            onUpdate: reportEmployeesApi.update,
+          })
+          openModal("INFORMATION", {
+            title: "⏱️ Horas actualizadas",
+            message: (
+              <>
+                <p>✅ Las horas trabajadas han sido actualizadas correctamente</p>
+                <p>➡️ continue con los materiales</p>
+              </>
+            ),
+          });
+
+        }
+        onSuccess()
       }
     } catch (e) {
       openModal("ERROR", {
@@ -207,8 +263,8 @@ export function ReportEmployeeForm({
           />
         </div>
 
-        <div className="mt-4 w-28 float-end">
-          <Button type="submit">Siguiente</Button>
+        <div className="mt-4 float-end">
+          <Button variant="outlineDark" type="submit">Ir a Materiales</Button>
         </div>
       </form>
       <ContactsModal

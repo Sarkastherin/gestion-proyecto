@@ -11,6 +11,7 @@ import { ImportCsvInput } from "~/utils/import";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import ModalBase from "~/components/modals_temp/ModalBase";
+import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Materiales" },
@@ -71,6 +72,7 @@ export default function Materials() {
     { label: "DESCRIPCION", key: "description" },
   ];
   return (
+    <ProtectedRoute allowed={["administrador", "dueño"]}>
     <>
       {!materials && <div>Cargando materiales...</div>}
       {materials && (
@@ -147,6 +149,6 @@ export default function Materials() {
           onSuccess={getMaterials}
         />
       </ModalBase>
-    </>
+    </></ProtectedRoute>
   );
 }

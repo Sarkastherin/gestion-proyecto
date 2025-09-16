@@ -107,7 +107,7 @@ export default function QuotesAndBudgetLayout<T extends Phase>({
               <Button
                 type="button"
                 onClick={() => handleNavigate(t)}
-                variant={propsQuoteAndBudget?.activeType === t.key ? "primary" : "secondary"}
+                variant={propsQuoteAndBudget?.activeType === t.key ? "primary" : "light"}
                 className="w-full"
               >
                 {t.label}

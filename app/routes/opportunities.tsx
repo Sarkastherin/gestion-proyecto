@@ -7,9 +7,9 @@ import { useEffect } from "react";
 import type { OpportunityUITable } from "~/types/opportunitiesType";
 import { useData } from "~/context/DataContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
-import { ButtonNavigate } from "~/components/Specific/Buttons";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
+import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidades" },
@@ -51,8 +51,8 @@ const columns: TableColumn<OpportunityUITable>[] = [
   },
   {
     name: "Status",
-    cell: (row) => <BadgeStatus variant={row.status}>{row.status}</BadgeStatus>,
-    width: "120px",
+    cell: (row) => <BadgeStatus status={row.status}>{row.status}</BadgeStatus>,
+    width: "130px",
   },
   {
     name: "Creado por",
@@ -70,36 +70,38 @@ export default function Opportunities() {
   }, []);
 
   return (
-    <>
-      {opportunities && (
-        <ContainerWithTitle title={"Oportunidades"} width="w-full">
-        <EntityTable
-          data={opportunities}
-          columns={columns}
-          onRowClick={(row) => {
-            setSelectedOpportunity(null);
-            navigate(`/opportunity/${row.id}/resumen`);
+    <ProtectedRoute allowed={["administrador", "dueño", "coordinador"]}>
+      <>
+        {opportunities && (
+          <ContainerWithTitle title={"Oportunidades"} width="w-full">
+            <EntityTable
+              data={opportunities}
+              columns={columns}
+              onRowClick={(row) => {
+                setSelectedOpportunity(null);
+                navigate(`/opportunity/${row.id}/resumen`);
+              }}
+              filterFields={[
+                { key: "name", label: "Buscar por descripción" },
+                { key: "client.nombre", label: "Buscar por cliente" },
+                {
+                  key: "status",
+                  label: "Estado",
+                  type: "select",
+                  options: <StatusOptions />,
+                },
+              ]}
+            />
+          </ContainerWithTitle>
+        )}
+        <FooterUITables
+          justify="justify-end"
+          buttonNavigate={{
+            title: "+ Oportunidad",
+            route: "/new-opportunity",
           }}
-          filterFields={[
-            { key: "name", label: "Buscar por descripción" },
-            { key: "client.nombre", label: "Buscar por cliente" },
-            {
-              key: "status",
-              label: "Estado",
-              type: "select",
-              options: <StatusOptions />,
-            },
-          ]}
-        />
-        </ContainerWithTitle>
-      )}
-      <FooterUITables
-        justify="justify-end"
-        buttonNavigate={{
-          title: "Nueva Oportunidad",
-          route: "/new-opportunity",
-        }}
-      ></FooterUITables>
-    </>
+        ></FooterUITables>
+      </>
+    </ProtectedRoute>
   );
 }

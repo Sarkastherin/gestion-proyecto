@@ -83,10 +83,7 @@ export type ProjectAndBudgetUI = ProjectsUITable &
       tasks: (TaskDB & {
         task_assignments: TaskAssignmentDB[];
       })[];
-      daily_reports: (DailyReportDB & {
-        report_tasks: ReportTaskDB[];
-        report_employees: ReportEmployeeDB[];
-      })[];
+      daily_reports: DailyReportUI[];
     })[];
     budget_details_items: BudgetItemDB[];
     budget_details_materials: BudgetMaterialsDB[];
@@ -116,19 +113,23 @@ export type ReportTaskProps = {
   id_task: number;
   id_daily_report: number;
   progress: number;
-}
+};
+export type DailyReportUI = DailyReportDB & {
+  report_tasks: ReportTaskDB[];
+  report_employees: ReportEmployeeDB[];
+};
 export type ReportTaskDB = ReportTaskProps & CommonPropsDB;
 export type ViewTasks = {
   id: number;
   id_phase: number;
   name: string;
   progress_total: number;
-}
+};
 export type ReportEmployeeProps = {
   id_daily_report: number;
   id_employee: number;
   hour_start: string;
   hour_end: string;
   observation?: string;
-}
+};
 export type ReportEmployeeDB = ReportEmployeeProps & CommonPropsDB;

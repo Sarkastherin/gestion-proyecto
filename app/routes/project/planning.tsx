@@ -20,6 +20,7 @@ import FooterForms from "~/templates/FooterForms";
 import { ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { useUIModals } from "~/context/ModalsContext";
 import { useFieldsChange } from "~/utils/fieldsChange";
+import { Badge } from "~/components/Specific/Badge";
 import {
   tasksApi,
   taskAssignmentsApi,
@@ -40,6 +41,7 @@ type TasksFormArray = {
   tasks: TaskFormProps[];
 };
 type PersonalModalPayload = {
+  
   activeIndex: number | null;
 };
 type PropsPhases = {
@@ -272,7 +274,7 @@ export default function Planning() {
               value={propsPhases?.id_supervisor || ""}
               onChange={(e) => handleChangeSupervisors(e)}
             >
-              {employees?.map((employee) => (
+              {employees?.filter(e=> e.puesto === "Supervisor").map((employee) => (
                 <option key={employee.id} value={employee.id}>
                   {employee.contacto_nombre}
                 </option>
@@ -356,9 +358,9 @@ export default function Planning() {
                             )
                             .map((assignment: TaskAssignmentProps) => (
                               <li key={assignment.id_employee}>
-                                <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-sm whitespace-nowrap text-purple-700">
+                                <Badge variant="purple">
                                   {employeesById.get(assignment.id_employee)}
-                                </span>
+                                </Badge>
                               </li>
                             ))}
                         </ul>
@@ -371,6 +373,7 @@ export default function Planning() {
                         <Button
                           type="button"
                           variant="yellow"
+                          size="sm"
                           onClick={() => handleOpenPersonal(index)}
                         >
                           Agregar Personal

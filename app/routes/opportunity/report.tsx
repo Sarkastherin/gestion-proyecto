@@ -144,7 +144,7 @@ export default function Report() {
             </Select>
             {description && <TextDescription description={description} />}
           </div>
-          <Button variant="danger" onClick={handleSettingChange}>
+          <Button variant="red" onClick={handleSettingChange}>
             Generar nuevo PDF
           </Button>
         </div>

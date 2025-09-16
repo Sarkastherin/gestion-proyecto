@@ -7,6 +7,7 @@ import type { ProjectsUITable } from "~/types/projectsType";
 import type { TableColumn } from "react-data-table-component";
 import { useEffect } from "react";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
+import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Proyectos" },
@@ -54,7 +55,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <>
+    <ProtectedRoute allowed={["administrador", "dueño", "coordinador", "supervisor"]}>
       {projects && (
         <ContainerWithTitle title={"Proyectos"} width="w-full">
           {import.meta.env.VITE_SHOW_DEBUG === "true" ? (
@@ -86,6 +87,6 @@ export default function Projects() {
           )}
         </ContainerWithTitle>
       )}
-    </>
+    </ProtectedRoute>
   );
 }

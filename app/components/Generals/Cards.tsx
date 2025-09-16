@@ -87,9 +87,12 @@ export const CardToggle = ({
     </div>
   );
 };
-export const Card = ({children}:{children: React.ReactNode}) => {
+export const Card = ({title, children}:{title?: string; children: React.ReactNode}) => {
   return (
     <article className="rounded-xl shadow-md p-6 border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/70">
+      <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+        {title}
+      </h3>
       {children}
     </article>
   )

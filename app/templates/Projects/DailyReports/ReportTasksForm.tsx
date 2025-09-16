@@ -2,25 +2,27 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { Input, Select } from "~/components/Forms/Inputs";
 import { Button } from "~/components/Forms/Buttons";
 import { reportTasksApi, tasksApi } from "~/backend/cruds";
+import { createdNewTask } from "~/utils/dailyReport";
 import type {
-  TaskProps,
-  TaskAssignmentDB,
   ReportTaskDB,
   ViewTasks,
+  DailyReportUI,
 } from "~/types/projectsType";
-import type { CommonPropsDB } from "~/types/sharedTypes";
 import { ButtonAdd, ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { useUIModals } from "~/context/ModalsContext";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useState } from "react";
+import { useTasksRealtime, useOpportunityRealtime } from "~/backend/realTime";
 
 type ReportTasksFormProps = {
   idDailyReport: number;
   selectedPhase: number;
   filteredTasks: ViewTasks[];
   onSuccess: (tasksTouched: number[]) => void;
+  type: "new" | "edit";
+  data?: DailyReportUI;
 };
-type ReportTaskForm = {
+export type ReportTaskForm = {
   reportTasks: (ReportTaskDB & { description: string })[];
 };
 export function ReportTasksForm({
@@ -28,7 +30,10 @@ export function ReportTasksForm({
   filteredTasks,
   selectedPhase,
   onSuccess,
+  type,
+  data,
 }: ReportTasksFormProps) {
+  useTasksRealtime();
   const { openModal } = useUIModals();
   const [tasksToDelete, setTasksToDelete] = useState<number[]>([]); // ✅ nuevo
   const defaultValues = {
@@ -71,62 +76,126 @@ export function ReportTasksForm({
     }
     remove(index);
   };
-  const onSubmit = async (data: ReportTaskForm) => {
-    if (!isDirty && tasksToDelete.length === 0) {
-      openModal("INFORMATION", { message: "No hay cambios para actualizar" });
-      return;
-    }
-    openModal("LOADING", {
-      message: "Procesando requerimiento",
-    });
+  const onSubmit = async (formData: ReportTaskForm) => {
     try {
+      const { reportTasks } = formData;
       let tasksTouched: number[] = [];
-      const { reportTasks } = data;
-      const dirtyArray = dirtyFields.reportTasks ?? [];
-      await Promise.all(
-        reportTasks.map(async (report, i) => {
-          const hasId = report.id_task > 0;
-          const dirty = dirtyArray[i] ?? {};
-          const hasFieldChanged = Object.values(dirty).some((v) => v);
-          if (hasId && hasFieldChanged) {
-            const reportTask = {
-              id_task: report.id_task,
-              id_daily_report: idDailyReport,
-              progress: report.progress,
-            };
-            tasksTouched.push(report.id_task);
-            const { error } = await reportTasksApi.insertOne(reportTask);
-            if (error) throw new Error(error.message);
-          } else if (!hasId) {
-            const newTask = {
-              name: report.description,
-              id_phase: selectedPhase,
-              duration: 0,
+      if (type === "new") {
+        if (!isDirty && tasksToDelete.length === 0) {
+          openModal("INFORMATION", {
+            message: "No hay datos para agregar",
+          });
+          return;
+        }
+        openModal("LOADING", {
+          message: "Procesando requerimiento",
+        });
 
-              planned: false,
-            };
-            console.log("newTask", newTask);
-            const { data, error } = await tasksApi.insertOne(newTask);
-            if (error) throw new Error(error.message);
-            if (data && "id" in data) {
+        const dirtyArray = dirtyFields.reportTasks ?? [];
+        await Promise.all(
+          reportTasks.map(async (report, i) => {
+            const hasId = report.id_task > 0;
+            const dirty = dirtyArray[i] ?? {};
+            const hasFieldChanged = Object.values(dirty).some((v) => v);
+            if (hasId && hasFieldChanged) {
               const reportTask = {
-                id_task: data.id,
+                id_task: report.id_task,
                 id_daily_report: idDailyReport,
                 progress: report.progress,
               };
-              console.log("reportTask", reportTask);
-              const { error: errorReport } =
-                await reportTasksApi.insertOne(reportTask);
-              if (errorReport) throw new Error(errorReport.message);
+              tasksTouched.push(report.id_task);
+              const { error } = await reportTasksApi.insertOne(reportTask);
+              if (error) throw new Error(error.message);
+            } else if (!hasId) {
+              const newTask = await createdNewTask({
+                task: report,
+                selectedPhase,
+              });
+              if (newTask && "id" in newTask) {
+                const reportTask = {
+                  id_task: newTask.id,
+                  id_daily_report: idDailyReport,
+                  progress: report.progress,
+                };
+                const { error: errorReport } =
+                  await reportTasksApi.insertOne(reportTask);
+                if (errorReport) throw new Error(errorReport.message);
+              }
             }
-          }
-        })
-      );
-      setTasksToDelete([]); // ✅ limpiar tareas a eliminar
+          })
+        );
+        setTasksToDelete([]); // ✅ limpiar tareas a eliminar
+        openModal("INFORMATION", {
+            title: "📝 Avance de actividades creado",
+            message: (
+              <>
+                <p>✅ Las actividades han sido creadas correctamente</p>
+                <p>➡️ continue con la carga de horas del personal.</p>
+              </>
+            ),
+          });
+      } else {
+        if (Object.keys(dirtyFields).length > 0) {
+          const { reportTasks: reportTasksDirty } = dirtyFields;
+          await Promise.all(
+            reportTasksDirty?.map(async (dirty, index) => {
+              if (dirty) {
+                const reportTaskDirty = reportTasks[index];
+                const original = data?.report_tasks.find(
+                  (rt) =>
+                    rt.id_task === reportTaskDirty.id_task &&
+                    rt.id_daily_report === reportTaskDirty.id_daily_report
+                );
+                if (original) {
+                  reportTasks[index] = { ...reportTaskDirty, id: original.id };
+                }
+                if (reportTaskDirty.id_task === 0) {
+                  const newTask = await createdNewTask({
+                    task: reportTaskDirty,
+                    selectedPhase,
+                  });
+                  if (newTask && "id" in newTask) {
+                    reportTasks[index] = {
+                      ...reportTaskDirty,
+                      id_task: newTask.id,
+                    };
+                  }
+                }
+              }
+            }) ?? []
+          );
+          const cleanedData = reportTasks
+            .filter((rt) => rt.progress > 0)
+            .map((t) => {
+              tasksTouched.push(t.id_task);
+              const { description, ...rest } = t;
+              return rest;
+            });
+
+          await updatesArrayFields<ReportTaskDB>({
+            fieldName: "reportTasks",
+            fieldsArray: cleanedData as ReportTaskDB[],
+            dirtyFields: dirtyFields,
+            fieldsDelete: tasksToDelete,
+            onInsert: reportTasksApi.insertOne,
+            onRemove: (id: number) => reportTasksApi.remove({ id }),
+            onUpdate: reportTasksApi.update,
+          });
+          openModal("INFORMATION", {
+            title: "📝 Avance de actividades actualizado",
+            message: (
+              <>
+                <p>✅ El avance de actividades ha sido actualizado correctamente</p>
+                <p>➡️ continue con las actividades.</p>
+              </>
+            ),
+          });
+        } else {
+          reportTasks.map((t) => tasksTouched.push(t.id_task));
+        }
+      }
+
       onSuccess(tasksTouched);
-      openModal("SUCCESS", {
-        message: "Requerimiento procesado con éxito",
-      });
     } catch (e) {
       openModal("ERROR", {
         message: "Error al procesar el requerimiento",
@@ -192,8 +261,8 @@ export function ReportTasksForm({
         />
       </div>
 
-      <div className="mt-4 w-28 float-end">
-        <Button type="submit">Siguiente</Button>
+      <div className="mt-4 float-end">
+        <Button variant="outlineDark" type="submit">Ir a Personal</Button>
       </div>
     </form>
   );

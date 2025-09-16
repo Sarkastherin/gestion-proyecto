@@ -24,15 +24,16 @@ export const updateSingleRow = async <T extends { id: number }>({
     },
     {} as Partial<T>
   );
-
   if (Object.keys(updatePayload).length === 0) return;
-  const { error } = await onUpdate({
+  const { status, error } = await onUpdate({
     id: formData.id,
     values: updatePayload,
   });
 
-  if (error)
+  if (error) {
+    console.error("Error updating row:", error);
     throw new Error(
       `No se pudo actualizar la fila. Error: ${String(error.message)}`
     );
+  }
 };

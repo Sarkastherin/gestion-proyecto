@@ -124,13 +124,6 @@ export default function OpportunityForm({
             openModal("SUCCESS", {
               title: "✅ Proyecto creado con éxito",
               message: "El proyecto se ha creado correctamente.",
-              btnPrimary: {
-                label: "Ir al Proyecto",
-                handleOnClick: () => {
-                  navigate(`/project/${projectId}/resumen`);
-                },
-                variant: "green",
-              },
             });
           } else {
             throw new Error(

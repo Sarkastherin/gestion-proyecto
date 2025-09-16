@@ -6,6 +6,7 @@ import { useOpportunityRealtime } from "~/backend/realTime";
 import { useEffect } from "react";
 import { useUI } from "~/context/UIContext";
 import { useData } from "~/context/DataContext";
+import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Nueva Oportunidad" },
@@ -24,7 +25,7 @@ export default function NewOpportunity() {
     setSelectedClient(null);
   }, []);
   return (
-    <>
+    <ProtectedRoute allowed={["administrador", "dueño"]}>
       <ContainerWithTitle title="Creando nueva oportunidad" width="max-w-7xl w-full">
         <OpportunityForm
           isNew={true}
@@ -36,6 +37,6 @@ export default function NewOpportunity() {
           }}
         />
       </ContainerWithTitle>
-    </>
+    </ProtectedRoute>
   );
 }

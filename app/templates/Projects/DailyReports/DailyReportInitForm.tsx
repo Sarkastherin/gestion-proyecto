@@ -2,11 +2,12 @@ import { Input, Select } from "~/components/Forms/Inputs";
 import { Button } from "~/components/Forms/Buttons";
 import { useForm } from "react-hook-form";
 import { dailyReportsApi } from "~/backend/cruds";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import type { DailyReportDB, ProjectAndBudgetUI } from "~/types/projectsType";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { useUIModals } from "~/context/ModalsContext";
 import { useData } from "~/context/DataContext";
+import { useDailyReportsRealtime } from "~/backend/realTime";
 type TypePhasesUI = ProjectAndBudgetUI["phases_project"];
 
 export function DailyReportInitForm({
@@ -14,61 +15,85 @@ export function DailyReportInitForm({
   phases_project,
   selectedPhase,
   setSelectedPhase,
+  data,
+  type,
 }: {
   onSuccess: (id: number) => void;
   phases_project: TypePhasesUI;
   selectedPhase: number | "";
+  data?: DailyReportDB;
   setSelectedPhase: React.Dispatch<React.SetStateAction<number | "">>;
+  type: "new" | "edit";
 }) {
+  useDailyReportsRealtime();
   const dailyReports =
     phases_project?.flatMap((phase) => phase.daily_reports) || [];
-  const {} = useData();
   const { openModal } = useUIModals();
   const {
     register,
     handleSubmit,
     formState: { dirtyFields },
+    reset,
   } = useForm<DailyReportDB>();
 
   const onSubmit = async (formData: DailyReportDB) => {
-    if (
-      dailyReports.some(
-        (dr) =>
-          dr.date_report === formData.date_report &&
-          dr.id_phase === formData.id_phase
-      )
-    ) {
-      openModal("ERROR", {
-        title: "Reporte existente",
-        message: `Ya existe un reporte para la fecha ${formData.date_report} en la etapa seleccionada.`,
-      });
-      return;
-    }
     try {
-      openModal("LOADING", {
-        message: "Procesando requerimiento",
-      });
-      if ("id" in formData) {
-        await updateSingleRow({
-          dirtyFields: Object.fromEntries(
-            Object.entries(dirtyFields).filter(
-              ([_, v]) => typeof v === "boolean"
-            )
-          ),
-          formData: formData,
-          onUpdate: dailyReportsApi.update,
+      if (type === "new") {
+        if (
+          dailyReports.some(
+            (dr) =>
+              dr.date_report === formData.date_report &&
+              dr.id_phase === formData.id_phase
+          )
+        ) {
+          throw new Error(
+            "Ya existe un parte diario para la fase y fecha seleccionadas"
+          );
+        }
+        openModal("LOADING", {
+          message: "Procesando requerimiento",
         });
-      } else {
         const { data, error } = await dailyReportsApi.insertOne(formData);
         if (error)
-          throw new Error("Error inserting daily report:", { cause: error });
+          throw new Error("Error inserting daily report:", {
+            cause: error,
+          });
         if (data) {
           onSuccess(data.id);
+          openModal("INFORMATION", {
+            title: "📄 Parte diario creado",
+            message: (
+              <>
+                <p>✅ El parte diario ha sido inicializado correctamente</p>
+                <p>➡️ continue con las actividades.</p>
+              </>
+            ),
+          });
         }
+      } else {
+        if (Object.keys(dirtyFields).length > 0) {          
+          /* dailyReports.some(
+            (dr) =>
+              dr.date_report === formData.date_report &&
+              dr.id_phase === formData.id_phase
+          ) */
+          await updateSingleRow({
+            dirtyFields: dirtyFields,
+            formData: formData,
+            onUpdate: dailyReportsApi.update,
+          });
+          openModal("INFORMATION", {
+            title: "📄 Parte diario actualizado",
+            message: (
+              <>
+                <p>✅ El parte diario ha sido actualizado correctamente</p>
+                <p>➡️ continue con las actividades.</p>
+              </>
+            ),
+          });
+        }
+        onSuccess(formData.id);
       }
-      openModal("SUCCESS", {
-        message: "Se han guardado los datos",
-      });
     } catch (e) {
       openModal("ERROR", {
         message: `No se pudo actualizar la oportunidad. ${e}`,
@@ -83,10 +108,16 @@ export function DailyReportInitForm({
     // Aquí puedes manejar el cambio de fase según tus necesidades
   };
   useEffect(() => {
-    if (selectedPhase) {
-      console.log(dailyReports);
+    if (data) {
+      setSelectedPhase(data?.id_phase || "");
+      reset({
+        id: data?.id || 0,
+        id_phase: data?.id_phase || undefined,
+        date_report:
+          data?.date_report || new Date().toISOString().split("T")[0],
+      });
     }
-  }, [selectedPhase]);
+  }, [data]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Select
@@ -105,11 +136,10 @@ export function DailyReportInitForm({
       <Input
         label="Fecha"
         type="date"
-        defaultValue={new Date().toISOString().split("T")[0]}
         {...register("date_report", { required: true })}
       />
-      <div className="mt-4 w-28 float-end">
-        <Button type="submit">Siguiente</Button>
+      <div className="mt-4 float-end">
+        <Button variant="outlineDark" type="submit">Ir a Actividades</Button>
       </div>
     </form>
   );

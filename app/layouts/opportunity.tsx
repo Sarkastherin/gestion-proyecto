@@ -167,7 +167,7 @@ export default function OpportunityLayout() {
           </div>
 
           <footer className="mt-6 flex justify-end">
-            <Button type="button" onClick={onClose} variant="secondary">
+            <Button type="button" onClick={onClose} variant="light">
               Cerrar
             </Button>
           </footer>

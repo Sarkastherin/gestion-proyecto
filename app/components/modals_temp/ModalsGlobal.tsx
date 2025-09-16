@@ -2,6 +2,16 @@ import type { variants } from "../Forms/Buttons";
 import ModalBase from "./ModalBase";
 import { ClipLoader } from "react-spinners";
 
+const Container = ({ message }: { message: string | React.ReactNode }) => {
+  return (
+    <div className="flex flex-col items-center justify-center py-4 rounded-lg bg-zinc-200 dark:bg-zinc-700/50">
+      <div className="text-sm text-zinc-800 dark:text-zinc-300 text-center max-w-xs">
+        {message}
+      </div>
+    </div>
+  );
+};
+
 export function ModalConfirmation({
   message,
   onConfirm,
@@ -26,15 +36,11 @@ export function ModalConfirmation({
         btnSecondary: {
           label: "Cancelar",
           handleOnClick: onClose,
-          variant: "secondary",
+          variant: "dark",
         },
       }}
     >
-      <div className="flex flex-col items-center justify-center py-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
-        <div className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
-          {message}
-        </div>
-      </div>
+      <Container message={message} />
     </ModalBase>
   );
 }
@@ -60,7 +66,7 @@ export function ModalInformation({
   title = "ℹ️ Información",
   message,
   onClose,
-btnSecondary,
+  btnSecondary,
 }: {
   title?: string;
   message?: string;
@@ -75,17 +81,14 @@ btnSecondary,
     handleOnClick: () => void;
     variant?: keyof typeof variants;
   };
-}) {/*  */
+}) {
+  /*  */
   const footer = {
     btnSecondary,
   };
   return (
     <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
-      <div className="flex flex-col items-center justify-center py-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
-        <div className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
-          {message}
-        </div>
-      </div>
+      <Container message={message} />
     </ModalBase>
   );
 }
@@ -116,9 +119,7 @@ export function ModalSuccess({
   };
   return (
     <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
-      <div className="flex flex-col items-center justify-center py-4 rounded-lg bg-zinc-700/50">
-        <p className="text-sm text-zinc-300 text-center max-w-xs">{message}</p>
-      </div>
+      <Container message={message} />
     </ModalBase>
   );
 }
@@ -147,9 +148,7 @@ export function ModalError({
   };
   return (
     <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
-      <div className="flex flex-col items-center justify-center py-4 rounded-lg bg-zinc-700/50">
-        <p className="text-sm text-zinc-300 text-center max-w-xs">{message}</p>
-      </div>
+      <Container message={message} />
     </ModalBase>
   );
 }
@@ -192,10 +191,10 @@ export function ModalProgressive({
                   step.status === "done"
                     ? "bg-green-500"
                     : step.status === "in-progress"
-                    ? "bg-blue-500 animate-pulse"
-                    : step.status === "error"
-                    ? "bg-red-500"
-                    : "bg-gray-400"
+                      ? "bg-blue-500 animate-pulse"
+                      : step.status === "error"
+                        ? "bg-red-500"
+                        : "bg-gray-400"
                 }`}
               />
               <span>{step.label}</span>

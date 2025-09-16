@@ -222,7 +222,7 @@ export const MarginsForm = ({
             </colgroup>
             <thead className="ltr:text-left rtl:text-right">
               <tr className="*:font-medium *:text-zinc-900 dark:*:text-white">
-                <th className="px-3 py-2 whitespace-nowrap">Total ?</th>
+                <th className="px-3 py-2 whitespace-nowrap">Total</th>
                 <th className="px-3 py-2 whitespace-nowrap">Márgen final</th>
                 <th className="px-3 py-2 whitespace-nowrap">Precio final</th>
               </tr>

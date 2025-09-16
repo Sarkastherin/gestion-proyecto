@@ -8,6 +8,7 @@ import {
 
 export default [
   route("login", "routes/login.tsx"),
+  route("unauthorized", "routes/unauthorizedPage.tsx"),
   layout("layouts/main.tsx", [
     index("routes/home.tsx"),
     route("opportunities", "routes/opportunities.tsx"),

@@ -16,6 +16,9 @@ type Pages = {
   "/login": {
     params: {};
   };
+  "/unauthorized": {
+    params: {};
+  };
   "/opportunities": {
     params: {};
   };
@@ -117,11 +120,15 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/daily_reports" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/project/:id/daily_reports" | "/material/:id" | "/material/:id/prices";
+    page: "/" | "/login" | "/unauthorized" | "/opportunities" | "/materials" | "/settings" | "/new-opportunity" | "/new-material" | "/projects" | "/daily_reports" | "/opportunity/:id/resumen" | "/opportunity/:id/information" | "/opportunity/:id/phases" | "/opportunity/:id/conditions" | "/opportunity/:id/report" | "/opportunity/:id/quotes/items" | "/opportunity/:id/quotes/materials" | "/project/:id/resumen" | "/project/:id/information" | "/project/:id/budget/items" | "/project/:id/budget/materials" | "/project/:id/planning" | "/project/:id/daily_reports" | "/material/:id" | "/material/:id/prices";
   };
   "routes/login.tsx": {
     id: "routes/login";
     page: "/login";
+  };
+  "routes/unauthorizedPage.tsx": {
+    id: "routes/unauthorizedPage";
+    page: "/unauthorized";
   };
   "layouts/main.tsx": {
     id: "layouts/main";

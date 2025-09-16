@@ -1,17 +1,8 @@
 import { useEffect, useState } from "react";
-import { Input, Select } from "~/components/Forms/Inputs";
 import ModalBase from "../ModalBase";
-import { Button } from "~/components/Forms/Buttons";
 import { useData } from "~/context/DataContext";
-import { ButtonAdd } from "~/components/Specific/Buttons";
-import type {
-  DailyReportDB,
-  ReportTaskDB,
-  ViewTasks,
-} from "~/types/projectsType";
 import { ReportTasksForm } from "~/templates/Projects/DailyReports/ReportTasksForm";
 import { ReportEmployeeForm } from "~/templates/Projects/DailyReports/ReportEmployeeForm";
-import { set, useFieldArray, useForm } from "react-hook-form";
 import { DailyReportInitForm } from "~/templates/Projects/DailyReports/DailyReportInitForm";
 import {
   DocumentPlusIcon,
@@ -20,9 +11,12 @@ import {
   ArchiveBoxArrowDownIcon,
 } from "@heroicons/react/24/outline";
 import { ReportMaterialsForm } from "~/templates/Projects/DailyReports/ReportMaterialsForm";
+import type { DailyReportUI } from "~/types/projectsType";
 type DailyReportModalProps = {
   open: boolean;
   onClose: () => void;
+  type: "new" | "edit";
+  report?: DailyReportUI;
 };
 
 const initialSteps = [
@@ -34,14 +28,19 @@ const initialSteps = [
 export default function DailyReportModal({
   open,
   onClose,
+  type,
+  report,
 }: DailyReportModalProps) {
-  const [dailyReportId, setDailyReportId] = useState<number | null>(null);
+  const [dailyReportId, setDailyReportId] = useState<number | null>(
+    report?.id || null
+  );
   const [idsEmployees, setIdsEmployees] = useState<number[] | null>(null);
   const {
     selectedProject,
     getTasksByIdPhase,
     tasksProgress,
     setTasksProgress,
+    refreshProject,
   } = useData();
   const { phases_project } = selectedProject || {};
   const [steps, setSteps] = useState<typeof initialSteps>(() =>
@@ -66,6 +65,7 @@ export default function DailyReportModal({
       setSteps(newSteps);
     }
   };
+  
   useEffect(() => {
     if (selectedPhase) {
       getTasksByIdPhase(selectedPhase);
@@ -89,9 +89,36 @@ export default function DailyReportModal({
     ];
     return employeeIds as number[];
   };
+  const handlerStepClick = (index: number) => {
+    if (type === "new") return;
+    const newSteps = steps.map((s, i) => {
+      if (i <= index) {
+        s.status = "in-progress";
+      }
+      return s;
+    });
+    //setSteps(newSteps);
+  };
+  const LinkStep = ({
+    index,
+    icon,
+  }: {
+    index: number;
+    icon: React.ReactNode;
+  }) => {
+    return (
+      <div
+        className={`flex items-center font-semibold ${steps[index].status === "done" ? "text-green" : ""}`}
+        onClick={() => handlerStepClick(index)}
+      >
+        <div className="size-5 mr-2">{icon}</div>
+        <span>{steps[index].name}</span>
+      </div>
+    );
+  };
   return (
     <ModalBase
-      title="Parte Diario"
+      title={type === "new" ? "Nuevo Parte Diario" : "Editar Parte Diario"}
       open={open}
       zIndex={40}
       onClose={() => {
@@ -106,44 +133,24 @@ export default function DailyReportModal({
       {phases_project && (
         <div className="mt-4 space-y-2">
           {/* Barra de progreso */}
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div className="w-full bg-zinc-200 dark:bg-zinc-600 rounded-full h-2.5">
             <div
-              className="bg-indigo-400 h-2.5 rounded-full transition-all duration-300 ease-out"
+              className="bg-green h-2.5 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <ol className="flex justify-between text-zinc-400">
+          <ol className="flex justify-between text-zinc-400 dark:text-zinc-500">
             <li>
-              <div
-                className={`flex items-center ${steps[0].status === "done" ? "text-indigo-400" : ""}`}
-              >
-                <DocumentPlusIcon className="h-5 w-5 mr-2" />
-                <span>Inicializando</span>
-              </div>
+              <LinkStep index={0} icon={<DocumentPlusIcon />} />
             </li>
             <li>
-              <div
-                className={`flex items-center ${steps[1].status === "done" ? "text-indigo-400" : ""}`}
-              >
-                <ClipboardDocumentCheckIcon className="h-5 w-5 mr-2" />
-                <span>Actividades</span>
-              </div>
+              <LinkStep index={1} icon={<ClipboardDocumentCheckIcon />} />
             </li>
             <li>
-              <div
-                className={`flex items-center ${steps[2].status === "done" ? "text-indigo-400" : ""}`}
-              >
-                <UserGroupIcon className="h-5 w-5 mr-2" />
-                <span>Personal</span>
-              </div>
+              <LinkStep index={2} icon={<UserGroupIcon />} />
             </li>
             <li>
-              <div
-                className={`flex items-center ${steps[3].status === "done" ? "text-indigo-400" : ""}`}
-              >
-                <ArchiveBoxArrowDownIcon className="h-5 w-5 mr-2" />
-                <span>Materiales</span>
-              </div>
+              <LinkStep index={3} icon={<ArchiveBoxArrowDownIcon />} />
             </li>
           </ol>
 
@@ -152,9 +159,12 @@ export default function DailyReportModal({
               selectedPhase={selectedPhase}
               setSelectedPhase={setSelectedPhase}
               phases_project={phases_project}
+              data={report}
+              type={type}
               onSuccess={(id) => {
                 setDailyReportId(id);
                 handleNextStep();
+                refreshProject();
               }}
             />
           )}
@@ -165,9 +175,12 @@ export default function DailyReportModal({
                 idDailyReport={dailyReportId}
                 filteredTasks={tasksProgress}
                 selectedPhase={selectedPhase as number}
+                type={type}
+                data={report}
                 onSuccess={(tasksTouched) => {
                   setIdsEmployees(getEmployeeDataByTasksId(tasksTouched));
                   handleNextStep();
+                  refreshProject();
                 }}
               />
             )}
@@ -176,10 +189,12 @@ export default function DailyReportModal({
             steps[2].status === "in-progress" && (
               <ReportEmployeeForm
                 idDailyReport={dailyReportId}
-                selectedPhase={selectedPhase as number}
                 idsEmployees={idsEmployees}
+                type={type}
+                data={report}
                 onSuccess={() => {
                   handleNextStep();
+                  refreshProject();
                 }}
               />
             )}
@@ -189,6 +204,7 @@ export default function DailyReportModal({
               onSuccess={() => {
                 handleNextStep();
                 onClose();
+                refreshProject();
               }}
             />
           )}

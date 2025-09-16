@@ -9,6 +9,7 @@ import type { TableColumn } from "react-data-table-component";
 import type { CrudMethod } from "~/backend/crudFactory";
 import type { Path } from "react-hook-form";
 import { useUIModals } from "~/context/ModalsContext";
+import { ButtonDeleteIcon } from "./Buttons";
 
 type FormField<T> = {
   name: Path<T>;
@@ -49,19 +50,17 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
     setOpen(true);
   };
   const actionColumn: TableColumn<T> = {
-    name: "🗑️",
+    name: "Eliminar",
     button: true,
     cell: (row) => (
-      <Button
-        variant="danger_outline"
-        size="sm"
+      <ButtonDeleteIcon
         onClick={(e) => {
           e.stopPropagation(); // evita que se dispare el onRowClicked
           handleDelete(row);
         }}
       >
         Eliminar
-      </Button>
+      </ButtonDeleteIcon>
     ),
     width: "90px",
   };

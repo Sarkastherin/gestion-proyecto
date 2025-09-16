@@ -118,7 +118,7 @@ export function InformationForms({
             />
             <Input
               label="Duración [Plan]"
-              type="date"
+              type="number"
               {...register("plan_duration")}
               error={errors.plan_duration?.message}
             />

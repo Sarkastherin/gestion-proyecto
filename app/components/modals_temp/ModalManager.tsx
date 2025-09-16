@@ -35,7 +35,7 @@ export function ModalManager() {
           onClose={closeModal}
           message={props?.message}
           title={props?.title}
-          btnSecondary={{ label: "Aceptar", handleOnClick: closeModal, variant: "danger" }}
+          btnSecondary={{ label: "Aceptar", handleOnClick: closeModal, variant: "red" }}
         />
       );
     case "CONFIRMATION":

@@ -38,7 +38,7 @@ const columnsEmployees: TableColumn<ContactsDataType | EmployeesDataType>[] = [
     wrap: true,
   },
   {
-    name: "CUIT",
+    name: "Puesto",
     selector: (row) => (row as EmployeesDataType).puesto || "",
     width: "150px",
   },
@@ -75,7 +75,7 @@ export default function ContactsModal({
       setFilterData(suppliers);
     }
     if (type === "employee" && employees && employees.length > 0) {
-      setFilterData(employees);
+      setFilterData(employees.filter((e) => e.puesto === "Operario"));
     }
   }, [clients, suppliers, employees]);
   return (
@@ -102,11 +102,14 @@ export default function ContactsModal({
           onRowClick={handleRowClicked}
           filterFields={[
             {
-              key: "nombre",
-              label: `${type === "client" ? "Cliente" : "Proveedor"}`,
+              key: type === "employee" ? "contacto_nombre" : "nombre",
+              label: `${type === "client" ? "Cliente" : type === "supplier" ? "Proveedor" : "Empleado"}`,
               autoFilter: true,
             },
-            { key: "cuit", label: "CUIT", autoFilter: true },
+            //solo en type client o supplier
+            ...(type !== "employee"
+              ? [{ key: "cuit", label: "CUIT", autoFilter: true }]
+              : []),
           ]}
         />
       </div>
