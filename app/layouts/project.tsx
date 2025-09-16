@@ -10,7 +10,7 @@ import {
   BriefcaseIcon,
   ListBulletIcon,
   ClipboardDocumentCheckIcon,
-  CurrencyDollarIcon
+  CurrencyDollarIcon,
 } from "@heroicons/react/16/solid";
 const menuItems = (id: number) => {
   return [
@@ -67,20 +67,7 @@ export default function ProjectLayout() {
             title={selectedProject?.name}
             menu={menu}
           />
-          {import.meta.env.VITE_SHOW_DEBUG === "true" ? (
-            <Outlet />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center text-zinc-600 dark:text-zinc-400 mt-20">
-              <span className="text-2xl font-semibold mb-2">
-                🛠️ En construcción
-              </span>
-              <p className="max-w-md">
-                Se esta creando la interfaz de cada proyecto individual. Muy
-                pronto vas a poder gestionar tus proyectos de manera más
-                eficiente.
-              </p>
-            </div>
-          )}
+          <Outlet />
         </>
       )}
     </>
