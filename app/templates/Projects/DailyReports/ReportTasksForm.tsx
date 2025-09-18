@@ -126,14 +126,14 @@ export function ReportTasksForm({
         );
         setTasksToDelete([]); // ✅ limpiar tareas a eliminar
         openModal("INFORMATION", {
-            title: "📝 Avance de actividades creado",
-            message: (
-              <>
-                <p>✅ Las actividades han sido creadas correctamente</p>
-                <p>➡️ continue con la carga de horas del personal.</p>
-              </>
-            ),
-          });
+          title: "📝 Avance de actividades creado",
+          message: (
+            <>
+              <p>✅ Las actividades han sido creadas correctamente</p>
+              <p>➡️ continue con la carga de horas del personal.</p>
+            </>
+          ),
+        });
       } else {
         if (Object.keys(dirtyFields).length > 0) {
           const { reportTasks: reportTasksDirty } = dirtyFields;
@@ -185,7 +185,9 @@ export function ReportTasksForm({
             title: "📝 Avance de actividades actualizado",
             message: (
               <>
-                <p>✅ El avance de actividades ha sido actualizado correctamente</p>
+                <p>
+                  ✅ El avance de actividades ha sido actualizado correctamente
+                </p>
                 <p>➡️ continue con las actividades.</p>
               </>
             ),
@@ -253,16 +255,19 @@ export function ReportTasksForm({
           ))}
         </tbody>
       </table>
+      <div className="">
+        <div className="mt-4">
+          <ButtonAdd
+            aria-label="Agregar actividad no planificada"
+            onClick={handleAddTask}
+          />
+        </div>
 
-      <div className="mt-4">
-        <ButtonAdd
-          aria-label="Agregar actividad no planificada"
-          onClick={handleAddTask}
-        />
-      </div>
-
-      <div className="mt-4 float-end">
-        <Button variant="outlineDark" type="submit">Ir a Personal</Button>
+        <div className="mt-4 float-end">
+          <Button variant="outlineDark" type="submit">
+            Ir a Personal
+          </Button>
+        </div>
       </div>
     </form>
   );

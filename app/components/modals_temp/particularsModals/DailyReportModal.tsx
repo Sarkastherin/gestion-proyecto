@@ -65,7 +65,7 @@ export default function DailyReportModal({
       setSteps(newSteps);
     }
   };
-  
+
   useEffect(() => {
     if (selectedPhase) {
       getTasksByIdPhase(selectedPhase);
@@ -130,86 +130,91 @@ export default function DailyReportModal({
       }}
       width="max-w-4xl"
     >
-      {phases_project && (
-        <div className="mt-4 space-y-2">
-          {/* Barra de progreso */}
-          <div className="w-full bg-zinc-200 dark:bg-zinc-600 rounded-full h-2.5">
-            <div
-              className="bg-green h-2.5 rounded-full transition-all duration-300 ease-out"
-              style={{ width: `${progressPercent}%` }}
-            />
-          </div>
-          <ol className="flex justify-between text-zinc-400 dark:text-zinc-500">
-            <li>
-              <LinkStep index={0} icon={<DocumentPlusIcon />} />
-            </li>
-            <li>
-              <LinkStep index={1} icon={<ClipboardDocumentCheckIcon />} />
-            </li>
-            <li>
-              <LinkStep index={2} icon={<UserGroupIcon />} />
-            </li>
-            <li>
-              <LinkStep index={3} icon={<ArchiveBoxArrowDownIcon />} />
-            </li>
-          </ol>
+      <div
+        className="px-6 pt-6 overflow-y-auto"
+        style={{ maxHeight: "calc(100vh - 270px)" }}
+      >
+        {phases_project && (
+          <div className="mt-4 space-y-2">
+            {/* Barra de progreso */}
+            <div className="w-full bg-zinc-200 dark:bg-zinc-600 rounded-full h-2.5">
+              <div
+                className="bg-green h-2.5 rounded-full transition-all duration-300 ease-out"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <ol className="flex justify-between text-zinc-400 dark:text-zinc-500">
+              <li>
+                <LinkStep index={0} icon={<DocumentPlusIcon />} />
+              </li>
+              <li>
+                <LinkStep index={1} icon={<ClipboardDocumentCheckIcon />} />
+              </li>
+              <li>
+                <LinkStep index={2} icon={<UserGroupIcon />} />
+              </li>
+              <li>
+                <LinkStep index={3} icon={<ArchiveBoxArrowDownIcon />} />
+              </li>
+            </ol>
 
-          {steps[0].status === "in-progress" && (
-            <DailyReportInitForm
-              selectedPhase={selectedPhase}
-              setSelectedPhase={setSelectedPhase}
-              phases_project={phases_project}
-              data={report}
-              type={type}
-              onSuccess={(id) => {
-                setDailyReportId(id);
-                handleNextStep();
-                refreshProject();
-              }}
-            />
-          )}
-          {dailyReportId &&
-            tasksProgress &&
-            steps[1].status === "in-progress" && (
-              <ReportTasksForm
-                idDailyReport={dailyReportId}
-                filteredTasks={tasksProgress}
-                selectedPhase={selectedPhase as number}
-                type={type}
+            {steps[0].status === "in-progress" && (
+              <DailyReportInitForm
+                selectedPhase={selectedPhase}
+                setSelectedPhase={setSelectedPhase}
+                phases_project={phases_project}
                 data={report}
-                onSuccess={(tasksTouched) => {
-                  setIdsEmployees(getEmployeeDataByTasksId(tasksTouched));
+                type={type}
+                onSuccess={(id) => {
+                  setDailyReportId(id);
                   handleNextStep();
                   refreshProject();
                 }}
               />
             )}
-          {dailyReportId &&
-            idsEmployees &&
-            steps[2].status === "in-progress" && (
-              <ReportEmployeeForm
+            {dailyReportId &&
+              tasksProgress &&
+              steps[1].status === "in-progress" && (
+                <ReportTasksForm
+                  idDailyReport={dailyReportId}
+                  filteredTasks={tasksProgress}
+                  selectedPhase={selectedPhase as number}
+                  type={type}
+                  data={report}
+                  onSuccess={(tasksTouched) => {
+                    setIdsEmployees(getEmployeeDataByTasksId(tasksTouched));
+                    handleNextStep();
+                    refreshProject();
+                  }}
+                />
+              )}
+            {dailyReportId &&
+              idsEmployees &&
+              steps[2].status === "in-progress" && (
+                <ReportEmployeeForm
+                  idDailyReport={dailyReportId}
+                  idsEmployees={idsEmployees}
+                  type={type}
+                  data={report}
+                  onSuccess={() => {
+                    handleNextStep();
+                    refreshProject();
+                  }}
+                />
+              )}
+            {dailyReportId && steps[3].status === "in-progress" && (
+              <ReportMaterialsForm
                 idDailyReport={dailyReportId}
-                idsEmployees={idsEmployees}
-                type={type}
-                data={report}
                 onSuccess={() => {
                   handleNextStep();
+                  onClose();
                   refreshProject();
                 }}
               />
             )}
-          {dailyReportId && steps[3].status === "in-progress" && (
-            <ReportMaterialsForm
-              idDailyReport={dailyReportId}
-              onSuccess={() => {
-                handleNextStep();
-                onClose();
-                refreshProject();
-              }}
-            />
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </ModalBase>
   );
 }

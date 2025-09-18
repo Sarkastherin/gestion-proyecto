@@ -65,12 +65,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       const { data, error } = await supabase
         .from("users")
         .select("*, roles:id_rol(name)")
-        .eq("auth_user_id", userId);
+        .eq("auth_user_id", userId).single();
       if (error) {
         alert(`No se pudo acceder al servidor: Error: ${error.message}`);
         return;
       }
-      setUser(data[0]);
+      setUser(data);
       return;
     } catch (e) {
       console.error("Error fetching user:", e);
