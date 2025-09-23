@@ -32,6 +32,7 @@ export type ProjectsProps = {
   end_date?: string;
   duration?: number;
   status?: StatusProjectsType;
+  mode?: "0000000" | "0000010" | "0000011" | "";
 };
 export type ProjectsDB = CommonPropsDB & ProjectsProps;
 export type ProjectsUITable = ProjectsDB & {

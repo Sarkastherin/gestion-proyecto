@@ -3,7 +3,7 @@ import { CardToggle, Card } from "~/components/Generals/Cards";
 import { Input, Textarea, Select } from "~/components/Forms/Inputs";
 import FooterForms from "../FooterForms";
 import type { ProjectsDB, ProjectAndBudgetUI } from "~/types/projectsType";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUI } from "~/context/UIContext";
 import { useModalState } from "~/components/modals_temp/particularsModals/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
@@ -12,6 +12,7 @@ import { MarginsForm } from "../MarginsForm";
 import { useUIModals } from "~/context/ModalsContext";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { projectsApi } from "~/backend/cruds";
+import { workdayIntl } from "~/utils/workdayIntl";
 export function InformationForms({
   defaultValues,
 }: {
@@ -47,6 +48,33 @@ export function InformationForms({
       });
     }
   };
+  const modalidades = [
+    { mode: "Sin descanso", description: "Sin descanso", value: "0000000" },
+    {
+      mode: "1 día descanso por semana",
+      description: "1 día descanso por semana",
+      value: "0000010",
+    },
+    {
+      mode: "2 días descanso por semana",
+      description: "2 días descanso por semana",
+      value: "0000011",
+    },
+  ];
+  useEffect(() => {
+    const start = watch("plan_start_date") ?? "";
+    const planDurationValue = watch("plan_duration");
+    const duration = parseInt(
+      planDurationValue !== undefined ? String(planDurationValue) : "0"
+    );
+    const mode = watch("mode");
+    if(duration <= 0 || isNaN(duration) || start === "" || mode === '') {
+      setValue("plan_end_date", "");
+      return;
+    }
+    const endDate = workdayIntl(start, duration, mode).toLocaleDateString("sv-SE")
+    setValue("plan_end_date", endDate);
+  }, [watch("plan_start_date"), watch("plan_duration"), watch("mode")]);
   return (
     <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
       <fieldset disabled={!isEditMode}>
@@ -83,7 +111,7 @@ export function InformationForms({
       <fieldset disabled={!isEditMode}>
         <CardToggle title="Detalles adicionales">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="col-span-3">
+            <div className="col-span-3 sr-only">
               <Select
                 label="Forma de pago"
                 {...register("method_payment", {
@@ -97,7 +125,7 @@ export function InformationForms({
                 ))}
               </Select>
             </div>
-            <div className="col-span-3">
+            <div className="col-span-3 sr-only">
               <Input
                 label="Garantía"
                 {...register("guarantee")}
@@ -111,26 +139,41 @@ export function InformationForms({
               error={errors.plan_start_date?.message}
             />
             <Input
+              label="Duración [Plan]"
+              type="number"
+              defaultValue={1}
+              {...register("plan_duration", {
+                valueAsNumber: true,
+                min: {
+                  value: 1,
+                  message: "La duración debe ser al menos 1 día",
+                },
+                required: "Campo requerido",
+              })}
+              error={errors.plan_duration?.message}
+            />
+            <Select
+              label="Modalidad"
+              {...register("mode", {
+                required: true,
+              })}
+            >
+              {modalidades.map((item) => (
+                <option key={item["description"]} value={item["value"]}>
+                  {item["description"]}
+                </option>
+              ))}
+            </Select>
+            <Input
+              readOnly
               label="Fecha de fin [Plan]"
               type="date"
               {...register("plan_end_date")}
               error={errors.plan_end_date?.message}
             />
-            <Input
-              label="Duración [Plan]"
-              type="number"
-              {...register("plan_duration")}
-              error={errors.plan_duration?.message}
-            />
           </div>
         </CardToggle>
       </fieldset>
-      <MarginsForm
-        watch={watch}
-        register={register}
-        setValue={setValue}
-        disabled={!isEditMode}
-      />
       <FooterForms
         isNew={false}
         isEditMode={isEditMode}
