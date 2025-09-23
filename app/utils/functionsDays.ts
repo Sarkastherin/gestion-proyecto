@@ -55,7 +55,48 @@ export function workdayIntl(
 
   return current;
 }
+export function networkdaysIntl(
+  startDate: string,
+  endDate: string,
+  weekend: WeekendOption = 1,
+  holidays: Holiday[] = []
+): number {
+  let start = new Date(startDate);
+  let end = new Date(endDate);
 
+  // Asegurarse de trabajar con fecha sin horas
+  start = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  end = new Date(end.getFullYear(), end.getMonth(), end.getDate());
+
+  if (start > end) {
+    [start, end] = [end, start]; // intercambiar
+  }
+
+  // Normalizar feriados
+  const holidaySet = new Set(
+    holidays.map((h) =>
+      new Date(h instanceof Date ? h : h + "T00:00:00").toDateString()
+    )
+  );
+
+  const weekendMask = getWeekendMask(weekend);
+
+  let count = 0;
+  let current = new Date(start);
+
+  while (current <= end) {
+    const dayOfWeek = (current.getDay() + 6) % 7; // lunes=0 ... domingo=6
+    const isWeekend = weekendMask[dayOfWeek] === 1;
+    const isHoliday = holidaySet.has(current.toDateString());
+
+    if (!isWeekend && !isHoliday) {
+      count++;
+    }
+    current.setDate(current.getDate() + 1);
+  }
+
+  return count;
+}
 
 // Convierte el argumento weekend en un array [0..6] con 0=weekday, 1=fin de semana
 function getWeekendMask(weekend: WeekendOption): number[] {

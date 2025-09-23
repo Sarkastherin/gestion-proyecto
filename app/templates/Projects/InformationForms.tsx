@@ -12,7 +12,7 @@ import { MarginsForm } from "../MarginsForm";
 import { useUIModals } from "~/context/ModalsContext";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { projectsApi } from "~/backend/cruds";
-import { workdayIntl } from "~/utils/workdayIntl";
+import { workdayIntl,networkdaysIntl } from "~/utils/functionsDays";
 export function InformationForms({
   defaultValues,
 }: {

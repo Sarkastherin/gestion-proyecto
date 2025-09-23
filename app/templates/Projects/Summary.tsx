@@ -13,6 +13,7 @@ import {
 import type { TaskProgressGroup, PhaseProgress } from "~/utils/dailyReport";
 import DailyReportModal from "~/components/modals_temp/particularsModals/DailyReportModal";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
+import { networkdaysIntl } from "~/utils/functionsDays";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Resumen" },
@@ -33,14 +34,12 @@ export default function ProjectSummary({
     }>();
   const [allProgress, setAllProgress] = useState<PhaseProgress[] | null>(null);
   const [globalProgress, setGlobalProgress] = useState<number | null>(null);
+  const [daysUsed, setDaysUsed] = useState<number | null>(null);
   const { getTasksByIdPhase } = useData();
   const { employees } = useContacts();
   const { phases_project } = project;
   if (!phases_project) return;
   const dr = phases_project.flatMap((phase) => phase.daily_reports);
-  const lastReports = dr.sort((a, b) =>
-    a.date_report.localeCompare(b.date_report)
-  );
   const employeesById = useMemo(
     () => new Map(employees?.map((e) => [e.id, e.contacto_nombre])),
     [employees]
@@ -79,6 +78,18 @@ export default function ProjectSummary({
     () => new Map(allProgress?.map((p) => [p.id_phase, p.progress])),
     [allProgress]
   );
+  useEffect(() => {
+    if(project.plan_duration && project.plan_duration> 0) {
+      const start = project.plan_start_date
+      const end = new Date().toLocaleDateString("sv-SE")
+      const mode = project.mode
+      if(!start || !mode) return;
+      const daysCount = networkdaysIntl(start, end, mode);
+      setDaysUsed(daysCount);
+      console.log(Math.round(daysCount/project.plan_duration * 100));
+      
+    }
+  },[project])
   return (
     <>
       <div className="space-y-6">
@@ -114,11 +125,17 @@ export default function ProjectSummary({
 
           <Card title="Días consumidos">
             <span className="text-2xl font-bold">
-              {project.duration}d{" "}
+              {daysUsed} d{" "}
               <span className="text-sm text-zinc-500">
-                / {project.plan_duration}d
+                / {project.plan_duration} d
               </span>
             </span>
+            <div className="mt-2 w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+              <div
+                className="bg-yellow-600 h-2 rounded-full"
+                style={{ width: `${project.plan_duration ? Math.round(((daysUsed ?? 0)/project.plan_duration) * 100) : 0}%` }}
+              />
+            </div>
           </Card>
         </div>
 
