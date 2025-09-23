@@ -132,7 +132,7 @@ export default function ProjectSummary({
             </span>
             <div className="mt-2 w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
               <div
-                className="bg-yellow-600 h-2 rounded-full"
+                className="bg-lime-500 h-2 rounded-full"
                 style={{ width: `${project.plan_duration ? Math.round(((daysUsed ?? 0)/project.plan_duration) * 100) : 0}%` }}
               />
             </div>
