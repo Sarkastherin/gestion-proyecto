@@ -138,3 +138,9 @@ function getWeekendMask(weekend: WeekendOption): number[] {
   }
   return mask;
 }
+export function formatDateUStoES(value?: string) {
+  if (!value) return "-";
+  const [year, month, day] = value.split("-");
+  return `${day}/${month}/${year}`;
+}
+

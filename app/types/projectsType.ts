@@ -96,6 +96,11 @@ export type TaskProps = {
   id_phase: number;
   duration: number;
   planned?: boolean;
+  startDate?: string;
+  endDate?: string;
+  peopleCount?: number;
+  observations?: string;
+  checklistCompleted?: boolean;
 };
 export type TaskDB = TaskProps & CommonPropsDB;
 export type TaskAssignmentProps = {

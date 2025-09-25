@@ -12,7 +12,7 @@ import { MarginsForm } from "../MarginsForm";
 import { useUIModals } from "~/context/ModalsContext";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { projectsApi } from "~/backend/cruds";
-import { workdayIntl,networkdaysIntl } from "~/utils/functionsDays";
+import { workdayIntl, networkdaysIntl } from "~/utils/functionsDays";
 export function InformationForms({
   defaultValues,
 }: {
@@ -68,11 +68,19 @@ export function InformationForms({
       planDurationValue !== undefined ? String(planDurationValue) : "0"
     );
     const mode = watch("mode");
-    if(duration <= 0 || isNaN(duration) || start === "" || mode === '') {
+    if (
+      duration <= 0 ||
+      isNaN(duration) ||
+      start === "" ||
+      mode === "" ||
+      mode === null
+    ) {
       setValue("plan_end_date", "");
       return;
     }
-    const endDate = workdayIntl(start, duration, mode).toLocaleDateString("sv-SE")
+    const endDate = workdayIntl(start, duration, mode).toLocaleDateString(
+      "sv-SE"
+    );
     setValue("plan_end_date", endDate);
   }, [watch("plan_start_date"), watch("plan_duration"), watch("mode")]);
   return (
