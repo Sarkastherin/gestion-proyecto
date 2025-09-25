@@ -77,7 +77,7 @@ export function ConfigFormModal<
       zIndex={10}
       footer={{
         btnPrimary: { label: "Guardar", handleOnClick: handleSubmit(onSubmit)},
-        btnSecondary: { label: "Cancelar", handleOnClick: onClose, variant: "secondary" },
+        btnSecondary: { label: "Cancelar", handleOnClick: onClose, variant: "light" },
       }}
     >
       <form className="space-y-4 mt-4" onSubmit={handleSubmit(onSubmit)}>

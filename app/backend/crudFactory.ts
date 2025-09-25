@@ -155,10 +155,12 @@ export const createCrud = <TFull extends object>(table: string) => {
     },
     update: async ({id,values}: {id: number; values: Partial<TFull>}): Promise<UpdateorDeleteResponse> => {
       try {
+        console.log({id,values})
         const { status, error } = await supabase
           .from(table)
           .update(values)
           .eq("id", id);
+          console.log({status, error})
         if (error) throw error;
         return { status, error: null };
       } catch (err) {
