@@ -2,11 +2,13 @@ import type { Route } from "../../+types/root";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import { useData } from "~/context/DataContext";
 import { useContacts } from "~/context/ContactsContext";
-import { useModalState } from "~/components/modals_temp/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import { useTasksRealtime, useOpportunityRealtime } from "~/backend/realTime";
 import PlanningForm from "~/components/planning/PlanningForm";
 import { Button } from "~/components/Forms/Buttons";
-import CustomerRequirementModal from "~/components/modals_temp/particularsModals/CustomerRequirementModal";
+import CustomerRequirementModal from "~/components/modals/particularsModals/CustomerRequirementModal";
+import { FaCheck } from "react-icons/fa";
+
 // 📌 Meta
 export function meta({}: Route.MetaArgs) {
   return [
@@ -32,13 +34,19 @@ export default function Planning() {
         <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
           Checklist de requerimientos del cliente
         </span>
-        <div className="w-38">
+        <div className="w-fit">
           <Button
             type="button"
             variant={selectedProject.customer_requirement ? "green" : "yellow"}
             onClick={() => customerRequirementModal.openModal()}
           >
-            {selectedProject.customer_requirement ? "Validado ✔" : "Validar"}
+            {selectedProject.customer_requirement ? (
+              <div className="flex items-center gap-2">
+                <FaCheck className="" /> <span>Validado</span>
+              </div>
+            ) : (
+              "Validar"
+            )}
           </Button>
         </div>
         <CustomerRequirementModal

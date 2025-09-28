@@ -10,7 +10,7 @@ import { ButtonExport } from "~/components/Specific/Buttons";
 import { ImportCsvInput } from "~/utils/import";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
-import ModalBase from "~/components/modals_temp/ModalBase";
+import ModalBase from "~/components/modals/ModalBase";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 export function meta({}: Route.MetaArgs) {
   return [
@@ -54,7 +54,7 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
   },
 ];
 export default function Materials() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const { getMaterials, materials } = useData();
   const navigate = useNavigate();
 
@@ -92,7 +92,7 @@ export default function Materials() {
         buttonNavigate={{ title: "Nuevo Material", route: "/new-material" }}
       >
         <div className="flex gap-4">
-          <div className="w-32">
+          <div className="w-fit">
             <Button variant="blue" type="button" onClick={handleUploadFile}>
               Importar
             </Button>

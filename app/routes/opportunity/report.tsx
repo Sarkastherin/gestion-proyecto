@@ -106,7 +106,7 @@ export default function Report() {
   }, [settings.model]);
   return (
     <div className="w-full mt-8 mx-auto flex gap-6 px-8">
-      <div className="w-88">
+      <div className="w-fit">
         <h3 className="text-2xl font-medium mb-6">Opciones</h3>
         <div className="flex flex-col gap-10">
           <div>

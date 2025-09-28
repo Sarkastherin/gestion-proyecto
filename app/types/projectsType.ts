@@ -135,8 +135,9 @@ export type ViewTasks = {
 export type ReportEmployeeProps = {
   id_daily_report: number;
   id_employee: number;
-  hour_start: string;
-  hour_end: string;
-  observation?: string;
+  hour_start: string | null;
+  hour_end: string | null;
+  observation?: string | null;
+  absent: boolean;
 };
 export type ReportEmployeeDB = ReportEmployeeProps & CommonPropsDB;

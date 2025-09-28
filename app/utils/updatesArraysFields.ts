@@ -27,10 +27,12 @@ export const updatesArrayFields = async <T extends object>({
   onInsert,
   onRemove,
 }: Props<T>): Promise<T[]> => {
+  
   const dirtyArray = dirtyFields[fieldName] ?? [];
   let newData: T[] = [];
   await Promise.all(
     fieldsArray.map(async (field, i) => {
+      
       const hasId = "id" in field;
       const dirty = dirtyArray[i] ?? {};
       const hasFieldChanged = Object.values(dirty).some((v) => v);
@@ -41,13 +43,16 @@ export const updatesArrayFields = async <T extends object>({
           acc[key] = field[key];
           return acc;
         }, {} as Partial<T>);
+        
         const { error: errorUpdate } = await onUpdate({
           id: (field as any).id, // asegurate que id exista en tus tipos
           values: updates,
         });
+        console.log({ errorUpdate });
         if (errorUpdate) throw new Error(errorUpdate.message);
       } else if (!hasId) {
         const { data: dataInsert, error: errorInsert } = await onInsert(field);
+        console.log(errorInsert)
         if (errorInsert) throw new Error(errorInsert.message);
 
         if (dataInsert !== null) {

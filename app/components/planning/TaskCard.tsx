@@ -12,7 +12,7 @@ import { formatDateUStoES } from "~/utils/functionsDays";
 import type {
   TaskAssignmentProps,
 } from "~/types/projectsType";
-import PersonalModal from "~/components/modals_temp/particularsModals/PersonalModal";
+import PersonalModal from "~/components/modals/particularsModals/PersonalModal";
 import { workdayIntl } from "~/utils/functionsDays";
 import type { PersonalModalPayload } from "~/routes/project/planning";
 
@@ -212,7 +212,7 @@ export default function TaskCard({
                   No hay personal asignado
                 </p>
               )}
-              <div className="mt-4 w-40">
+              <div className="mt-4 w-fit">
                 <Button
                   type="button"
                   variant="yellow"

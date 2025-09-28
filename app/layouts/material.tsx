@@ -69,7 +69,7 @@ export default function MaterialLayout() {
           title={selectedMaterial?.description}
           menu={menu}
           rightSection={
-            <div className="w-42">
+            <div className="w-fit">
               <Button
                 title="Eliminar material"
                 variant="red"

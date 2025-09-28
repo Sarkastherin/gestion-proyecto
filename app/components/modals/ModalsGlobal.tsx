@@ -25,7 +25,7 @@ export function ModalConfirmation({
     <ModalBase
       title="Confirmar acción"
       open
-      zIndex={50}
+      zIndex={100}
       onClose={onClose}
       footer={{
         btnPrimary: {
@@ -52,7 +52,7 @@ export function ModalLoading({
   message?: string;
 }) {
   return (
-    <ModalBase title={title} open zIndex={50}>
+    <ModalBase title={title} open zIndex={100}>
       <div className="flex flex-col items-center justify-center py-6 gap-4">
         <ClipLoader color="#4F46E5" size={40} />
         <p className="text-sm text-zinc-700 dark:text-zinc-300 text-center max-w-xs">
@@ -87,7 +87,7 @@ export function ModalInformation({
     btnSecondary,
   };
   return (
-    <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
+    <ModalBase title={title} open zIndex={100} onClose={onClose} footer={footer}>
       <Container message={message} />
     </ModalBase>
   );
@@ -118,7 +118,7 @@ export function ModalSuccess({
     btnSecondary,
   };
   return (
-    <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
+    <ModalBase title={title} open zIndex={100} onClose={onClose} footer={footer}>
       <Container message={message} />
     </ModalBase>
   );
@@ -147,7 +147,7 @@ export function ModalError({
     btnSecondary,
   };
   return (
-    <ModalBase title={title} open zIndex={50} onClose={onClose} footer={footer}>
+    <ModalBase title={title} open zIndex={100} onClose={onClose} footer={footer}>
       <Container message={message} />
     </ModalBase>
   );
@@ -172,7 +172,7 @@ export function ModalProgressive({
       ? (steps.filter((s) => s.status === "done").length / steps.length) * 100
       : 0;
   return (
-    <ModalBase title="Progreso" open zIndex={50} onClose={onClose}>
+    <ModalBase title="Progreso" open zIndex={100} onClose={onClose}>
       <div className="mt-4 space-y-4">
         {/* Barra de progreso */}
         <div className="w-full bg-gray-200 rounded-full h-2.5">

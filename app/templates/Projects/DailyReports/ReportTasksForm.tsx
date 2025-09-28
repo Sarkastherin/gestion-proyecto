@@ -12,7 +12,7 @@ import { ButtonAdd, ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { useUIModals } from "~/context/ModalsContext";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useState } from "react";
-import { useTasksRealtime, useOpportunityRealtime } from "~/backend/realTime";
+import { useTasksRealtime, useProjectRealtime } from "~/backend/realTime";
 
 type ReportTasksFormProps = {
   idDailyReport: number;
@@ -34,10 +34,15 @@ export function ReportTasksForm({
   data,
 }: ReportTasksFormProps) {
   useTasksRealtime();
-  const { openModal } = useUIModals();
+  useProjectRealtime();
+  const { openModal, closeModal } = useUIModals();
   const [tasksToDelete, setTasksToDelete] = useState<number[]>([]); // ✅ nuevo
+  const isFinished = data?.status === "finalizado";
+  const values = isFinished
+    ? filteredTasks.filter((t) => t.progress_total > 0)
+    : filteredTasks;
   const defaultValues = {
-    reportTasks: filteredTasks.map((t) => ({
+    reportTasks: values.map((t) => ({
       id_task: t.id,
       description: t.name,
       id_daily_report: idDailyReport,
@@ -82,8 +87,18 @@ export function ReportTasksForm({
       let tasksTouched: number[] = [];
       if (type === "new") {
         if (!isDirty && tasksToDelete.length === 0) {
-          openModal("INFORMATION", {
-            message: "No hay datos para agregar",
+          openModal("CONFIRMATION", {
+            title: "⚠️ Sin cambios",
+            message: (
+              <>
+                <p>No hay datos para agregar</p>
+                <p>¿Desea continuar con el proceso de carga de personal?</p>
+              </>
+            ),
+            onConfirm: () => {
+              onSuccess([]);
+              closeModal();
+            },
           });
           return;
         }
@@ -206,68 +221,68 @@ export function ReportTasksForm({
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <table className="w-full text-sm table-auto divide-zinc-200 dark:divide-zinc-700">
-        <colgroup>
-          <col />
-          <col className="w-[15%]" />
-          <col className="w-[1%]" />
-        </colgroup>
-        <thead className="ltr:text-left rtl:text-right">
-          <tr>
-            <th className="py-1 px-1"> Descripción</th>
-            <th className="py-1 px-1">Progreso %</th>
-            <th className="px-1 py-1">🗑️</th>
-          </tr>
-        </thead>
-        <tbody>
-          {fields.map((field, index) => (
-            <tr key={field.id}>
-              <td className="px-1 py-0.5 whitespace-nowrap">
-                <Input
-                  {...register(`reportTasks.${index}.description`, {
-                    required: true,
-                  })}
-                  defaultValue={field.description}
-                  readOnly={watch(`reportTasks.${index}.id_task`) > 0}
-                />
-              </td>
-              <td className="px-1 py-0.5 whitespace-nowrap">
-                <Select
-                  {...register(`reportTasks.${index}.progress`, {
-                    valueAsNumber: true,
-                  })}
-                  defaultValue={field.progress}
-                >
-                  <option value="0">0%</option>
-                  <option value="25">25%</option>
-                  <option value="50">50%</option>
-                  <option value="75">75%</option>
-                  <option value="100">100%</option>
-                </Select>
-              </td>
-              <td className="px-1 py-0.5 whitespace-nowrap">
-                <ButtonDeleteIcon
-                  onClick={() => handleRemove(index)}
-                  disabled={watch(`reportTasks.${index}.id_task`) > 0}
-                />
-              </td>
+      <fieldset disabled={isFinished}>
+        <table className="w-full text-sm table-auto divide-zinc-200 dark:divide-zinc-700">
+          <colgroup>
+            <col />
+            <col className="w-[15%]" />
+            <col className="w-[1%]" />
+          </colgroup>
+          <thead className="ltr:text-left rtl:text-right">
+            <tr>
+              <th className="py-1 px-1"> Descripción</th>
+              <th className="py-1 px-1">Progreso %</th>
+              <th className="px-1 py-1">🗑️</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="">
+          </thead>
+          <tbody>
+            {fields.map((field, index) => (
+              <tr key={field.id}>
+                <td className="px-1 py-0.5 whitespace-nowrap">
+                  <Input
+                    {...register(`reportTasks.${index}.description`, {
+                      required: true,
+                    })}
+                    defaultValue={field.description}
+                    readOnly={watch(`reportTasks.${index}.id_task`) > 0}
+                  />
+                </td>
+                <td className="px-1 py-0.5 whitespace-nowrap">
+                  <Select
+                    {...register(`reportTasks.${index}.progress`, {
+                      valueAsNumber: true,
+                    })}
+                    defaultValue={field.progress}
+                  >
+                    <option value="0">0%</option>
+                    <option value="25">25%</option>
+                    <option value="50">50%</option>
+                    <option value="75">75%</option>
+                    <option value="100">100%</option>
+                  </Select>
+                </td>
+                <td className="px-1 py-0.5 whitespace-nowrap">
+                  <ButtonDeleteIcon
+                    onClick={() => handleRemove(index)}
+                    disabled={watch(`reportTasks.${index}.id_task`) > 0}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
         <div className="mt-4">
           <ButtonAdd
             aria-label="Agregar actividad no planificada"
             onClick={handleAddTask}
           />
         </div>
+      </fieldset>
 
-        <div className="mt-4 float-end">
-          <Button variant="outlineDark" type="submit">
-            Ir a Personal
-          </Button>
-        </div>
+      <div className="mt-4 float-end">
+        <Button variant="outlineBlue" type="submit" size="sm">
+          Ir a Personal
+        </Button>
       </div>
     </form>
   );

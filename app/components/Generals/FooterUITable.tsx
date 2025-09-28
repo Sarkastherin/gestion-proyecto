@@ -15,7 +15,7 @@ export default function FooterUITables({
         className={`flex ${justify} w-full px-10 py-5 hover:bg-zinc-200 hover:dark:bg-zinc-900`}
       >
         {children}
-        <div className="w-42">
+        <div className="w-fit">
           <ButtonNavigate variant="yellow" route={route}>
             {title}
           </ButtonNavigate>

@@ -51,7 +51,7 @@ export default function CustomerRequirementModal({
     <ModalBase
       title={`Requerimientos de cliente`}
       open={open}
-      zIndex={40}
+      zIndex={50}
       onClose={onClose}
       width="max-w-4xl"
     >
@@ -77,7 +77,7 @@ export default function CustomerRequirementModal({
                 : "Validar requerimientos"}
             </label>
           </div>
-          <div className="w-38 float-end">
+          <div className="w-fit float-end">
             <Button type="submit" variant="primary">
               Guardar
             </Button>

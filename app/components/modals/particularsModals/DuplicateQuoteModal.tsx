@@ -3,10 +3,10 @@ import { EntityTable } from "~/components/Generals/EntityTable";
 import { useState, useEffect } from "react";
 import { useData } from "~/context/DataContext";
 import type { TableColumn } from "react-data-table-component";
-import type { StatusType } from "~/types/database";
 import { setEntities } from "~/services/fetchers/fetchEntitiesWithClient";
 import { BadgeStatus } from "~/components/Specific/Badge";
 import { useUIModals } from "~/context/ModalsContext";
+import type { StatusOpportunityType } from "~/types/opportunitiesType";
 import {
   validateOpportunityDuplication,
   createNewQuote,
@@ -21,7 +21,7 @@ export type ViewType = {
   id_opportunity: number;
   quote_id: number;
   opportunity_name: string;
-  opportunity_status: StatusType;
+  opportunity_status: StatusOpportunityType;
   total_materials: number;
   total_labor: number;
   total_subcontracting: number;
@@ -54,7 +54,7 @@ const columns: TableColumn<ViewType>[] = [
   {
     name: "Status",
     cell: (row) => (
-      <BadgeStatus variant={row.opportunity_status}>
+      <BadgeStatus status={row.opportunity_status}>
         {row.opportunity_status}
       </BadgeStatus>
     ),
@@ -224,7 +224,7 @@ export default function DuplicateQuoteModal({
     <ModalBase
       title="Listado de Cotizaciones"
       open={open}
-      zIndex={40}
+      zIndex={50}
       onClose={onClose}
       width="max-w-4xl"
       footer={{

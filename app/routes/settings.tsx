@@ -100,7 +100,7 @@ export default function Settings() {
     <ProtectedRoute allowed={["administrador", "dueño"]}>
       <div className="flex flex-1 gap-6 min-h-[calc(100vh-64px)]">
         {/* Menú lateral */}
-        <nav className="w-58 pt-4 space-y-2 border-r border-zinc-300 bg-zinc-200/80 dark:border-zinc-700/60 dark:bg-zinc-900/70 px-4 shadow">
+        <nav className="w-44 pt-4 space-y-2 border-r border-zinc-300 bg-zinc-200/80 dark:border-zinc-700/60 dark:bg-zinc-900/70 px-4 shadow">
           {["unidades", "familias", "rubros", "subrubros"].map((key, i) => (
             <Button
               key={i}

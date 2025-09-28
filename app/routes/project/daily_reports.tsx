@@ -6,8 +6,8 @@ import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useEffect, useMemo, useState } from "react";
 import type { DailyReportUI } from "~/types/projectsType";
 import { useContacts } from "~/context/ContactsContext";
-import { useModalState } from "~/components/modals_temp/particularsModals/useModalState";
-import DailyReportModal from "~/components/modals_temp/particularsModals/DailyReportModal";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
 import { Button } from "~/components/Forms/Buttons";
 import { Badge } from "~/components/Specific/Badge";
 
@@ -55,7 +55,7 @@ export default function DailyReport() {
   return (
     <>
       <ContainerWithTitle title="" width="w-full">
-        <div className="w-48 -mt-10 mb-4 ms-auto">
+        <div className="w-fit -mt-10 mb-4 ms-auto">
           <Button
             type="button"
             variant="yellow"

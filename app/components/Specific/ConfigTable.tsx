@@ -88,7 +88,7 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">{title}</h2>
-        <div className="w-32">
+        <div className="w-fit">
           <Button variant="primary" onClick={handleAdd}>
             + Agregar
           </Button>

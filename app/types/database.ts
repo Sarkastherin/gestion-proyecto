@@ -1,4 +1,5 @@
-export type StatusType =
+import type { StatusOpportunityType } from "./opportunitiesType";
+/* export type StatusType =
   | "Nuevo"
   | "Desestimada"
   | "En proceso"
@@ -8,7 +9,7 @@ export type StatusType =
   | "Perdida"
   | "Vencida"
   | "No status";
-
+ */
 export type CommonTypesDataBase = {
   id: number;
   created_at: string;
@@ -18,7 +19,7 @@ export type OpportunityInput = {
   name: string;
   scope?: string;
   id_client: number;
-  status: StatusType;
+  status: StatusOpportunityType;
   created_by: string;
   loss_reason?: string | null;
   id_project?: number | null;

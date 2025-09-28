@@ -26,6 +26,7 @@ export function DailyReportInitForm({
   type: "new" | "edit";
 }) {
   useDailyReportsRealtime();
+  const isFinished = data?.status === "finalizado";
   const dailyReports =
     phases_project?.flatMap((phase) => phase.daily_reports) || [];
   const { openModal } = useUIModals();
@@ -71,12 +72,7 @@ export function DailyReportInitForm({
           });
         }
       } else {
-        if (Object.keys(dirtyFields).length > 0) {          
-          /* dailyReports.some(
-            (dr) =>
-              dr.date_report === formData.date_report &&
-              dr.id_phase === formData.id_phase
-          ) */
+        if (Object.keys(dirtyFields).length > 0) {
           await updateSingleRow({
             dirtyFields: dirtyFields,
             formData: formData,
@@ -120,26 +116,30 @@ export function DailyReportInitForm({
   }, [data]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Select
-        label="Etapa"
-        {...register("id_phase", { required: true, valueAsNumber: true })}
-        onChange={(e) => handleChangePhases(e)}
-        disabled={false}
-        value={selectedPhase || ""}
-      >
-        {phases_project?.map((phase) => (
-          <option key={phase.id} value={phase.id}>
-            {`[${phase.id}] ${phase.name}`}
-          </option>
-        ))}
-      </Select>
-      <Input
-        label="Fecha"
-        type="date"
-        {...register("date_report", { required: true })}
-      />
+      <fieldset disabled={isFinished}>
+        <Select
+          label="Etapa"
+          {...register("id_phase", { required: true, valueAsNumber: true })}
+          onChange={(e) => handleChangePhases(e)}
+          disabled={false}
+          value={selectedPhase || ""}
+        >
+          {phases_project?.map((phase) => (
+            <option key={phase.id} value={phase.id}>
+              {`[${phase.id}] ${phase.name}`}
+            </option>
+          ))}
+        </Select>
+        <Input
+          label="Fecha"
+          type="date"
+          {...register("date_report", { required: true })}
+        />
+      </fieldset>
       <div className="mt-4 float-end">
-        <Button variant="outlineDark" type="submit">Ir a Actividades</Button>
+        <Button variant="outlineBlue" type="submit" size="sm">
+          Ir a Actividades
+        </Button>
       </div>
     </form>
   );

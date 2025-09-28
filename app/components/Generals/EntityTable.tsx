@@ -117,7 +117,7 @@ export function EntityTable<T>({
             )
           )}
           {!filterFields.every((f) => f.autoFilter) && (
-            <div className="w-32">
+            <div className="w-fit">
               <Button variant="yellow" type="submit">
                 Filtrar
               </Button>

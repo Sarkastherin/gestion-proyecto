@@ -11,8 +11,8 @@ import { dateUSFormatted } from "~/utils/functions";
 import { useMaterialsAndPricesRealtime } from "~/backend/realTime";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import type { PricesDB } from "~/types/materialsType";
-import ContactsModal from "~/components/modals_temp/particularsModals/ContactsModal";
-import { useModalState } from "~/components/modals_temp/particularsModals/useModalState";
+import ContactsModal from "~/components/modals/particularsModals/ContactsModal";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
 import { useUIModals } from "~/context/ModalsContext";
 type DefaulTypes = {
@@ -296,7 +296,7 @@ export default function PricesForm({
           </div>
         </fieldset>
         {modalMode ? (
-          <div className="mt-4 float-end w-32">
+          <div className="mt-4 float-end w-fit">
             <Button type="submit" variant="yellow">
               Guardar
             </Button>

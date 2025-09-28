@@ -5,13 +5,13 @@ import type { DailyReportUI, ProjectAndBudgetUI } from "~/types/projectsType";
 import { useMemo, useEffect, useState } from "react";
 import { useContacts } from "~/context/ContactsContext";
 import { useData } from "~/context/DataContext";
-import { useModalState } from "~/components/modals_temp/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import {
   calculatePhaseProgress,
   calculateGlobalProgress,
 } from "~/utils/dailyReport";
 import type { TaskProgressGroup, PhaseProgress } from "~/utils/dailyReport";
-import DailyReportModal from "~/components/modals_temp/particularsModals/DailyReportModal";
+import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { networkdaysIntl } from "~/utils/functionsDays";
 export function meta({}: Route.MetaArgs) {
@@ -86,7 +86,6 @@ export default function ProjectSummary({
       if(!start || !mode) return;
       const daysCount = networkdaysIntl(start, end, mode);
       setDaysUsed(daysCount);
-      console.log(Math.round(daysCount/project.plan_duration * 100));
       
     }
   },[project])

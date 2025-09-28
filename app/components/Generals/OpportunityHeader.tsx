@@ -91,7 +91,7 @@ export function OpportunityHeader({
                         />
                       </div>
                     </div>
-                    <ButtonCreateQuote label=" + Nueva Cotización" />
+                    <ButtonCreateQuote label=" + Nueva Cotización"/>
                   </>
                 )}
               {selectedOpportunity?.id_project && (
