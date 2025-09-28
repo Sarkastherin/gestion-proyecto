@@ -34,23 +34,23 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
   {
     name: "Sub-rubro",
     selector: (row) => row.view_categorizations.description_subcategory,
-    width: "150px",
+    width: "220px",
     sortable: true,
-    wrap: true,
+    grow: 1,
   },
   {
     name: "Rubro",
     selector: (row) => row.view_categorizations.description_category,
-    width: "150px",
+    width: "220px",
     sortable: true,
-    wrap: true,
+    grow: 1,
   },
   {
     name: "Familia",
     selector: (row) => row.view_categorizations.description_family,
-    width: "150px",
+    width: "220px",
     sortable: true,
-    wrap: true,
+    grow: 1,
   },
 ];
 export default function Materials() {
@@ -82,7 +82,7 @@ export default function Materials() {
             columns={columnsMaterials}
             onRowClick={(row) => navigate(`/material/${row.id}`)}
             filterFields={[
-              { key: "description", label: "Buscar por descripción" },
+              { key: "description", label: "Buscar por descripción", autoFilter: true },
             ]}
           />
         </ContainerWithTitle>

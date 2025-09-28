@@ -8,7 +8,7 @@ serve(async (req) => {
   )
 
   const { data, error } = await supabase
-    .from('projects')
+    .from('proyectos_resumen')
     .select('*') // podés limitar campos si querés
 
   if (error) {
@@ -20,4 +20,6 @@ serve(async (req) => {
     status: 200,
   })
 })
+
+// Deploy: supabase functions deploy get-projects
 

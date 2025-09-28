@@ -35,7 +35,7 @@ export default function OpportunityForm({
   defaultValues,
   isNew,
   selectedQuoteId,
-  initialEditMode
+  initialEditMode,
 }: {
   defaultValues: OpportunityDB | Omit<OpportunityDB, "id" | "created_at">;
   isNew: boolean;
@@ -208,7 +208,10 @@ export default function OpportunityForm({
       return null;
     }
   }
-  const isLost = watch("status") === "Perdida";
+  const isLostOrExpired =
+    watch("status") === "Perdida" ||
+    watch("status") === "Vencida" ||
+    watch("status") === "Desestimada";
   return (
     <>
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
@@ -254,21 +257,27 @@ export default function OpportunityForm({
               >
                 <StatusOptions />
               </Select>
-              <Textarea
-                disabled={watch("status") !== "Perdida"}
-                label="Razón de pérdida"
-                {...register("loss_reason", {
-                  required: {
-                    value: isLost,
-                    message: "Campo requerido",
-                  },
-                })}
-                error={errors.loss_reason?.message}
-              />
+              {isLostOrExpired && (
+                <Textarea
+                  disabled={!isLostOrExpired}
+                  label={`Razón de status: ${watch("status")}`}
+                  {...register("loss_reason", {
+                    required: {
+                      value: isLostOrExpired,
+                      message: "Campo requerido",
+                    },
+                  })}
+                  error={errors.loss_reason?.message}
+                />
+              )}
             </div>
           </CardToggle>
         </fieldset>
-        <FooterForms isNew={isNew} isEditMode={isEditMode} onToggleEdit={() => setIsEditMode((prev) => !prev)}/>
+        <FooterForms
+          isNew={isNew}
+          isEditMode={isEditMode}
+          onToggleEdit={() => setIsEditMode((prev) => !prev)}
+        />
       </form>
       <ContactsModal
         open={clientModal.open}

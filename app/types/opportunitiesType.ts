@@ -2,7 +2,6 @@ import type { ContactsDataType } from "~/context/ContactsContext";
 import type { MyUser } from "~/context/AuthContext";
 import type { CommonPropsDB } from "./sharedTypes";
 import type { Totals } from "~/utils/functions";
-//import type { MaterialsType } from "~/backend/dataBase";
 import type { PricesDB, MaterialsDB } from "~/types/materialsType";
 export type StatusOpportunityType =
   | "Nuevo"
@@ -12,6 +11,7 @@ export type StatusOpportunityType =
   | "Revisión"
   | "Ganada"
   | "Perdida"
+  | "Vencida"
   | "No status";
 export type OpportunityProps = {
   name: string;

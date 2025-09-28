@@ -25,16 +25,12 @@ const columns: TableColumn<OpportunityUITable>[] = [
   },
   {
     name: "Fecha",
-    selector: (row) => {
-      const dateString = row.created_at;
-      const date = new Date(dateString);
-      const options = {
-        year: "numeric" as const,
-        day: "numeric" as const,
-        month: "long" as const,
-      };
-      return date.toLocaleString("es-AR", options);
-    },
+    selector: (row) =>
+      new Date(row.created_at).toLocaleDateString("es-AR", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }),
     width: "170px",
     sortable: true,
   },
@@ -82,13 +78,22 @@ export default function Opportunities() {
                 navigate(`/opportunity/${row.id}/resumen`);
               }}
               filterFields={[
-                { key: "name", label: "Buscar por descripción" },
-                { key: "client.nombre", label: "Buscar por cliente" },
+                {
+                  key: "name",
+                  label: "Buscar por descripción",
+                  autoFilter: true,
+                },
+                {
+                  key: "client.nombre",
+                  label: "Buscar por cliente",
+                  autoFilter: true,
+                },
                 {
                   key: "status",
                   label: "Estado",
                   type: "select",
                   options: <StatusOptions />,
+                  autoFilter: true,
                 },
               ]}
             />

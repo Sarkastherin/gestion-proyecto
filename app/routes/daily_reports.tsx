@@ -63,8 +63,8 @@ export default function DailyReport() {
               columns={columns}
               onRowClick={(row) => navigate(`/project/${row.id}/resumen`)}
               filterFields={[
-                { key: "name", label: "Buscar por descripción" },
-                { key: "client.nombre", label: "Buscar por cliente" },
+                { key: "name", label: "Buscar por descripción", autoFilter: true },
+                { key: "client.nombre", label: "Buscar por cliente", autoFilter: true },
                 {
                   key: "status",
                   label: "Estado",

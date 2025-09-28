@@ -6,6 +6,7 @@ import DataTable, {
 import { Input, Select } from "../Forms/Inputs";
 import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
+import { useLocation } from "react-router";
 function getNestedValue(obj: any, path: string): any {
   return path.split(".").reduce((acc, part) => acc?.[part], obj);
 }
@@ -59,30 +60,58 @@ export function EntityTable<T>({
   onRowClick,
 }: EntityTableProps<T>) {
   const { theme } = useUI();
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const location = useLocation();
+  const storageKey = `entityTableFilters_${location.pathname}`;
+  const [filters, setFilters] = useState<Record<string, string>>(() => {
+    // Recupera filtros guardados
+    const saved = localStorage.getItem(storageKey);
+    return saved ? JSON.parse(saved) : {};
+  });
   const [filteredData, setFilteredData] = useState<T[]>(data);
+  const [showFilterInfo, setShowFilterInfo] = useState(false);
+  function removeAccents(str: string) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
   const onFilter = (newFilters: Record<string, string>) => {
     const result = data.filter((item) =>
       filterFields.every(({ key }) => {
-        const value = newFilters[key]?.toLowerCase() ?? "";
-        const itemValue = String(getNestedValue(item, key) ?? "").toLowerCase();
+        const value = removeAccents(newFilters[key]?.toLowerCase() ?? "");
+        const itemValue = removeAccents(String(getNestedValue(item, key) ?? "").toLowerCase());
         return itemValue.includes(value);
       })
     );
     setFilteredData(result);
+    setShowFilterInfo(Object.values(newFilters).some((v) => v));
   };
 
   const handleChange = (key: string, value: string, auto?: boolean) => {
     const updated = { ...filters, [key]: value };
     setFilters(updated);
+    localStorage.setItem(storageKey, JSON.stringify(updated)); // Guarda filtros
     if (auto) onFilter(updated);
   };
   useEffect(() => {
     setFilteredData(data);
+    setShowFilterInfo(Object.values(filters).some((v) => v));
   }, [data]);
-
+  // ...existing code...
+  useEffect(() => {
+    // Aplica filtros guardados al montar si existen
+    if (Object.values(filters).some((v) => v)) {
+      onFilter(filters);
+    } else {
+      setFilteredData(data);
+    }
+    setShowFilterInfo(Object.values(filters).some((v) => v));
+  }, [data]); // Ejecuta cuando cambia la data
+  // ...existing code...
   return (
     <>
+      {showFilterInfo && (
+        <div className="mb-2 text-blue font-semibold text-sm">
+          ℹ️ Filtros aplicados.
+        </div>
+      )}
       {filterFields.length > 0 && (
         <form
           className="flex gap-2 items-baseline md:flex-row flex-col"

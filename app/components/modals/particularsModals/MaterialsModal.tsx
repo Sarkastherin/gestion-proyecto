@@ -56,7 +56,7 @@ export default function MaterialsModal({
           data={filterData}
           onRowClick={handleRowClicked}
           filterFields={[
-            { key: "description", label: "Buscar por descripción" },
+            { key: "description", label: "Buscar por descripción", autoFilter: true },
           ]}
         />
       </div>

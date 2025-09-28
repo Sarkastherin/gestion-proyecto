@@ -21,8 +21,8 @@ const columns: TableColumn<ProjectsUITable>[] = [
     selector: (row) =>
       new Date(row.created_at).toLocaleDateString("es-AR", {
         year: "numeric",
-        month: "long",
-        day: "numeric",
+        month: "2-digit",
+        day: "2-digit",
       }),
     width: "170px",
     sortable: true,
@@ -65,14 +65,8 @@ export default function Projects() {
             columns={columns}
             onRowClick={(row) => navigate(`/project/${row.id}/resumen`)}
             filterFields={[
-              { key: "name", label: "Buscar por descripción" },
-              { key: "client.nombre", label: "Buscar por cliente" },
-              {
-                key: "status",
-                label: "Estado",
-                type: "select",
-                options: <StatusOptions />,
-              },
+              { key: "name", label: "Buscar por descripción", autoFilter: true },
+              { key: "client.nombre", label: "Buscar por cliente", autoFilter: true },
             ]}
           />
         </ContainerWithTitle>
