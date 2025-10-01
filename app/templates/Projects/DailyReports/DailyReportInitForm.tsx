@@ -2,11 +2,10 @@ import { Input, Select } from "~/components/Forms/Inputs";
 import { Button } from "~/components/Forms/Buttons";
 import { useForm } from "react-hook-form";
 import { dailyReportsApi } from "~/backend/cruds";
-import { use, useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { DailyReportDB, ProjectAndBudgetUI } from "~/types/projectsType";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { useUIModals } from "~/context/ModalsContext";
-import { useData } from "~/context/DataContext";
 import { useDailyReportsRealtime } from "~/backend/realTime";
 type TypePhasesUI = ProjectAndBudgetUI["phases_project"];
 
@@ -33,20 +32,26 @@ export function DailyReportInitForm({
   const {
     register,
     handleSubmit,
-    formState: { dirtyFields },
+    formState: { dirtyFields, errors },
     reset,
   } = useForm<DailyReportDB>();
-
+  // ...existing code...
+  const isDuplicateReport = (
+    formData: DailyReportDB,
+    dailyReports: DailyReportDB[],
+    ignoreId?: number
+  ) => {
+    return dailyReports.some(
+      (dr) =>
+        dr.date_report === formData.date_report &&
+        dr.id_phase === formData.id_phase &&
+        (ignoreId ? dr.id !== ignoreId : true)
+    );
+  };
   const onSubmit = async (formData: DailyReportDB) => {
     try {
       if (type === "new") {
-        if (
-          dailyReports.some(
-            (dr) =>
-              dr.date_report === formData.date_report &&
-              dr.id_phase === formData.id_phase
-          )
-        ) {
+        if (isDuplicateReport(formData, dailyReports)) {
           throw new Error(
             "Ya existe un parte diario para la fase y fecha seleccionadas"
           );
@@ -72,6 +77,12 @@ export function DailyReportInitForm({
           });
         }
       } else {
+        // Validar duplicados ignorando el propio registro
+        if (isDuplicateReport(formData, dailyReports, formData.id)) {
+          throw new Error(
+            "Ya existe un parte diario para la fase y fecha seleccionadas"
+          );
+        }
         if (Object.keys(dirtyFields).length > 0) {
           await updateSingleRow({
             dirtyFields: dirtyFields,
@@ -90,18 +101,15 @@ export function DailyReportInitForm({
         }
         onSuccess(formData.id);
       }
-    } catch (e) {
+    } catch (e: any) {
       openModal("ERROR", {
-        message: `No se pudo actualizar la oportunidad. ${e}`,
+        message: `No se pudo actualizar la oportunidad. ${e.message || e}`,
       });
     }
   };
   const handleChangePhases = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPhaseId = Number(e.target.value);
-    if (selectedPhaseId && typeof selectedPhaseId === "number") {
-      setSelectedPhase(selectedPhaseId);
-    }
-    // Aquí puedes manejar el cambio de fase según tus necesidades
+    setSelectedPhase(selectedPhaseId);
   };
   useEffect(() => {
     if (data) {
@@ -113,16 +121,17 @@ export function DailyReportInitForm({
           data?.date_report || new Date().toISOString().split("T")[0],
       });
     }
-  }, [data]);
+  }, [data, reset, setSelectedPhase]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <fieldset disabled={isFinished}>
         <Select
           label="Etapa"
-          {...register("id_phase", { required: true, valueAsNumber: true })}
+          {...register("id_phase", { required: { value: true, message: "Este campo es obligatorio" }, valueAsNumber: true })}
           onChange={(e) => handleChangePhases(e)}
           disabled={false}
           value={selectedPhase || ""}
+          error={errors.id_phase?.message}
         >
           {phases_project?.map((phase) => (
             <option key={phase.id} value={phase.id}>
@@ -133,7 +142,8 @@ export function DailyReportInitForm({
         <Input
           label="Fecha"
           type="date"
-          {...register("date_report", { required: true })}
+          {...register("date_report", { required: { value: true, message: "Este campo es obligatorio" } })}
+          error={errors.date_report?.message}
         />
       </fieldset>
       <div className="mt-4 float-end">

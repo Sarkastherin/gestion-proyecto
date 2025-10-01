@@ -1,23 +1,33 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { Input, Select } from "~/components/Forms/Inputs";
 import { Button } from "~/components/Forms/Buttons";
-import { reportTasksApi, tasksApi } from "~/backend/cruds";
+import { reportTasksApi } from "~/backend/cruds";
 import { createdNewTask } from "~/utils/dailyReport";
 import type {
   ReportTaskDB,
-  ViewTasks,
   DailyReportUI,
+  TaskDB,
+  TaskProps,
 } from "~/types/projectsType";
 import { ButtonAdd, ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { useUIModals } from "~/context/ModalsContext";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { useState } from "react";
 import { useTasksRealtime, useProjectRealtime } from "~/backend/realTime";
+import { useData } from "~/context/DataContext";
+import {
+  getMaxProgressUntil,
+  hasPosteriorProgress,
+  isReportedHere,
+  getProgressInThisReport,
+  getReportTasksFormValues,
+} from "~/utils/dailyReportTasks";
+import { Tooltip } from "~/components/Generals/Tooltip";
 
 type ReportTasksFormProps = {
   idDailyReport: number;
   selectedPhase: number;
-  filteredTasks: ViewTasks[];
+  filteredTasks: (TaskDB & { progress: number })[];
   onSuccess: (tasksTouched: number[]) => void;
   type: "new" | "edit";
   data?: DailyReportUI;
@@ -35,19 +45,26 @@ export function ReportTasksForm({
 }: ReportTasksFormProps) {
   useTasksRealtime();
   useProjectRealtime();
+  const { selectedProject } = useData();
+  const { phases_project } = selectedProject || {};
+  if (!phases_project) return null;
+  const dailyReports = phases_project.flatMap((phase) => phase.daily_reports);
+  const reportTasks = dailyReports.flatMap((dr) => dr.report_tasks);
   const { openModal, closeModal } = useUIModals();
   const [tasksToDelete, setTasksToDelete] = useState<number[]>([]); // ✅ nuevo
   const isFinished = data?.status === "finalizado";
-  const values = isFinished
-    ? filteredTasks.filter((t) => t.progress_total > 0)
-    : filteredTasks;
+  const isEditMode = type === "edit" || data?.status === "borrador";
+  // Mostrar solo tareas planificadas o reportadas en este parte
+  const values = getReportTasksFormValues({
+    filteredTasks,
+    reportTasks,
+    idDailyReport,
+    data,
+    isEditMode,
+  });
+  // ...form setup...
   const defaultValues = {
-    reportTasks: values.map((t) => ({
-      id_task: t.id,
-      description: t.name,
-      id_daily_report: idDailyReport,
-      progress: t.progress_total,
-    })) as (ReportTaskDB & { description: string })[],
+    reportTasks: values,
   };
   const {
     control,
@@ -76,10 +93,177 @@ export function ReportTasksForm({
   const handleRemove = (index: number) => {
     const currentTasks = watch("reportTasks");
     const task = currentTasks[index];
-    if (task && "id" in task && task.id !== undefined) {
-      setTasksToDelete((prev) => [...prev, task.id]); // ✅ guardar id para delete
+    // Busca el id real del avance en la data original
+    const original = data?.report_tasks.find(
+      (rt) =>
+        rt.id_task === task.id_task &&
+        rt.id_daily_report === task.id_daily_report
+    );
+    if (original && original.id) {
+      setTasksToDelete((prev) => [...prev, original.id]);
     }
     remove(index);
+  };
+  /**
+   * Filtra y prepara tareas para guardar: solo tareas con progreso > 0.
+   * REGLA: No guardar tareas con progreso 0%
+   * Si se pasa un array de dirtyFields, también lo filtra en el mismo orden.
+   */
+  function prepareTasksForSave<T extends { progress: number }>(
+    tasks: T[],
+    dirtyFields?: any[]
+  ): { tasks: T[]; dirtyFields?: any[] } {
+    if (!dirtyFields) {
+      return { tasks: tasks.filter((t) => t.progress > 0) }; // REGLA: No guardar tareas con progreso 0%
+    }
+    const filtered: { tasks: T[]; dirtyFields: any[] } = {
+      tasks: [],
+      dirtyFields: [],
+    };
+    tasks.forEach((t, i) => {
+      if (t.progress > 0) {
+        filtered.tasks.push(t);
+        filtered.dirtyFields.push(dirtyFields[i]);
+      }
+    });
+    return filtered;
+  }
+  // --- Lógica de guardado para "new"
+  const saveNewTasks = async (
+    reportTasks: ReportTaskForm["reportTasks"],
+    dirtyArray: any[],
+    tasksTouched: number[]
+  ) => {
+    // REGLA: No guardar tareas con progreso 0%
+    const { tasks: filteredTasks, dirtyFields: filteredDirty } =
+      prepareTasksForSave(reportTasks, dirtyArray);
+    await Promise.all(
+      filteredTasks.map(async (report, i) => {
+        const hasId = report.id_task > 0;
+        const dirty = filteredDirty ? (filteredDirty[i] ?? {}) : {};
+        const hasFieldChanged = Object.values(dirty).some((v) => v);
+        if (hasId && hasFieldChanged) {
+          const reportTask = {
+            id_task: report.id_task,
+            id_daily_report: idDailyReport,
+            progress: report.progress,
+          };
+          tasksTouched.push(report.id_task);
+          const { error } = await reportTasksApi.insertOne(reportTask);
+          if (error) throw new Error(error.message);
+        } else if (!hasId) {
+          const newTask = await createdNewTask({
+            task: report,
+            selectedPhase,
+          });
+          if (newTask && "id" in newTask) {
+            const reportTask = {
+              id_task: newTask.id,
+              id_daily_report: idDailyReport,
+              progress: report.progress,
+            };
+            const { error: errorReport } =
+              await reportTasksApi.insertOne(reportTask);
+            if (errorReport) throw new Error(errorReport.message);
+          }
+        }
+      })
+    );
+    setTasksToDelete([]); // ✅ limpiar tareas a eliminar
+    openModal("INFORMATION", {
+      title: "📝 Avance de actividades creado",
+      message: (
+        <>
+          <p>✅ Las actividades han sido creadas correctamente</p>
+          <p>➡️ continue con la carga de horas del personal.</p>
+        </>
+      ),
+    });
+  };
+  // --- Lógica de guardado para "edit"
+  const saveEditTasks = async (
+    reportTasks: ReportTaskForm["reportTasks"],
+    reportTasksDirty: any[],
+    tasksTouched: number[]
+  ) => {
+    // REGLA: No guardar tareas con progreso 0%
+    const { tasks: filteredTasks, dirtyFields: filteredDirty } =
+      prepareTasksForSave(reportTasks, reportTasksDirty);
+
+    await Promise.all(
+      (filteredDirty ?? []).map(async (dirty, i) => {
+        if (!dirty) return;
+        const report = filteredTasks[i];
+        if (!report) return;
+        const hasId = report.id_task > 0;
+        const hasFieldChanged = Object.values(dirty).some((v) => v);
+        if (hasId && hasFieldChanged) {
+          const reportTask = {
+            id_task: report.id_task,
+            id_daily_report: idDailyReport,
+            progress: report.progress,
+          };
+          tasksTouched.push(report.id_task);
+          const { error } = await reportTasksApi.insertOne(reportTask);
+          if (error) throw new Error(error.message);
+        } else if (!hasId) {
+          const newTask = await createdNewTask({
+            task: report,
+            selectedPhase,
+          });
+          if (newTask && "id" in newTask) {
+            const reportTask = {
+              id_task: newTask.id,
+              id_daily_report: idDailyReport,
+              progress: report.progress,
+            };
+            const { error: errorReport } =
+              await reportTasksApi.insertOne(reportTask);
+            if (errorReport) throw new Error(errorReport.message);
+          }
+        }
+      })
+    );
+
+    // Solo tareas realmente modificadas y con progreso > 0
+    // REGLA: No guardar tareas con progreso 0%
+    const cleanedData = (reportTasksDirty ?? [])
+      .map((dirty, index) => {
+        if (!dirty) return null;
+        if (!reportTasks[index]) return null;
+        const t = reportTasks[index];
+        if (t.progress === 0) return null; // <-- filtro clave
+        const original = data?.report_tasks.find(
+          (rtDb) =>
+            rtDb.id_task === t.id_task &&
+            rtDb.id_daily_report === t.id_daily_report
+        );
+        const withId = original ? { ...t, id: original.id } : t;
+        tasksTouched.push(withId.id_task);
+        const { description, ...rest } = withId;
+        return rest;
+      })
+      .filter((rt): rt is ReportTaskDB => !!rt);
+
+    await updatesArrayFields<ReportTaskDB>({
+      fieldName: "reportTasks",
+      fieldsArray: cleanedData,
+      dirtyFields: { reportTasks: reportTasksDirty ?? [] },
+      fieldsDelete: tasksToDelete,
+      onInsert: reportTasksApi.insertOne,
+      onRemove: (id: number) => reportTasksApi.remove({ id }),
+      onUpdate: reportTasksApi.update,
+    });
+
+    openModal("INFORMATION", {
+      title: "📝 Avance de actividades actualizado",
+      message: (
+        <>
+          <p>✅ El avance de actividades ha sido actualizado correctamente</p>
+          <p>➡️ continue con las actividades.</p>
+        </>
+      ),
+    });
   };
   const onSubmit = async (formData: ReportTaskForm) => {
     try {
@@ -105,170 +289,152 @@ export function ReportTasksForm({
         openModal("LOADING", {
           message: "Procesando requerimiento",
         });
-
         const dirtyArray = dirtyFields.reportTasks ?? [];
-        await Promise.all(
-          reportTasks.map(async (report, i) => {
-            const hasId = report.id_task > 0;
-            const dirty = dirtyArray[i] ?? {};
-            const hasFieldChanged = Object.values(dirty).some((v) => v);
-            if (hasId && hasFieldChanged) {
-              const reportTask = {
-                id_task: report.id_task,
-                id_daily_report: idDailyReport,
-                progress: report.progress,
-              };
-              tasksTouched.push(report.id_task);
-              const { error } = await reportTasksApi.insertOne(reportTask);
-              if (error) throw new Error(error.message);
-            } else if (!hasId) {
-              const newTask = await createdNewTask({
-                task: report,
-                selectedPhase,
-              });
-              if (newTask && "id" in newTask) {
-                const reportTask = {
-                  id_task: newTask.id,
-                  id_daily_report: idDailyReport,
-                  progress: report.progress,
-                };
-                const { error: errorReport } =
-                  await reportTasksApi.insertOne(reportTask);
-                if (errorReport) throw new Error(errorReport.message);
-              }
-            }
-          })
-        );
-        setTasksToDelete([]); // ✅ limpiar tareas a eliminar
-        openModal("INFORMATION", {
-          title: "📝 Avance de actividades creado",
-          message: (
-            <>
-              <p>✅ Las actividades han sido creadas correctamente</p>
-              <p>➡️ continue con la carga de horas del personal.</p>
-            </>
-          ),
-        });
+        await saveNewTasks(reportTasks, dirtyArray, tasksTouched);
       } else {
         if (Object.keys(dirtyFields).length > 0) {
-          const { reportTasks: reportTasksDirty } = dirtyFields;
-          await Promise.all(
-            reportTasksDirty?.map(async (dirty, index) => {
-              if (dirty) {
-                const reportTaskDirty = reportTasks[index];
-                const original = data?.report_tasks.find(
-                  (rt) =>
-                    rt.id_task === reportTaskDirty.id_task &&
-                    rt.id_daily_report === reportTaskDirty.id_daily_report
-                );
-                if (original) {
-                  reportTasks[index] = { ...reportTaskDirty, id: original.id };
-                }
-                if (reportTaskDirty.id_task === 0) {
-                  const newTask = await createdNewTask({
-                    task: reportTaskDirty,
-                    selectedPhase,
-                  });
-                  if (newTask && "id" in newTask) {
-                    reportTasks[index] = {
-                      ...reportTaskDirty,
-                      id_task: newTask.id,
-                    };
-                  }
-                }
-              }
-            }) ?? []
-          );
-          const cleanedData = reportTasks
-            .filter((rt) => rt.progress > 0)
-            .map((t) => {
-              tasksTouched.push(t.id_task);
-              const { description, ...rest } = t;
-              return rest;
-            });
-
-          await updatesArrayFields<ReportTaskDB>({
-            fieldName: "reportTasks",
-            fieldsArray: cleanedData as ReportTaskDB[],
-            dirtyFields: dirtyFields,
-            fieldsDelete: tasksToDelete,
-            onInsert: reportTasksApi.insertOne,
-            onRemove: (id: number) => reportTasksApi.remove({ id }),
-            onUpdate: reportTasksApi.update,
-          });
-          openModal("INFORMATION", {
-            title: "📝 Avance de actividades actualizado",
-            message: (
-              <>
-                <p>
-                  ✅ El avance de actividades ha sido actualizado correctamente
-                </p>
-                <p>➡️ continue con las actividades.</p>
-              </>
-            ),
-          });
+          const reportTasksDirty = dirtyFields.reportTasks ?? [];
+          await saveEditTasks(reportTasks, reportTasksDirty, tasksTouched);
         } else {
           reportTasks.map((t) => tasksTouched.push(t.id_task));
         }
       }
-
       onSuccess(tasksTouched);
-    } catch (e) {
+    } catch (e: any) {
+      console.error(e);
       openModal("ERROR", {
-        message: "Error al procesar el requerimiento",
+        message: `Error al procesar el requerimiento: ${e.message || e}`,
       });
     }
   };
+  const onError = (errors: any) => {
+    console.error("Errors:", errors);
+    openModal("ERROR", {
+      message: `Error en el formulario, verifique los datos ingresados.`,
+    });
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <fieldset disabled={isFinished}>
         <table className="w-full text-sm table-auto divide-zinc-200 dark:divide-zinc-700">
           <colgroup>
             <col />
-            <col className="w-[15%]" />
+            <col className="w-[1%]" />
+            <col className="w-[10%]" />
             <col className="w-[1%]" />
           </colgroup>
-          <thead className="ltr:text-left rtl:text-right">
+          <thead>
             <tr>
-              <th className="py-1 px-1"> Descripción</th>
-              <th className="py-1 px-1">Progreso %</th>
+              <th className="py-1 px-1">Descripción</th>
+              <th className="py-1 px-1">Progreso actual</th>
+              <th className="py-1 px-1">Nuevo avance</th>
               <th className="px-1 py-1">🗑️</th>
             </tr>
           </thead>
           <tbody>
-            {fields.map((field, index) => (
-              <tr key={field.id}>
-                <td className="px-1 py-0.5 whitespace-nowrap">
-                  <Input
-                    {...register(`reportTasks.${index}.description`, {
-                      required: true,
-                    })}
-                    defaultValue={field.description}
-                    readOnly={watch(`reportTasks.${index}.id_task`) > 0}
-                  />
-                </td>
-                <td className="px-1 py-0.5 whitespace-nowrap">
-                  <Select
-                    {...register(`reportTasks.${index}.progress`, {
-                      valueAsNumber: true,
-                    })}
-                    defaultValue={field.progress}
-                  >
-                    <option value="0">0%</option>
-                    <option value="25">25%</option>
-                    <option value="50">50%</option>
-                    <option value="75">75%</option>
-                    <option value="100">100%</option>
-                  </Select>
-                </td>
-                <td className="px-1 py-0.5 whitespace-nowrap">
-                  <ButtonDeleteIcon
-                    onClick={() => handleRemove(index)}
-                    disabled={watch(`reportTasks.${index}.id_task`) > 0}
-                  />
-                </td>
-              </tr>
-            ))}
+            {fields.map((field, index) => {
+              // Progreso acumulado real hasta este parte
+              const currentProgress = getMaxProgressUntil({
+                reportTasks,
+                id_task: field.id_task,
+                idDailyReport,
+              });
+
+              // Avance reportado en este parte (puede ser 0)
+              const progressInThisReport = getProgressInThisReport({
+                reportTasks,
+                id_task: field.id_task,
+                idDailyReport,
+              });
+
+              // ¿Fue reportada en este parte?
+              const isReported = isReportedHere({
+                reportTasks,
+                id_task: field.id_task,
+                idDailyReport,
+              });
+
+              // ¿Hay avance posterior?
+              const hasPosterior = hasPosteriorProgress({
+                reportTasks,
+                id_task: field.id_task,
+                idDailyReport,
+                progress: progressInThisReport, // ¡Usa el progreso reportado en este parte!
+              });
+
+              // Opciones válidas para el select
+              const stepOptions = [25, 50, 75, 100].filter(
+                (step) => step >= currentProgress
+              );
+
+              return (
+                <tr
+                  key={field.id}
+                  className={isReported ? "bg-green-50 dark:bg-green-900" : ""}
+                >
+                  <td className="relative px-1 py-0.5 whitespace-nowrap">
+                    <Input
+                      {...register(`reportTasks.${index}.description`, {
+                        required: true,
+                      })}
+                      defaultValue={field.description}
+                      readOnly={false}
+                    />
+                    {isReported && (
+                      <div
+                        className="absolute w-full top-0 -left-2 h-full flex items-center justify-end pr-1"
+                        title="Reportada en este parte"
+                      >
+                        <span className="text-xs rounded px-1 py-0.5 bg-green-200 text-green-800 dark:bg-green-700 dark:text-green-100">
+                          📝 Reportada aquí
+                        </span>
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-1 py-0.5 whitespace-nowrap">
+                    <Input disabled value={currentProgress + "%"} />
+                  </td>
+                                    <td className="relative px-1 py-0.5 whitespace-nowrap">
+                    <Select
+                      {...register(`reportTasks.${index}.progress`, {
+                        valueAsNumber: true,
+                        validate: (value) =>
+                          value >= currentProgress ||
+                          "El avance no puede ser menor al actual",
+                      })}
+                      defaultValue={progressInThisReport}
+                      disabled={hasPosterior}
+                    >
+                      <option value={progressInThisReport}>
+                        {progressInThisReport}%
+                      </option>
+                      {stepOptions
+                        .filter((step) => step !== progressInThisReport)
+                        .map((step) => (
+                          <option key={step} value={step}>
+                            {step}%
+                          </option>
+                        ))}
+                    </Select>
+                    {hasPosterior && (
+                      <div className="absolute w-full top-0 -left-2 h-full flex items-center justify-end pr-1">
+                        <Tooltip message="No editable: existe un avance posterior registrado">
+                          <span className="text-xs text-red-600 ml-2" role="img" aria-label="No editable">
+                            🔒
+                          </span>
+                        </Tooltip>
+                      </div>
+                    )}
+                  </td>
+                  <td className="px-1 py-0.5 whitespace-nowrap">
+                    <ButtonDeleteIcon
+                      onClick={() => handleRemove(index)}
+                      disabled={hasPosterior}
+                    />
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
         <div className="mt-4">
@@ -286,4 +452,4 @@ export function ReportTasksForm({
       </div>
     </form>
   );
-}
+} //No editable: existe un avance posterior registrado

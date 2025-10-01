@@ -12,11 +12,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function ProjectSummaryDemo() {
-  const { selectedProject, tasksProgress, getTasksByIdPhase } = useData();
+  const { selectedProject } = useData();
   if (!selectedProject) return;
   const { phases_project } = selectedProject;
   if (!phases_project) return;
-  
 
   return (
     <ContainerToForms>

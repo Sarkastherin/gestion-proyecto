@@ -47,7 +47,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
       lang="en"
       data-theme={theme}
       className={theme === "dark" ? "dark:bg-zinc-800" : ""}
-      title="Gestión de Proyectos IM + Industrial"
     >
       <title>Gestión de Proyectos IM + Industrial</title>
       <head>

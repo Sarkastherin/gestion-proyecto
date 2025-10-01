@@ -8,7 +8,7 @@ export type DirtyMap<T> = Partial<Record<keyof T, boolean>>;
 type Props<T> = {
   fieldsArray: T[];
   dirtyFields: Record<string, DirtyMap<T>[]>;
-  fieldName: string; // ejemplo: 'prices'
+  fieldName: string;
   fieldsDelete: number[];
   onUpdate: (args: {
     id: number;
@@ -27,12 +27,10 @@ export const updatesArrayFields = async <T extends object>({
   onInsert,
   onRemove,
 }: Props<T>): Promise<T[]> => {
-  
   const dirtyArray = dirtyFields[fieldName] ?? [];
   let newData: T[] = [];
   await Promise.all(
     fieldsArray.map(async (field, i) => {
-      
       const hasId = "id" in field;
       const dirty = dirtyArray[i] ?? {};
       const hasFieldChanged = Object.values(dirty).some((v) => v);
@@ -43,17 +41,22 @@ export const updatesArrayFields = async <T extends object>({
           acc[key] = field[key];
           return acc;
         }, {} as Partial<T>);
-        
         const { error: errorUpdate } = await onUpdate({
           id: (field as any).id, // asegurate que id exista en tus tipos
           values: updates,
         });
-        console.log({ errorUpdate });
-        if (errorUpdate) throw new Error(errorUpdate.message);
+        if (errorUpdate) {
+          throw new Error(
+            `Error actualizando el registro con id=${field.id}: ${errorUpdate.message}`
+          );
+        }
       } else if (!hasId) {
         const { data: dataInsert, error: errorInsert } = await onInsert(field);
-        console.log(errorInsert)
-        if (errorInsert) throw new Error(errorInsert.message);
+        if (errorInsert) {
+          throw new Error(
+            `Error insertando un nuevo registro: ${errorInsert.message}`
+          );
+        }
 
         if (dataInsert !== null) {
           newData = [dataInsert, ...newData];
@@ -61,10 +64,13 @@ export const updatesArrayFields = async <T extends object>({
       }
     })
   );
-
   for (const id of fieldsDelete) {
     const { error: errorRemove } = await onRemove(id);
-    if (errorRemove) throw new Error(errorRemove.message);
+    if (errorRemove) {
+      throw new Error(
+        `Error eliminando el registro con id=${id}: ${errorRemove.message}`
+      );
+    }
   }
   return newData;
 };

@@ -66,7 +66,6 @@ export default function TaskCard({
     );
     setValue(`tasks.${index}.endDate`, endDate, { shouldDirty: true });
   }, [taskValues.startDate, taskValues.duration]);
-
   return (
     <div className="flex-1 relative">
       <div className="bg-white dark:bg-zinc-800 rounded-xl shadow p-4 border border-zinc-200 dark:border-zinc-700 overflow-hidden relative">
@@ -124,8 +123,8 @@ export default function TaskCard({
             <span>{peopleCount}</span>
           </div>
           <div>
-            <span className="block font-medium">Status</span>
-            <span>-</span>
+            <span className="block font-medium">Avance</span>
+            <span>{taskValues.progress || 0}%</span>
           </div>
         </div>
 

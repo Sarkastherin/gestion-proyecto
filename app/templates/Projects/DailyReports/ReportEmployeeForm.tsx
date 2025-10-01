@@ -24,7 +24,7 @@ type ReportEmployeeFormProps = {
   data?: DailyReportUI;
 };
 type ReportEmployeeForm = {
-  reportEmployees: ReportEmployeeDB[];
+  reportEmployees: (ReportEmployeeDB & { name_employee: string })[];
 };
 export function ReportEmployeeForm({
   idDailyReport,
@@ -94,25 +94,24 @@ export function ReportEmployeeForm({
       observation: "",
       id_daily_report: idDailyReport,
       absent: false,
-    } as ReportEmployeeDB);
+      name_employee: "",
+    } as ReportEmployeeForm["reportEmployees"][0]);
   };
-  useEffect(() => {
+    useEffect(() => {
     if (selectedEmployee && activeIndex !== null) {
+      // Solo actualiza si el valor realmente cambió
       setValue(
         `reportEmployees.${activeIndex}.id_employee`,
         selectedEmployee.id,
-        {
-          shouldDirty: true,
-        }
+        { shouldDirty: false }
       );
-      const employeeInput = document.getElementById(
-        `reportEmployees.${activeIndex}.name_employee`
-      ) as HTMLInputElement | null;
-      if (employeeInput) {
-        employeeInput.value = selectedEmployee.contacto_nombre;
-      }
+      setValue(
+        `reportEmployees.${activeIndex}.name_employee`,
+        selectedEmployee.contacto_nombre,
+        { shouldDirty: false }
+      );
     }
-  }, [selectedEmployee]);
+  }, [selectedEmployee, activeIndex, setValue]);
   useEffect(() => {
     if (fields.length > 0) {
       fields.map((field, index) => {
@@ -131,7 +130,6 @@ export function ReportEmployeeForm({
     employeeModal.openModal();
   };
   const onSubmit = async (data: ReportEmployeeForm) => {
-    console.log("data", data);
     try {
       const { reportEmployees } = data;
       if (type === "new") {
@@ -167,11 +165,14 @@ export function ReportEmployeeForm({
       } else {
         if (Object.keys(dirtyFields).length > 0) {
           const cleanedReportEmployees = reportEmployees.map((re) => {
-            if (re.id === null) {
-              const { id, ...rest } = re;
+            // Extrae id y name_employee, y deja el resto
+            const { id, name_employee, ...rest } = re;
+            // Si es nuevo, no envíes id
+            if (id === null) {
               return rest;
             } else {
-              return re;
+              // Si existe, agrega id de vuelta
+              return { id, ...rest };
             }
           });
           await updatesArrayFields({
@@ -245,8 +246,8 @@ export function ReportEmployeeForm({
     return true;
   };
   const onError = (errors: any) => {
-    console.log("errors", errors);
-  }
+    console.log(dirtyFields);
+  };
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -284,6 +285,7 @@ export function ReportEmployeeForm({
                     <Input
                       id={`reportEmployees.${index}.name_employee`}
                       placeholder="Seleccionar operario"
+                      {...register(`reportEmployees.${index}.name_employee`)}
                       onClick={() => handlerEmployee(index)}
                     />
                   </td>
@@ -338,7 +340,10 @@ export function ReportEmployeeForm({
                           ? "La observación es obligatoria si el operario está ausente"
                           : false,
                       })}
-                      error={errors.reportEmployees?.[index]?.observation?.message as string}
+                      error={
+                        errors.reportEmployees?.[index]?.observation
+                          ?.message as string
+                      }
                     />
                   </td>
 

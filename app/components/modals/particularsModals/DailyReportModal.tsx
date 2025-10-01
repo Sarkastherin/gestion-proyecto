@@ -50,12 +50,10 @@ export default function DailyReportModal({
   const [idsEmployees, setIdsEmployees] = useState<number[] | null>(null);
   const {
     selectedProject,
-    getTasksByIdPhase,
-    tasksProgress,
-    setTasksProgress,
     refreshProject,
   } = useData();
   const { phases_project } = selectedProject || {};
+  const tasks = phases_project?.flatMap((phase) => phase.tasks) || [];
   const [steps, setSteps] = useState<typeof initialSteps>(() =>
     initialSteps.map((s) => ({ ...s }))
   );
@@ -79,11 +77,6 @@ export default function DailyReportModal({
     }
   };
 
-  useEffect(() => {
-    if (selectedPhase) {
-      getTasksByIdPhase(selectedPhase);
-    }
-  }, [selectedPhase]);
   const getEmployeeDataByTasksId = (tasksTouched: number[]): number[] | [] => {
     const tasks = phases_project?.flatMap((phase) => phase.tasks);
     const assignments = tasks?.flatMap((t) => t.task_assignments);
@@ -182,14 +175,13 @@ export default function DailyReportModal({
   };
   return (
     <ModalBase
-      title={type === "new" ? "Nuevo Parte Diario" : "Editar Parte Diario"}
+      title={type === "new" ? "Nuevo Parte Diario" : `Editar Parte Diario # ${report?.id}`}
       open={open}
       zIndex={40}
       onClose={() => {
         setSteps(initialSteps.map((s) => ({ ...s })));
         setSelectedPhase("");
         setDailyReportId(null);
-        setTasksProgress(null);
         onClose();
       }}
       width="max-w-4xl"
@@ -274,7 +266,6 @@ export default function DailyReportModal({
                 </li>
               ))}
             </ol>
-
             {steps[0].status === "in-progress" && (
               <DailyReportInitForm
                 selectedPhase={selectedPhase}
@@ -290,12 +281,12 @@ export default function DailyReportModal({
               />
             )}
             {dailyReportId &&
-              tasksProgress &&
+              tasks &&
               steps[1].status === "in-progress" && (
                 <>
                   <ReportTasksForm
                     idDailyReport={dailyReportId}
-                    filteredTasks={tasksProgress}
+                    filteredTasks={tasks}
                     selectedPhase={selectedPhase as number}
                     type={type}
                     data={report}

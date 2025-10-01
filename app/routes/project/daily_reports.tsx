@@ -71,7 +71,7 @@ export default function DailyReport() {
               <Card key={report.id}>
                 <div className="flex gap-2 items-center font-bold text-xl mb-4">
                   <DocumentTextIcon className="size-6 text-indigo-400" />{" "}
-                  <h2 className="">Parte Diario # {index + 1}</h2>
+                  <h2 className="">Parte Diario # {report.id}</h2>
                 </div>
 
                 <ul className="text-sm space-y-1.5">

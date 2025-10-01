@@ -72,7 +72,7 @@ export default function Materials() {
     { label: "DESCRIPCION", key: "description" },
   ];
   return (
-    <ProtectedRoute allowed={["administrador", "dueño"]}>
+    <ProtectedRoute allowed={["administrador", "dueño", "coordinador"]}>
     <>
       {!materials && <div>Cargando materiales...</div>}
       {materials && (

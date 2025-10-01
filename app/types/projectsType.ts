@@ -33,7 +33,7 @@ export type ProjectsProps = {
   duration?: number;
   status?: StatusProjectsType;
   mode?: "0000000" | "0000010" | "0000011" | "";
-  customer_requirement: boolean
+  customer_requirement: boolean;
 };
 export type ProjectsDB = CommonPropsDB & ProjectsProps;
 export type ProjectsUITable = ProjectsDB & {
@@ -82,7 +82,7 @@ export type ProjectAndBudgetUI = ProjectsUITable &
   TotalsMargens &
   Omit<Totals, "id_quote"> & {
     phases_project: (PhasesProjectDB & {
-      tasks: (TaskDB & {
+      tasks: ((TaskDB & { progress: number }) & {
         task_assignments: TaskAssignmentDB[];
       })[];
       daily_reports: DailyReportUI[];

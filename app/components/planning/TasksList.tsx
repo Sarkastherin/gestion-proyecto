@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import { ButtonAdd } from "~/components/Specific/Buttons";
 import { Button } from "~/components/Forms/Buttons";
 import TaskCard from "./TaskCard";
@@ -6,12 +6,13 @@ import type { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
 import type { PersonalModalPayload } from "~/routes/project/planning";
 import type { TaskAssignmentDB, TaskDB } from "~/types/projectsType";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
+import { useData } from "~/context/DataContext";
 
 export type TaskFormProps = TaskDB & {
   task_assignments: TaskAssignmentDB[];
 };
 export type TasksFormArray = {
-  tasks: TaskFormProps[];
+  tasks: (TaskFormProps & { progress?: number })[];
 };
 type Props = {
   form: UseFormReturn<TasksFormArray>;
