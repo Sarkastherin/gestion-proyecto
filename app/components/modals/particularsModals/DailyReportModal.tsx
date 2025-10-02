@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import ModalBase from "../ModalBase";
 import { useData } from "~/context/DataContext";
 import { ReportTasksForm } from "~/templates/Projects/DailyReports/ReportTasksForm";
@@ -15,6 +15,7 @@ import type { DailyReportUI } from "~/types/projectsType";
 import { Button } from "~/components/Forms/Buttons";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { dailyReportsApi } from "~/backend/cruds";
+import { useDailyReportsRealtime } from "~/backend/realTime";
 type DailyReportModalProps = {
   open: boolean;
   onClose: () => void;
@@ -44,14 +45,12 @@ export default function DailyReportModal({
   type,
   report,
 }: DailyReportModalProps) {
+  useDailyReportsRealtime("DailyReportModal");
   const [dailyReportId, setDailyReportId] = useState<number | null>(
     report?.id || null
   );
   const [idsEmployees, setIdsEmployees] = useState<number[] | null>(null);
-  const {
-    selectedProject,
-    refreshProject,
-  } = useData();
+  const { selectedProject, refreshProject } = useData();
   const { phases_project } = selectedProject || {};
   const tasks = phases_project?.flatMap((phase) => phase.tasks) || [];
   const [steps, setSteps] = useState<typeof initialSteps>(() =>
@@ -175,7 +174,11 @@ export default function DailyReportModal({
   };
   return (
     <ModalBase
-      title={type === "new" ? "Nuevo Parte Diario" : `Editar Parte Diario # ${report?.id}`}
+      title={
+        type === "new"
+          ? "Nuevo Parte Diario"
+          : `Editar Parte Diario # ${report?.id}`
+      }
       open={open}
       zIndex={40}
       onClose={() => {
@@ -270,9 +273,8 @@ export default function DailyReportModal({
               <DailyReportInitForm
                 selectedPhase={selectedPhase}
                 setSelectedPhase={setSelectedPhase}
-                phases_project={phases_project}
-                data={report}
                 type={type}
+                idDailyReport={dailyReportId}
                 onSuccess={(id) => {
                   setDailyReportId(id);
                   handleNextStep();
@@ -280,25 +282,24 @@ export default function DailyReportModal({
                 }}
               />
             )}
-            {dailyReportId &&
-              tasks &&
-              steps[1].status === "in-progress" && (
-                <>
-                  <ReportTasksForm
-                    idDailyReport={dailyReportId}
-                    filteredTasks={tasks}
-                    selectedPhase={selectedPhase as number}
-                    type={type}
-                    data={report}
-                    onSuccess={(tasksTouched) => {
-                      setIdsEmployees(getEmployeeDataByTasksId(tasksTouched));
-                      handleNextStep();
-                      refreshProject();
-                    }}
-                  />
-                  <ButtonBack label="Ir a Inicialización" />
-                </>
-              )}
+            {dailyReportId && tasks && steps[1].status === "in-progress" && (
+              <>
+                <ReportTasksForm
+                  idDailyReport={dailyReportId}
+                  filteredTasks={tasks.filter(
+                    (t) => t.id_phase === selectedPhase
+                  )}
+                  selectedPhase={selectedPhase as number}
+                  type={type}
+                  onSuccess={(tasksTouched) => {
+                    setIdsEmployees(getEmployeeDataByTasksId(tasksTouched));
+                    handleNextStep();
+                    refreshProject();
+                  }}
+                />
+                <ButtonBack label="Ir a Inicialización" />
+              </>
+            )}
             {dailyReportId &&
               idsEmployees &&
               steps[2].status === "in-progress" && (
@@ -307,7 +308,6 @@ export default function DailyReportModal({
                     idDailyReport={dailyReportId}
                     idsEmployees={idsEmployees}
                     type={type}
-                    data={report}
                     onSuccess={() => {
                       handleNextStep();
                       refreshProject();

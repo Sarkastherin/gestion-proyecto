@@ -52,9 +52,6 @@ type DataContextType = {
   getProjectById: (id: number) => Promise<ProjectAndBudgetUI | null>;
   selectedProject: ProjectAndBudgetUI | null;
   refreshProject: (id?: number) => Promise<void>;
-  /* getTasksByIdPhase: (id: number) => Promise<ViewTasks[] | null>;
-  tasksProgress: ViewTasks[] | null;
-  setTasksProgress: React.Dispatch<React.SetStateAction<ViewTasks[] | null>>; */
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -301,7 +298,6 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         t_mg_total: t_mg_total,
         client,
       };
-      //if (!onlyReturn) setSelectedOpportunity(completedProject);
       setSelectedProject(completedProject);
       return completedProject;
     } catch (err) {
@@ -309,16 +305,6 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       return null;
     }
   };
-  /* const getTasksByIdPhase = async (id: number): Promise<ViewTasks[] | null> => {
-    const {data, error} = await supabase.from('view_task_and_progress').select('*').eq('id_phase', id);
-    if (error) {
-      console.error("Error en getTasksByIdPhase:", error);
-      return null;
-    }
-    setTasksProgress
-    (data);
-    return data;
-  }; */
   const getMaterial = (id: number, materialsList: MaterialsUI[]) => {
     const data = materialsList.find((item) => item.id === id);
     setSelectedMaterial(data || null);
@@ -383,9 +369,6 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         getProjectById,
         selectedProject,
         refreshProject,
-        /* getTasksByIdPhase,
-        tasksProgress,
-        setTasksProgress, */
       }}
     >
       {children}

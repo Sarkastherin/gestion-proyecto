@@ -53,6 +53,7 @@ export const updatesArrayFields = async <T extends object>({
       } else if (!hasId) {
         const { data: dataInsert, error: errorInsert } = await onInsert(field);
         if (errorInsert) {
+          console.error("Error insertando nuevo registro:", errorInsert, field);
           throw new Error(
             `Error insertando un nuevo registro: ${errorInsert.message}`
           );

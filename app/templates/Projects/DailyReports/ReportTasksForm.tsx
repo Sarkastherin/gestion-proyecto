@@ -1,19 +1,13 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import { Input, Select } from "~/components/Forms/Inputs";
+import { Input, Select, Textarea } from "~/components/Forms/Inputs";
 import { Button } from "~/components/Forms/Buttons";
 import { reportTasksApi } from "~/backend/cruds";
-import { createdNewTask } from "~/utils/dailyReport";
-import type {
-  ReportTaskDB,
-  DailyReportUI,
-  TaskDB,
-  TaskProps,
-} from "~/types/projectsType";
+import type { ReportTaskDB, DailyReportUI, TaskDB } from "~/types/projectsType";
 import { ButtonAdd, ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { useUIModals } from "~/context/ModalsContext";
 import { updatesArrayFields } from "~/utils/updatesArraysFields";
-import { useState } from "react";
-import { useTasksRealtime, useProjectRealtime } from "~/backend/realTime";
+import { useEffect, useState } from "react";
+import { useTasksRealtime, useDailyReportsRealtime } from "~/backend/realTime";
 import { useData } from "~/context/DataContext";
 import {
   getMaxProgressUntil,
@@ -21,6 +15,7 @@ import {
   isReportedHere,
   getProgressInThisReport,
   getReportTasksFormValues,
+  createdNewTask,
 } from "~/utils/dailyReportTasks";
 import { Tooltip } from "~/components/Generals/Tooltip";
 
@@ -30,7 +25,6 @@ type ReportTasksFormProps = {
   filteredTasks: (TaskDB & { progress: number })[];
   onSuccess: (tasksTouched: number[]) => void;
   type: "new" | "edit";
-  data?: DailyReportUI;
 };
 export type ReportTaskForm = {
   reportTasks: (ReportTaskDB & { description: string })[];
@@ -41,25 +35,39 @@ export function ReportTasksForm({
   selectedPhase,
   onSuccess,
   type,
-  data,
 }: ReportTasksFormProps) {
   useTasksRealtime();
-  useProjectRealtime();
+  useDailyReportsRealtime();
+  const [report, setReport] = useState<DailyReportUI | null>(null);
   const { selectedProject } = useData();
+  if (!selectedProject) return null;
   const { phases_project } = selectedProject || {};
   if (!phases_project) return null;
-  const dailyReports = phases_project.flatMap((phase) => phase.daily_reports);
-  const reportTasks = dailyReports.flatMap((dr) => dr.report_tasks);
+  const dailyReports =
+    phases_project?.flatMap((phase) => phase.daily_reports) || [];
+  const getReport = (id: number) => {
+    setReport(dailyReports.find((report) => report.id === id) || null);
+  };
+  useEffect(() => {
+    if (idDailyReport) {
+      getReport(idDailyReport);
+    }
+  }, [idDailyReport, phases_project]);
+
+  const drFromCurrentPhase = dailyReports.filter(
+    (dr) => dr.id_phase === selectedPhase
+  );
+  const reportTasks = drFromCurrentPhase.flatMap((dr) => dr.report_tasks);
   const { openModal, closeModal } = useUIModals();
   const [tasksToDelete, setTasksToDelete] = useState<number[]>([]); // ✅ nuevo
-  const isFinished = data?.status === "finalizado";
-  const isEditMode = type === "edit" || data?.status === "borrador";
+  const isFinished = report?.status === "finalizado";
+  const isEditMode = type === "edit" || report?.status === "borrador";
   // Mostrar solo tareas planificadas o reportadas en este parte
   const values = getReportTasksFormValues({
     filteredTasks,
     reportTasks,
     idDailyReport,
-    data,
+    data: report ?? undefined,
     isEditMode,
   });
   // ...form setup...
@@ -94,7 +102,7 @@ export function ReportTasksForm({
     const currentTasks = watch("reportTasks");
     const task = currentTasks[index];
     // Busca el id real del avance en la data original
-    const original = data?.report_tasks.find(
+    const original = report?.report_tasks.find(
       (rt) =>
         rt.id_task === task.id_task &&
         rt.id_daily_report === task.id_daily_report
@@ -186,6 +194,7 @@ export function ReportTasksForm({
     reportTasksDirty: any[],
     tasksTouched: number[]
   ) => {
+    console.log(reportTasks);
     // REGLA: No guardar tareas con progreso 0%
     const { tasks: filteredTasks, dirtyFields: filteredDirty } =
       prepareTasksForSave(reportTasks, reportTasksDirty);
@@ -204,7 +213,10 @@ export function ReportTasksForm({
             progress: report.progress,
           };
           tasksTouched.push(report.id_task);
-          const { error } = await reportTasksApi.insertOne(reportTask);
+          const { error } = await reportTasksApi.update({
+            id: report.id,
+            values: reportTask,
+          });
           if (error) throw new Error(error.message);
         } else if (!hasId) {
           const newTask = await createdNewTask({
@@ -233,7 +245,8 @@ export function ReportTasksForm({
         if (!reportTasks[index]) return null;
         const t = reportTasks[index];
         if (t.progress === 0) return null; // <-- filtro clave
-        const original = data?.report_tasks.find(
+        if (t.id_task === 0) return null;
+        const original = report?.report_tasks.find(
           (rtDb) =>
             rtDb.id_task === t.id_task &&
             rtDb.id_daily_report === t.id_daily_report
@@ -319,14 +332,14 @@ export function ReportTasksForm({
         <table className="w-full text-sm table-auto divide-zinc-200 dark:divide-zinc-700">
           <colgroup>
             <col />
-            <col className="w-[1%]" />
+            <col className="w-[14%]" />
             <col className="w-[10%]" />
             <col className="w-[1%]" />
           </colgroup>
           <thead>
             <tr>
-              <th className="py-1 px-1">Descripción</th>
-              <th className="py-1 px-1">Progreso actual</th>
+              <th className="py-1 px-1 text-left">Descripción</th>
+              <th className="py-1 px-1">Avance en PD</th>
               <th className="py-1 px-1">Nuevo avance</th>
               <th className="px-1 py-1">🗑️</th>
             </tr>
@@ -370,7 +383,9 @@ export function ReportTasksForm({
               return (
                 <tr
                   key={field.id}
-                  className={isReported ? "bg-green-50 dark:bg-green-900" : ""}
+                  className={
+                    isReported ? "bg-green-100/70 dark:bg-green-600/20" : ""
+                  }
                 >
                   <td className="relative px-1 py-0.5 whitespace-nowrap">
                     <Input
@@ -378,27 +393,27 @@ export function ReportTasksForm({
                         required: true,
                       })}
                       defaultValue={field.description}
-                      readOnly={false}
+                      readOnly={field.id_task !== 0}
                     />
                     {isReported && (
-                      <div
-                        className="absolute w-full top-0 -left-2 h-full flex items-center justify-end pr-1"
-                        title="Reportada en este parte"
-                      >
-                        <span className="text-xs rounded px-1 py-0.5 bg-green-200 text-green-800 dark:bg-green-700 dark:text-green-100">
-                          📝 Reportada aquí
-                        </span>
+                      <div className="absolute w-full top-0 -left-2 h-full flex items-center justify-end pr-1">
+                        <Tooltip message="Reportada en este parte diario">
+                          <span className="text-xs rounded px-1 py-0.5 bg-yellow-300">
+                            📌
+                          </span>
+                        </Tooltip>
                       </div>
                     )}
                   </td>
                   <td className="px-1 py-0.5 whitespace-nowrap">
                     <Input disabled value={currentProgress + "%"} />
                   </td>
-                                    <td className="relative px-1 py-0.5 whitespace-nowrap">
+                  <td className="relative px-1 py-0.5 whitespace-nowrap">
                     <Select
                       {...register(`reportTasks.${index}.progress`, {
                         valueAsNumber: true,
                         validate: (value) =>
+                          value === 0 ||
                           value >= currentProgress ||
                           "El avance no puede ser menor al actual",
                       })}
@@ -419,9 +434,7 @@ export function ReportTasksForm({
                     {hasPosterior && (
                       <div className="absolute w-full top-0 -left-2 h-full flex items-center justify-end pr-1">
                         <Tooltip message="No editable: existe un avance posterior registrado">
-                          <span className="text-xs text-red-600 ml-2" role="img" aria-label="No editable">
-                            🔒
-                          </span>
+                          <span>🔒</span>
                         </Tooltip>
                       </div>
                     )}
@@ -452,4 +465,4 @@ export function ReportTasksForm({
       </div>
     </form>
   );
-} //No editable: existe un avance posterior registrado
+}

@@ -10,6 +10,8 @@ import { useModalState } from "~/components/modals/particularsModals/useModalSta
 import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
 import { Button } from "~/components/Forms/Buttons";
 import { Badge } from "~/components/Specific/Badge";
+import { formatDateUStoES } from "~/utils/functionsDays";
+import { useDailyReportsRealtime } from "~/backend/realTime";
 
 // 📌 Meta
 export function meta({}: Route.MetaArgs) {
@@ -21,6 +23,7 @@ export function meta({}: Route.MetaArgs) {
 
 // 🧩 Página principal
 export default function DailyReport() {
+  useDailyReportsRealtime();
   const dailyReportModal = useModalState<{
     type: "new" | "edit";
     data?: DailyReportUI;
@@ -71,7 +74,7 @@ export default function DailyReport() {
               <Card key={report.id}>
                 <div className="flex gap-2 items-center font-bold text-xl mb-4">
                   <DocumentTextIcon className="size-6 text-indigo-400" />{" "}
-                  <h2 className="">Parte Diario # {report.id}</h2>
+                  <h2 className="">Parte Diario 📅{formatDateUStoES(report.date_report)}</h2>
                 </div>
 
                 <ul className="text-sm space-y-1.5">
@@ -79,7 +82,7 @@ export default function DailyReport() {
                     <strong>Proyecto:</strong> {selectedProject.name}
                   </li>
                   <li>
-                    <strong>Fecha:</strong> {report.date_report}
+                    <strong>Fecha:</strong> {formatDateUStoES(report.date_report)}
                   </li>
                   <li>
                     <strong>Etapa:</strong>{" "}

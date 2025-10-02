@@ -194,7 +194,8 @@ export function useTasksRealtime() {
     };
   }, []);
 }
-export function useDailyReportsRealtime() {
+// ...existing code...
+export function useDailyReportsRealtime(page?: string) {
   const { selectedProject, refreshProject } = useData();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
@@ -210,7 +211,7 @@ export function useDailyReportsRealtime() {
         "postgres_changes",
         { event: "*", schema: "public", table },
         (payload) => {
-          console.log(`[${table.toUpperCase()}] Evento recibido:`, payload);
+          console.log(`Page: ${page} [${table.toUpperCase()}] Evento recibido:`, payload);
           // Reiniciamos el timer
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
           timeoutRef.current = setTimeout(() => {
@@ -226,5 +227,6 @@ export function useDailyReportsRealtime() {
       supabase.removeChannel(channel);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [selectedProject]); // <-- AGREGA selectedProject AQUÍ
 }
+// ...existing code...

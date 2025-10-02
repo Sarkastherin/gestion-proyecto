@@ -2,32 +2,45 @@ import { Input, Select } from "~/components/Forms/Inputs";
 import { Button } from "~/components/Forms/Buttons";
 import { useForm } from "react-hook-form";
 import { dailyReportsApi } from "~/backend/cruds";
-import { useEffect } from "react";
-import type { DailyReportDB, ProjectAndBudgetUI } from "~/types/projectsType";
+import { useEffect, useState } from "react";
+import type { DailyReportDB, DailyReportUI } from "~/types/projectsType";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { useUIModals } from "~/context/ModalsContext";
 import { useDailyReportsRealtime } from "~/backend/realTime";
-type TypePhasesUI = ProjectAndBudgetUI["phases_project"];
+import { useData } from "~/context/DataContext";
 
 export function DailyReportInitForm({
   onSuccess,
-  phases_project,
   selectedPhase,
   setSelectedPhase,
-  data,
+  idDailyReport,
   type,
 }: {
   onSuccess: (id: number) => void;
-  phases_project: TypePhasesUI;
   selectedPhase: number | "";
-  data?: DailyReportDB;
+  idDailyReport: number | null;
   setSelectedPhase: React.Dispatch<React.SetStateAction<number | "">>;
   type: "new" | "edit";
 }) {
-  useDailyReportsRealtime();
-  const isFinished = data?.status === "finalizado";
+  const [report, setReport] = useState<DailyReportUI | null>(null);
+  const { selectedProject } = useData();
+  if (!selectedProject) return null;
+  const { phases_project } = selectedProject || {};
   const dailyReports =
     phases_project?.flatMap((phase) => phase.daily_reports) || [];
+  const getReport = (id: number) => {
+    setReport(dailyReports.find((report) => report.id === id) || null);
+  };
+  useEffect(() => {
+    if (idDailyReport) {
+      getReport(idDailyReport);
+    }
+  }, [idDailyReport, phases_project]);
+
+  useDailyReportsRealtime(
+    `DailyReportInitForm-${selectedProject.id}-${idDailyReport}`
+  );
+  const isFinished = report?.status === "finalizado";
   const { openModal } = useUIModals();
   const {
     register,
@@ -35,7 +48,6 @@ export function DailyReportInitForm({
     formState: { dirtyFields, errors },
     reset,
   } = useForm<DailyReportDB>();
-  // ...existing code...
   const isDuplicateReport = (
     formData: DailyReportDB,
     dailyReports: DailyReportDB[],
@@ -65,6 +77,11 @@ export function DailyReportInitForm({
             cause: error,
           });
         if (data) {
+          reset({
+            id: data.id,
+            id_phase: data.id_phase,
+            date_report: data.date_report,
+          });
           onSuccess(data.id);
           openModal("INFORMATION", {
             title: "📄 Parte diario creado",
@@ -99,6 +116,7 @@ export function DailyReportInitForm({
             ),
           });
         }
+        reset(formData);
         onSuccess(formData.id);
       }
     } catch (e: any) {
@@ -112,22 +130,25 @@ export function DailyReportInitForm({
     setSelectedPhase(selectedPhaseId);
   };
   useEffect(() => {
-    if (data) {
-      setSelectedPhase(data?.id_phase || "");
+    if (report) {
+      setSelectedPhase(report?.id_phase || "");
       reset({
-        id: data?.id || 0,
-        id_phase: data?.id_phase || undefined,
+        id: report?.id || 0,
+        id_phase: report?.id_phase || undefined,
         date_report:
-          data?.date_report || new Date().toISOString().split("T")[0],
+          report?.date_report || new Date().toISOString().split("T")[0],
       });
     }
-  }, [data, reset, setSelectedPhase]);
+  }, [report, reset, setSelectedPhase]);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <fieldset disabled={isFinished}>
         <Select
           label="Etapa"
-          {...register("id_phase", { required: { value: true, message: "Este campo es obligatorio" }, valueAsNumber: true })}
+          {...register("id_phase", {
+            required: { value: true, message: "Este campo es obligatorio" },
+            valueAsNumber: true,
+          })}
           onChange={(e) => handleChangePhases(e)}
           disabled={false}
           value={selectedPhase || ""}
@@ -142,7 +163,9 @@ export function DailyReportInitForm({
         <Input
           label="Fecha"
           type="date"
-          {...register("date_report", { required: { value: true, message: "Este campo es obligatorio" } })}
+          {...register("date_report", {
+            required: { value: true, message: "Este campo es obligatorio" },
+          })}
           error={errors.date_report?.message}
         />
       </fieldset>

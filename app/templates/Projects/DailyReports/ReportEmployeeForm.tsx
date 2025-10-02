@@ -1,11 +1,10 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import type { DailyReportUI, ReportEmployeeDB } from "~/types/projectsType";
-import { useContacts, type EmployeesDataType } from "~/context/ContactsContext";
-import { Input, Select } from "~/components/Forms/Inputs";
+import { useContacts } from "~/context/ContactsContext";
+import { Input } from "~/components/Forms/Inputs";
 import { useMemo, useState, useEffect } from "react";
 import { ButtonAdd, ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { Button } from "~/components/Forms/Buttons";
-import ContactsModal from "~/components/modals/particularsModals/ContactsModal";
 import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import { useUI } from "~/context/UIContext";
 import { reportEmployeesApi } from "~/backend/cruds";
@@ -15,53 +14,41 @@ import { Badge } from "~/components/Specific/Badge";
 import { dailyReportsApi } from "~/backend/cruds";
 import { useData } from "~/context/DataContext";
 import { useTasksRealtime, useProjectRealtime } from "~/backend/realTime";
+import EmployeesModal from "~/components/modals/particularsModals/EmployeesModal";
 
 type ReportEmployeeFormProps = {
   idDailyReport: number;
   idsEmployees: number[];
   onSuccess: () => void;
   type: "new" | "edit";
-  data?: DailyReportUI;
 };
 type ReportEmployeeForm = {
   reportEmployees: (ReportEmployeeDB & { name_employee: string })[];
 };
+type ContactsModalProps = {
+  excludeIds?: number[];
+};
+
 export function ReportEmployeeForm({
   idDailyReport,
   idsEmployees,
   type,
-  data,
   onSuccess,
 }: ReportEmployeeFormProps) {
   useProjectRealtime();
-  const { selectedProject } = useData();
+
+  const [report, setReport] = useState<DailyReportUI | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+
+  const { selectedProject, getProjectById } = useData();
   const { openModal } = useUIModals();
-  const employeeModal = useModalState<EmployeesDataType>();
+  const employeeModal = useModalState<ContactsModalProps>();
   const { employees } = useContacts();
   const { setSelectedEmployee, selectedEmployee } = useUI();
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const { report_employees } = data || {};
-  const isFinished = data?.status === "finalizado";
-  const idsInReportEmployees =
-    report_employees?.map((re) => re.id_employee) ?? [];
-  const joinsIds = isFinished
-    ? idsInReportEmployees
-    : [...idsEmployees, ...idsInReportEmployees];
-  const allIdsEmployees = [...new Set(joinsIds)];
-  const getOldDataReportEmployees = (id: number) => {
-    return report_employees?.find((re) => re.id_employee === id);
-  };
-  const defaultValues = {
-    reportEmployees: allIdsEmployees.map((id) => ({
-      id: getOldDataReportEmployees(id)?.id || null,
-      id_daily_report: idDailyReport,
-      id_employee: id,
-      hour_start: getOldDataReportEmployees(id)?.hour_start || "",
-      hour_end: getOldDataReportEmployees(id)?.hour_end || "",
-      observation: getOldDataReportEmployees(id)?.observation || "",
-      absent: getOldDataReportEmployees(id)?.absent || false,
-    })) as ReportEmployeeDB[],
-  };
+
+  // ----------------------
+  // hooks del formulario (siempre declarados)
+  // ----------------------
   const {
     control,
     register,
@@ -69,9 +56,9 @@ export function ReportEmployeeForm({
     watch,
     reset,
     setValue,
-    formState: { isDirty, dirtyFields, errors },
+    formState: { dirtyFields, errors },
   } = useForm<ReportEmployeeForm>({
-    defaultValues,
+    defaultValues: { reportEmployees: [] }, // empieza vacío y luego hago reset()
   });
 
   const { fields, append, remove } = useFieldArray<ReportEmployeeForm>({
@@ -79,70 +66,123 @@ export function ReportEmployeeForm({
     name: "reportEmployees",
   });
 
+  // ----------------------
+  // obtener report cuando cambian selectedProject / idDailyReport
+  // ----------------------
+  useEffect(() => {
+    if (selectedProject?.phases_project && idDailyReport) {
+      const dailyReports =
+        selectedProject.phases_project.flatMap((phase) => phase.daily_reports) || [];
+      const found = dailyReports.find((r) => r.id === idDailyReport) || null;
+      setReport(found);
+    } else {
+      setReport(null);
+    }
+  }, [selectedProject, idDailyReport]);
+
+  // ----------------------
+  // mapa empleados por id (memo)
+  // ----------------------
   const employeesById = useMemo(
     () => new Map(employees?.map((e) => [e.id, e.contacto_nombre])),
     [employees]
   );
-  const handleRemove = (index: number) => {
-    remove(index);
-  };
-  const handleAddEmployee = () => {
+
+  // ----------------------
+  // cuando cambia `report` o `idsEmployees` reconstruyo los valores y hago reset()
+  // esto garantiza que el formulario siempre se inicialice desde los hooks (no cambia el orden)
+  // ----------------------
+  useEffect(() => {
+    // si no hay report, dejo el form vacío (pero hooks ya ejecutados)
+    if (!report) {
+      reset({ reportEmployees: [] }, { keepDirty: false, keepValues: false });
+      return;
+    }
+
+    const report_employees = report.report_employees ?? [];
+    const isFinished = report.status === "finalizado";
+
+    const idsInReportEmployees = report_employees.map((re) => re.id_employee) ?? [];
+    const joinsIds = isFinished ? idsInReportEmployees : [...idsEmployees, ...idsInReportEmployees];
+    const allIdsEmployees = [...new Set(joinsIds)];
+
+    const arr = allIdsEmployees.map((id) => {
+      const old = report_employees.find((re) => re.id_employee === id);
+      return {
+        id: old?.id ?? null,
+        id_daily_report: idDailyReport,
+        id_employee: id,
+        hour_start: old?.hour_start ?? "",
+        hour_end: old?.hour_end ?? "",
+        observation: old?.observation ?? "",
+        absent: old?.absent ?? false,
+        name_employee: employeesById.get(id) ?? "",
+      } as ReportEmployeeDB & { name_employee: string };
+    });
+
+    // resetea todo el form con los valores preparados
+    reset({ reportEmployees: arr }, { keepDirty: false, keepValues: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [report, idsEmployees, employeesById, idDailyReport, reset]);
+
+  // ----------------------
+  // si seleccionaron un empleado desde el modal, lo guardo en la fila activa
+  // ----------------------
+  useEffect(() => {
+    if (selectedEmployee && activeIndex !== null) {
+      setValue(`reportEmployees.${activeIndex}.id_employee`, selectedEmployee.id, {
+        shouldDirty: true,
+      });
+      setValue(
+        `reportEmployees.${activeIndex}.name_employee`,
+        selectedEmployee.contacto_nombre,
+        { shouldDirty: true }
+      );
+    }
+  }, [selectedEmployee, activeIndex, setValue]);
+
+  // ----------------------
+  // utilitarios
+  // ----------------------
+  const handleRemove = (index: number) => remove(index);
+  const handleAddEmployee = () =>
     append({
+      id: null as any,
+      id_daily_report: idDailyReport,
       id_employee: 0,
       hour_start: "",
       hour_end: "",
       observation: "",
-      id_daily_report: idDailyReport,
       absent: false,
       name_employee: "",
     } as ReportEmployeeForm["reportEmployees"][0]);
-  };
-    useEffect(() => {
-    if (selectedEmployee && activeIndex !== null) {
-      // Solo actualiza si el valor realmente cambió
-      setValue(
-        `reportEmployees.${activeIndex}.id_employee`,
-        selectedEmployee.id,
-        { shouldDirty: false }
-      );
-      setValue(
-        `reportEmployees.${activeIndex}.name_employee`,
-        selectedEmployee.contacto_nombre,
-        { shouldDirty: false }
-      );
-    }
-  }, [selectedEmployee, activeIndex, setValue]);
-  useEffect(() => {
-    if (fields.length > 0) {
-      fields.map((field, index) => {
-        const employeeInput = document.getElementById(
-          `reportEmployees.${index}.name_employee`
-        ) as HTMLInputElement | null;
-        if (employeeInput) {
-          employeeInput.value = employeesById.get(field.id_employee) || "";
-        }
-      });
-    }
-  }, [fields]);
+
+  const getSelectedEmployeeIds = (excludeIndex?: number) =>
+    (watch("reportEmployees") ?? [])
+      .map((re, idx) => (idx !== excludeIndex ? re.id_employee : null))
+      .filter((id) => id !== null && id !== 0);
+
   const handlerEmployee = (index: number) => {
     setActiveIndex(index);
     setSelectedEmployee(null);
-    employeeModal.openModal();
+    employeeModal.openModal({
+      excludeIds: getSelectedEmployeeIds(index).filter((id): id is number => id !== null),
+    });
   };
+
+  // ----------------------
+  // submit
+  // ----------------------
   const onSubmit = async (data: ReportEmployeeForm) => {
     try {
       const { reportEmployees } = data;
       if (type === "new") {
-        openModal("LOADING", {
-          message: "Procesando requerimiento",
-        });
-        const cleanedReportEmployees = reportEmployees.map((re) => {
-          const { id, ...rest } = re;
+        openModal("LOADING", { message: "Procesando requerimiento" });
+        const cleaned = reportEmployees.map((re) => {
+          const { id, name_employee, ...rest } = re;
           return rest;
         });
-        const { data: createdData, error } = await reportEmployeesApi.insert(
-          cleanedReportEmployees
-        );
+        const { data: createdData, error } = await reportEmployeesApi.insert(cleaned);
         if (error) throw new Error(error.message);
         const isUpdated = await updateStatusDailyReport(idDailyReport);
         if (createdData) {
@@ -154,8 +194,7 @@ export function ReportEmployeeForm({
                 <p>✅ Las horas trabajadas han sido cargadas correctamente</p>
                 {isUpdated && (
                   <p>
-                    ➡️ El status del parte diario se ha actualizado a{" "}
-                    <Badge variant="green">Finalizado</Badge>
+                    ➡️ El status del parte diario se ha actualizado a <Badge variant="green">Finalizado</Badge>
                   </p>
                 )}
               </>
@@ -164,21 +203,14 @@ export function ReportEmployeeForm({
         }
       } else {
         if (Object.keys(dirtyFields).length > 0) {
-          const cleanedReportEmployees = reportEmployees.map((re) => {
-            // Extrae id y name_employee, y deja el resto
-            const { id, name_employee, ...rest } = re;
-            // Si es nuevo, no envíes id
-            if (id === null) {
-              return rest;
-            } else {
-              // Si existe, agrega id de vuelta
-              return { id, ...rest };
-            }
+          const cleaned = reportEmployees.map((re) => {
+            const { id, name_employee, ...rest } = re as any;
+            return id === null ? rest : { id, ...rest };
           });
           await updatesArrayFields({
             fieldName: "reportEmployees",
             dirtyFields: dirtyFields,
-            fieldsArray: cleanedReportEmployees as ReportEmployeeDB[],
+            fieldsArray: cleaned as ReportEmployeeDB[],
             fieldsDelete: [],
             onInsert: reportEmployeesApi.insertOne,
             onRemove: (id: number) => reportEmployeesApi.remove({ id }),
@@ -189,13 +221,10 @@ export function ReportEmployeeForm({
             title: "⏱️ Horas actualizadas",
             message: (
               <>
-                <p>
-                  ✅ Las horas trabajadas han sido actualizadas correctamente
-                </p>
+                <p>✅ Las horas trabajadas han sido actualizadas correctamente</p>
                 {isUpdated && (
                   <p>
-                    ➡️ El status del parte diario se ha actualizado a{" "}
-                    <Badge variant="green">Finalizado</Badge>
+                    ➡️ El status del parte diario se ha actualizado a <Badge variant="green">Finalizado</Badge>
                   </p>
                 )}
               </>
@@ -208,8 +237,7 @@ export function ReportEmployeeForm({
               title: "Parte diario Actualizado",
               message: (
                 <p>
-                  ➡️ El status del parte diario se ha actualizado a{" "}
-                  <Badge variant="green">Finalizado</Badge>
+                  ➡️ El status del parte diario se ha actualizado a <Badge variant="green">Finalizado</Badge>
                 </p>
               ),
             });
@@ -218,36 +246,40 @@ export function ReportEmployeeForm({
         onSuccess();
       }
     } catch (e) {
-      openModal("ERROR", {
-        message: "Error al procesar el requerimiento",
-      });
+      openModal("ERROR", { message: "Error al procesar el requerimiento" });
     }
   };
+
   const updateStatusDailyReport = async (id: number) => {
-    const dailyReports = selectedProject?.phases_project.flatMap(
-      (phase) => phase.daily_reports
-    );
-    const report = dailyReports?.find((dr) => dr.id === idDailyReport);
-    const hasReportTasks =
-      report?.report_tasks && report.report_tasks.length > 0;
-    const hasReportEmployees =
-      report?.report_employees && report.report_employees.length > 0;
+    if (!selectedProject) return;
+    const thisProject = await getProjectById(selectedProject.id);
+    const dailyReports = thisProject?.phases_project.flatMap((phase) => phase.daily_reports);
+    const found = dailyReports?.find((dr) => dr.id === idDailyReport);
+    const hasReportTasks = !!(found?.report_tasks && found.report_tasks.length > 0);
+    const hasReportEmployees = !!(found?.report_employees && found.report_employees.length > 0);
     if (!hasReportTasks || !hasReportEmployees) return;
-    if (isFinished) return;
-    const { error } = await dailyReportsApi.update({
-      id,
-      values: { status: "finalizado" },
-    });
-    if (error) {
-      throw new Error("Problemas al actualizar el status del reporte:", {
-        cause: error,
-      });
-    }
+    if (found?.status === "finalizado") return;
+    const { error } = await dailyReportsApi.update({ id, values: { status: "finalizado" } });
+    if (error) throw new Error("Problemas al actualizar el status del reporte:", { cause: error });
     return true;
   };
+
   const onError = (errors: any) => {
-    console.log(dirtyFields);
+    console.log("FORM ERRORS", errors);
   };
+
+  // ----------------------
+  // UI: show loading states (estos returns están al FINAL, después de todos los hooks)
+  // ----------------------
+  if (!selectedProject?.phases_project) {
+    return <p className="text-center py-4">Cargando proyecto...</p>;
+  }
+  if (!report) {
+    return <p className="text-center py-4">Cargando parte diario...</p>;
+  }
+
+  const isFinished = report.status === "finalizado";
+
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit, onError)}>
@@ -275,7 +307,7 @@ export function ReportEmployeeForm({
               {fields.map((field, index) => (
                 <tr key={field.id}>
                   <td className="px-1 py-0.5 whitespace-nowrap">
-                    <Input
+                    <input
                       className="sr-only"
                       {...register(`reportEmployees.${index}.id_employee`, {
                         required: true,
@@ -306,7 +338,7 @@ export function ReportEmployeeForm({
                       {...register(`reportEmployees.${index}.hour_end`, {
                         required: watch(`reportEmployees.${index}.absent`)
                           ? false
-                          : "La hora de entrada es obligatoria",
+                          : "La hora de salida es obligatoria",
                       })}
                       disabled={watch(`reportEmployees.${index}.absent`)}
                     />
@@ -326,8 +358,8 @@ export function ReportEmployeeForm({
                             `reportEmployees.${index}.absent`,
                             !watch(`reportEmployees.${index}.absent`)
                           );
-                          setValue(`reportEmployees.${index}.hour_start`, null);
-                          setValue(`reportEmployees.${index}.hour_end`, null);
+                          setValue(`reportEmployees.${index}.hour_start`, "");
+                          setValue(`reportEmployees.${index}.hour_end`, "");
                         }}
                       />
                       <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-gray-300 ring-[6px] ring-white transition-all ring-inset peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent dark:bg-gray-600 dark:ring-gray-900 dark:peer-checked:bg-gray-900"></span>
@@ -340,10 +372,7 @@ export function ReportEmployeeForm({
                           ? "La observación es obligatoria si el operario está ausente"
                           : false,
                       })}
-                      error={
-                        errors.reportEmployees?.[index]?.observation
-                          ?.message as string
-                      }
+                      error={errors.reportEmployees?.[index]?.observation?.message as string}
                     />
                   </td>
 
@@ -356,10 +385,7 @@ export function ReportEmployeeForm({
           </table>
 
           <div className="mt-4">
-            <ButtonAdd
-              aria-label="Agregar actividad no planificada"
-              onClick={handleAddEmployee}
-            />
+            <ButtonAdd aria-label="Agregar operario" onClick={handleAddEmployee} />
           </div>
         </fieldset>
 
@@ -369,10 +395,13 @@ export function ReportEmployeeForm({
           </Button>
         </div>
       </form>
-      <ContactsModal
+
+      <EmployeesModal
         open={employeeModal.open}
         onClose={employeeModal.closeModal}
-        type="employee"
+        excludeIds={getSelectedEmployeeIds(activeIndex ?? undefined).filter(
+          (id): id is number => id !== null
+        )}
       />
     </>
   );

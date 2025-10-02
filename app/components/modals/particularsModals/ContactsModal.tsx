@@ -1,15 +1,12 @@
 import ModalBase from "../ModalBase";
-import type {
-  ContactsDataType,
-  EmployeesDataType,
-} from "~/context/ContactsContext";
+import type { ContactsDataType } from "~/context/ContactsContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
 import type { TableColumn } from "react-data-table-component";
 import { useState, useEffect } from "react";
 import { useUI } from "~/context/UIContext";
 import { useContacts } from "~/context/ContactsContext";
 
-const columnsContact: TableColumn<ContactsDataType | EmployeesDataType>[] = [
+const columnsContact: TableColumn<ContactsDataType>[] = [
   {
     name: "Id",
     selector: (row) => row.id,
@@ -17,29 +14,12 @@ const columnsContact: TableColumn<ContactsDataType | EmployeesDataType>[] = [
   },
   {
     name: "Cliente",
-    selector: (row) => (row as ContactsDataType).nombre,
+    selector: (row) => row.nombre,
     wrap: true,
   },
   {
     name: "CUIT",
-    selector: (row) => (row as ContactsDataType).cuit || "",
-    width: "150px",
-  },
-];
-const columnsEmployees: TableColumn<ContactsDataType | EmployeesDataType>[] = [
-  {
-    name: "Id",
-    selector: (row) => row.id,
-    width: "80px",
-  },
-  {
-    name: "Cliente",
-    selector: (row) => (row as EmployeesDataType).contacto_nombre,
-    wrap: true,
-  },
-  {
-    name: "Puesto",
-    selector: (row) => (row as EmployeesDataType).puesto || "",
+    selector: (row) => row.cuit || "",
     width: "150px",
   },
 ];
@@ -51,22 +31,18 @@ export default function ContactsModal({
 }: {
   open: boolean;
   onClose: () => void;
-  type: "client" | "supplier" | "employee";
+  type: "client" | "supplier";
 }) {
-  const { setSelectedClient, setSelectedSupplier, setSelectedEmployee } =
-    useUI();
-  const { clients, suppliers, employees } = useContacts();
-  const [filterData, setFilterData] = useState<
-    ContactsDataType[] | EmployeesDataType[]
-  >([]);
-  const handleRowClicked = (data: ContactsDataType | EmployeesDataType) => {
-    if (type === "client") setSelectedClient({ ...(data as ContactsDataType) });
-    if (type === "supplier")
-      setSelectedSupplier({ ...(data as ContactsDataType) });
-    if (type === "employee")
-      setSelectedEmployee({ ...(data as EmployeesDataType) });
+  const { setSelectedClient, setSelectedSupplier } = useUI();
+  const { clients, suppliers } = useContacts();
+  const [filterData, setFilterData] = useState<ContactsDataType[]>([]);
+
+  const handleRowClicked = (data: ContactsDataType) => {
+    if (type === "client") setSelectedClient({ ...data });
+    if (type === "supplier") setSelectedSupplier({ ...data });
     onClose();
   };
+
   useEffect(() => {
     if (type === "client" && clients && clients.length > 0) {
       setFilterData(clients);
@@ -74,10 +50,8 @@ export default function ContactsModal({
     if (type === "supplier" && suppliers && suppliers.length > 0) {
       setFilterData(suppliers);
     }
-    if (type === "employee" && employees && employees.length > 0) {
-      setFilterData(employees.filter((e) => e.puesto === "Operario"));
-    }
-  }, [clients, suppliers, employees]);
+  }, [clients, suppliers, type]);
+
   return (
     <ModalBase
       title={`Listado de ${type === "client" ? "Clientes" : "Proveedores"}`}
@@ -97,19 +71,16 @@ export default function ContactsModal({
         style={{ maxHeight: "calc(100vh - 270px)" }}
       >
         <EntityTable
-          columns={type === "employee" ? columnsEmployees : columnsContact}
+          columns={columnsContact}
           data={filterData}
           onRowClick={handleRowClicked}
           filterFields={[
             {
-              key: type === "employee" ? "contacto_nombre" : "nombre",
-              label: `${type === "client" ? "Cliente" : type === "supplier" ? "Proveedor" : "Empleado"}`,
+              key: "nombre",
+              label: type === "client" ? "Cliente" : "Proveedor",
               autoFilter: true,
             },
-            //solo en type client o supplier
-            ...(type !== "employee"
-              ? [{ key: "cuit", label: "CUIT", autoFilter: true }]
-              : []),
+            { key: "cuit", label: "CUIT", autoFilter: true },
           ]}
         />
       </div>
