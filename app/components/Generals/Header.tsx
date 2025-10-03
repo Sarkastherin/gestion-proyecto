@@ -9,6 +9,7 @@ import {
   ALLOWED_MATERIALS,
   ALLOWED_OPPORTUNITIES,
   ALLOWED_PROJECTS,
+  ALLOWED_RRHH
 } from "../auth/allowedRoles";
 
 type MyLinkProps = {
@@ -52,7 +53,7 @@ const menuBar = [
   {
     name: "✨RRHH",
     to: "/rrhh",
-    permission: ["administrador"],
+    permission: ALLOWED_RRHH,
   },
 ];
 export default function Header() {
