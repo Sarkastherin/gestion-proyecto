@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useUI } from "~/context/UIContext";
 import { useData } from "~/context/DataContext";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
+import { ALLOWED_NEW_OPPORTUNITY } from "~/components/auth/allowedRoles";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Nueva Oportunidad" },
@@ -25,7 +26,7 @@ export default function NewOpportunity() {
     setSelectedClient(null);
   }, []);
   return (
-    <ProtectedRoute allowed={["administrador", "dueño"]}>
+    <ProtectedRoute allowed={ALLOWED_NEW_OPPORTUNITY}>
       <ContainerWithTitle title="Creando nueva oportunidad" width="max-w-7xl w-full">
         <OpportunityForm
           isNew={true}

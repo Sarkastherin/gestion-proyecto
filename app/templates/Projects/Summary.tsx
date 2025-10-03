@@ -14,6 +14,7 @@ import type { TaskProgressGroup, PhaseProgress } from "~/utils/dailyReport";
 import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { networkdaysIntl } from "~/utils/functionsDays";
+import ProjectSummaryTable from "~/components/Specific/ProjectSummaryTable";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Resumen" },
@@ -47,11 +48,12 @@ export default function ProjectSummary({
     () => new Map(phases_project.map((phase) => [phase.id, phase])),
     [phases_project]
   );
-  const supervisorsById = (id_phase: number) => {
+  const supervisorsById = (id_phase: number): string => {
     const phase = phases_project.find((phase) => phase.id === id_phase);
-    return phase?.id_supervisor
-      ? employeesById.get(phase.id_supervisor)
-      : "No asignado";
+    if (phase?.id_supervisor) {
+      return employeesById.get(phase.id_supervisor) ?? "No asignado";
+    }
+    return "No asignado";
   };
   useEffect(() => {
     if (!phases_project) return;
@@ -76,6 +78,7 @@ export default function ProjectSummary({
       setDaysUsed(daysCount);
     }
   }, [project]);
+
   return (
     <>
       <div className="space-y-6">
@@ -136,8 +139,13 @@ export default function ProjectSummary({
             </div>
           </Card>
         </div>
+        <ProjectSummaryTable
+          phases_project={phases_project}
+          supervisorsById={supervisorsById}
+          getProgress={getProgress}
+        />
 
-        <div className="rounded-xl shadow-md p-6 border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/70">
+        {/* <div className="rounded-xl shadow-md p-6 border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/70">
           <h3 className="text-lg font-semibold mb-4">Avance de etapas</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
@@ -162,7 +170,7 @@ export default function ProjectSummary({
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
       </div>
       {dailyReportModal.data?.type && (
         <DailyReportModal

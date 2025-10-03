@@ -10,6 +10,7 @@ import { EntityTable } from "~/components/Generals/EntityTable";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
+import { ALLOWED_OPPORTUNITIES } from "~/components/auth/allowedRoles";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidades" },
@@ -66,7 +67,7 @@ export default function Opportunities() {
   }, []);
 
   return (
-    <ProtectedRoute allowed={["administrador", "dueño", "coordinador"]}>
+    <ProtectedRoute allowed={ALLOWED_OPPORTUNITIES}>
       <>
         {opportunities && (
           <ContainerWithTitle title={"Oportunidades"} width="w-full">

@@ -1,8 +1,5 @@
 import type { Route } from "./+types/home";
 import { appVersion } from "~/utils/functions";
-import { dateUSFormatted } from "~/utils/functions";
-import { Button } from "~/components/Forms/Buttons";
-import { useUIModals } from "~/context/ModalsContext";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Bienvenido" },
@@ -11,11 +8,6 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
-  const { openModal } = useUIModals();
-  const to = dateUSFormatted(new Date());
-  const fromArray = to.split("-");
-  fromArray[2] = "01";
-  const from = fromArray.join("-");
   return (
     <>
       <div className="flex flex-col items-center justify-center h-full text-center text-zinc-600 dark:text-zinc-400 mt-20">

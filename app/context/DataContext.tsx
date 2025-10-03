@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState } from "react";
-import type { ProjectsUITable, ProjectAndBudgetUI, ViewTasks } from "~/types/projectsType";
+import type {
+  ProjectsUITable,
+  ProjectAndBudgetUI,
+  ReportsEmployeesUIView,
+} from "~/types/projectsType";
 import type {
   DetailsItemsDB,
   DetailsMaterialsDB,
@@ -52,10 +56,13 @@ type DataContextType = {
   getProjectById: (id: number) => Promise<ProjectAndBudgetUI | null>;
   selectedProject: ProjectAndBudgetUI | null;
   refreshProject: (id?: number) => Promise<void>;
+  getReportsEmployees: () => Promise<ReportsEmployeesUIView[] | null>;
+  reportsEmployees: ReportsEmployeesUIView[] | null;
+  setReportsEmployees: React.Dispatch<React.SetStateAction<ReportsEmployeesUIView[] | null>>;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-  const { clients } = useContacts();
+  const { clients, employees } = useContacts();
   const [projects, setProjects] = useState<ProjectsUITable[] | null>(null);
   const [opportunities, setOpportunities] = useState<
     OpportunityUITable[] | null
@@ -74,7 +81,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsUI | null>(
     null
   );
-  //const [tasksProgress, setTasksProgress] = useState<ViewTasks[] | null>(null);
+  const [reportsEmployees, setReportsEmployees] = useState<
+    ReportsEmployeesUIView[] | null
+  >(null);
   const getProjects = async (): Promise<void> => {
     if (clients) {
       setEntities<ProjectsUITable>({
@@ -341,6 +350,15 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         ) ?? []
     );
   };
+  const getReportsEmployees = async () => {
+    return setEntities<ReportsEmployeesUIView>({
+      table: "view_report_employees",
+      select: "*",
+      employeeKey: "id_employee",
+      employees: employees || [],
+      setData: setReportsEmployees,
+    });
+  };
   return (
     <DataContext.Provider
       value={{
@@ -369,6 +387,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         getProjectById,
         selectedProject,
         refreshProject,
+        getReportsEmployees,
+        reportsEmployees,
+        setReportsEmployees
       }}
     >
       {children}

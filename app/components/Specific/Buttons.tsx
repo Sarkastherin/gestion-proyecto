@@ -61,7 +61,7 @@ export const ButtonAdd = ({
     </button>
   );
 };
-type ButtonExportProps = { type: "resumen" | "materials" } & CommonPropTypes;
+type ButtonExportProps = { type: "resumen" | "materials" | "absents" } & CommonPropTypes;
 export const ButtonExport = ({
   data,
   headers,

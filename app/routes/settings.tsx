@@ -19,6 +19,7 @@ import type {
   SubCategoryDB,
 } from "~/types/materialsType";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
+import { ALLOWED_SETTINGS } from "~/components/auth/allowedRoles";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Configuraciones" },
@@ -97,7 +98,7 @@ export default function Settings() {
     },
   ];
   return (
-    <ProtectedRoute allowed={["administrador", "dueño", "coordinador"]}>
+    <ProtectedRoute allowed={ALLOWED_SETTINGS}>
       <div className="flex flex-1 gap-6 min-h-[calc(100vh-64px)]">
         {/* Menú lateral */}
         <nav className="w-44 pt-4 space-y-2 border-r border-zinc-300 bg-zinc-200/80 dark:border-zinc-700/60 dark:bg-zinc-900/70 px-4 shadow">

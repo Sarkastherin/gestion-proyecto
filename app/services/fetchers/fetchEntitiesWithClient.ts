@@ -1,7 +1,7 @@
-import { data } from "react-router";
 import { supabase } from "~/backend/supabaseClient";
-import type { ContactsDataType } from "~/context/ContactsContext";
+import type { ContactsDataType, EmployeesDataType } from "~/context/ContactsContext";
 type EntityWithClient<T> = T & { client: ContactsDataType };
+type EntityWithEmployee<T> = T & { employee: EmployeesDataType };
 interface FetchEntitiesOptions<T> {
   table: string;
   select: string;
@@ -39,11 +39,15 @@ export async function setEntities<T>({
   setData,
   clients,
   clientKey,
-  id_name
+  id_name,
+  employeeKey,
+  employees,
 }: FetchEntitiesOptions<T> & {
   setData: (data: T[]) => void;
   clientKey?: keyof T;
   clients?: ContactsDataType[];
+  employeeKey?: keyof T;
+  employees?: EmployeesDataType[];
 }): Promise<T[]> {
   if (clients && clientKey) {
     const entities = await fetchEntitiesWithClient<T>({
@@ -54,7 +58,18 @@ export async function setEntities<T>({
     });
     setData(entities);
     return entities;
-  } else {
+  } 
+  else if (employees && employeeKey) {
+    const entities = await fetchEntitiesWithEmployees<T>({
+      table,
+      select,
+      employeeKey,
+      employees,
+    });
+    setData(entities);
+    return entities;
+  }
+  else {
     const entities = await fetchEntities<T>({ table, select, id_name });
     setData(entities);
     return entities;
@@ -80,6 +95,31 @@ export async function fetchEntitiesWithClient<T>({
         return { ...item, client };
       })
       .filter((item): item is EntityWithClient<T> => item !== null);
+    allData = enriched;
+  }
+
+  return allData;
+}
+export async function fetchEntitiesWithEmployees<T>({
+  table,
+  select,
+  employeeKey,
+  employees,
+}: FetchEntitiesOptions<T> & {
+  employeeKey: keyof T;
+  employees: EmployeesDataType[];
+}): Promise<T[]> {
+  let allData = await fetchEntities<T>({ table, select });
+
+  if (employees && employees.length > 0 && employeeKey) {
+    const enriched = allData
+      .map((item) => {
+        const employeeId = item[employeeKey];
+        const employee = employees.find((c) => c.id === employeeId);
+        if (!employee) return null;
+        return { ...item, employee };
+      })
+      .filter((item): item is EntityWithEmployee<T> => item !== null);
     allData = enriched;
   }
 

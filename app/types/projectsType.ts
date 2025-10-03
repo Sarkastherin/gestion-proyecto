@@ -141,3 +141,11 @@ export type ReportEmployeeProps = {
   absent: boolean;
 };
 export type ReportEmployeeDB = ReportEmployeeProps & CommonPropsDB;
+export type ReportsEmployeesUIView = ReportEmployeeDB & {
+  date_report: string;
+  employee?: EmployeesDataType;
+  id_phase: number;
+  phase_name?: string;
+  id_project: number;
+  project_name?: string;
+}

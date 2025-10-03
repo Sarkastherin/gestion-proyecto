@@ -78,7 +78,6 @@ export function getBudgetTotals(data: {
     prices: { price: number };
   }>;
 }): Omit<Totals, "id_quote"> {
-
   const total_materials = roundToPrecision(
     data.details_materials.reduce((sum, m) => {
       return sum + m.quantity * (m.prices?.price || 0);
@@ -124,13 +123,12 @@ export const dateUSFormatted = (date: Date) => {
 };
 // Escapa comillas dobles y transforma valores undefined
 export const escapeCSVValue = (value: any) =>
-  typeof value === "string" ? value.replace(/"/g, '""') : value ?? "";
+  typeof value === "string" ? value.replace(/"/g, '""') : (value ?? "");
 
 // Transforma un solo ítem en una fila CSV compatible
 export const transformToCSVRow =
-  (type: "resumen" | "materials") => (item: any) => {
+  (type: "resumen" | "materials" | "absents") => (item: any) => {
     //console.log("type", type);
-    
 
     if (type === "materials") {
       const defaultPrice = item.prices?.find((p: any) => p.default) ?? {};
@@ -152,7 +150,6 @@ export const transformToCSVRow =
         ),
       };
     }
-
     if (type === "resumen") {
       return {
         type: escapeCSVValue(item.type || ""),
@@ -167,10 +164,23 @@ export const transformToCSVRow =
         unit: escapeCSVValue(item.unit || ""),
       };
     }
+    if (type === "absents") {
+      return {
+        id: item.id,
+        date_report: escapeCSVValue(item.date_report || ""),
+        "employee.contacto_nombre": escapeCSVValue(item.employee?.contacto_nombre || ""),
+        absent: item.absent ? "Ausente" : "Presente",
+        hour_start: escapeCSVValue(item.hour_start || ""),
+        hour_end: escapeCSVValue(item.hour_end || ""),
+        project_name: escapeCSVValue(item.project_name || ""),
+      };
+    }
 
     return {}; // fallback vacío si el tipo no coincide
   };
 
 // Aplica la transformación a todo el array de datos
-export const sanitizeCSVData = (data: Data, type: "resumen" | "materials") =>
-  data.map(transformToCSVRow(type));
+export const sanitizeCSVData = (
+  data: Data,
+  type: "resumen" | "materials" | "absents"
+) => data.map(transformToCSVRow(type));

@@ -8,6 +8,7 @@ import type { TableColumn } from "react-data-table-component";
 import { useEffect } from "react";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
+import { ALLOWED_PROJECTS } from "~/components/auth/allowedRoles";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Proyectos" },
@@ -56,7 +57,7 @@ export default function Projects() {
 
   return (
     <ProtectedRoute
-      allowed={["administrador", "dueño", "coordinador", "supervisor"]}
+      allowed={ALLOWED_PROJECTS}
     >
       {projects && (
         <ContainerWithTitle title={"Proyectos"} width="w-full">

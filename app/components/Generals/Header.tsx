@@ -4,6 +4,12 @@ import { useAuth } from "~/context/AuthContext";
 import { LightBulbIcon, MoonIcon } from "@heroicons/react/24/outline";
 import { Permission } from "../auth/Permission";
 import type { Roles } from "~/context/AuthContext";
+import {
+  ALLOWED_SETTINGS,
+  ALLOWED_MATERIALS,
+  ALLOWED_OPPORTUNITIES,
+  ALLOWED_PROJECTS,
+} from "../auth/allowedRoles";
 
 type MyLinkProps = {
   to: string;
@@ -21,27 +27,32 @@ const menuBar = [
   {
     name: "Oportunidades",
     to: "/opportunities",
-    permission: ["administrador", "dueño", "coordinador"],
+    permission: ALLOWED_OPPORTUNITIES,
   },
   {
-    name: "✨Proyectos",
+    name: "Proyectos",
     to: "/projects",
-    permission: ["administrador", "dueño"],
+    permission: ALLOWED_PROJECTS,
   },
   {
     name: "Partes Diarios",
     to: "/daily_reports",
-    permission: ["administrador"],
+    permission: [],
   },
   {
     name: "Materiales",
     to: "/materials",
-    permission: ["administrador", "dueño", "coordinador"],
+    permission: ALLOWED_MATERIALS,
   },
   {
     name: "Configuraciones",
     to: "/settings",
-    permission: ["administrador", "dueño", "coordinador"],
+    permission: ALLOWED_SETTINGS,
+  },
+  {
+    name: "✨RRHH",
+    to: "/rrhh",
+    permission: ["administrador"],
   },
 ];
 export default function Header() {

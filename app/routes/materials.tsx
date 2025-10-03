@@ -12,6 +12,7 @@ import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import ModalBase from "~/components/modals/ModalBase";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
+import { ALLOWED_MATERIALS } from "~/components/auth/allowedRoles";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Materiales" },
@@ -61,6 +62,10 @@ export default function Materials() {
   useEffect(() => {
     if (!materials) getMaterials();
   }, []);
+  const [filtered, setFiltered] = useState(materials ?? []);
+  useEffect(() => {
+    setFiltered(materials ?? []);
+  }, [materials]);
   const handleUploadFile = () => {
     setOpen(true);
   };
@@ -72,7 +77,7 @@ export default function Materials() {
     { label: "DESCRIPCION", key: "description" },
   ];
   return (
-    <ProtectedRoute allowed={["administrador", "dueño", "coordinador"]}>
+    <ProtectedRoute allowed={ALLOWED_MATERIALS}>
     <>
       {!materials && <div>Cargando materiales...</div>}
       {materials && (
@@ -98,7 +103,7 @@ export default function Materials() {
             </Button>
           </div>
           <ButtonExport
-            data={materials ?? []}
+            data={filtered}
             headers={headers}
             filename="Listado de materiales"
             type="materials"

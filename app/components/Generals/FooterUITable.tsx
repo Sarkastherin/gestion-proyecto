@@ -2,11 +2,11 @@ import { ButtonNavigate } from "~/components/Specific/Buttons";
 
 export default function FooterUITables({
   justify,
-  buttonNavigate: { title, route },
+  buttonNavigate,
   children,
 }: {
   justify: "justify-between" | "justify-end";
-  buttonNavigate: { title: string; route: string };
+  buttonNavigate?: { title: string; route: string };
   children?: React.ReactNode;
 }) {
   return (
@@ -16,9 +16,11 @@ export default function FooterUITables({
       >
         {children}
         <div className="w-fit">
-          <ButtonNavigate variant="yellow" route={route}>
-            {title}
-          </ButtonNavigate>
+          {buttonNavigate && (
+            <ButtonNavigate variant="yellow" route={buttonNavigate.route}>
+              {buttonNavigate.title}
+            </ButtonNavigate>
+          )}
         </div>
       </div>
     </span>
