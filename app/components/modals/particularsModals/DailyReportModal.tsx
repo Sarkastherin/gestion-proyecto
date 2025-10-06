@@ -160,8 +160,8 @@ export default function DailyReportModal({
           `Problemas al actualizar el status del reporte: ${error}`
         );
       }
+      refreshProject();
       toggleDropdown();
-      console.log("Status del reporte actualizado a:", newStatus);
     } catch (error) {
       console.error("Error al actualizar el status del reporte:", error);
     }

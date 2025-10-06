@@ -65,7 +65,7 @@ export default function PersonalModal({
 
           <div className="flex flex-col items-start gap-3">
             {employees
-              ?.filter((e) => e.puesto === "Operario")
+              ?.filter((e) => e.puesto !== "Coordinador")
               .map((employee) => (
                 <label
                   key={employee.id}
