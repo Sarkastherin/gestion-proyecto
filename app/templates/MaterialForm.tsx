@@ -224,7 +224,7 @@ export const MaterialForm = ({
                 <Input
                   label="Aplicación"
                   placeholder="Aplicación"
-                  {...register("applycation")}
+                  {...register("application")}
                 />
               </div>
             </CardToggle>

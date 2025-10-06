@@ -58,9 +58,8 @@ export function useUnitsRealTime() {
   }, []);
 }
 export function useConfigRealTime() {
-  const { selectedOpportunity } = useData();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const { getCategorizations } = useUI();
+  const { getCategorizations, categorizations } = useUI();
   useEffect(() => {
     const channel = supabase.channel("realtime:categorizations_realtime");
 
@@ -91,7 +90,7 @@ export function useConfigRealTime() {
       supabase.removeChannel(channel);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [selectedOpportunity]);
+  }, [categorizations]);
 }
 export function useOpportunityRealtime() {
   const { selectedOpportunity, refreshOpportunity } = useData();
@@ -229,4 +228,3 @@ export function useDailyReportsRealtime(page?: string) {
     };
   }, [selectedProject]); // <-- AGREGA selectedProject AQUÍ
 }
-// ...existing code...

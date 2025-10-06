@@ -130,12 +130,15 @@ export default function Settings() {
                   label: "Descripción",
                   type: "text",
                   required: true,
+                  isInFilter: true
+                  
                 },
                 {
                   name: "abbreviation",
                   label: "Abreviatura",
                   type: "text",
                   required: true,
+                  isInFilter: false
                 },
               ]}
             />
@@ -154,6 +157,7 @@ export default function Settings() {
                   label: "Descripción",
                   type: "text",
                   required: true,
+                  isInFilter: true
                 },
               ]}
             />
@@ -172,6 +176,7 @@ export default function Settings() {
                   label: "Descripción",
                   type: "text",
                   required: true,
+                  isInFilter: true
                 },
                 {
                   name: "id_family",
@@ -181,6 +186,7 @@ export default function Settings() {
                     return { value: f.id, label: f.description };
                   }),
                   required: true,
+                  isInFilter: false
                 },
               ]}
             />
@@ -202,6 +208,7 @@ export default function Settings() {
                   label: "Descripción",
                   type: "text",
                   required: true,
+                  isInFilter: true
                 },
                 {
                   name: "id_category",
@@ -217,6 +224,7 @@ export default function Settings() {
                     };
                   }),
                   required: true,
+                  isInFilter: false
                 },
               ]}
             />

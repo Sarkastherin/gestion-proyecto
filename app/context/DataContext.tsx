@@ -109,7 +109,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const getMaterials = async (): Promise<MaterialsUI[]> => {
     return setEntities<MaterialsUI>({
       table: "materials",
-      select: "*, prices(*), view_categorizations(*)",
+      select: "*, prices(*), view_categorizations(*), units(*)",
       setData: setMaterials,
     });
   };

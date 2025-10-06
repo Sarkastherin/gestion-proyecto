@@ -10,6 +10,7 @@ import type { CrudMethod } from "~/backend/crudFactory";
 import type { Path } from "react-hook-form";
 import { useUIModals } from "~/context/ModalsContext";
 import { ButtonDeleteIcon } from "./Buttons";
+import { EntityTable } from "../Generals/EntityTable";
 
 type FormField<T> = {
   name: Path<T>;
@@ -17,6 +18,7 @@ type FormField<T> = {
   type: "text" | "boolean" | "select";
   required?: boolean;
   options?: { value: string | number; label: string }[];
+  isInFilter: boolean
 };
 
 type Props<T extends { id: number }, TInsert = Partial<T>> = {
@@ -83,7 +85,15 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
       variant: "success",
     });
   }
-
+const filterFields = () => {
+  const form = formFields.filter(f => f.isInFilter);
+  if (form.length === 0) return undefined;
+  return form.map((field) => ({
+    key: field.name as string,
+    label: `Buscar por ${field.label}`,
+    autoFilter: true,
+  }));
+};
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
@@ -94,7 +104,13 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
           </Button>
         </div>
       </div>
-      <DataTable
+      <EntityTable
+        columns={[...columns, actionColumn]}
+        data={data}
+        onRowClick={handleOnRowClicked}
+        filterFields={filterFields()}
+      />
+      {/* <DataTable
         columns={[...columns, actionColumn]}
         data={data}
         customStyles={customStyles}
@@ -105,7 +121,7 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
         highlightOnHover
         defaultSortFieldId={"id"}
         paginationPerPage={30}
-      />
+      /> */}
 
       <ConfigFormModal<T, TInsert>
         open={open}

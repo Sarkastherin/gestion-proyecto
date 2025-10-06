@@ -53,6 +53,21 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
     sortable: true,
     grow: 1,
   },
+  {
+    name: "Unidad",
+    selector: (row) => row.units?.description || "",
+    sortable: true,
+    width: "120px",
+  },
+  {
+    name: "Precio",
+    selector: (row) =>
+      row.prices?.find((price) => price.default)?.price
+        ? `$${row.prices.find((price) => price.default)?.price?.toFixed(2)}`
+        : "",
+    sortable: true,
+    width: "120px",
+  },
 ];
 export default function Materials() {
   const [open, setOpen] = useState(false);
@@ -68,92 +83,112 @@ export default function Materials() {
   }, [materials]);
   const handleUploadFile = () => {
     setOpen(true);
+    console.log(filtered.find((m) => m.id === 1));
   };
   const headers = [
     { label: "ID", key: "id" },
-    { label: "FAMILIA", key: "view_categorizations.description_family" },
-    { label: "RUBRO", key: "view_categorizations.description_category" },
-    { label: "SUBRUBRO", key: "view_categorizations.description_subcategory" },
     { label: "DESCRIPCION", key: "description" },
+    { label: "ID FAMILIA", key: "view_categorizations.id_family" },
+    { label: "FAMILIA", key: "view_categorizations.description_family" },
+    { label: "ID RUBRO", key: "view_categorizations.id_category" },
+    { label: "RUBRO", key: "view_categorizations.description_category" },
+    { label: "ID SUBRUBRO", key: "view_categorizations.id_subcategory" },
+    { label: "SUBRUBRO", key: "view_categorizations.description_subcategory" },
+    { label: "UNIDAD", key: "units.description" },
+    { label: "ID UNIDAD", key: "id_unit" },
+    { label: "PRECIO", key: "defaultPrice" },
+    { label: "PESO", key: "weight" },
+    { label: "APLICACION", key: "application" },
   ];
+
   return (
     <ProtectedRoute allowed={ALLOWED_MATERIALS}>
-    <>
-      {!materials && <div>Cargando materiales...</div>}
-      {materials && (
-        <ContainerWithTitle title={"Materiales"} width="w-full">
-          <EntityTable
-            data={materials}
-            columns={columnsMaterials}
-            onRowClick={(row) => navigate(`/material/${row.id}`)}
-            filterFields={[
-              { key: "description", label: "Buscar por descripción", autoFilter: true },
-            ]}
-          />
-        </ContainerWithTitle>
-      )}
-      <FooterUITables
-        justify="justify-between"
-        buttonNavigate={{ title: "Nuevo Material", route: "/new-material" }}
-      >
-        <div className="flex gap-4">
-          <div className="w-fit">
-            <Button variant="blue" type="button" onClick={handleUploadFile}>
-              Importar
-            </Button>
+      <>
+        {!materials && <div>Cargando materiales...</div>}
+        {materials && (
+          <ContainerWithTitle title={"Materiales"} width="w-full">
+            <EntityTable
+              data={materials}
+              columns={columnsMaterials}
+              onRowClick={(row) => navigate(`/material/${row.id}`)}
+              filterFields={[
+                {
+                  key: "description",
+                  label: "Buscar por descripción",
+                  autoFilter: true,
+                },
+              ]}
+            />
+          </ContainerWithTitle>
+        )}
+        <FooterUITables
+          justify="justify-between"
+          buttonNavigate={{ title: "Nuevo Material", route: "/new-material" }}
+        >
+          <div className="flex gap-4">
+            <div className="w-fit">
+              <Button variant="blue" type="button" onClick={handleUploadFile}>
+                Importar
+              </Button>
+            </div>
+            <ButtonExport
+              data={filtered}
+              headers={headers}
+              filename="Listado de materiales"
+              type="materials"
+            />
           </div>
-          <ButtonExport
-            data={filtered}
-            headers={headers}
-            filename="Listado de materiales"
-            type="materials"
-          />
-        </div>
-      </FooterUITables>
-      <ModalBase open={open} onClose={() => setOpen(false)} zIndex={10} title="Seleccionar archivo">
-        <div className="text-zinc-700 dark:text-zinc-300 mb-10 space-y-3">
-          <p className="text-md font-semibold">Herramienta de Importación</p>
-          <p>
-            Para ayudarte a preparar los materiales de forma correcta, puedes
-            usar una hoja de Google Sheets que genera el formato compatible con
-            esta importación.
-          </p>
-          <ul className="list-disc list-inside text-sm text-zinc-700 dark:text-zinc-300 p-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
-            <li>
-              Seleccioná familia, rubro y subrubro desde listas predefinidas.
-            </li>
-            <li>
-              El archivo calcula automáticamente el{" "}
-              <code className="text-blue-600 dark:text-blue-400">
-                id_subrubro
-              </code>{" "}
-              correspondiente.
-            </li>
-            <li>
-              Si la combinación no es válida, te avisa y resalta la fila en
-              naranja.
-            </li>
-            <li>
-              También puedes elegir la unidad de medida sin errores de
-              escritura.
-            </li>
-          </ul>
-          <a
-            href="https://docs.google.com/spreadsheets/d/1QuuoWQXr5BYu-sZQLGGJ7Z-HOqQxzNxp3nMIHO0M4Ys/edit?gid=1833383596#gid=1833383596"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block mt-2 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
-          >
-            Ver hoja de Google Sheets para preparar archivo →
-          </a>
-        </div>
+        </FooterUITables>
+        <ModalBase
+          open={open}
+          onClose={() => setOpen(false)}
+          zIndex={10}
+          title="Seleccionar archivo"
+        >
+          <div className="text-zinc-700 dark:text-zinc-300 mb-10 space-y-3">
+            <p className="text-md font-semibold">Herramienta de Importación</p>
+            <p>
+              Para ayudarte a preparar los materiales de forma correcta, puedes
+              usar una hoja de Google Sheets que genera el formato compatible
+              con esta importación.
+            </p>
+            <ul className="list-disc list-inside text-sm text-zinc-700 dark:text-zinc-300 p-4 bg-zinc-100 dark:bg-zinc-700 rounded-lg">
+              <li>
+                Seleccioná familia, rubro y subrubro desde listas predefinidas.
+              </li>
+              <li>
+                El archivo calcula automáticamente el{" "}
+                <code className="text-blue-600 dark:text-blue-400">
+                  id_subrubro
+                </code>{" "}
+                correspondiente.
+              </li>
+              <li>
+                Si la combinación no es válida, te avisa y resalta la fila en
+                naranja.
+              </li>
+              <li>
+                También puedes elegir la unidad de medida sin errores de
+                escritura.
+              </li>
+            </ul>
+            <a
+              href="https://docs.google.com/spreadsheets/d/1QuuoWQXr5BYu-sZQLGGJ7Z-HOqQxzNxp3nMIHO0M4Ys/edit?gid=1833383596#gid=1833383596"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-2 text-sm text-indigo-600 dark:text-indigo-400 hover:underline"
+            >
+              Ver hoja de Google Sheets para preparar archivo →
+            </a>
+          </div>
 
-        <ImportCsvInput
-          table="materials"
-          className="block text-sm text-zinc-700 file:border-none file:bg-indigo-600 file:text-white file:rounded file:px-4 file:py-1 hover:file:bg-indigo-500"
-          onSuccess={getMaterials}
-        />
-      </ModalBase>
-    </></ProtectedRoute>
+          <ImportCsvInput
+            table="materials"
+            className="block text-sm text-zinc-700 file:border-none file:bg-indigo-600 file:text-white file:rounded file:px-4 file:py-1 hover:file:bg-indigo-500"
+            onSuccess={getMaterials}
+          />
+        </ModalBase>
+      </>
+    </ProtectedRoute>
   );
 }

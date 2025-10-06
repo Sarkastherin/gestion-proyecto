@@ -5,12 +5,13 @@ export type MaterialsProps = {
   description: string;
   id_unit: number | null;
   weight?: number;
-  applycation?: string;
+  application?: string;
 };
 export type MaterialsDB = CommonPropsDB & MaterialsProps;
 export type MaterialsUI = MaterialsDB & {
   prices: PricesDB[];
   view_categorizations: Categorization;
+  units: UnitsDB;
 };
 /* Prices */
 export type PricesProps = {

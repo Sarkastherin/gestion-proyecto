@@ -135,19 +135,27 @@ export const transformToCSVRow =
       return {
         id: item.id,
         description: escapeCSVValue(item.description),
-        weight: item.weight ?? "",
-        unit: item.id_unit ?? "",
-        price: defaultPrice.price ?? "",
-        supplier: defaultPrice.id_supplier ?? "",
+        "view_categorizations.id_family": item.view_categorizations.id_family,
         "view_categorizations.description_family": escapeCSVValue(
           item.view_categorizations?.description_family ?? ""
         ),
+        "view_categorizations.id_category": item.view_categorizations.id_category,
         "view_categorizations.description_category": escapeCSVValue(
           item.view_categorizations?.description_category ?? ""
         ),
+        "view_categorizations.id_subcategory": item.view_categorizations.id_subcategory,
         "view_categorizations.description_subcategory": escapeCSVValue(
           item.view_categorizations?.description_subcategory ?? ""
         ),
+        unit: item.id_unit ?? "",
+        "units.description": escapeCSVValue(item.units?.description || ""),
+        defaultPrice:
+          defaultPrice.price !== undefined && defaultPrice.price !== null
+            ? String(defaultPrice.price).replace(".", ",")
+            : "",
+        weight: item.weight ?? "",
+        application: escapeCSVValue(item.application ?? ""),
+        supplier: defaultPrice.id_supplier ?? "",
       };
     }
     if (type === "resumen") {
@@ -168,7 +176,9 @@ export const transformToCSVRow =
       return {
         id: item.id,
         date_report: escapeCSVValue(item.date_report || ""),
-        "employee.contacto_nombre": escapeCSVValue(item.employee?.contacto_nombre || ""),
+        "employee.contacto_nombre": escapeCSVValue(
+          item.employee?.contacto_nombre || ""
+        ),
         absent: item.absent ? "Ausente" : "Presente",
         hour_start: escapeCSVValue(item.hour_start || ""),
         hour_end: escapeCSVValue(item.hour_end || ""),
