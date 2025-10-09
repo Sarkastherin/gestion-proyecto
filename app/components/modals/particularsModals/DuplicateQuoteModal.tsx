@@ -196,17 +196,12 @@ export default function DuplicateQuoteModal({
         id_opportunity: selectedOpportunity.id,
       });
       updateStep(1, "done");
-      console.log("Ejecutando duplicación de cotización...");
       const createdQuote = await createNewQuote(selectedOpportunity);
       updateStep(2, "done");
       const phaseMap = mapPhases(filteredPhases, insertedPhases);
-      console.log(phaseMap)
-      console.log("Ejecutando duplicación de ítems...");
       await duplicateItems(oldItems, phaseMap, createdQuote.id);
       updateStep(3, "done");
-      console.log("Ejecutando duplicación de materiales...");
       await duplicateMaterials(oldMaterials, phaseMap, createdQuote.id);
-      console.log("finalizado duplicateMaterials...");
       updateStep(4, "done");
 
       openModal("SUCCESS", {
