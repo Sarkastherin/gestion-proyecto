@@ -15,6 +15,7 @@ import type {
 import PersonalModal from "~/components/modals/particularsModals/PersonalModal";
 import { workdayIntl } from "~/utils/functionsDays";
 import type { PersonalModalPayload } from "~/routes/project/planning";
+import { useUIModals } from "~/context/ModalsContext";
 
 type Props = {
   index: number;
@@ -47,6 +48,7 @@ export default function TaskCard({
   personalModal,
   mode,
 }: Props) {
+  const {openModal} = useUIModals();
   // valores derivados
   const taskValues = watch(`tasks.${index}`);
   const assignedCount =
@@ -57,6 +59,14 @@ export default function TaskCard({
 
   // recalculo endDate cuando cambia startDate o duration
   useEffect(() => {
+    if (!mode) {
+      openModal("ERROR", {
+        title: "Modalidad de cálculo no seleccionada",
+        message:
+          "Selecciona una modalidad de cálculo de días laborales para que el sistema pueda calcular las fechas automáticamente.",
+      });
+      return;
+    }
     const start = taskValues.startDate;
     const duration = taskValues.duration;
     if (!start || !duration) return;

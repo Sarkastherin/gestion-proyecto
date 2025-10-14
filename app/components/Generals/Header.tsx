@@ -24,7 +24,7 @@ const all = [
   "invitado",
 ] as Roles[];
 const menuBar = [
-  { name: "Inicio", to: "/", permission: all },
+  { name: "🏠Inicio", to: "/", permission: all },
   {
     name: "Oportunidades",
     to: "/opportunities",
@@ -36,9 +36,9 @@ const menuBar = [
     permission: ALLOWED_PROJECTS,
   },
   {
-    name: "Partes Diarios",
+    name: "📋Partes Diarios",
     to: "/daily_reports",
-    permission: [],
+    permission: ['administrador'],
   },
   {
     name: "Materiales",
@@ -46,12 +46,12 @@ const menuBar = [
     permission: ALLOWED_MATERIALS,
   },
   {
-    name: "Configuraciones",
+    name: "⚙️Configuraciones",
     to: "/settings",
     permission: ALLOWED_SETTINGS,
   },
   {
-    name: "✨RRHH",
+    name: "RRHH",
     to: "/rrhh",
     permission: ALLOWED_RRHH,
   },

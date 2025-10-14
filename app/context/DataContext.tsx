@@ -3,6 +3,8 @@ import type {
   ProjectsUITable,
   ProjectAndBudgetUI,
   ReportsEmployeesUIView,
+  DailyReportsView,
+  DailyReportUI,
 } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
@@ -58,7 +60,14 @@ type DataContextType = {
   refreshProject: (id?: number) => Promise<void>;
   getReportsEmployees: () => Promise<ReportsEmployeesUIView[] | null>;
   reportsEmployees: ReportsEmployeesUIView[] | null;
-  setReportsEmployees: React.Dispatch<React.SetStateAction<ReportsEmployeesUIView[] | null>>;
+  setReportsEmployees: React.Dispatch<
+    React.SetStateAction<ReportsEmployeesUIView[] | null>
+  >;
+  getReportsBySupervisor: (
+    id_supervisor: number
+  ) => Promise<DailyReportsView[] | null>;
+  dailyReportsView: DailyReportsView[] | null;
+  getDailyReportById: (id: number) => Promise<DailyReportUI | null>;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -84,11 +93,14 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [reportsEmployees, setReportsEmployees] = useState<
     ReportsEmployeesUIView[] | null
   >(null);
+  const [dailyReportsView, setDailyReportsView] = useState<
+    DailyReportsView[] | null
+  >(null);
   const getProjects = async (): Promise<void> => {
     if (clients) {
       setEntities<ProjectsUITable>({
         table: "projects",
-        select: "*, users(*)",
+        select: "*, users(*), phases_project(id_supervisor)",
         clientKey: "id_client",
         clients,
         setData: setProjects,
@@ -359,6 +371,24 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       setData: setReportsEmployees,
     });
   };
+  const getReportsBySupervisor = async (id_supervisor: number) => {
+    const { data, error } = await supabase
+      .from("view_daily_reports")
+      .select("*")
+      .eq("id_supervisor", id_supervisor);
+    if (error) throw new Error("No se pudieron obtener los partes diarios");
+    setDailyReportsView(data);
+    return data;
+  };
+  const getDailyReportById = async (id: number) => {
+    const { data, error } = await supabase
+      .from("daily_reports")
+      .select("*, report_tasks(*), report_employees(*)")
+      .eq("id", id)
+      .single();
+    if (error || !data) throw new Error("No se pudo obtener el parte diario");
+    return data;
+  };
   return (
     <DataContext.Provider
       value={{
@@ -389,7 +419,10 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         refreshProject,
         getReportsEmployees,
         reportsEmployees,
-        setReportsEmployees
+        setReportsEmployees,
+        getReportsBySupervisor,
+        dailyReportsView,
+        getDailyReportById,
       }}
     >
       {children}

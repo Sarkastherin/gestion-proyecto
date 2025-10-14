@@ -39,6 +39,7 @@ export type ProjectsDB = CommonPropsDB & ProjectsProps;
 export type ProjectsUITable = ProjectsDB & {
   client: ContactsDataType;
   users: MyUser;
+  phases_project: {id_supervisor: number}[];
 };
 /* Phases project */
 export type PhasesProjectProps = {
@@ -148,4 +149,10 @@ export type ReportsEmployeesUIView = ReportEmployeeDB & {
   phase_name?: string;
   id_project: number;
   project_name?: string;
+}
+export type DailyReportsView = DailyReportDB &{
+  name_phase: string;
+  name_project: string;
+  id_supervisor: number;
+  id_project: number;
 }

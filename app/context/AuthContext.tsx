@@ -10,6 +10,7 @@ export type MyUser = {
   last_name: string;
   user_name: string;
   roles: { name: Roles };
+  id_supervisor?: number;
 };
 type AuthContextType = {
   session: Session | null;

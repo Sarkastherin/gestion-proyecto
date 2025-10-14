@@ -7,10 +7,16 @@ import type { ProjectsUITable } from "~/types/projectsType";
 import type { TableColumn } from "react-data-table-component";
 import { useEffect } from "react";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
+import CardReport from "~/components/dayly_report/CardReport";
+import { useAuth } from "~/context/AuthContext";
+import { Input, Select } from "~/components/Forms/Inputs";
+import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
+import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import type { DailyReportsView, DailyReportUI } from "~/types/projectsType";
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Proyectos" },
-    { name: "description", content: "Proyectos" },
+    { title: "Partes Diarios" },
+    { name: "description", content: "Partes Diarios" },
   ];
 }
 const columns: TableColumn<ProjectsUITable>[] = [
@@ -46,45 +52,65 @@ const columns: TableColumn<ProjectsUITable>[] = [
 ];
 
 export default function DailyReport() {
-  const { getProjects, projects } = useData();
+  const { user } = useAuth();
+  const { getReportsBySupervisor, dailyReportsView, getDailyReportById, getProjectById, selectedProject } = useData();
   const navigate = useNavigate();
+  const dailyReportModal = useModalState<{
+    type: "new" | "edit";
+    data?: DailyReportUI;
+  }>();
 
   useEffect(() => {
-    if (!projects) getProjects();
+    if (!user) return;
+    if (user.id_supervisor) {
+      getReportsBySupervisor(user.id_supervisor);
+    }
   }, []);
-
+  useEffect(() => {
+    if (dailyReportsView && dailyReportsView.length > 0) {
+    }
+  }, [dailyReportsView]);
+const handleOpenModal = async (id: number, id_project: number) => {
+  const report = await getDailyReportById(id);
+  console.log("report", report);
+  //dailyReportModal.openModal({ type: "edit", data: undefined });
+}
   return (
     <>
-      {projects && (
-        <ContainerWithTitle title={"Partes Diarios"} width="w-full">
-          {import.meta.env.VITE_SHOW_DEBUG === "true" ? (
-            <EntityTable
-              data={projects}
-              columns={columns}
-              onRowClick={(row) => navigate(`/project/${row.id}/resumen`)}
-              filterFields={[
-                { key: "name", label: "Buscar por descripción", autoFilter: true },
-                { key: "client.nombre", label: "Buscar por cliente", autoFilter: true },
-                {
-                  key: "status",
-                  label: "Estado",
-                  type: "select",
-                  options: <StatusOptions />,
-                },
-              ]}
+      {dailyReportsView && (
+        <>
+          <ContainerWithTitle title={"Partes Diarios"} width="w-full">
+            <form className="flex gap-4 mb-4">
+              <Input type="date" label="Fecha" />
+              <Input type="text" label="Proyecto" />
+              <Input type="text" label="Etapa" />
+              <Select label="Estado">
+                <option value="">Todos</option>
+                <option value="borrador">Borrador</option>
+                <option value="finalizado">Finalizado</option>
+              </Select>
+            </form>
+            {dailyReportsView && dailyReportsView.length > 0 ? (
+              <div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-4">
+                {dailyReportsView.map((report) => (
+                  <CardReport key={report.id} report={report} onOpenModal={() => handleOpenModal(report.id, report.id_project)} />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-10">
+                No hay partes diarios asignados.
+              </div>
+            )}
+          </ContainerWithTitle>
+          {dailyReportModal.data?.type && (
+            <DailyReportModal
+              open={dailyReportModal.open}
+              onClose={dailyReportModal.closeModal}
+              type={dailyReportModal.data.type}
+              report={dailyReportModal.data.data}
             />
-          ) : (
-            <div className="flex flex-col items-center justify-center h-full text-center text-zinc-600 dark:text-zinc-400 mt-20">
-              <span className="text-2xl font-semibold mb-2">
-                🛠️ Partes Diarios
-              </span>
-              <p className="max-w-md">
-                Se esta creando la interfaz de partes diarios. Muy pronto vas a poder
-                gestionar tus partes diarios de manera más eficiente.
-              </p>
-            </div>
           )}
-        </ContainerWithTitle>
+        </>
       )}
     </>
   );

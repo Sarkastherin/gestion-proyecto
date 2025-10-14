@@ -64,8 +64,7 @@ export default function PersonalModal({
           <legend className="sr-only">Checkboxes</legend>
 
           <div className="flex flex-col items-start gap-3">
-            {employees
-              ?.filter((e) => e.puesto !== "Coordinador")
+            {(employees ?? [])
               .map((employee) => (
                 <label
                   key={employee.id}

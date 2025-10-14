@@ -47,7 +47,7 @@ export default function EmployeesModal({
       const filteredEmployees = employees.filter(
         (emp) => !excludeIds.includes(emp.id)
       );
-      setFilterData(filteredEmployees.filter((e) => e.puesto !== "Coordinador"));
+      setFilterData(filteredEmployees);
     }
   }, [employees, excludeIds]);
 
