@@ -83,6 +83,7 @@ export function InformationForms({
     );
     setValue("plan_end_date", endDate);
   }, [watch("plan_start_date"), watch("plan_duration"), watch("mode")]);
+
   return (
     <form className=" flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
       <fieldset disabled={!isEditMode}>
@@ -122,9 +123,7 @@ export function InformationForms({
             <div className="col-span-3 sr-only">
               <Select
                 label="Forma de pago"
-                {...register("method_payment", {
-                  required: true,
-                })}
+                {...register("method_payment")}
               >
                 {formaPago.map((item) => (
                   <option key={item["description"]} value={item["description"]}>
@@ -163,8 +162,9 @@ export function InformationForms({
             <Select
               label="Modalidad"
               {...register("mode", {
-                required: true,
+                required: "Campo requerido",
               })}
+              error={errors.mode?.message}
             >
               {modalidades.map((item) => (
                 <option key={item["description"]} value={item["value"]}>

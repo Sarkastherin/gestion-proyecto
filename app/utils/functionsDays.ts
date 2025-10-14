@@ -101,7 +101,6 @@ export function networkdaysIntl(
 // Convierte el argumento weekend en un array [0..6] con 0=weekday, 1=fin de semana
 function getWeekendMask(weekend: WeekendOption): number[] {
   if (typeof weekend === "string") {
-    console.log(weekend);
     if (weekend.length !== 7 || /[^01]/.test(weekend))
       throw new Error("Formato de cadena inválido para weekend");
     return weekend.split("").map((c) => Number(c));

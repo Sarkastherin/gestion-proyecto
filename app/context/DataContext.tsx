@@ -100,7 +100,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     if (clients) {
       setEntities<ProjectsUITable>({
         table: "projects",
-        select: "*, users(*), phases_project(id_supervisor)",
+        select: "*, users(*), phases_project_supervisors:phases_project(id_supervisor)",
         clientKey: "id_client",
         clients,
         setData: setProjects,

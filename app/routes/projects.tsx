@@ -63,7 +63,7 @@ export default function Projects() {
     if (!projects) return;
     if (user?.roles.name === "supervisor") {
       const id_supervisors = projects.flatMap((p) =>
-        p.phases_project.map((pp) => pp.id_supervisor)
+        p.phases_project_supervisors.map((pp) => pp.id_supervisor)
       );
       const filteredProjects = projects.filter((p) =>
         id_supervisors.includes(user.id_supervisor!)

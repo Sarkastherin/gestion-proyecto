@@ -50,7 +50,6 @@ export default function ProjectSummaryTable({
                       />
                       {phase.name}
                     </td>
-                    <td className="py-2 font-medium">{phase.name}</td>
                     <td className="py-2">{supervisorsById(phase.id)}</td>
                     <td className="py-2">{getProgress.get(phase.id) ?? 0}%</td>
                   </tr>

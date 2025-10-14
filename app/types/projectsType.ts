@@ -39,7 +39,7 @@ export type ProjectsDB = CommonPropsDB & ProjectsProps;
 export type ProjectsUITable = ProjectsDB & {
   client: ContactsDataType;
   users: MyUser;
-  phases_project: {id_supervisor: number}[];
+  phases_project_supervisors: {id_supervisor: number}[];
 };
 /* Phases project */
 export type PhasesProjectProps = {

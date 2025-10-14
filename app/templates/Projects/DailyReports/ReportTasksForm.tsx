@@ -194,7 +194,6 @@ export function ReportTasksForm({
     reportTasksDirty: any[],
     tasksTouched: number[]
   ) => {
-    console.log(reportTasks);
     // REGLA: No guardar tareas con progreso 0%
     const { tasks: filteredTasks, dirtyFields: filteredDirty } =
       prepareTasksForSave(reportTasks, reportTasksDirty);
@@ -204,21 +203,11 @@ export function ReportTasksForm({
         if (!dirty) return;
         const report = filteredTasks[i];
         if (!report) return;
-        const hasId = report.id_task > 0;
+        const hasIdTask = report.id_task > 0;
+        const hasId = report.id > 0;
         const hasFieldChanged = Object.values(dirty).some((v) => v);
-        if (hasId && hasFieldChanged) {
-          const reportTask = {
-            id_task: report.id_task,
-            id_daily_report: idDailyReport,
-            progress: report.progress,
-          };
-          tasksTouched.push(report.id_task);
-          const { error } = await reportTasksApi.update({
-            id: report.id,
-            values: reportTask,
-          });
-          if (error) throw new Error(error.message);
-        } else if (!hasId) {
+        if (!hasIdTask) {
+          //Crear nueva tarea y agregar reporte
           const newTask = await createdNewTask({
             task: report,
             selectedPhase,
@@ -234,6 +223,33 @@ export function ReportTasksForm({
             if (errorReport) throw new Error(errorReport.message);
           }
         }
+        if (!hasId) {
+          //Crear nuevo reporte
+          const reportTask = {
+            id_task: report.id_task,
+            id_daily_report: idDailyReport,
+
+            progress: report.progress,
+          };
+          const { error: errorReport } =
+            await reportTasksApi.insertOne(reportTask);
+          if (errorReport) throw new Error(errorReport.message);
+        }
+        if (hasId && hasFieldChanged) {
+          // actualizar reporte
+          const reportTask = {
+            id_task: report.id_task,
+            id_daily_report: idDailyReport,
+            progress: report.progress,
+          };
+          tasksTouched.push(report.id_task);
+          const { error } = await reportTasksApi.update({
+            id: report.id,
+            values: reportTask,
+          });
+          if (error) throw new Error(error.message);
+        }
+        if (hasId && !hasFieldChanged) return;
       })
     );
 

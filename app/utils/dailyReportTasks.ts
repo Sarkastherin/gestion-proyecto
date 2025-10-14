@@ -89,8 +89,6 @@ export function getReportTasksFormValues({
   filteredTasks,
   reportTasks,
   idDailyReport,
-  data,
-  isEditMode,
 }: {
   filteredTasks: (TaskDB & { progress: number })[];
   reportTasks: ReportTaskDB[];
