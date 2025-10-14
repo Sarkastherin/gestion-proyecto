@@ -91,7 +91,6 @@ export default function TaskCard({
             <button
               type="button"
               onClick={(e) => {
-                console.log('click');
                 e.stopPropagation(); // evita que dispare el toggle expand
                 onRemove(index);
               }}

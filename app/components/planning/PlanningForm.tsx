@@ -109,6 +109,7 @@ export default function PlanningForm({
     try {
       const { tasks } = data;
       const dirtyArray = form.formState.dirtyFields.tasks ?? [];
+      console.log({ dirtyArray, tasks });
 
       if (!selectedPhase)
         throw new Error("No se encontró la fase seleccionada");
@@ -120,16 +121,32 @@ export default function PlanningForm({
           id: selectedPhase.id,
           values: { id_supervisor: propsPhases.id_supervisor },
         });
-        if (errorUpdate) throw new Error(errorUpdate.message);
+        if (errorUpdate)
+          throw new Error(`Error al actualizar etapa: ${errorUpdate.message}`);
       }
 
       await Promise.all(
         tasks.map(async (task, i) => {
           const hasId = task.id > 0;
           const dirty = dirtyArray[i] ?? {};
-          const hasFieldChanged = Object.values(dirty).some((v) => v);
+          //const hasFieldChanged = Object.values(dirty).some((v) => v);
+          // ✅ SOLUCIÓN: Filtrar correctamente arrays y valores falsy
+          const hasFieldChanged = Object.entries(dirty).some(([key, value]) => {
+            // Ignorar arrays (como task_assignments)
+            if (Array.isArray(value)) return false;
+            // Solo considerar valores true
+            return value === true;
+          });
           if (hasId && hasFieldChanged) {
-            const fieldsChanged = Object.keys(dirty) as (keyof TaskFormProps)[];
+            // Solo obtener campos que realmente cambiaron (excluyendo arrays)
+            //const fieldsChanged = Object.keys(dirty) as (keyof TaskFormProps)[];
+            const fieldsChanged = Object.entries(dirty)
+              .filter(([key, value]) => !Array.isArray(value) && value === true)
+              .map(([key]) => key) as (keyof TaskFormProps)[];
+            if (fieldsChanged.length === 0) {
+              console.log(`Saltando tarea ${task.id} - sin cambios reales`);
+              return;
+            }
             const updates: Partial<TaskFormProps> = fieldsChanged.reduce(
               (acc, key) => {
                 acc[key] = task[key] as any;
@@ -142,7 +159,11 @@ export default function PlanningForm({
               id: task.id as number,
               values: updateTask,
             });
-            if (errorUpdate) throw new Error(errorUpdate.message);
+            console.log(updateTask);
+            if (errorUpdate)
+              throw new Error(
+                `Error al actualizar tarea: ${errorUpdate.message}`
+              );
             if (task_assignments) {
               task_assignments.forEach(async (assignment: TaskAssignmentDB) => {
                 const hasId = "id" in assignment;
@@ -167,7 +188,10 @@ export default function PlanningForm({
               task as TaskFormProps;
             const { data: dataInsert, error: errorInsert } =
               await tasksApi.insertOne(newData);
-            if (errorInsert) throw new Error(errorInsert.message);
+            if (errorInsert)
+              throw new Error(
+                `Error al insertar tarea: ${errorInsert.message}`
+              );
             if (task_assignments && dataInsert) {
               await Promise.all(
                 task_assignments.map(async (assignment: TaskAssignmentDB) => {
@@ -175,7 +199,10 @@ export default function PlanningForm({
                   const insertValues = { id_task: dataInsert.id, ...values };
                   const { error: errorAssignment } =
                     await taskAssignmentsApi.insertOne(insertValues);
-                  if (errorAssignment) throw new Error(errorAssignment.message);
+                  if (errorAssignment)
+                    throw new Error(
+                      `Error asignación de tarea: ${errorAssignment.message}`
+                    );
                 })
               );
             }
@@ -184,8 +211,23 @@ export default function PlanningForm({
       );
       for (const id of tasksToDelete) {
         const { error: errorRemove } = await tasksApi.remove({ id });
-        if (errorRemove) throw new Error(errorRemove.message);
+        if (errorRemove)
+          throw new Error(`Error Eliminar: ${errorRemove.message}`);
       }
+
+      // ✅ LIMPIAR DIRTY FIELDS: Resetear el formulario después del submit exitoso
+      setTasksToDelete([]); // Limpiar tareas a eliminar
+
+      // Obtener las tareas actualizadas de la fase actual
+      const updatedTasks =
+        phases_project?.find((phase) => phase.id === propsPhases?.id_phase)
+          ?.tasks || [];
+
+      // Resetear el formulario con los datos actualizados
+      form.reset({
+        tasks: updatedTasks.sort((a, b) => (a.id as number) - (b.id as number)),
+      });
+
       openModal("SUCCESS", {
         title: "Tareas actualizadas",
         message: "Las tareas se han actualizado correctamente.",
@@ -193,7 +235,7 @@ export default function PlanningForm({
     } catch (e) {
       openModal("ERROR", {
         title: "Error al actualizar",
-        message: `No se pudo actualizar las tareas. Error: ${String(e)}`,
+        message: `No se pudo procesar: ${String(e)}`,
       });
     }
   };
