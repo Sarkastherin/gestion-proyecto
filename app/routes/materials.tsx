@@ -83,7 +83,6 @@ export default function Materials() {
   }, [materials]);
   const handleUploadFile = () => {
     setOpen(true);
-    console.log(filtered.find((m) => m.id === 1));
   };
   const headers = [
     { label: "ID", key: "id" },

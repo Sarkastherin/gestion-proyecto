@@ -27,11 +27,10 @@ export function ImportCsvInput<T>({
           alert("Importación exitosa ✅");
           onSuccess?.();
         } catch (e) {
-          alert("Error al importar: " + (e instanceof Error ? e.message : String(e)));
+          const errorMessage =
+            (e as { message: string }).message || "Error desconocido";
+          alert("Error al importar: " + errorMessage);
         }
-      },
-      error: (err) => {
-        alert("Error leyendo CSV: " + err.message);
       },
     });
   };
