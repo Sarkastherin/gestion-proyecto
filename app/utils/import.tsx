@@ -27,7 +27,7 @@ export function ImportCsvInput<T>({
           alert("Importación exitosa ✅");
           onSuccess?.();
         } catch (e) {
-          alert("Error al importar: " + String(e));
+          alert("Error al importar: " + (e instanceof Error ? e.message : String(e)));
         }
       },
       error: (err) => {
