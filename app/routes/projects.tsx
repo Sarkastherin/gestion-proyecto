@@ -68,7 +68,8 @@ export default function Projects() {
       const filteredProjects = projects.filter((p) =>
         id_supervisors.includes(user.id_supervisor!)
       );
-      setProjectsDataSupervisor(filteredProjects);
+      setProjectsDataSupervisor(projects)
+      //setProjectsDataSupervisor(filteredProjects);
     } else {
       setProjectsDataSupervisor(projects);
     }
