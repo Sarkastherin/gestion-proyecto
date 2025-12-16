@@ -11,5 +11,5 @@ export const Permission = ({ roles, children }: PermissionProps) => {
   const { user } = useAuth();
 
   if (!user) return null;
-  return roles.includes(user.roles.name) ? <>{children}</> : null;
+  return roles.includes(user.roles.name) || roles.includes(user.user_name) ? <>{children}</> : null;
 };

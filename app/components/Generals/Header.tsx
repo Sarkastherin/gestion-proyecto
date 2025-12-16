@@ -9,7 +9,7 @@ import {
   ALLOWED_MATERIALS,
   ALLOWED_OPPORTUNITIES,
   ALLOWED_PROJECTS,
-  ALLOWED_RRHH
+  ALLOWED_RRHH,
 } from "../auth/allowedRoles";
 
 type MyLinkProps = {
@@ -38,7 +38,7 @@ const menuBar = [
   {
     name: "📋Partes Diarios",
     to: "/daily_reports",
-    permission: ['administrador'],
+    permission: ["administrador"],
   },
   {
     name: "Materiales",

@@ -1,14 +1,15 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 import { supabase } from "~/backend/supabaseClient";
 import type { User, Session, AuthError } from "@supabase/supabase-js";
-export type Roles = "administrador" | "dueño" | "coordinador" | "supervisor" | "invitado";
+export type UserNames = "gabrilm"
+export type Roles = "administrador" | "dueño" | "coordinador" | "supervisor" | "invitado" | UserNames;
 export type MyUser = {
   id: number;
   created_at: string;
   auth_user_id: string;
   name: string;
   last_name: string;
-  user_name: string;
+  user_name: UserNames;
   roles: { name: Roles };
   id_supervisor?: number;
 };
