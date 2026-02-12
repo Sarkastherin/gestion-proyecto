@@ -4,13 +4,13 @@ import { Card } from "~/components/Generals/Cards";
 import type { DailyReportUI, ProjectAndBudgetUI } from "~/types/projectsType";
 import { useMemo, useEffect, useState } from "react";
 import { useContacts } from "~/context/ContactsContext";
-import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/customs/useModalState";
 import {
   calculatePhaseProgress,
   calculateGlobalProgress,
 } from "~/utils/dailyReport";
 import type { PhaseProgress } from "~/utils/dailyReport";
-import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
+import DailyReportModal from "~/components/modals/customs/DailyReportModal";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { networkdaysIntl } from "~/utils/functionsDays";
 import ProjectSummaryTable from "~/components/Specific/ProjectSummaryTable";

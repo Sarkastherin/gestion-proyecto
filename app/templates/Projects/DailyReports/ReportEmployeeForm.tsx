@@ -5,7 +5,7 @@ import { Input } from "~/components/Forms/Inputs";
 import { useMemo, useState, useEffect } from "react";
 import { ButtonAdd, ButtonDeleteIcon } from "~/components/Specific/Buttons";
 import { Button } from "~/components/Forms/Buttons";
-import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/customs/useModalState";
 import { useUI } from "~/context/UIContext";
 import { reportEmployeesApi } from "~/backend/cruds";
 import { useUIModals } from "~/context/ModalsContext";
@@ -14,7 +14,7 @@ import { Badge } from "~/components/Specific/Badge";
 import { dailyReportsApi } from "~/backend/cruds";
 import { useData } from "~/context/DataContext";
 import { useTasksRealtime, useProjectRealtime } from "~/backend/realTime";
-import EmployeesModal from "~/components/modals/particularsModals/EmployeesModal";
+import EmployeesModal from "~/components/modals/customs/EmployeesModal";
 
 type ReportEmployeeFormProps = {
   idDailyReport: number;

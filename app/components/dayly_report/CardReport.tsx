@@ -4,7 +4,7 @@ import type { DailyReportUI, DailyReportsView } from "~/types/projectsType";
 import { Badge } from "../Specific/Badge";
 import { formatDateUStoES } from "~/utils/functionsDays";
 import { Button } from "../Forms/Buttons";
-import { useModalState } from "../modals/particularsModals/useModalState";
+import { useModalState } from "../modals/customs/useModalState";
 import { useMemo } from "react";
 import { useContacts } from "~/context/ContactsContext";
 export default function CardReport({ report, onOpenModal }: { report: DailyReportsView; onOpenModal: () => void }) {

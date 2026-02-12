@@ -5,7 +5,7 @@ import FooterForms from "../FooterForms";
 import type { ProjectsDB, ProjectAndBudgetUI } from "~/types/projectsType";
 import { useState, useEffect } from "react";
 import { useUI } from "~/context/UIContext";
-import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/customs/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
 import { formaPago } from "../ConditionsForm";
 import { MarginsForm } from "../MarginsForm";

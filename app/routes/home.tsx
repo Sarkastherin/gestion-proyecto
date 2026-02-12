@@ -13,8 +13,8 @@ import {
 import { useData } from "~/context/DataContext";
 import { useEffect, useState, type JSX } from "react";
 import { NavLink } from "react-router";
-import { useModalState } from "~/components/modals/particularsModals/useModalState";
-import OpportunitiesHomeModal from "~/components/modals/particularsModals/OpportunitiesHomeModal";
+import { useModalState } from "~/components/modals/customs/useModalState";
+import OpportunitiesHomeModal from "~/components/modals/customs/OpportunitiesHomeModal";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 import type { HolidaysDB } from "~/types/projectsType";
 export function meta({}: Route.MetaArgs) {

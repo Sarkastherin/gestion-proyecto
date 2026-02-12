@@ -2,11 +2,11 @@ import type { Route } from "../../+types/root";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import { useData } from "~/context/DataContext";
 import { useContacts } from "~/context/ContactsContext";
-import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/customs/useModalState";
 import { useTasksRealtime, useOpportunityRealtime } from "~/backend/realTime";
 import PlanningForm from "~/components/planning/PlanningForm";
 import { Button } from "~/components/Forms/Buttons";
-import CustomerRequirementModal from "~/components/modals/particularsModals/CustomerRequirementModal";
+import CustomerRequirementModal from "~/components/modals/customs/CustomerRequirementModal";
 import { FaCheck } from "react-icons/fa";
 
 // 📌 Meta

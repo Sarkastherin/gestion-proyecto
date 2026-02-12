@@ -13,9 +13,9 @@ import type {} from "~/context/UIContext";
 import { ProjectCreationError } from "~/utils/errors";
 import { useData } from "~/context/DataContext";
 import type { Step } from "~/context/ModalsContext";
-import { useModalState } from "~/components/modals/particularsModals/useModalState";
+import { useModalState } from "~/components/modals/customs/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
-import ContactsModal from "~/components/modals/particularsModals/ContactsModal";
+import ContactsModal from "~/components/modals/customs/ContactsModal";
 import {
   validateQuoteAndOpportunity,
   buildProjectPayload,

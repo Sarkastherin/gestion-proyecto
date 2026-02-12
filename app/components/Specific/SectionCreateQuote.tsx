@@ -6,9 +6,9 @@ import { ButtonNavigate } from "./Buttons";
 import { useOpportunityRealtime } from "~/backend/realTime";
 import { useData } from "~/context/DataContext";
 import type { QuotesProps } from "~/types/opportunitiesType";
-import DuplicateQuoteModal from "../modals/particularsModals/DuplicateQuoteModal";
-import { useModalState } from "../modals/particularsModals/useModalState";
-import type { ViewType } from "../modals/particularsModals/DuplicateQuoteModal";
+import DuplicateQuoteModal from "../modals/customs/DuplicateQuoteModal";
+import { useModalState } from "../modals/customs/useModalState";
+import type { ViewType } from "../modals/customs/DuplicateQuoteModal";
 import { useUIModals } from "~/context/ModalsContext";
 import ModalBase from "../modals/ModalBase";
 const ContainerSection = ({

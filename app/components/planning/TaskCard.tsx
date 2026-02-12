@@ -12,7 +12,7 @@ import { formatDateUStoES } from "~/utils/functionsDays";
 import type {
   TaskAssignmentProps,
 } from "~/types/projectsType";
-import PersonalModal from "~/components/modals/particularsModals/PersonalModal";
+import PersonalModal from "~/components/modals/customs/PersonalModal";
 import { workdayIntl } from "~/utils/functionsDays";
 import type { PersonalModalPayload } from "~/routes/projects/planning";
 import { useUIModals } from "~/context/ModalsContext";
