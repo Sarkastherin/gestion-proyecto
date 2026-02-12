@@ -11,6 +11,7 @@ const variants = {
     purple: "bg-purple-200/90 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
     pink: "bg-pink-200/90 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
     orange: "bg-orange-200/90 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+    default: "bg-zinc-200/90 text-zinc-800 dark:bg-zinc-700 dark:text-zinc-300",
   };
 
 export function Badge({

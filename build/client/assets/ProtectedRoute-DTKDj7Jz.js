@@ -1,0 +1,1 @@
+import{j as e,N as n}from"./chunk-PVWAREVJ-Cl_c9Jt0.js";import{u as i}from"./AuthContext-DiXfFtBN.js";const l=({allowed:s,children:u})=>{const{user:r}=i(),o=t=>s.includes(t),a=t=>s.includes(t);return r?!o(r.roles.name)&&!a(r.user_name)?e.jsx(n,{to:"/unauthorized",replace:!0}):e.jsx(e.Fragment,{children:u}):e.jsx(n,{to:"/login",replace:!0})};export{l as P};

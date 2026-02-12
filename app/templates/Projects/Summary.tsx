@@ -4,13 +4,12 @@ import { Card } from "~/components/Generals/Cards";
 import type { DailyReportUI, ProjectAndBudgetUI } from "~/types/projectsType";
 import { useMemo, useEffect, useState } from "react";
 import { useContacts } from "~/context/ContactsContext";
-import { useData } from "~/context/DataContext";
 import { useModalState } from "~/components/modals/particularsModals/useModalState";
 import {
   calculatePhaseProgress,
   calculateGlobalProgress,
 } from "~/utils/dailyReport";
-import type { TaskProgressGroup, PhaseProgress } from "~/utils/dailyReport";
+import type { PhaseProgress } from "~/utils/dailyReport";
 import DailyReportModal from "~/components/modals/particularsModals/DailyReportModal";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { networkdaysIntl } from "~/utils/functionsDays";
@@ -42,11 +41,11 @@ export default function ProjectSummary({
   const dr = phases_project.flatMap((phase) => phase.daily_reports);
   const employeesById = useMemo(
     () => new Map(employees?.map((e) => [e.id, e.contacto_nombre])),
-    [employees]
+    [employees],
   );
   const phasesById = useMemo(
     () => new Map(phases_project.map((phase) => [phase.id, phase])),
-    [phases_project]
+    [phases_project],
   );
   const supervisorsById = (id_phase: number): string => {
     const phase = phases_project.find((phase) => phase.id === id_phase);
@@ -66,7 +65,7 @@ export default function ProjectSummary({
   }, [phases_project]);
   const getProgress = useMemo(
     () => new Map(allProgress?.map((p) => [p.id_phase, p.progress])),
-    [allProgress]
+    [allProgress],
   );
   useEffect(() => {
     if (project.plan_duration && project.plan_duration > 0) {
@@ -103,7 +102,7 @@ export default function ProjectSummary({
             </Button>
             <ButtonNavigate
               variant="light"
-              route={`/project/${project.id}/planning`}
+              route={`/projects/${project.id}/planning`}
             >
               Ver Planificación
             </ButtonNavigate>
@@ -116,7 +115,7 @@ export default function ProjectSummary({
             <span className="text-2xl font-bold">{globalProgress ?? 0}%</span>
             <div className="mt-2 w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
               <div
-                className="bg-indigo-600 h-2 rounded-full"
+                className="bg-primary-text h-2 rounded-full"
                 style={{ width: `${globalProgress ?? 0}%` }}
               />
             </div>
@@ -144,33 +143,6 @@ export default function ProjectSummary({
           supervisorsById={supervisorsById}
           getProgress={getProgress}
         />
-
-        {/* <div className="rounded-xl shadow-md p-6 border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900/70">
-          <h3 className="text-lg font-semibold mb-4">Avance de etapas</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="border-b text-zinc-500 dark:text-zinc-400">
-                <tr>
-                  <th className="py-2">Etapa</th>
-                  <th className="py-2">Supervisor</th>
-                  <th className="py-2">Avance</th>
-                </tr>
-              </thead>
-              <tbody>
-                {phases_project.map((phase, i) => (
-                  <tr
-                    key={i}
-                    className="border-b last:border-0 text-zinc-700 dark:text-zinc-200"
-                  >
-                    <td className="py-2">{phasesById.get(phase.id)?.name}</td>
-                    <td className="py-2">{supervisorsById(phase.id)}</td>
-                    <td className="py-2">{getProgress.get(phase.id) ?? 0}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div> */}
       </div>
       {dailyReportModal.data?.type && (
         <DailyReportModal

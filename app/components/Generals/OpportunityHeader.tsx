@@ -27,37 +27,37 @@ export function OpportunityHeader({
   const { selectedOpportunity } = useData();
   const navigate = useNavigate();
   const id = selectedOpportunity?.id;
-  
+
   const menuItems = (id: number) => {
     return [
       {
         title: "Resumen",
-        href: `/opportunity/${id}/resumen`,
+        href: `/opportunities/${id}/resumen`,
         icon: <PresentationChartBarIcon className="w-4" />,
       },
       {
         title: "Información",
-        href: `/opportunity/${id}/information`,
+        href: `/opportunities/${id}/information`,
         icon: <InboxIcon className="w-4" />,
       },
       {
         title: "Etapas",
-        href: `/opportunity/${id}/phases`,
+        href: `/opportunities/${id}/phases`,
         icon: <SwatchIcon className="w-4" />,
       },
       {
         title: "Cotización",
-        href: `/opportunity/${id}/quotes/materials`,
+        href: `/opportunities/${id}/quotes/materials`,
         icon: <BanknotesIcon className="w-4" />,
       },
       {
         title: "Margenes y Condiciones",
-        href: `/opportunity/${id}/conditions`,
+        href: `/opportunities/${id}/conditions`,
         icon: <ReceiptPercentIcon className="w-4" />,
       },
       {
         title: "Informes",
-        href: `/opportunity/${id}/report`,
+        href: `/opportunities/${id}/report`,
         icon: <ClipboardDocumentIcon className="w-4" />,
       },
     ];
@@ -91,7 +91,7 @@ export function OpportunityHeader({
                         />
                       </div>
                     </div>
-                    <ButtonCreateQuote label=" + Nueva Cotización"/>
+                    <ButtonCreateQuote label=" + Nueva Cotización" />
                   </>
                 )}
               {selectedOpportunity?.id_project && (
@@ -100,7 +100,7 @@ export function OpportunityHeader({
                     className="flex items-center gap-1"
                     onClick={() =>
                       navigate(
-                        `/project/${selectedOpportunity.id_project}/resumen`
+                        `/projects/${selectedOpportunity.id_project}/resumen`,
                       )
                     }
                   >
@@ -110,6 +110,7 @@ export function OpportunityHeader({
               )}
             </div>
           }
+          back_path="/opportunities"
         />
       )}
     </>

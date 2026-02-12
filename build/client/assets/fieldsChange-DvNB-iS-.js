@@ -1,0 +1,1 @@
+import{a as r}from"./UIContext-9PjeG9pu.js";import{r as s}from"./chunk-PVWAREVJ-Cl_c9Jt0.js";function d({isSubmitSuccessful:e,isDirty:a}){const{handleSetIsFieldsChanged:o}=r();s.useEffect(()=>{o(e,a)},[e,a])}export{d as u};

@@ -6,7 +6,7 @@ import {
   InformationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/16/solid";
-import { Button } from "~/components/Forms/Buttons";
+import { Button, ButtonOnlyIcon } from "~/components/Forms/Buttons";
 import { materialsApi } from "~/backend/cruds";
 import { useData } from "~/context/DataContext";
 import ItemsHeader from "~/components/Generals/ItemsHeader";
@@ -16,12 +16,12 @@ const menuItems = (id: number) => {
   return [
     {
       title: "Información",
-      href: `/material/${id}`,
+      href: `/materials/${id}`,
       icon: <InformationCircleIcon className="w-4" />,
     },
     {
       title: "Precios",
-      href: `/material/${id}/prices`,
+      href: `/materials/${id}/prices`,
       icon: <CurrencyDollarIcon className="w-4" />,
     },
   ];
@@ -70,18 +70,28 @@ export default function MaterialLayout() {
           menu={menu}
           rightSection={
             <div className="w-fit">
+              <ButtonOnlyIcon
+                title="Eliminar material"
+                size="sm"
+                variant="red"
+                onClick={handleDelete}
+                icon={{component: TrashIcon, color: "text-white"}}
+                className="md:hidden"
+              />
               <Button
+              size="sm"
                 title="Eliminar material"
                 variant="red"
                 onClick={handleDelete}
+                className="md:inline-flex hidden"
+                icon={{component: TrashIcon, color: "text-white"}}
               >
-                <div className="flex gap-1">
-                  <TrashIcon className="size-4" />
-                  <span>Eliminar Material</span>
-                </div>
+                Eliminar Material
               </Button>
             </div>
+            
           }
+          back_path="/materials"
         />
       )}
       {selectedMaterial ? (

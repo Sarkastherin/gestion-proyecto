@@ -91,7 +91,7 @@ export default function OpportunityForm({
           message: "La oportunidad se ha creado correctamente.",
         });
         getOpportunities();
-        navigate(`/opportunity/${data.id}/resumen`);
+        navigate(`/opportunities/${data.id}/resumen`);
       }
       if (!isNew) {
         openModal("LOADING", {

@@ -9,12 +9,6 @@ type RequireRoleProps = {
 };
 export const ProtectedRoute = ({ allowed, children }: RequireRoleProps) => {
   const { user } = useAuth();
-  useEffect(() => {
-    if (user) {
-      console.log("icluye rol?", allowed.includes(user.roles.name));
-      console.log("icluye username?", allowed.includes(user.user_name));
-    }
-  }, []);
   const includesRole = (role: Roles) => {
     return allowed.includes(role);
   }

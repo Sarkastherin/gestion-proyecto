@@ -8,10 +8,10 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import type { QuotesUI } from "~/types/opportunitiesType";
-import type { PropStateReport } from "~/routes/opportunity/report";
+import type { PropStateReport } from "~/routes/opportunities/report";
 import Logo from "public/logo_imindustrial.png";
 import type { OpportunityAndQuotesUI } from "~/types/opportunitiesType";
-import { currencies, modelOfTable } from "~/routes/opportunity/report";
+import { currencies, modelOfTable } from "~/routes/opportunities/report";
 
 const styles = StyleSheet.create({
   page: {

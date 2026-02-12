@@ -3,7 +3,7 @@ import { ButtonAdd } from "~/components/Specific/Buttons";
 import { Button } from "~/components/Forms/Buttons";
 import TaskCard from "./TaskCard";
 import type { UseFormReturn, UseFieldArrayReturn } from "react-hook-form";
-import type { PersonalModalPayload } from "~/routes/project/planning";
+import type { PersonalModalPayload } from "~/routes/projects/planning";
 import type { TaskAssignmentDB, TaskDB } from "~/types/projectsType";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
 import { useData } from "~/context/DataContext";

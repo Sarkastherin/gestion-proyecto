@@ -1,4 +1,5 @@
 import { ButtonNavigate } from "~/components/Specific/Buttons";
+import { variants } from "../Forms/Buttons";
 
 export default function FooterUITables({
   justify,
@@ -6,7 +7,8 @@ export default function FooterUITables({
   children,
 }: {
   justify: "justify-between" | "justify-end";
-  buttonNavigate?: { title: string; route: string };
+  buttonNavigate?: { title: string; route: string; color: keyof typeof variants; };
+  
   children?: React.ReactNode;
 }) {
   return (
@@ -17,7 +19,7 @@ export default function FooterUITables({
         {children}
         <div className="w-fit">
           {buttonNavigate && (
-            <ButtonNavigate variant="yellow" route={buttonNavigate.route}>
+            <ButtonNavigate variant={buttonNavigate.color} route={buttonNavigate.route}>
               {buttonNavigate.title}
             </ButtonNavigate>
           )}

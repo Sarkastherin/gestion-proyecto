@@ -14,7 +14,7 @@ import type {
 } from "~/types/projectsType";
 import PersonalModal from "~/components/modals/particularsModals/PersonalModal";
 import { workdayIntl } from "~/utils/functionsDays";
-import type { PersonalModalPayload } from "~/routes/project/planning";
+import type { PersonalModalPayload } from "~/routes/projects/planning";
 import { useUIModals } from "~/context/ModalsContext";
 
 type Props = {

@@ -70,6 +70,7 @@ export async function setEntities<T>({
     return entities;
   }
   else {
+    if(table === "holidays") console.log("Fetching holidays without client enrichment");
     const entities = await fetchEntities<T>({ table, select, id_name });
     setData(entities);
     return entities;

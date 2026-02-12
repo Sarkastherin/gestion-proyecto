@@ -23,7 +23,8 @@ import type {
   TaskAssignmentDB,
   DailyReportDB,
   ReportTaskDB,
-  ReportEmployeeDB
+  ReportEmployeeDB,
+  HolidaysDB
 } from "~/types/projectsType";
 export const opportunityApi = createCrud<OpportunityDB>("opportunities");
 export const phasesApi = createCrud<PhasesDB>("phases");
@@ -49,3 +50,5 @@ export const taskAssignmentsApi = createCrud<TaskAssignmentDB>("task_assignments
 export const dailyReportsApi = createCrud<DailyReportDB>("daily_reports");
 export const reportTasksApi = createCrud<ReportTaskDB>("report_tasks");
 export const reportEmployeesApi = createCrud<ReportEmployeeDB>("report_employees");
+
+export const holidaysApi = createCrud<HolidaysDB>("holidays");

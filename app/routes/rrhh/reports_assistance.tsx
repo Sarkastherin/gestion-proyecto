@@ -11,8 +11,8 @@ import { formatDateUStoES } from "~/utils/functionsDays";
 import { Badge } from "~/components/Specific/Badge";
 import FooterUITables from "~/components/Generals/FooterUITable";
 import { ButtonExport } from "~/components/Specific/Buttons";
-import { Button } from "~/components/Forms/Buttons";
 import { ALLOWED_REPORTS_EMPLOYEES } from "~/components/auth/allowedRoles";
+import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Asistencias" },
@@ -62,9 +62,7 @@ const columns: TableColumn<ReportsEmployeesUIView>[] = [
 ];
 
 export default function ReportEmployees() {
-  const { getReportsEmployees, reportsEmployees, setReportsEmployees } =
-    useData();
-  const navigate = useNavigate();
+  const { getReportsEmployees, reportsEmployees } = useData();
 
   useEffect(() => {
     if (!reportsEmployees) getReportsEmployees();
@@ -82,38 +80,37 @@ export default function ReportEmployees() {
     { label: "Salida", key: "hour_end" },
     { label: "Proyecto", key: "project_name" },
   ];
+  if (!reportsEmployees) return <LoaderComponent />;
   return (
     <ProtectedRoute allowed={ALLOWED_REPORTS_EMPLOYEES}>
-      {reportsEmployees && (
-        <ContainerWithTitle title={"Asistencias"} width="w-full">
-          <EntityTable
-            data={reportsEmployees}
-            columns={columns}
-            onFilteredChange={setFiltered}
-            filterFields={[
-              {
-                key: "employee.contacto_nombre",
-                label: "Nombre del empleado",
-                autoFilter: true,
-              },
-              {
-                key: "absent",
-                label: "Asistencia",
-                type: "select",
-                options: (
-                  <>
-                    <option value={"true"}>Ausente</option>
-                    <option value={"false"}>Presente</option>
-                  </>
-                ),
-                autoFilter: true,
-              },
-              { key: "project_name", label: "Proyecto", autoFilter: true },
-              { key: "date_report", label: "Fecha", type: "dateRange" },
-            ]}
-          />
-        </ContainerWithTitle>
-      )}
+      <ContainerWithTitle title={"Asistencias"} width="w-full">
+        <EntityTable
+          data={reportsEmployees}
+          columns={columns}
+          onFilteredChange={setFiltered}
+          filterFields={[
+            {
+              key: "employee.contacto_nombre",
+              label: "Nombre del empleado",
+              autoFilter: true,
+            },
+            {
+              key: "absent",
+              label: "Asistencia",
+              type: "select",
+              options: (
+                <>
+                  <option value={"true"}>Ausente</option>
+                  <option value={"false"}>Presente</option>
+                </>
+              ),
+              autoFilter: true,
+            },
+            { key: "project_name", label: "Proyecto", autoFilter: true },
+            { key: "date_report", label: "Fecha", type: "dateRange", autoFilter: true },
+          ]}
+        />
+      </ContainerWithTitle>
       <FooterUITables justify="justify-between">
         <div className="flex gap-4">
           <ButtonExport

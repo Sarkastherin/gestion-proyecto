@@ -11,6 +11,7 @@ import type { Path } from "react-hook-form";
 import { useUIModals } from "~/context/ModalsContext";
 import { ButtonDeleteIcon } from "./Buttons";
 import { EntityTable } from "../Generals/EntityTable";
+import { Subtitle } from "../Generals/Containers";
 
 type FormField<T> = {
   name: Path<T>;
@@ -18,7 +19,7 @@ type FormField<T> = {
   type: "text" | "boolean" | "select";
   required?: boolean;
   options?: { value: string | number; label: string }[];
-  isInFilter: boolean
+  isInFilter: boolean;
 };
 
 type Props<T extends { id: number }, TInsert = Partial<T>> = {
@@ -39,7 +40,6 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
   method,
 }: Props<T, TInsert>) => {
   const { openModal } = useUIModals();
-  const { theme } = useUI();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
 
@@ -85,24 +85,19 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
       variant: "success",
     });
   }
-const filterFields = () => {
-  const form = formFields.filter(f => f.isInFilter);
-  if (form.length === 0) return undefined;
-  return form.map((field) => ({
-    key: field.name as string,
-    label: `Buscar por ${field.label}`,
-    autoFilter: true,
-  }));
-};
+  const filterFields = () => {
+    const form = formFields.filter((f) => f.isInFilter);
+    if (form.length === 0) return undefined;
+    return form.map((field) => ({
+      key: field.name as string,
+      label: `Buscar por ${field.label}`,
+      autoFilter: true,
+    }));
+  };
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <div className="w-fit">
-          <Button variant="primary" onClick={handleAdd}>
-            + Agregar
-          </Button>
-        </div>
+      <div className="mb-6">
+        <Subtitle title={title} back_path="/settings" />
       </div>
       <EntityTable
         columns={[...columns, actionColumn]}
@@ -110,18 +105,6 @@ const filterFields = () => {
         onRowClick={handleOnRowClicked}
         filterFields={filterFields()}
       />
-      {/* <DataTable
-        columns={[...columns, actionColumn]}
-        data={data}
-        customStyles={customStyles}
-        theme={theme}
-        pagination
-        onRowClicked={handleOnRowClicked}
-        pointerOnHover
-        highlightOnHover
-        defaultSortFieldId={"id"}
-        paginationPerPage={30}
-      /> */}
 
       <ConfigFormModal<T, TInsert>
         open={open}

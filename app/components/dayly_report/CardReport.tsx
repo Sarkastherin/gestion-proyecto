@@ -16,7 +16,7 @@ export default function CardReport({ report, onOpenModal }: { report: DailyRepor
   return (
     <Card key={report.id}>
       <div className="flex gap-2 items-center font-bold text-xl mb-4">
-        <DocumentTextIcon className="size-6 text-indigo-400" />{" "}
+        <DocumentTextIcon className="size-6 text-primary-text" />{" "}
         <h2 className="">
           Parte Diario 📅{formatDateUStoES(report.date_report)}
         </h2>

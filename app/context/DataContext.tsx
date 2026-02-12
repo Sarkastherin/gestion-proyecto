@@ -5,6 +5,7 @@ import type {
   ReportsEmployeesUIView,
   DailyReportsView,
   DailyReportUI,
+  HolidaysDB,
 } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
@@ -17,6 +18,7 @@ import type {
 import { supabase } from "~/backend/supabaseClient";
 import { useContacts } from "./ContactsContext";
 import { setEntities } from "~/services/fetchers/fetchEntitiesWithClient";
+import { holidaysApi } from "~/backend/cruds";
 import type {
   MaterialsUI,
   UnitsDB,
@@ -68,6 +70,9 @@ type DataContextType = {
   ) => Promise<DailyReportsView[] | null>;
   dailyReportsView: DailyReportsView[] | null;
   getDailyReportById: (id: number) => Promise<DailyReportUI | null>;
+  getHolidays: () => Promise<HolidaysDB[]>;
+  holidays: HolidaysDB[] | null;
+  deleteHoliday: (id: number) => Promise<void>;
 };
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
@@ -96,6 +101,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [dailyReportsView, setDailyReportsView] = useState<
     DailyReportsView[] | null
   >(null);
+  const [holidays, setHolidays] = useState<HolidaysDB[] | null>(null);
   const getProjects = async (): Promise<void> => {
     if (clients) {
       setEntities<ProjectsUITable>({
@@ -389,6 +395,23 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     if (error || !data) throw new Error("No se pudo obtener el parte diario");
     return data;
   };
+  const getHolidays = async (): Promise<HolidaysDB[]> => {
+    return setEntities<HolidaysDB>({
+      table: "holidays",
+      select: "*",
+      setData: setHolidays,
+    });
+  };
+  const deleteHoliday = async (id: number): Promise<void> => {
+    try {
+      const { error } = await holidaysApi.remove({ id });
+      if (error) throw error;
+      await getHolidays();
+    } catch (error) {
+      console.error("Error deleting holiday:", error);
+      throw error;
+    }
+  };
   return (
     <DataContext.Provider
       value={{
@@ -423,6 +446,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         getReportsBySupervisor,
         dailyReportsView,
         getDailyReportById,
+        getHolidays,
+        holidays,
+        deleteHoliday,
       }}
     >
       {children}

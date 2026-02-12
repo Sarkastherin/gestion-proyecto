@@ -1,13 +1,13 @@
 import { useForm, useFieldArray } from "react-hook-form";
 import { useEffect, useMemo, useState } from "react";
-import { Select } from "~/components/Forms/Inputs";
+import { Select, Checkbox, Toggle } from "~/components/Forms/Inputs";
 import FooterForms from "~/templates/FooterForms";
 import TasksList from "~/components/planning/TasksList";
 import { useUIModals } from "~/context/ModalsContext";
 import { useUI } from "~/context/UIContext";
 import { useFieldsChange } from "~/utils/fieldsChange";
 import type { TaskDB, TaskAssignmentDB } from "~/types/projectsType";
-import type { PersonalModalPayload } from "~/routes/project/planning";
+import type { PersonalModalPayload } from "~/routes/projects/planning";
 import {
   tasksApi,
   taskAssignmentsApi,
@@ -46,6 +46,7 @@ export default function PlanningForm({
   const [propsPhases, setPropsPhases] = useState<{
     id_phase: number;
     id_supervisor: number;
+    viaticum: boolean;
   } | null>(null);
 
   // hook form
@@ -65,7 +66,7 @@ export default function PlanningForm({
   // empleados por id
   const employeesById = useMemo(
     () => new Map(employees?.map((e) => [e.id, e.contacto_nombre])),
-    [employees]
+    [employees],
   );
 
   const handleAdd = () => {
@@ -94,11 +95,12 @@ export default function PlanningForm({
 
   const onSubmit = async (data: TasksFormArray) => {
     const selectedPhase = selectedProject.phases_project.find(
-      (phase) => phase.id === propsPhases?.id_phase
+      (phase) => phase.id === propsPhases?.id_phase,
     );
     const hasChangedSupervisor =
       selectedPhase?.id_supervisor !== propsPhases?.id_supervisor;
-    if (!form.formState.isDirty && !hasChangedSupervisor) {
+    const hasChangedViaticum = selectedPhase?.viaticum !== propsPhases?.viaticum;
+    if (!form.formState.isDirty && !hasChangedSupervisor && !hasChangedViaticum) {
       openModal("INFORMATION", {
         title: "Formulario sin cambios",
         message: "No hay cambios para actualizar'",
@@ -115,11 +117,13 @@ export default function PlanningForm({
         throw new Error("No se encontró la fase seleccionada");
       if (!propsPhases?.id_supervisor)
         throw new Error("No se ha seleccionado un supervisor");
+      if (propsPhases?.viaticum === undefined)
+        throw new Error("No se ha seleccionado un viático");
 
-      if (hasChangedSupervisor) {
+      if (hasChangedSupervisor || hasChangedViaticum) {
         const { error: errorUpdate } = await phasesProjectApi.update({
           id: selectedPhase.id,
-          values: { id_supervisor: propsPhases.id_supervisor },
+          values: { id_supervisor: propsPhases.id_supervisor, viaticum: propsPhases.viaticum },
         });
         if (errorUpdate)
           throw new Error(`Error al actualizar etapa: ${errorUpdate.message}`);
@@ -152,7 +156,7 @@ export default function PlanningForm({
                 acc[key] = task[key] as any;
                 return acc;
               },
-              {} as Partial<TaskFormProps>
+              {} as Partial<TaskFormProps>,
             );
             const { task_assignments, ...updateTask } = updates;
             const { error: errorUpdate } = await tasksApi.update({
@@ -162,7 +166,7 @@ export default function PlanningForm({
             console.log(updateTask);
             if (errorUpdate)
               throw new Error(
-                `Error al actualizar tarea: ${errorUpdate.message}`
+                `Error al actualizar tarea: ${errorUpdate.message}`,
               );
             if (task_assignments) {
               task_assignments.forEach(async (assignment: TaskAssignmentDB) => {
@@ -190,7 +194,7 @@ export default function PlanningForm({
               await tasksApi.insertOne(newData);
             if (errorInsert)
               throw new Error(
-                `Error al insertar tarea: ${errorInsert.message}`
+                `Error al insertar tarea: ${errorInsert.message}`,
               );
             if (task_assignments && dataInsert) {
               await Promise.all(
@@ -201,13 +205,13 @@ export default function PlanningForm({
                     await taskAssignmentsApi.insertOne(insertValues);
                   if (errorAssignment)
                     throw new Error(
-                      `Error asignación de tarea: ${errorAssignment.message}`
+                      `Error asignación de tarea: ${errorAssignment.message}`,
                     );
-                })
+                }),
               );
             }
           }
-        })
+        }),
       );
       for (const id of tasksToDelete) {
         const { error: errorRemove } = await tasksApi.remove({ id });
@@ -244,12 +248,13 @@ export default function PlanningForm({
   useEffect(() => {
     if (phases_project && phases_project.length > 0 && !propsPhases?.id_phase) {
       const firstPhaseWithTasks = phases_project.findIndex(
-        (phase) => phase.tasks.length > 0
+        (phase) => phase.tasks.length > 0,
       );
       if (firstPhaseWithTasks !== -1) {
         setPropsPhases({
           id_phase: phases_project[firstPhaseWithTasks].id,
           id_supervisor: phases_project[firstPhaseWithTasks].id_supervisor || 0,
+          viaticum: phases_project[firstPhaseWithTasks].viaticum || false,
         });
       }
     }
@@ -260,6 +265,7 @@ export default function PlanningForm({
       setPropsPhases({
         id_phase: phase.id,
         id_supervisor: phase.id_supervisor || 0,
+        viaticum: phase.viaticum || false,
       });
     }
   };
@@ -272,45 +278,57 @@ export default function PlanningForm({
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
       {/* selects de fase y supervisor */}
-      <fieldset
-        disabled={!isEditMode}
-        className="mb-4 grid grid-cols-1 md:grid-cols-2 gap-4"
-      >
-        <Select
-          label="Etapa"
-          id="id_phase"
-          onChange={(e) => {
-            const selectedPhaseId = Number(e.target.value);
-            handleChangePhase(selectedPhaseId);
-          }}
-          disabled={isFieldsChanged}
-          value={propsPhases?.id_phase || ""}
-        >
-          {phases_project?.map((phase) => (
-            <option key={phase.id} value={phase.id}>
-              {`[${phase.id}] ${phase.name}`}
-            </option>
-          ))}
-        </Select>
-        <Select
-          label="Supervisor"
-          id="id_supervisor"
-          value={propsPhases?.id_supervisor || ""}
+      <fieldset disabled={!isEditMode} className="mb-4 flex items-end gap-4">
+        <div className="flex-1">
+          <Select
+            label="Etapa"
+            id="id_phase"
+            onChange={(e) => {
+              const selectedPhaseId = Number(e.target.value);
+              handleChangePhase(selectedPhaseId);
+            }}
+            disabled={isFieldsChanged}
+            value={propsPhases?.id_phase || ""}
+          >
+            {phases_project?.map((phase) => (
+              <option key={phase.id} value={phase.id}>
+                {`[${phase.id}] ${phase.name}`}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="flex-1">
+          <Select
+            label="Supervisor"
+            id="id_supervisor"
+            value={propsPhases?.id_supervisor || ""}
+            onChange={(e) =>
+              setPropsPhases({
+                ...propsPhases!,
+                id_supervisor: Number(e.target.value),
+              })
+            }
+          >
+            {employees
+              ?.filter((e) => e.puesto === "Supervisor")
+              .map((employee) => (
+                <option key={employee.id} value={employee.id}>
+                  {employee.contacto_nombre}
+                </option>
+              ))}
+          </Select>
+        </div>
+        <Toggle
+          label="Viáticos"
+          id="viaticum"
+          checked={propsPhases?.viaticum || false}
           onChange={(e) =>
             setPropsPhases({
               ...propsPhases!,
-              id_supervisor: Number(e.target.value),
+              viaticum: e.target.checked,
             })
           }
-        >
-          {employees
-            ?.filter((e) => e.puesto === "Supervisor")
-            .map((employee) => (
-              <option key={employee.id} value={employee.id}>
-                {employee.contacto_nombre}
-              </option>
-            ))}
-        </Select>
+        />
       </fieldset>
 
       <TasksList

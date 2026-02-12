@@ -51,13 +51,95 @@ export const Input = ({
     </label>
   );
 };
+type CheckboxProps = CommonInputsProps &
+  InputHTMLAttributes<HTMLInputElement> & { ref?: React.Ref<HTMLInputElement> };
+export const Checkbox = ({
+  label,
+  id,
+  register,
+  error,
+  ref,
+  ...inputProps
+}: CheckboxProps): JSX.Element => {
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-200"
+      >
+        <input
+          ref={ref}
+          id={id}
+          type="checkbox"
+          className={`h-4 w-4 rounded border-zinc-300 text-primary focus:ring-2 focus:ring-primary/40 dark:border-zinc-600 dark:bg-zinc-900 ${
+            error ? "ring-2 ring-red-500/40" : ""
+          }`}
+          {...inputProps}
+          {...register}
+        />
+        <span className={`${!label && "sr-only"}`}>{label}</span>
+      </label>
+      {error && (
+        <span className="block mt-0.5 text-red-500 text-xs dark:text-red-400">
+          {error}
+        </span>
+      )}
+    </div>
+  );
+};
+type ToggleProps = CommonInputsProps &
+  InputHTMLAttributes<HTMLInputElement> & { ref?: React.Ref<HTMLInputElement> };
+export const Toggle = ({
+  label,
+  id,
+  register,
+  error,
+  ref,
+  ...inputProps
+}: ToggleProps): JSX.Element => {
+  return (
+    <div
+      className="mt-0.5 rounded border py-1.5 px-2 shadow-sm disabled:bg-zinc-500/15 border-zinc-300 dark:border-zinc-600"
+    >
+      <label htmlFor={id} className="flex items-center gap-3 text-sm">
+        <span className={`${!label && "sr-only"}`}>{label}</span>
+        <span className="relative inline-flex h-6 w-11 items-center">
+          <input
+            ref={ref}
+            id={id}
+            type="checkbox"
+            className="peer sr-only"
+            {...inputProps}
+            {...register}
+          />
+          <span
+            className={`absolute inset-0 rounded-full border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 ${
+              error
+                ? "border-red-500/60"
+                : "border-zinc-300 dark:border-zinc-600"
+            } ${
+              inputProps.disabled
+                ? "bg-zinc-200/60 dark:bg-zinc-800/60"
+                : "bg-zinc-200 peer-checked:bg-primary dark:bg-zinc-700"
+            }`}
+          />
+          <span className="absolute left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform peer-checked:translate-x-5 dark:bg-zinc-50" />
+        </span>
+      </label>
+      {error && (
+        <span className="block mt-0.5 text-red-500 text-xs dark:text-red-400">
+          {error}
+        </span>
+      )}
+    </div>
+  );
+};
 export type SelectProps = {
   selectText?: string;
   children?: React.ReactNode;
 } & CommonInputsProps &
   SelectHTMLAttributes<HTMLSelectElement>;
-export const 
-Select = ({
+export const Select = ({
   label,
   id,
   register,
@@ -81,7 +163,7 @@ Select = ({
             name={id}
             id={id}
             className={`${basesClass(
-              error ?? ""
+              error ?? "",
             )}  dark:bg-zinc-800 dark:text-white appearance-none`}
             {...selectProps}
             {...register}

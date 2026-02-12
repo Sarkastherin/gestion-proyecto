@@ -44,6 +44,9 @@ export function ModalManager() {
           onClose={closeModal}
           message={props?.message}
           onConfirm={props?.onConfirm}
+          title={props?.title}
+          confirmText={props?.confirmText}
+          cancelText={props?.cancelText}
         />
       );
     case "PROGRESSIVE":

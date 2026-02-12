@@ -2,7 +2,7 @@
 import { useData } from "~/context/DataContext";
 import { useEffect, useState} from "react";
 import type { QuotesUI } from "~/types/opportunitiesType";
-import type { PropStateReport } from "~/routes/opportunity/report";
+import type { PropStateReport } from "~/routes/opportunities/report";
 import { PDFViewer } from "@react-pdf/renderer";
 import QuotePDFDocument from "./QuotePDFDocument";
 

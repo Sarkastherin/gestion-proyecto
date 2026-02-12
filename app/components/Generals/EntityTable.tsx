@@ -7,21 +7,25 @@ import { Input, Select } from "../Forms/Inputs";
 import { Button } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
 import { useLocation } from "react-router";
+import { useUIModals } from "~/context/ModalsContext";
 function getNestedValue(obj: any, path: string): any {
   return path.split(".").reduce((acc, part) => acc?.[part], obj);
 }
 export const customStyles = {
   headCells: {
     style: {
-      fontFamily: "sans-serif",
       fontWeight: "bold",
       fontSize: "15px",
     },
   },
   cells: {
     style: {
-      fontFamily: "sans-serif",
       fontSize: "14px",
+    },
+  },
+  rows: {
+    style: {
+      // Estilos base para las filas
     },
   },
 };
@@ -35,7 +39,7 @@ createTheme("light", {
     default: "transparent",
   },
 });
-type FilterField = {
+export type FilterField = {
   key: string;
   label: string;
   type?: "text" | "select" | "dateRange";
@@ -49,6 +53,10 @@ type EntityTableProps<T> = {
   filterFields?: FilterField[];
   onRowClick?: (row: T) => void;
   onFilteredChange?: (filtered: T[]) => void;
+  noDataComponent?: JSX.Element;
+  inactiveField?: string; // Campo para identificar elementos inactivos (ej: "activo")
+  alternativeStorageKey?: string; // Clave alternativa para almacenamiento local
+  disableRowClick?: boolean; // Deshabilita el click en filas y el cursor pointer
 };
 const options = {
   rowsPerPageText: "Filas por página",
@@ -60,10 +68,64 @@ export function EntityTable<T>({
   filterFields = [],
   onRowClick,
   onFilteredChange,
+  noDataComponent,
+  inactiveField,
+  alternativeStorageKey,
+  disableRowClick = false,
 }: EntityTableProps<T>) {
   const { theme } = useUI();
   const location = useLocation();
-  const storageKey = `entityTableFilters_${location.pathname}`;
+  const { openModal, closeModal } = useUIModals();
+  const storageKey =
+    alternativeStorageKey || `entityTableFilters_${location.pathname}`;
+
+  // Función para crear un componente de estado con colores
+  const StatusCell = ({
+    row,
+    originalSelector,
+  }: {
+    row: T;
+    originalSelector: (row: T) => any;
+  }) => {
+    const status = originalSelector(row);
+    const isActive = status === "Activo" || status === "Sí" || status === true;
+
+    return (
+      <span
+        className={`font-medium text-xs px-2 py-1 rounded-full ${
+          isActive
+            ? "text-green-700 bg-green-100 dark:text-green-400 dark:bg-green-900/30"
+            : "text-red-700 bg-red-100 dark:text-red-400 dark:bg-red-900/30"
+        }`}
+      >
+        {typeof status === "boolean"
+          ? status
+            ? "Activo"
+            : "Inactivo"
+          : status}
+      </span>
+    );
+  };
+
+  // Procesar columnas para aplicar formato especial a columnas de estado
+  const processedColumns = columns.map((column) => {
+    // Detectar si es una columna de estado por el nombre
+    if (
+      (column.name === "Activo" ||
+        column.name === "Estado" ||
+        column.name === "Status") &&
+      column.selector
+    ) {
+      return {
+        ...column,
+        cell: (row: T) => (
+          <StatusCell row={row} originalSelector={column.selector!} />
+        ),
+      };
+    }
+    return column;
+  });
+
   const [filters, setFilters] = useState<Record<string, string>>(() => {
     // Recupera filtros guardados
     const saved = localStorage.getItem(storageKey);
@@ -71,6 +133,43 @@ export function EntityTable<T>({
   });
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [showFilterInfo, setShowFilterInfo] = useState(false);
+  
+  // Estado para la página actual
+  const [currentPage, setCurrentPage] = useState<number>(() => {
+    // Recupera la página guardada
+    const savedPage = localStorage.getItem(`${storageKey}_page`);
+    return savedPage ? parseInt(savedPage, 10) : 1;
+  });
+
+  // Función para determinar si una fila está inactiva
+  const isRowInactive = (row: T): boolean => {
+    if (!inactiveField) return false;
+    const value = getNestedValue(row, inactiveField);
+    // Si el campo es booleano, verificamos que sea false
+    // Si es string, verificamos valores como "No", "Inactivo", etc.
+    return (
+      value === false ||
+      value === "No" ||
+      value === "Inactivo" ||
+      value === "no" ||
+      value === "false"
+    );
+  };
+
+  // Función para obtener estilos condicionales de fila
+  const getInactiveRowStyles = () => {
+    return {
+      opacity: "0.6",
+      backgroundColor:
+        theme === "dark"
+          ? "rgba(107, 114, 128, 0.1)"
+          : "rgba(156, 163, 175, 0.1)",
+      borderLeft:
+        theme === "dark"
+          ? "3px solid rgb(107, 114, 128)"
+          : "3px solid rgb(156, 163, 175)",
+    };
+  };
   function removeAccents(str: string) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
@@ -94,6 +193,7 @@ export function EntityTable<T>({
           );
         } else {
           const value = removeAccents(newFilters[key]?.toLowerCase() ?? "");
+          if (!value) return true;
           const itemValue = removeAccents(
             String(getNestedValue(item, key) ?? "").toLowerCase()
           );
@@ -103,35 +203,68 @@ export function EntityTable<T>({
     );
     setFilteredData(result);
     setShowFilterInfo(Object.values(newFilters).some((v) => v));
-    if (onFilteredChange) onFilteredChange(result);
   };
 
   const handleChange = (key: string, value: string, auto?: boolean) => {
-    const updated = { ...filters, [key]: value };
+    const updated = { ...filters };
+    if (value && value.trim() !== "") {
+      updated[key] = value;
+    } else {
+      delete updated[key];
+    }
     setFilters(updated);
     localStorage.setItem(storageKey, JSON.stringify(updated)); // Guarda filtros
+    
+    // Resetear a la primera página cuando se aplican filtros
+    setCurrentPage(1);
+    localStorage.setItem(`${storageKey}_page`, "1");
+    
     if (auto) onFilter(updated);
   };
+
+  // Función para manejar el cambio de página
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    localStorage.setItem(`${storageKey}_page`, page.toString());
+  };
+  
+  // useEffect consolidado para manejar cambios en data o filtros
   useEffect(() => {
-    setFilteredData(data);
-    setShowFilterInfo(Object.values(filters).some((v) => v));
-    if (onFilteredChange) onFilteredChange(data);
-  }, [data]);
-  // ...existing code...
-  useEffect(() => {
-    // Aplica filtros guardados al montar si existen
-    if (Object.values(filters).some((v) => v)) {
+    const hasFilters = Object.values(filters).some((v) => v);
+
+    if (hasFilters) {
       onFilter(filters);
     } else {
       setFilteredData(data);
-      if (onFilteredChange) onFilteredChange(data);
+      setShowFilterInfo(false);
     }
-    setShowFilterInfo(Object.values(filters).some((v) => v));
-  }, [data]); // Ejecuta cuando cambia la data
-  // ...existing code...
+  }, [data, filters]);
+
+  // useEffect para el modal de confirmación al montar (solo una vez)
+  useEffect(() => {
+    const isFilter = Object.values(filters).some((v) => v);
+    if(isFilter) {
+      openModal("CONFIRMATION", {
+        title: "Filtros Aplicados",
+        message: "Hay filtros aplicados desde tu última visita. ¿Deseas limpiar los filtros?",
+        confirmText: "Limpiar Filtros",
+        cancelText: "Mantener Filtros",
+        onConfirm: () => {
+          setFilters({});
+          setFilteredData(data);
+          if (onFilteredChange) onFilteredChange(data);
+          localStorage.removeItem(storageKey);
+          localStorage.removeItem(`${storageKey}_page`);
+          setCurrentPage(1);
+          setShowFilterInfo(false);
+          closeModal();
+        }
+      });
+    }
+  },[]);
   return (
     <>
-      {showFilterInfo && (
+      {showFilterInfo && filterFields.length > 0 && (
         <div className="mb-2 text-blue font-semibold text-sm">
           ℹ️ Filtros aplicados.
         </div>
@@ -150,6 +283,7 @@ export function EntityTable<T>({
                 {type === "dateRange" ? (
                   <div className="flex gap-2 items-center">
                     <Input
+                    label="Desde"
                       type="date"
                       value={filters[`${key}_from`] ?? ""}
                       onChange={(e) =>
@@ -159,6 +293,7 @@ export function EntityTable<T>({
                     <span className="text-sm">a</span>
                     <Input
                       type="date"
+                      label="Hasta"
                       value={filters[`${key}_to`] ?? ""}
                       onChange={(e) =>
                         handleChange(`${key}_to`, e.target.value, autoFilter)
@@ -167,6 +302,7 @@ export function EntityTable<T>({
                   </div>
                 ) : type === "select" ? (
                   <Select
+                  label={label}
                     value={filters[key] ?? ""}
                     onChange={(e) =>
                       handleChange(key, e.target.value, autoFilter)
@@ -178,6 +314,7 @@ export function EntityTable<T>({
                   <Input
                     type="search"
                     placeholder={label}
+                    label={label}
                     value={filters[key] ?? ""}
                     onChange={(e) =>
                       handleChange(key, e.target.value, autoFilter)
@@ -197,16 +334,36 @@ export function EntityTable<T>({
         </form>
       )}
       <DataTable
-        columns={columns}
+        columns={processedColumns}
         data={filteredData}
         customStyles={customStyles}
         theme={theme}
         pagination
         paginationPerPage={30}
-        onRowClicked={onRowClick}
-        pointerOnHover
+        paginationDefaultPage={currentPage}
+        onChangePage={handlePageChange}
+        onRowClicked={!disableRowClick ? onRowClick : undefined}
+        pointerOnHover={!disableRowClick}
         highlightOnHover
         paginationComponentOptions={options}
+        noDataComponent={
+          noDataComponent || (
+            <div className="py-6 text-text-secondary">
+              No se encontraron registros
+            </div>
+          )
+        }
+        conditionalRowStyles={
+          inactiveField
+            ? [
+                {
+                  when: (row: T) => isRowInactive(row),
+                  style: getInactiveRowStyles(),
+                },
+              ]
+            : undefined
+        }
+        //defaultSortAsc={true}
       />
     </>
   );

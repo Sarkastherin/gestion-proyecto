@@ -15,13 +15,11 @@ export default function OpportunityLayout() {
   useOpportunityRealtime();
   const { openModal } = useUIModals();
   const [selectedQuoteId, setSelectedQuoteId] = useState<number | null>(null);
-  const { getOpportunityById, selectedOpportunity, setSelectedOpportunity } = useData();
-  const {
-    setSelectedClient,
-    setEditByStatus,
-  } = useUI();
+  const { getOpportunityById, selectedOpportunity, setSelectedOpportunity } =
+    useData();
+  const { setSelectedClient, setEditByStatus } = useUI();
   const { id } = useParams();
-  useEffect(() => {    
+  useEffect(() => {
     getOpportunityById(Number(id));
   }, []);
   useEffect(() => {
@@ -58,7 +56,7 @@ export default function OpportunityLayout() {
         aria-labelledby="modalTitle"
       >
         <div
-          className={`w-full max-w-lg min-w-sm rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900 text-indigo-600 dark:text-indigo-400`}
+          className="w-full max-w-lg min-w-sm rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900 text-primary-text"
         >
           <div className="flex items-start justify-between">
             <h2 id="modalTitle" className="text-xl font-bold sm:text-2xl">
@@ -95,7 +93,7 @@ export default function OpportunityLayout() {
                 <div key={q.id}>
                   <label
                     htmlFor={q.id.toLocaleString()}
-                    className="flex items-center justify-between gap-4 rounded border border-zinc-300 bg-white p-3 text-sm font-medium shadow-sm transition-colors hover:bg-zinc-50 has-checked:border-indigo-600 has-checked:ring-1 has-checked:ring-indigo-600 dark:border-zinc-600 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+                    className="flex items-center justify-between gap-4 rounded border border-zinc-300 bg-white p-3 text-sm font-medium shadow-sm transition-colors hover:bg-zinc-50 has-checked:border-text-primary has-checked:ring-1 has-checked:ring-text-primary dark:border-zinc-600 dark:bg-zinc-900 dark:hover:bg-zinc-800"
                   >
                     <p className="text-zinc-700 dark:text-zinc-200">
                       Id Cotización N° {q.id}
@@ -119,9 +117,12 @@ export default function OpportunityLayout() {
                       onChange={async () => {
                         if (q.active) return;
                         setHidden(true);
-                        openModal("LOADING", {title: "Actualizando...", message: "Aplicando cambio de cotización activa."})
+                        openModal("LOADING", {
+                          title: "Actualizando...",
+                          message: "Aplicando cambio de cotización activa.",
+                        });
                         const currentActive = selectedOpportunity?.quotes.find(
-                          (q) => q.active
+                          (q) => q.active,
                         );
                         const currentId = currentActive?.id;
 
@@ -146,7 +147,7 @@ export default function OpportunityLayout() {
                           {
                             id: q.id,
                             values: { active: true },
-                          }
+                          },
                         );
 
                         if (activateError) {

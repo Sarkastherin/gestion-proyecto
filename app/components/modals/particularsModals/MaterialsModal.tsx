@@ -1,5 +1,5 @@
 import ModalBase from "../ModalBase";
-import { columnsMaterials } from "~/routes/materials";
+import { columnsMaterials } from "~/routes/materials/home";
 import { EntityTable } from "~/components/Generals/EntityTable";
 import { useState, useEffect } from "react";
 import type { MaterialsUI } from "~/types/materialsType";

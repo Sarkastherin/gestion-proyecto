@@ -46,6 +46,7 @@ export type PhasesProjectProps = {
   name: string;
   id_project: number;
   id_supervisor?: number;
+  viaticum?: boolean;
 };
 export type PhasesProjectDB = PhasesProjectProps & CommonPropsDB;
 
@@ -149,6 +150,7 @@ export type ReportsEmployeesUIView = ReportEmployeeDB & {
   phase_name?: string;
   id_project: number;
   project_name?: string;
+  hours_worked?: number;
 }
 export type DailyReportsView = DailyReportDB &{
   name_phase: string;
@@ -156,3 +158,11 @@ export type DailyReportsView = DailyReportDB &{
   id_supervisor: number;
   id_project: number;
 }
+
+export type HolidaysProps = {
+  date: string;
+  name?: string | null;
+  created_by?: string | null;
+};
+
+export type HolidaysDB = CommonPropsDB & HolidaysProps;

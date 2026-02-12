@@ -26,7 +26,7 @@ export function TableDetailsQuotes({
       <form className=" flex flex-col gap-6" onSubmit={handleSubmit}>
         <fieldset disabled={!isEditMode}>
           <div className="overflow-x-auto">
-            <h2 className="mt-2 text-lg font-bold text-indigo-400">{title}</h2>
+            <h2 className="mt-2 text-lg font-bold text-primary-text">{title}</h2>
             <table className="min-w-full table-auto divide-y-2 divide-zinc-200 dark:divide-zinc-700 mt-2 mb-4">
               <colgroup>
                 {columns.map((item, index) => (

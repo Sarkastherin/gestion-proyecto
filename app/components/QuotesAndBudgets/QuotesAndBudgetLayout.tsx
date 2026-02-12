@@ -59,9 +59,9 @@ export default function QuotesAndBudgetLayout<T extends Phase>({
   
   const getHref = (t: PropsType) => {
     if (type === "quotes") {
-      return `opportunity/${id}/quotes/${t.key === "materiales" ? "materials" : "items"}`;
+      return `opportunities/${id}/quotes/${t.key === "materiales" ? "materials" : "items"}`;
     }
-    return `project/${id}/budget/${t.key === "materiales" ? "materials" : "items"}`;
+    return `projects/${id}/budget/${t.key === "materiales" ? "materials" : "items"}`;
   };
   const handleNavigate = (t: PropsType) => {
     const href = getHref(t);

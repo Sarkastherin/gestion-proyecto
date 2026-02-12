@@ -17,6 +17,7 @@ import { Buffer } from "buffer";
 import { UIModalsProvider } from "./context/ModalsContext";
 import { DataProvider } from "./context/DataContext";
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", href: "/favicon.ico", type: "image/svg+xml" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",

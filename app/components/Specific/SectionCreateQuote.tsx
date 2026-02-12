@@ -140,7 +140,7 @@ export function ButtonNavigateDetails() {
       message="Esta cotización no tiene detalles creados"
     >
       <ButtonNavigate
-        route={`/opportunity/${selectedOpportunity?.id}/quotes/materials`}
+        route={`/opportunities/${selectedOpportunity?.id}/quotes/materials`}
       >
         Ir a Detalles de Cotización
       </ButtonNavigate>

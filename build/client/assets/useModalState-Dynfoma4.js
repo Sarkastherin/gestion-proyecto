@@ -1,0 +1,1 @@
+import{r as t}from"./chunk-PVWAREVJ-Cl_c9Jt0.js";function S(){const[s,o]=t.useState(!1),[n,a]=t.useState(void 0),[r,c]=t.useState("view"),[l,e]=t.useState("form");return{open:s,data:n,variant:r,step:l,setStep:e,openModal:(p,u="view")=>{a(p),c(u),e("form"),o(!0)},closeModal:()=>{o(!1),a(void 0),e("form")}}}export{S as u};

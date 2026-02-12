@@ -8,9 +8,7 @@ import {
   DocumentPlusIcon,
   ClipboardDocumentCheckIcon,
   UserGroupIcon,
-  ArchiveBoxArrowDownIcon,
 } from "@heroicons/react/24/outline";
-import { ReportMaterialsForm } from "~/templates/Projects/DailyReports/ReportMaterialsForm";
 import type { DailyReportUI } from "~/types/projectsType";
 import { Button } from "~/components/Forms/Buttons";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
@@ -40,7 +38,6 @@ const initialSteps = [
   //{ id: 4, name: "Materiales", status: "pending", icon: <ArchiveBoxArrowDownIcon /> },
 ];
 export default function DailyReportModal({
-  open,
   onClose,
   type,
   report,
@@ -179,7 +176,7 @@ export default function DailyReportModal({
           ? "Nuevo Parte Diario"
           : `Editar Parte Diario # ${report?.id}`
       }
-      open={open}
+      open={true}
       zIndex={40}
       onClose={() => {
         setSteps(initialSteps.map((s) => ({ ...s })));
@@ -317,19 +314,6 @@ export default function DailyReportModal({
                   <ButtonBack label="Ir a Actividades" />
                 </>
               )}
-            {/* {dailyReportId && steps[3].status === "in-progress" && (
-              <>
-                <ReportMaterialsForm
-                  idDailyReport={dailyReportId}
-                  onSuccess={() => {
-                    handleNextStep();
-                    onClose();
-                    refreshProject();
-                  }}
-                />
-                <ButtonBack label="Ir a Personal" />
-              </>
-            )} */}
           </div>
         )}
       </div>

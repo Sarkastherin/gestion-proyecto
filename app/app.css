@@ -18,7 +18,7 @@ dark:focus:ring-blue-800"
   --color-primary: var(--color-indigo-700);
   --color-primary-hover: var(--color-indigo-800);
   --color-primary-focus: var(--color-indigo-300);
-  --color-primary-text: var(--color-indigo-400);
+  --color-primary-text: var(--color-indigo-600);
   /* Green */
   --color-green: var(--color-green-700);
   --color-green-hover: var(--color-green-800);
@@ -49,6 +49,7 @@ dark:focus:ring-blue-800"
       --color-primary: var(--color-indigo-600);
       --color-primary-hover: var(--color-indigo-700);
       --color-primary-focus: var(--color-indigo-800);
+      --color-primary-text: var(--color-indigo-400);
       /* Green */
       --color-green: var(--color-green-600);
       --color-green-hover: var(--color-green-700);
@@ -70,3 +71,4 @@ dark:focus:ring-blue-800"
     }
   }
 }
+

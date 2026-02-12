@@ -44,7 +44,7 @@ export default function ProjectSummaryTable({
                       <FaChevronDown
                         className={`h-4 w-4 transition-transform ${
                           isExpanded
-                            ? "rotate-90 text-indigo-600"
+                            ? "rotate-90 text-primary-text"
                             : "text-zinc-400"
                         }`}
                       />

@@ -16,27 +16,27 @@ const menuItems = (id: number) => {
   return [
     {
       title: "Resumen",
-      href: `/project/${id}/resumen`,
+      href: `/projects/${id}/resumen`,
       icon: <PresentationChartBarIcon className="w-4" />,
     },
     {
       title: "Información",
-      href: `/project/${id}/information`,
+      href: `/projects/${id}/information`,
       icon: <InformationCircleIcon className="w-4" />,
     },
     {
       title: "Presupuesto",
-      href: `/project/${id}/budget/materials`,
+      href: `/projects/${id}/budget/materials`,
       icon: <CurrencyDollarIcon className="w-4" />,
     },
     {
       title: "Planificación",
-      href: `/project/${id}/planning`,
+      href: `/projects/${id}/planning`,
       icon: <ListBulletIcon className="w-4" />,
     },
     {
       title: "Partes Diarios",
-      href: `/project/${id}/daily_reports`,
+      href: `/projects/${id}/daily_reports`,
       icon: <ClipboardDocumentCheckIcon className="w-4" />,
     },
   ];
@@ -66,6 +66,7 @@ export default function ProjectLayout() {
             color="bg-fuchsia-500"
             title={selectedProject?.name}
             menu={menu}
+            back_path="/projects"
           />
           <Outlet />
         </>

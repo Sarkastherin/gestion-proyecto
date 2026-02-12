@@ -1,0 +1,1 @@
+import{j as e}from"./chunk-PVWAREVJ-Cl_c9Jt0.js";import{u}from"./AuthContext-DiXfFtBN.js";const o=({roles:r,children:n})=>{const{user:s}=u();return s&&(r.includes(s.roles.name)||r.includes(s.user_name))?e.jsx(e.Fragment,{children:n}):null};export{o as P};
