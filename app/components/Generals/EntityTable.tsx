@@ -4,10 +4,12 @@ import DataTable, {
   type TableColumn,
 } from "react-data-table-component";
 import { Input, Select } from "../Forms/Inputs";
-import { Button } from "../Forms/Buttons";
+import { Button, variants } from "../Forms/Buttons";
 import { useUI } from "~/context/UIContext";
 import { useLocation } from "react-router";
 import { useUIModals } from "~/context/ModalsContext";
+import FooterUITables from "./FooterUITable";
+import { ButtonExport, ButtonNavigate, type ButtonExportProps } from "../Specific/Buttons";
 function getNestedValue(obj: any, path: string): any {
   return path.split(".").reduce((acc, part) => acc?.[part], obj);
 }
@@ -47,7 +49,7 @@ export type FilterField = {
   autoFilter?: boolean;
 };
 
-type EntityTableProps<T> = {
+type EntityTableProps<T extends object> = {
   data: T[];
   columns: TableColumn<T>[];
   filterFields?: FilterField[];
@@ -57,12 +59,22 @@ type EntityTableProps<T> = {
   inactiveField?: string; // Campo para identificar elementos inactivos (ej: "activo")
   alternativeStorageKey?: string; // Clave alternativa para almacenamiento local
   disableRowClick?: boolean; // Deshabilita el click en filas y el cursor pointer
+  buttonExport?: {
+    headers: ButtonExportProps["headers"];
+    filename: string;
+    type: ButtonExportProps["type"];
+  };
+  buttonNavigate?: {
+    route: string;
+    title: string;
+    color?: keyof typeof variants;
+  };
 };
 const options = {
   rowsPerPageText: "Filas por página",
   rangeSeparatorText: "de",
 };
-export function EntityTable<T>({
+export function EntityTable<T extends object>({
   data,
   columns,
   filterFields = [],
@@ -72,6 +84,8 @@ export function EntityTable<T>({
   inactiveField,
   alternativeStorageKey,
   disableRowClick = false,
+  buttonNavigate,
+  buttonExport,
 }: EntityTableProps<T>) {
   const { theme } = useUI();
   const location = useLocation();
@@ -133,7 +147,7 @@ export function EntityTable<T>({
   });
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [showFilterInfo, setShowFilterInfo] = useState(false);
-  
+
   // Estado para la página actual
   const [currentPage, setCurrentPage] = useState<number>(() => {
     // Recupera la página guardada
@@ -195,11 +209,11 @@ export function EntityTable<T>({
           const value = removeAccents(newFilters[key]?.toLowerCase() ?? "");
           if (!value) return true;
           const itemValue = removeAccents(
-            String(getNestedValue(item, key) ?? "").toLowerCase()
+            String(getNestedValue(item, key) ?? "").toLowerCase(),
           );
           return itemValue.includes(value);
         }
-      })
+      }),
     );
     setFilteredData(result);
     setShowFilterInfo(Object.values(newFilters).some((v) => v));
@@ -214,11 +228,11 @@ export function EntityTable<T>({
     }
     setFilters(updated);
     localStorage.setItem(storageKey, JSON.stringify(updated)); // Guarda filtros
-    
+
     // Resetear a la primera página cuando se aplican filtros
     setCurrentPage(1);
     localStorage.setItem(`${storageKey}_page`, "1");
-    
+
     if (auto) onFilter(updated);
   };
 
@@ -227,7 +241,7 @@ export function EntityTable<T>({
     setCurrentPage(page);
     localStorage.setItem(`${storageKey}_page`, page.toString());
   };
-  
+
   // useEffect consolidado para manejar cambios en data o filtros
   useEffect(() => {
     const hasFilters = Object.values(filters).some((v) => v);
@@ -243,10 +257,11 @@ export function EntityTable<T>({
   // useEffect para el modal de confirmación al montar (solo una vez)
   useEffect(() => {
     const isFilter = Object.values(filters).some((v) => v);
-    if(isFilter) {
+    if (isFilter) {
       openModal("CONFIRMATION", {
         title: "Filtros Aplicados",
-        message: "Hay filtros aplicados desde tu última visita. ¿Deseas limpiar los filtros?",
+        message:
+          "Hay filtros aplicados desde tu última visita. ¿Deseas limpiar los filtros?",
         confirmText: "Limpiar Filtros",
         cancelText: "Mantener Filtros",
         onConfirm: () => {
@@ -258,14 +273,14 @@ export function EntityTable<T>({
           setCurrentPage(1);
           setShowFilterInfo(false);
           closeModal();
-        }
+        },
       });
     }
-  },[]);
+  }, []);
   return (
     <>
       {showFilterInfo && filterFields.length > 0 && (
-        <div className="mb-2 text-blue font-semibold text-sm">
+        <div className="mb-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
           ℹ️ Filtros aplicados.
         </div>
       )}
@@ -283,7 +298,7 @@ export function EntityTable<T>({
                 {type === "dateRange" ? (
                   <div className="flex gap-2 items-center">
                     <Input
-                    label="Desde"
+                      label="Desde"
                       type="date"
                       value={filters[`${key}_from`] ?? ""}
                       onChange={(e) =>
@@ -302,7 +317,7 @@ export function EntityTable<T>({
                   </div>
                 ) : type === "select" ? (
                   <Select
-                  label={label}
+                    label={label}
                     value={filters[key] ?? ""}
                     onChange={(e) =>
                       handleChange(key, e.target.value, autoFilter)
@@ -322,7 +337,7 @@ export function EntityTable<T>({
                   />
                 )}
               </div>
-            )
+            ),
           )}
           {!filterFields.every((f) => f.autoFilter) && (
             <div className="w-fit">
@@ -363,8 +378,34 @@ export function EntityTable<T>({
               ]
             : undefined
         }
-        //defaultSortAsc={true}
       />
+      {}
+      {buttonExport && (
+        <span className="fixed bottom-0 -left-0 w-full">
+          <div
+            className={`flex justify-between w-full  py-5 px-8 hover:bg-zinc-200 hover:dark:bg-zinc-900`}
+          >
+            <div className="flex gap-4">
+              <ButtonExport
+                data={filteredData}
+                headers={buttonExport.headers}
+                filename={buttonExport.filename}
+                type={buttonExport.type}
+              />
+            </div>
+            <div className="w-fit">
+              {buttonNavigate && (
+                <ButtonNavigate
+                  variant={buttonNavigate.color}
+                  route={buttonNavigate.route}
+                >
+                  {buttonNavigate.title}
+                </ButtonNavigate>
+              )}
+            </div>
+          </div>
+        </span>
+      )}
     </>
   );
 }

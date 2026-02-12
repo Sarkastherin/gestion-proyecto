@@ -20,27 +20,26 @@ import type {
 } from "~/types/materialsType";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 import { ALLOWED_SETTINGS } from "~/components/auth/allowedRoles";
+import { ButtonExport } from "~/components/Specific/Buttons";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Configuraciones" },
     { name: "Configuraciones", content: "Configuraciones" },
   ];
 }
-const colsUnits: TableColumn<UnitsDB>[] = [
-  { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
-  { name: "Abreviatura", selector: (row) => row.abbreviation, width: "180px" },
-  { name: "Descripción", selector: (row) => row.description },
-];
 
-const colsFamilies: TableColumn<FamilyDB>[] = [
-  { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
-  { name: "Familia", selector: (row) => row.description },
+export type ConfigType = "unidades" | "familias" | "rubros" | "subrubros";
+const configTitles: { type: ConfigType; title: string }[] = [
+  { type: "unidades", title: "Unidades" },
+  { type: "familias", title: "Familias" },
+  { type: "rubros", title: "Rubros" },
+  { type: "subrubros", title: "Subrubros" },
 ];
 
 export default function Settings() {
   useUnitsRealTime();
   useConfigRealTime();
-  const [activeTab, setActiveTab] = useState("unidades");
+  const [activeTab, setActiveTab] = useState<ConfigType>("unidades");
   const {
     units,
     getUnits,
@@ -60,6 +59,20 @@ export default function Settings() {
     if (!categorizations) getCategorizations();
     if (!units) getUnits();
   }, []);
+
+  const colsUnits: TableColumn<UnitsDB>[] = [
+    { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
+    {
+      name: "Abreviatura",
+      selector: (row) => row.abbreviation,
+      width: "180px",
+    },
+    { name: "Descripción", selector: (row) => row.description },
+  ];
+  const colsFamilies: TableColumn<FamilyDB>[] = [
+    { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
+    { name: "Familia", selector: (row) => row.description },
+  ];
   const colsCategories: TableColumn<CategoryDB>[] = [
     { id: "id", name: "Id", selector: (row) => row.id, width: "80px" },
     {
@@ -97,6 +110,105 @@ export default function Settings() {
       },
     },
   ];
+  const configItems = [
+    {
+      key: "unidades",
+      title: "Unidades",
+      columns: colsUnits,
+      data: units,
+      method: unitsApi,
+      formFields: [
+        {
+          name: "description",
+          label: "Descripción",
+          type: "text",
+          required: true,
+          isInFilter: true,
+        },
+        {
+          name: "abbreviation",
+          label: "Abreviatura",
+          type: "text",
+          required: true,
+          isInFilter: false,
+        },
+      ],
+    },
+    {
+      key: "familias",
+      title: "Familias",
+      columns: colsFamilies,
+      data: families,
+      method: familyApi,
+      formFields: [
+        {
+          name: "description",
+          label: "Descripción",
+          type: "text",
+          required: true,
+          isInFilter: true,
+        },
+      ],
+    },
+    {
+      key: "rubros",
+      title: "Rubros",
+      columns: colsCategories,
+      data: categories,
+      method: categoryApi,
+      formFields: [
+        {
+          name: "description",
+          label: "Descripción",
+          type: "text",
+          required: true,
+          isInFilter: true,
+        },
+        {
+          name: "id_family",
+          label: "Familia",
+          type: "select",
+          options: families?.map((f) => {
+            return { value: f.id, label: f.description };
+          }),
+          required: true,
+          isInFilter: false,
+        },
+      ],
+    },
+    {
+      key: "subrubros",
+      title: "Subrubros",
+      columns: colsSubcategories,
+      data: subcategories,
+      method: subcategoryApi,
+      formFields: [
+        {
+          name: "description",
+          label: "Descripción",
+          type: "text",
+          required: true,
+          isInFilter: true,
+        },
+        {
+          name: "id_category",
+          label: "Rubro",
+          type: "select",
+          options: categories?.map((c) => {
+            const family = families?.find(
+              (f) => f.id === c.id_family,
+            )?.description;
+            return {
+              value: c.id,
+              label: `${c.description}-[🧩${family}]`,
+            };
+          }),
+          required: true,
+          isInFilter: false,
+        },
+      ],
+    },
+  ];
   return (
     <ProtectedRoute allowed={ALLOWED_SETTINGS}>
       <div className="flex flex-1 min-h-[calc(100vh-64px)]">
@@ -104,7 +216,6 @@ export default function Settings() {
         <div className="flex-1 py-4 mx-auto px-6">
           {activeTab === "unidades" && (
             <ConfigTable<UnitsDB, Omit<UnitsDB, "id" | "created_at">>
-              table="units"
               title="Unidades"
               columns={colsUnits}
               data={units || []}
@@ -130,7 +241,6 @@ export default function Settings() {
 
           {activeTab === "familias" && (
             <ConfigTable<FamilyDB, Omit<FamilyDB, "id" | "created_at">>
-              table="families"
               title="Familias"
               columns={colsFamilies}
               data={(families as FamilyDB[]) || []}
@@ -149,7 +259,6 @@ export default function Settings() {
 
           {activeTab === "rubros" && (
             <ConfigTable<CategoryDB, Omit<CategoryDB, "id" | "created_at">>
-              table="categories"
               title="Rubros"
               columns={colsCategories}
               data={(categories as CategoryDB[]) || []}
@@ -181,7 +290,6 @@ export default function Settings() {
               SubCategoryDB,
               Omit<SubCategoryDB, "id" | "created_at">
             >
-              table="subcategories"
               title="Subrubros"
               columns={colsSubcategories}
               data={(subcategories as SubCategoryDB[]) || []}
@@ -216,28 +324,32 @@ export default function Settings() {
         </div>
         {/* Menú lateral */}
         <nav className="w-44 pt-4 space-y-2 border-r border-zinc-300 bg-zinc-200/80 dark:border-zinc-700/60 dark:bg-zinc-900/70 px-4 shadow">
-          {["unidades", "familias", "rubros", "subrubros"].map((key, i) => (
+          {configTitles.map(({ type, title }, i) => (
             <Button
               key={i}
               type="button"
-              onClick={() => setActiveTab(key)}
-              variant={activeTab === key ? "dark" : "light"}
+              onClick={() => setActiveTab(type)}
+              variant={activeTab === type ? "dark" : "light"}
               className="w-full"
             >
-              {key.charAt(0).toUpperCase() + key.slice(1)}
+              {title}
             </Button>
           ))}
         </nav>
       </div>
       <span className="fixed bottom-0 w-full">
-        <div
-          className={`flex justify-start w-full px-10 py-5 hover:bg-zinc-200 hover:dark:bg-zinc-900`}
-        >
+        <div className="flex justify-between w-full px-10 py-5 hover:bg-zinc-200 hover:dark:bg-zinc-900">
           <div className="w-fit">
-            <Button variant="primary" onClick={() =>{}}>
+            <Button variant="primary" onClick={() => {}}>
               Agregar
             </Button>
           </div>
+          <ButtonExport
+            headers={[]}
+            filename={`${activeTab}.csv`}
+            data={[]}
+            type={activeTab}
+          />
         </div>
       </span>
     </ProtectedRoute>

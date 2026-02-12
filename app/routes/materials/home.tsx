@@ -121,10 +121,20 @@ export default function Materials() {
               autoFilter: true,
             },
           ]}
+          buttonExport={{
+            headers,
+            filename: "Materiales",
+            type: "materials",
+          }}
+          buttonNavigate={{
+            route: "/materials/new-material",
+            title: "+ Material",
+            color: "yellow",
+          }}
         />
       </ContainerWithTitle>
 
-      <FooterUITables
+      {/* <FooterUITables
         justify="justify-between"
         buttonNavigate={{ title: "+ Material", route: "/materials/new-material", color: "yellow" }}
       >
@@ -141,7 +151,7 @@ export default function Materials() {
             type="materials"
           />
         </div>
-      </FooterUITables>
+      </FooterUITables> */}
       <ModalBase
         open={open}
         onClose={() => setOpen(false)}
@@ -185,10 +195,7 @@ export default function Materials() {
           </a>
         </div>
 
-        <ImportCsvInput
-          table="materials"
-          onSuccess={getMaterials}
-        />
+        <ImportCsvInput table="materials" onSuccess={getMaterials} />
       </ModalBase>
     </ProtectedRoute>
   );

@@ -48,7 +48,22 @@ const columns: TableColumn<ProjectsUITable>[] = [
     sortable: true,
   },
 ];
-
+const headers = [
+  { label: "Id", key: "id" },
+  { label: "Fecha", key: "created_at" },
+  { label: "Nombre del Proyecto", key: "name" },
+  { label: "Cliente", key: "client.nombre" },
+  {label: "Fecha de inicio [PLAN]", key: "plan_start_date"},
+  {label: "Fecha de fin [PLAN]", key: "plan_end_date"},
+  {label: "Duración [PLAN]", key: "plan_duration"},
+  {label: "Fecha de inicio [REAL]", key: "start_date"},
+  {label: "Fecha de fin [REAL]", key: "end_date"},
+  {label: "Duración [REAL]", key: "duration"},
+  {label: "Status", key: "status"},
+  {label: "Modalidad", key: "mode"},
+  {label: "Requerimientos de cliente", key: "customer_requirement"},
+  { label: "Creado por", key: "users.user_name" },
+];
 export default function Projects() {
   const { user } = useAuth();
   const { getProjects, projects } = useData();
@@ -86,6 +101,11 @@ export default function Projects() {
               autoFilter: true,
             },
           ]}
+          buttonExport={{
+            headers,
+            filename: "Proyectos",
+            type: "projects"
+          }}
         />
       </ContainerWithTitle>
     </ProtectedRoute>

@@ -13,6 +13,7 @@ import FooterUITables from "~/components/Generals/FooterUITable";
 import { ButtonExport } from "~/components/Specific/Buttons";
 import { ALLOWED_REPORTS_EMPLOYEES } from "~/components/auth/allowedRoles";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
+import { UsersRound } from "lucide-react";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Asistencias" },
@@ -83,7 +84,15 @@ export default function ReportEmployees() {
   if (!reportsEmployees) return <LoaderComponent />;
   return (
     <ProtectedRoute allowed={ALLOWED_REPORTS_EMPLOYEES}>
-      <ContainerWithTitle title={"Asistencias"} width="w-full">
+      <ContainerWithTitle
+        title={"Asistencias"}
+        width="w-full"
+        back_path="/rrhh"
+        IconComponent={{
+          component: UsersRound,
+          color: "text-blue-600 dark:text-blue-400",
+        }}
+      >
         <EntityTable
           data={reportsEmployees}
           columns={columns}
@@ -107,20 +116,20 @@ export default function ReportEmployees() {
               autoFilter: true,
             },
             { key: "project_name", label: "Proyecto", autoFilter: true },
-            { key: "date_report", label: "Fecha", type: "dateRange", autoFilter: true },
+            {
+              key: "date_report",
+              label: "Fecha",
+              type: "dateRange",
+              autoFilter: true,
+            },
           ]}
+          buttonExport={{
+            headers,
+            filename: "Asistencias",
+            type: "absents",
+          }}
         />
       </ContainerWithTitle>
-      <FooterUITables justify="justify-between">
-        <div className="flex gap-4">
-          <ButtonExport
-            data={filtered}
-            headers={headers}
-            filename="Asistencias"
-            type="absents"
-          />
-        </div>
-      </FooterUITables>
     </ProtectedRoute>
   );
 }

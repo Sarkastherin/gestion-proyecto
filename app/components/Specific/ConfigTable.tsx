@@ -13,7 +13,7 @@ import { ButtonDeleteIcon } from "./Buttons";
 import { EntityTable } from "../Generals/EntityTable";
 import { Subtitle } from "../Generals/Containers";
 
-type FormField<T> = {
+export type FormField<T> = {
   name: Path<T>;
   label: string;
   type: "text" | "boolean" | "select";
@@ -23,7 +23,6 @@ type FormField<T> = {
 };
 
 type Props<T extends { id: number }, TInsert = Partial<T>> = {
-  table: string;
   title: string;
   columns: TableColumn<T>[];
   formFields: FormField<T>[];
@@ -32,7 +31,6 @@ type Props<T extends { id: number }, TInsert = Partial<T>> = {
 };
 
 export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
-  table,
   title,
   columns,
   formFields,
@@ -109,7 +107,6 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
       <ConfigFormModal<T, TInsert>
         open={open}
         onClose={() => setOpen(false)}
-        table={table}
         fields={formFields}
         initialValues={selected}
         method={method}

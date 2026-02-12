@@ -9,6 +9,7 @@ import { CSVLink } from "react-csv";
 import type { CommonPropTypes } from "react-csv/components/CommonPropTypes";
 import { sanitizeCSVData } from "~/utils/functions";
 import type { Data } from "react-csv/lib/core";
+import type { ConfigType } from "~/routes/settings/generals";
 type ButtonProps = {
   route: string;
   variant?: keyof typeof variants;
@@ -61,7 +62,16 @@ export const ButtonAdd = ({
     </button>
   );
 };
-type ButtonExportProps = { type: "resumen" | "materials" | "absents" } & CommonPropTypes;
+export type ButtonExportProps = {
+  type:
+    | ConfigType
+    | "resumen"
+    | "materials"
+    | "absents"
+    | "liquidation"
+    | "opportunities"
+    | "projects";
+} & CommonPropTypes;
 export const ButtonExport = ({
   data,
   headers,

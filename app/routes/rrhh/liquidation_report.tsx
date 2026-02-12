@@ -64,6 +64,12 @@ const columns: TableColumn<LiquidationReport>[] = [
     selector: (row) => row.project_name || "",
     sortable: true,
   },
+  {
+    name: "Viatico",
+    cell: (row) => (row.viaticum ? "Sí" : "No"),
+    sortable: true,
+    width: "120px",
+  },
 ];
 
 export default function LiquidationReport() {
@@ -88,6 +94,9 @@ export default function LiquidationReport() {
       setFiltered(updatedReports);
     }
   }, [reportsEmployees, holidays]);
+  useEffect(() => {
+    console.log("filtered", filtered);
+  }, [filtered]);
   const headers = [
     { label: "ID", key: "id" },
     { label: "Fecha", key: "date_report" },
@@ -96,6 +105,9 @@ export default function LiquidationReport() {
     { label: "Entrada", key: "hour_start" },
     { label: "Salida", key: "hour_end" },
     { label: "Proyecto", key: "project_name" },
+    { label: "Total horas", key: "hours_worked" },
+    { label: "Horas equivalentes", key: "equivalent_hours" },
+    { label: "Viatico", key: "viaticum" },
   ];
   if (!reportsEmployees || !holidays) return <LoaderComponent />;
   return (
@@ -136,18 +148,13 @@ export default function LiquidationReport() {
               autoFilter: true,
             },
           ]}
+          buttonExport={{
+            headers,
+            filename: "Liquidación de sueldos",
+            type: "liquidation",
+          }}
         />
       </ContainerWithTitle>
-      <FooterUITables justify="justify-between">
-        <div className="flex gap-4">
-          <ButtonExport
-            data={filtered}
-            headers={headers}
-            filename="Asistencias"
-            type="absents"
-          />
-        </div>
-      </FooterUITables>
     </ProtectedRoute>
   );
 }

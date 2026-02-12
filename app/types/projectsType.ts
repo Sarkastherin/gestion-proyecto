@@ -33,7 +33,7 @@ export type ProjectsProps = {
   duration?: number;
   status?: StatusProjectsType;
   mode?: "0000000" | "0000010" | "0000011" | "";
-  customer_requirement: boolean;
+  customer_requirement?: boolean;
 };
 export type ProjectsDB = CommonPropsDB & ProjectsProps;
 export type ProjectsUITable = ProjectsDB & {
@@ -151,6 +151,7 @@ export type ReportsEmployeesUIView = ReportEmployeeDB & {
   id_project: number;
   project_name?: string;
   hours_worked?: number;
+  viaticum?: boolean;
 }
 export type DailyReportsView = DailyReportDB &{
   name_phase: string;

@@ -55,6 +55,7 @@ export default function Items() {
     if (!isDirty) {
       openModal("INFORMATION", {
         message: "No hay cambios para actualizar'",
+
       });
       return;
     }

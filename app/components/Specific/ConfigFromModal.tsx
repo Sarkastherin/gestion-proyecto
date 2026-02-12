@@ -17,7 +17,6 @@ type Field<T> = {
 
 type Props<T extends { id: number }, TInsert = Partial<T>> = {
   open: boolean;
-  table: string;
   fields: Field<T>[];
   onClose: () => void;
   initialValues: DefaultValues<T>;

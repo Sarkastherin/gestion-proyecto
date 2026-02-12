@@ -60,6 +60,16 @@ const columns: TableColumn<OpportunityUITable>[] = [
     sortable: true,
   },
 ];
+const headers = [
+  { label: "Id", key: "id" },
+  { label: "Fecha", key: "created_at" },
+  { label: "Nombre de la Oportunidad", key: "name" },
+  { label: "Cliente", key: "client.nombre" },
+  {label: "Alcance", key: "scope"},
+  { label: "Status", key: "status" },
+  {label: "Motivo de pérdida", key: "loss_reason" },
+  { label: "Creado por", key: "users.user_name" },
+]
 export default function Opportunities() {
   const { getOpportunities, opportunities, setSelectedOpportunity } = useData();
   const navigate = useNavigate();
@@ -105,16 +115,18 @@ export default function Opportunities() {
               autoFilter: true,
             },
           ]}
+          buttonExport={{
+            headers,
+            filename:"Oportunidades",
+            type: "opportunities"
+          }}
+          buttonNavigate={{
+            route: "/opportunities/new-opportunity",
+            title: "+ Oportunidad",
+            color: "green",
+          }}
         />
       </ContainerWithTitle>
-      <FooterUITables
-        justify="justify-end"
-        buttonNavigate={{
-          title: "+ Oportunidad",
-          route: "/opportunities/new-opportunity",
-          color: "green",
-        }}
-      />
     </ProtectedRoute>
   );
 }
