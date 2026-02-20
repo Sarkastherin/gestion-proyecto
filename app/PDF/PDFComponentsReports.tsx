@@ -8,9 +8,6 @@ import {
   Text,
 } from "@react-pdf/renderer";
 import Logo from "public/logo_imindustrial.png";
-import type { ConsolidatedData } from "~/routes/rrhh/consolidated_hours_per_worker";
-import { formatDateUStoES } from "~/utils/functions";
-import type { GlobalBalance } from "~/routes/rrhh/consolidated_hours_per_worker";
 export const styles = StyleSheet.create({
   codeText: {
     fontSize: 9,

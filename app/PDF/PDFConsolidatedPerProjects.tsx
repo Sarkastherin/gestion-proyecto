@@ -113,9 +113,8 @@ const TableRowWorker = ({
       }}
     >
       {project.employees.map((employee, idx) => (
-        <>
+        <View key={idx}>
           <View
-            key={idx}
             style={{
               display: "flex",
               flexDirection: "row",
@@ -170,7 +169,7 @@ const TableRowWorker = ({
               <Cell content={report.absent ? "1" : "0"} flex={0.5} />
             </View>
           ))}
-        </>
+        </View>
       ))}
     </View>
   );
