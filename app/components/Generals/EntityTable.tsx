@@ -9,8 +9,13 @@ import { useUI } from "~/context/UIContext";
 import { useLocation } from "react-router";
 import { useUIModals } from "~/context/ModalsContext";
 import FooterUITables from "./FooterUITable";
-import { ButtonExport, ButtonNavigate, type ButtonExportProps } from "../Specific/Buttons";
-function getNestedValue(obj: any, path: string): any {
+import type { IconType } from "react-icons/lib";
+import {
+  ButtonExport,
+  ButtonNavigate,
+  type ButtonExportProps,
+} from "../Specific/Buttons";
+export function getNestedValue(obj: any, path: string): any {
   return path.split(".").reduce((acc, part) => acc?.[part], obj);
 }
 export const customStyles = {
@@ -55,6 +60,8 @@ type EntityTableProps<T extends object> = {
   filterFields?: FilterField[];
   onRowClick?: (row: T) => void;
   onFilteredChange?: (filtered: T[]) => void;
+  expandableRows?: boolean;
+  ExpandedComponent?: React.ComponentType<{ data: T }>;
   noDataComponent?: JSX.Element;
   inactiveField?: string; // Campo para identificar elementos inactivos (ej: "activo")
   alternativeStorageKey?: string; // Clave alternativa para almacenamiento local
@@ -68,6 +75,12 @@ type EntityTableProps<T extends object> = {
     route: string;
     title: string;
     color?: keyof typeof variants;
+  };
+  buttonOnClick?: {
+    onClick: () => void;
+    title: string;
+    color?: keyof typeof variants;
+    icon?: { component: IconType; color: string };
   };
 };
 const options = {
@@ -86,6 +99,9 @@ export function EntityTable<T extends object>({
   disableRowClick = false,
   buttonNavigate,
   buttonExport,
+  buttonOnClick,
+  expandableRows = false,
+  ExpandedComponent,
 }: EntityTableProps<T>) {
   const { theme } = useUI();
   const location = useLocation();
@@ -277,8 +293,9 @@ export function EntityTable<T extends object>({
       });
     }
   }, []);
+  //const ExpandedComponent = ({ data }: { data: T[] }) => <pre>{JSON.stringify(data, null, 2)}</pre>;
   return (
-    <>
+    <div className="relative flex flex-col gap-4">
       {showFilterInfo && filterFields.length > 0 && (
         <div className="mb-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
           ℹ️ Filtros aplicados.
@@ -361,6 +378,8 @@ export function EntityTable<T extends object>({
         pointerOnHover={!disableRowClick}
         highlightOnHover
         paginationComponentOptions={options}
+        expandableRows={expandableRows}
+        expandableRowsComponent={ExpandedComponent}
         noDataComponent={
           noDataComponent || (
             <div className="py-6 text-text-secondary">
@@ -379,33 +398,46 @@ export function EntityTable<T extends object>({
             : undefined
         }
       />
-      {}
-      {buttonExport && (
+      {(buttonExport || buttonNavigate || buttonOnClick) && (
         <span className="fixed bottom-0 -left-0 w-full">
           <div
             className={`flex justify-between w-full  py-5 px-8 hover:bg-zinc-200 hover:dark:bg-zinc-900`}
           >
-            <div className="flex gap-4">
-              <ButtonExport
-                data={filteredData}
-                headers={buttonExport.headers}
-                filename={buttonExport.filename}
-                type={buttonExport.type}
-              />
-            </div>
-            <div className="w-fit">
-              {buttonNavigate && (
+            {buttonExport && (
+              <div className="flex gap-4">
+                <ButtonExport
+                  data={filteredData}
+                  headers={buttonExport.headers}
+                  filename={buttonExport.filename}
+                  type={buttonExport.type}
+                />
+              </div>
+            )}
+
+            {buttonNavigate && (
+              <div className="w-fit">
                 <ButtonNavigate
                   variant={buttonNavigate.color}
                   route={buttonNavigate.route}
                 >
                   {buttonNavigate.title}
                 </ButtonNavigate>
-              )}
-            </div>
+              </div>
+            )}
+            {buttonOnClick && (
+              <div className="w-fit">
+                <Button
+                  variant={buttonOnClick.color}
+                  onClick={buttonOnClick.onClick}
+                  icon={buttonOnClick.icon}
+                >
+                  {buttonOnClick.title}
+                </Button>
+              </div>
+            )}
           </div>
         </span>
       )}
-    </>
+    </div>
   );
 }

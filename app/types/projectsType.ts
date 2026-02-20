@@ -167,3 +167,7 @@ export type HolidaysProps = {
 };
 
 export type HolidaysDB = CommonPropsDB & HolidaysProps;
+export type LiquidationReport = ReportsEmployeesUIView & {
+  equivalent_hours?: number;
+  day_type?: string | null;
+};

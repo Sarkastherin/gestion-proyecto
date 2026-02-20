@@ -64,13 +64,15 @@ export const ButtonAdd = ({
 };
 export type ButtonExportProps = {
   type:
-    | ConfigType
     | "resumen"
     | "materials"
     | "absents"
     | "liquidation"
     | "opportunities"
-    | "projects";
+    | "projects"
+    | "consolidated_hours_per_worker"
+    | "consolidated_hours_per_project"
+    | ConfigType;
 } & CommonPropTypes;
 export const ButtonExport = ({
   data,

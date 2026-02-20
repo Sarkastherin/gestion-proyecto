@@ -31,12 +31,12 @@ export type EmployeesDataType = {
   contacto_id: number;
   legajo: string;
   puesto: string;
-  fecha_ingreso: string;
-  fecha_egreso: string;
+  fecha_ingreso: string | null;
+  fecha_egreso: string | null;
   tipo_contrato: string;
   categoria: string;
-  salario_basico: number;
-  fecha_nacimiento: string;
+  salario_basico: number | null;
+  fecha_nacimiento: string | null;
   estado_civil: string;
   nivel_estudios: string;
   contacto_emergencia: string;
@@ -44,8 +44,8 @@ export type EmployeesDataType = {
   cbu: string;
   alias_cbu: string;
   observaciones: string;
-  created_at: string;
-  updated_at: string;
+  created_at: string | null;
+  updated_at: string | null;
   contacto_nombre: string;
   contacto_cuit: string;
   contacto_email: string;

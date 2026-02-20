@@ -21,26 +21,20 @@ export const PAY_RULES: Record<DayType, PayBracket[]> = {
   // Lunes a Viernes (día normal)
   weekday: [
     { upToHours: 9, factor: 1 }, // Primeras 9 horas: factor 1
-    { upToHours: 13.5, factor: 1.5 }, // De 9 a 13.5 horas: factor 1.5 (horas extra moderadas)
-    { upToHours: 18, factor: 2 }, // De 13.5 a 18 horas: factor 2 (horas extra extendidas)
-    { upToHours: Infinity, factor: 2 }, // Más de 18 horas: factor 2
+    { upToHours: Infinity, factor: 1.5 }, // Más de 18 horas: factor 1.5
   ],
   // Sábado
   saturday: [
     { upToHours: 4, factor: 1 }, // Primeras 4 horas: factor 1
     { upToHours: 9, factor: 1.5 }, // De 4 a 9 horas: factor 1.5 (semi-laboral)
-    { upToHours: 13.5, factor: 2 }, // De 9 a 13.5 horas: factor 2 (excepcional)
-    { upToHours: Infinity, factor: 2 }, // Más de 13.5 horas: factor 2
+    { upToHours: Infinity, factor: 2 }, // Más de 9 horas: factor 2
   ],
   // Domingo o Feriado
   sundayOrHoliday: [
     { upToHours: 9, factor: 2 }, // Primeras 9 horas: factor 2 (jornada base no laborable)
-    { upToHours: 13.5, factor: 3 }, // De 9 a 13.5 horas: factor 3 (jornada prolongada)
-    { upToHours: 18, factor: 3.5 }, // De 13.5 a 18 horas: factor 3.5 (jornada extendida)
-    { upToHours: Infinity, factor: 3.5 }, // Más de 18 horas: factor 3.5
+    { upToHours: Infinity, factor: 4 }, // Más de 9 horas: factor 4
   ],
 };
-
 /**
  * Determina el tipo de día (weekday, saturday, sundayOrHoliday)
  * @param date - Fecha a evaluar (string YYYY-MM-DD o Date)
@@ -48,10 +42,14 @@ export const PAY_RULES: Record<DayType, PayBracket[]> = {
  * @returns Tipo de día
  */
 export function getDayType(
-  date: string | Date,
+  date: string,
   holidays: HolidaysDB[]
 ): DayType {
-  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const splitDate = date.split("-").map(Number) 
+  if (splitDate.length !== 3) {
+    throw new Error("Fecha inválida. Se esperaba formato YYYY-MM-DD.");
+  }
+  const dateObj = typeof date === "string" ? new Date(splitDate[0], splitDate[1] - 1, splitDate[2]) : date;
   const dateString =
     typeof date === "string"
       ? date
@@ -78,10 +76,10 @@ export function getDayType(
  */
 export function calculatePaidHours(
   hoursWorked: number,
-  date: string | Date,
+  date: string,
   holidays: HolidaysDB[]
-): number {
-  if (hoursWorked <= 0) return 0;
+): { equivalentHours: number; dayType: DayType | null } {
+  if (hoursWorked <= 0) return { equivalentHours: 0, dayType: null };
 
   const dayType = getDayType(date, holidays);
   const brackets = PAY_RULES[dayType];
@@ -102,8 +100,9 @@ export function calculatePaidHours(
     remainingHours -= hoursInBracket;
     previousLimit = bracket.upToHours;
   }
+  const roundedPaidHours = Math.round(totalPaidHours * 100) / 100;
 
-  return Math.round(totalPaidHours * 100) / 100; // Redondear a 2 decimales
+  return { equivalentHours: roundedPaidHours, dayType }; // Redondear a 2 decimales
 }
 
 /**

@@ -19,6 +19,9 @@ type Pages = {
   "/unauthorized": {
     params: {};
   };
+  "/dev-pdf": {
+    params: {};
+  };
   "/rrhh": {
     params: {};
   };
@@ -26,6 +29,18 @@ type Pages = {
     params: {};
   };
   "/rrhh/liquidation_report": {
+    params: {};
+  };
+  "/rrhh/consolidated_hours_per_worker": {
+    params: {};
+  };
+  "/rrhh/consolidated_hours_per_project": {
+    params: {};
+  };
+  "/rrhh/consolidated_hours_per_worker/pdf": {
+    params: {};
+  };
+  "/rrhh/consolidated_hours_per_project/pdf": {
     params: {};
   };
   "/opportunities": {
@@ -135,7 +150,7 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/login" | "/unauthorized" | "/rrhh" | "/rrhh/reports_assistance" | "/rrhh/liquidation_report" | "/opportunities" | "/opportunities/new-opportunity" | "/opportunities/:id/resumen" | "/opportunities/:id/information" | "/opportunities/:id/phases" | "/opportunities/:id/conditions" | "/opportunities/:id/report" | "/opportunities/:id/quotes/items" | "/opportunities/:id/quotes/materials" | "/projects" | "/projects/new-daily-report" | "/projects/:id/resumen" | "/projects/:id/information" | "/projects/:id/budget/items" | "/projects/:id/budget/materials" | "/projects/:id/planning" | "/projects/:id/daily_reports" | "/materials" | "/materials/new-material" | "/materials/:id" | "/materials/:id/prices" | "/settings" | "/settings/generals" | "/settings/calendar";
+    page: "/" | "/login" | "/unauthorized" | "/dev-pdf" | "/rrhh" | "/rrhh/reports_assistance" | "/rrhh/liquidation_report" | "/rrhh/consolidated_hours_per_worker" | "/rrhh/consolidated_hours_per_project" | "/rrhh/consolidated_hours_per_worker/pdf" | "/rrhh/consolidated_hours_per_project/pdf" | "/opportunities" | "/opportunities/new-opportunity" | "/opportunities/:id/resumen" | "/opportunities/:id/information" | "/opportunities/:id/phases" | "/opportunities/:id/conditions" | "/opportunities/:id/report" | "/opportunities/:id/quotes/items" | "/opportunities/:id/quotes/materials" | "/projects" | "/projects/new-daily-report" | "/projects/:id/resumen" | "/projects/:id/information" | "/projects/:id/budget/items" | "/projects/:id/budget/materials" | "/projects/:id/planning" | "/projects/:id/daily_reports" | "/materials" | "/materials/new-material" | "/materials/:id" | "/materials/:id/prices" | "/settings" | "/settings/generals" | "/settings/calendar";
   };
   "routes/login.tsx": {
     id: "routes/login";
@@ -145,9 +160,13 @@ type RouteFiles = {
     id: "routes/unauthorizedPage";
     page: "/unauthorized";
   };
+  "routes/dev-pdf.tsx": {
+    id: "routes/dev-pdf";
+    page: "/dev-pdf";
+  };
   "layouts/main.tsx": {
     id: "layouts/main";
-    page: "/" | "/rrhh" | "/rrhh/reports_assistance" | "/rrhh/liquidation_report" | "/opportunities" | "/opportunities/new-opportunity" | "/opportunities/:id/resumen" | "/opportunities/:id/information" | "/opportunities/:id/phases" | "/opportunities/:id/conditions" | "/opportunities/:id/report" | "/opportunities/:id/quotes/items" | "/opportunities/:id/quotes/materials" | "/projects" | "/projects/new-daily-report" | "/projects/:id/resumen" | "/projects/:id/information" | "/projects/:id/budget/items" | "/projects/:id/budget/materials" | "/projects/:id/planning" | "/projects/:id/daily_reports" | "/materials" | "/materials/new-material" | "/materials/:id" | "/materials/:id/prices" | "/settings" | "/settings/generals" | "/settings/calendar";
+    page: "/" | "/rrhh" | "/rrhh/reports_assistance" | "/rrhh/liquidation_report" | "/rrhh/consolidated_hours_per_worker" | "/rrhh/consolidated_hours_per_project" | "/rrhh/consolidated_hours_per_worker/pdf" | "/rrhh/consolidated_hours_per_project/pdf" | "/opportunities" | "/opportunities/new-opportunity" | "/opportunities/:id/resumen" | "/opportunities/:id/information" | "/opportunities/:id/phases" | "/opportunities/:id/conditions" | "/opportunities/:id/report" | "/opportunities/:id/quotes/items" | "/opportunities/:id/quotes/materials" | "/projects" | "/projects/new-daily-report" | "/projects/:id/resumen" | "/projects/:id/information" | "/projects/:id/budget/items" | "/projects/:id/budget/materials" | "/projects/:id/planning" | "/projects/:id/daily_reports" | "/materials" | "/materials/new-material" | "/materials/:id" | "/materials/:id/prices" | "/settings" | "/settings/generals" | "/settings/calendar";
   };
   "routes/home.tsx": {
     id: "routes/home";
@@ -164,6 +183,22 @@ type RouteFiles = {
   "routes/rrhh/liquidation_report.tsx": {
     id: "routes/rrhh/liquidation_report";
     page: "/rrhh/liquidation_report";
+  };
+  "routes/rrhh/consolidated_hours_per_worker.tsx": {
+    id: "routes/rrhh/consolidated_hours_per_worker";
+    page: "/rrhh/consolidated_hours_per_worker";
+  };
+  "routes/rrhh/consolidated_hours_per_project.tsx": {
+    id: "routes/rrhh/consolidated_hours_per_project";
+    page: "/rrhh/consolidated_hours_per_project";
+  };
+  "routes/rrhh/consolidated_hours_per_worker_pdf.tsx": {
+    id: "routes/rrhh/consolidated_hours_per_worker_pdf";
+    page: "/rrhh/consolidated_hours_per_worker/pdf";
+  };
+  "routes/rrhh/consolidated_hours_per_project_pdf.tsx": {
+    id: "routes/rrhh/consolidated_hours_per_project_pdf";
+    page: "/rrhh/consolidated_hours_per_project/pdf";
   };
   "routes/opportunities/home.tsx": {
     id: "routes/opportunities/home";

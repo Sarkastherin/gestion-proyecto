@@ -10,9 +10,11 @@ export const variants = {
   yellow:
     "text-zinc-800 bg-yellow hover:bg-yellow-hover focus:ring-yellow-focus",
   purple: "text-white bg-purple hover:bg-purple-hover focus:ring-purple-focus",
+  orange: "text-white bg-orange hover:bg-orange-hover focus:ring-orange-focus",
   light:
     "text-stone-800 bg-white border border-stone-300 hover:bg-stone-100 focus:ring-stone-100 dark:bg-stone-800 dark:text-white dark:border-stone-600 dark:hover:bg-stone-700 dark:hover:border-stone-600 dark:focus:ring-stone-700",
   dark: "text-white bg-stone-800 hover:bg-stone-800 focus:ring-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 dark:focus:ring-stone-700 dark:border-stone-700",
+  pink: "text-white bg-pink hover:bg-pink-hover focus:ring-pink-focus",
   outlinePrimary:
     "text-primary hover:text-white border border-primary hover:bg-primary-hover focus:ring-primary-focus",
   outlineBlue:
@@ -46,7 +48,8 @@ type ButtonProps = {
   className?: string;
 };
 type ButtonNativeProps = ButtonHTMLAttributes<HTMLButtonElement>;
-type Props = ButtonProps & ButtonNativeProps & { icon?: { component: IconType; color: string } };
+type Props = ButtonProps &
+  ButtonNativeProps & { icon?: { component: IconType; color: string } };
 export const Button = ({
   variant = "primary",
   size = "md",
@@ -67,8 +70,10 @@ export const Button = ({
       className={`${basesClass} ${sizes[size]} ${variants[variant]} ${className}`}
       {...buttonProps}
     >
-      {Icon && <span className={`me-2`}>{Icon}</span>}
-      {children}
+      <span className="flex gap-2 items-center justify-center">
+        {Icon && <span>{Icon}</span>}
+        {children}
+      </span>
     </button>
   );
 };

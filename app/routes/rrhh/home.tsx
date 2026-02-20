@@ -26,11 +26,25 @@ const menu = [
     icon: <UsersRound className="w-10 h-10 text-blue-600" />,
   },
   {
-    title: "Liquidación de sueldos",
-    description: "Resumen de haberes y descuentos del periodo.",
+    title: "Horas Equivalentes y viáticos",
+    description: "Resumen de horas equivalentes y viáticos del periodo.",
     to: "/rrhh/liquidation_report",
     permission: ALLOWED_RRHH,
     icon: <Receipt className="w-10 h-10 text-green-600" />,
+  },
+  {
+    title: "Consolidado de horas por operario",
+    description: "Resumen de horas trabajadas por cada operario.",
+    to: "/rrhh/consolidated_hours_per_worker",
+    permission: ALLOWED_RRHH,
+    icon: <Receipt className="w-10 h-10 text-yellow-600" />,
+  },
+  {
+    title: "Consolidado de horas por proyecto",
+    description: "Resumen de horas trabajadas por cada proyecto.",
+    to: "/rrhh/consolidated_hours_per_project",
+    permission: ALLOWED_RRHH,
+    icon: <Receipt className="w-10 h-10 text-purple-600" />,
   },
 ];
 export default function RRHH() {
@@ -70,10 +84,10 @@ export default function RRHH() {
         description="Accede rapidamente a los modulos clave del area"
       >
         <nav className="relative">
-          <ul className="grid w-full gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+          <ul className="grid w-full gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 items-stretch">
             {menu.map((link) => (
               <Permission key={link.title} roles={link.permission}>
-                <li>
+                <li className="flex">
                   <LinkCard
                     to={link.to}
                     icon={link.icon}

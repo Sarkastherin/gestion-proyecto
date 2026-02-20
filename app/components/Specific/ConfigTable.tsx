@@ -1,10 +1,5 @@
 import { useState } from "react";
-import { supabase } from "~/backend/supabaseClient";
-import { Button } from "../Forms/Buttons";
 import { ConfigFormModal } from "./ConfigFromModal";
-import DataTable from "react-data-table-component";
-import { customStyles } from "../Generals/EntityTable";
-import { useUI } from "~/context/UIContext";
 import type { TableColumn } from "react-data-table-component";
 import type { CrudMethod } from "~/backend/crudFactory";
 import type { Path } from "react-hook-form";
@@ -12,8 +7,10 @@ import { useUIModals } from "~/context/ModalsContext";
 import { ButtonDeleteIcon } from "./Buttons";
 import { EntityTable } from "../Generals/EntityTable";
 import { Subtitle } from "../Generals/Containers";
+import type { IconType } from "react-icons/lib";
+import type { ConfigType } from "~/routes/settings/generals";
 
-export type FormField<T> = {
+type FormField<T> = {
   name: Path<T>;
   label: string;
   type: "text" | "boolean" | "select";
@@ -22,21 +19,27 @@ export type FormField<T> = {
   isInFilter: boolean;
 };
 
-type Props<T extends { id: number }, TInsert = Partial<T>> = {
+type Props<T extends { id: number }> = {
+  value: ConfigType;
   title: string;
   columns: TableColumn<T>[];
   formFields: FormField<T>[];
   data: T[];
   method: CrudMethod<T>;
+  icon: IconType;
+  headers: { key: string; label: string }[];
 };
 
-export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
+export const ConfigTable = <T extends { id: number }>({
+  value,
   title,
   columns,
   formFields,
   data,
   method,
-}: Props<T, TInsert>) => {
+  icon,
+  headers,
+}: Props<T>) => {
   const { openModal } = useUIModals();
   const [selected, setSelected] = useState<any | null>(null);
   const [open, setOpen] = useState(false);
@@ -94,17 +97,30 @@ export const ConfigTable = <T extends { id: number }, TInsert = Partial<T>>({
   };
   return (
     <div>
-      <div className="mb-6">
-        <Subtitle title={title} back_path="/settings" />
+      <div className="my-4">
+        <Subtitle
+          title={title}
+          back_path="/settings"
+          IconComponent={{ component: icon, color: "text-orange-500" }}
+        />
       </div>
       <EntityTable
         columns={[...columns, actionColumn]}
         data={data}
         onRowClick={handleOnRowClicked}
         filterFields={filterFields()}
+        buttonExport={{
+          headers,
+          filename: `${title}`,
+          type: value
+        }}
+        buttonOnClick={{
+          onClick: handleAdd,
+          title: "Agregar",
+          color: "orange",
+        }}
       />
-
-      <ConfigFormModal<T, TInsert>
+      <ConfigFormModal<T>
         open={open}
         onClose={() => setOpen(false)}
         fields={formFields}

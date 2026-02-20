@@ -3,9 +3,7 @@ import type { LucideProps } from "lucide-react";
 import { NavLink } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { getIcon } from "../IconComponent";
-export type IconType = React.ForwardRefExoticComponent<
-  Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
->;
+import type { IconType } from "react-icons/lib";
 
 export const Subtitle = ({
   back_path,

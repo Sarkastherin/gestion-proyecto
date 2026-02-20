@@ -5,25 +5,33 @@ import type { TableColumn } from "react-data-table-component";
 import { useEffect, useState } from "react";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
-import type { ReportsEmployeesUIView } from "~/types/projectsType";
 import { formatDateUStoES } from "~/utils/functionsDays";
-import FooterUITables from "~/components/Generals/FooterUITable";
-import { ButtonExport } from "~/components/Specific/Buttons";
 import { ALLOWED_REPORTS_EMPLOYEES } from "~/components/auth/allowedRoles";
 import { Receipt } from "lucide-react";
-import { calculatePaidHours } from "~/utils/payFactors";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
+import type { LiquidationReport } from "~/types/projectsType";
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Asistencias" },
-    { name: "description", content: "Asistencias" },
+    { title: "Horas Equivalentes y viáticos" },
+    { name: "description", content: "Horas Equivalentes y viáticos" },
   ];
 }
-type LiquidationReport = ReportsEmployeesUIView & {
-  equivalent_hours?: number;
-};
+const daysOfWeek = [
+  "lunes",
+  "martes",
+  "miércoles",
+  "jueves",
+  "viernes",
+  "sábado",
+  "domingo",
+];
 const columns: TableColumn<LiquidationReport>[] = [
   { name: "Id", selector: (row) => row.id, width: "80px", sortable: true },
+  {
+    name: "Empleado",
+    selector: (row) => row.employee?.contacto_nombre || "",
+    sortable: true,
+  },
   {
     name: "Fecha",
     selector: (row) => formatDateUStoES(row.date_report) || "",
@@ -31,9 +39,15 @@ const columns: TableColumn<LiquidationReport>[] = [
     width: "130px",
   },
   {
-    name: "Empleado",
-    selector: (row) => row.employee?.contacto_nombre || "",
+    name: "Día de la semana",
+    selector: (row) => {
+      const dateSplit = row.date_report.split("-");
+      const dateString = `${dateSplit[0]}-${dateSplit[1]}-${dateSplit[2]}`;
+      const day = daysOfWeek[new Date(dateString).getDay()];
+      return `${day}`;
+    },
     sortable: true,
+    width: "150px",
   },
   {
     name: "Entrada",
@@ -60,6 +74,19 @@ const columns: TableColumn<LiquidationReport>[] = [
     width: "150px",
   },
   {
+    name: "Tipo de día",
+    selector: (row) =>
+      row.day_type === "weekday"
+        ? "Día laborable"
+        : row.day_type === "saturday"
+          ? "Sábado"
+          : row.day_type === "sundayOrHoliday"
+            ? "Domingo/Feriado"
+            : "",
+    sortable: true,
+    width: "150px",
+  },
+  {
     name: "Proyecto",
     selector: (row) => row.project_name || "",
     sortable: true,
@@ -73,30 +100,16 @@ const columns: TableColumn<LiquidationReport>[] = [
 ];
 
 export default function LiquidationReport() {
-  const { getReportsEmployees, reportsEmployees, holidays, getHolidays } =
-    useData();
+  const { getLiquidationReport, liquidationReport } = useData();
 
   useEffect(() => {
-    if (!reportsEmployees) getReportsEmployees();
-    if (!holidays) getHolidays();
+    if (!liquidationReport) getLiquidationReport();
   }, []);
-  const [filtered, setFiltered] = useState(reportsEmployees ?? []);
-  useEffect(() => {
-    if (reportsEmployees && holidays) {
-      const updatedReports = reportsEmployees.map((report) => {
-        const hoursWorked = calculatePaidHours(
-          report.hours_worked ?? 0,
-          report.date_report,
-          holidays,
-        );
-        return { ...report, equivalent_hours: hoursWorked };
-      });
-      setFiltered(updatedReports);
-    }
-  }, [reportsEmployees, holidays]);
-  useEffect(() => {
-    console.log("filtered", filtered);
-  }, [filtered]);
+  const [filtered, setFiltered] = useState<LiquidationReport[] | null>(liquidationReport);
+  useEffect(() =>{
+    if (liquidationReport) setFiltered(liquidationReport);
+  },[liquidationReport])
+
   const headers = [
     { label: "ID", key: "id" },
     { label: "Fecha", key: "date_report" },
@@ -109,11 +122,11 @@ export default function LiquidationReport() {
     { label: "Horas equivalentes", key: "equivalent_hours" },
     { label: "Viatico", key: "viaticum" },
   ];
-  if (!reportsEmployees || !holidays) return <LoaderComponent />;
+  if (!filtered) return <LoaderComponent />;
   return (
     <ProtectedRoute allowed={ALLOWED_REPORTS_EMPLOYEES}>
       <ContainerWithTitle
-        title={"Liquidación de sueldos"}
+        title={"Horas Equivalentes y viáticos"}
         width="w-full"
         back_path="/rrhh"
         IconComponent={{ component: Receipt, color: "text-green-600" }}

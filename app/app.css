@@ -39,6 +39,14 @@ dark:focus:ring-blue-800"
   --color-blue: var(--color-blue-700);
   --color-blue-hover: var(--color-blue-800);
   --color-blue-focus: var(--color-blue-300);
+  /* Orange */
+  --color-orange: var(--color-orange-600);
+  --color-orange-hover: var(--color-orange-700);
+  --color-orange-focus: var(--color-orange-300);
+  /* Pink */
+  --color-pink: var(--color-pink-600);
+  --color-pink-hover: var(--color-pink-700);
+  --color-pink-focus: var(--color-pink-300);
 }
 
 @layer theme {
@@ -68,6 +76,14 @@ dark:focus:ring-blue-800"
       --color-blue: var(--color-blue-600);
       --color-blue-hover: var(--color-blue-700);
       --color-blue-focus: var(--color-blue-800);
+      /* Orange */
+      --color-orange: var(--color-orange-500);
+      --color-orange-hover: var(--color-orange-600);
+      --color-orange-focus: var(--color-orange-700);
+      /* Pink */
+      --color-pink: var(--color-pink-500);
+      --color-pink-hover: var(--color-pink-600);
+      --color-pink-focus: var(--color-pink-700);
     }
   }
 }

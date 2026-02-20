@@ -9,12 +9,17 @@ import {
 export default [
   route("login", "routes/login.tsx"),
   route("unauthorized", "routes/unauthorizedPage.tsx"),
+  route("dev-pdf", "routes/dev-pdf.tsx"),
   layout("layouts/main.tsx", [
     index("routes/home.tsx"),
     ...prefix("rrhh", [
       index("routes/rrhh/home.tsx"),
       route("reports_assistance", "routes/rrhh/reports_assistance.tsx"),
       route("liquidation_report", "routes/rrhh/liquidation_report.tsx"),
+      route("consolidated_hours_per_worker", "routes/rrhh/consolidated_hours_per_worker.tsx"),
+      route("consolidated_hours_per_project", "routes/rrhh/consolidated_hours_per_project.tsx"),
+      route("consolidated_hours_per_worker/pdf", "routes/rrhh/consolidated_hours_per_worker_pdf.tsx"),
+      route("consolidated_hours_per_project/pdf", "routes/rrhh/consolidated_hours_per_project_pdf.tsx"),
     ]),
     ...prefix("opportunities", [
       index("routes/opportunities/home.tsx"),

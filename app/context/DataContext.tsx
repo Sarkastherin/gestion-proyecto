@@ -6,6 +6,7 @@ import type {
   DailyReportsView,
   DailyReportUI,
   HolidaysDB,
+  LiquidationReport
 } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
@@ -31,6 +32,7 @@ import {
   roundToPrecision,
   getBudgetTotals,
 } from "~/utils/functions";
+import { calculatePaidHours } from "~/utils/payFactors";
 type DataContextType = {
   projects: ProjectsUITable[] | null;
   getProjects: () => Promise<void>;
@@ -73,7 +75,10 @@ type DataContextType = {
   getHolidays: () => Promise<HolidaysDB[]>;
   holidays: HolidaysDB[] | null;
   deleteHoliday: (id: number) => Promise<void>;
+  getLiquidationReport: () => Promise<void>;
+  liquidationReport: LiquidationReport[] | null;
 };
+
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const { clients, employees } = useContacts();
@@ -102,6 +107,9 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     DailyReportsView[] | null
   >(null);
   const [holidays, setHolidays] = useState<HolidaysDB[] | null>(null);
+  const [liquidationReport, setLiquidationReport] = useState<
+    LiquidationReport[] | null
+  >(null);
   const getProjects = async (): Promise<void> => {
     if (clients) {
       setEntities<ProjectsUITable>({
@@ -377,6 +385,27 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       setData: setReportsEmployees,
     });
   };
+  const getLiquidationReport = async () => {
+    let dataReportsEmployees = reportsEmployees;
+    let dataHolidays = holidays;
+    if (!dataHolidays) {
+      dataHolidays = await getHolidays();
+    }
+    if (!dataReportsEmployees) {
+      dataReportsEmployees = await getReportsEmployees();
+    }
+    if (reportsEmployees && holidays) {
+      const updatedReports = dataReportsEmployees.map((report) => {
+        const hoursWorked = calculatePaidHours(
+          report.hours_worked ?? 0,
+          report.date_report,
+          dataHolidays || []
+        );
+        return { ...report, equivalent_hours: hoursWorked.equivalentHours, day_type: hoursWorked.dayType };
+      });
+      setLiquidationReport(updatedReports);
+    }
+  }
   const getReportsBySupervisor = async (id_supervisor: number) => {
     const { data, error } = await supabase
       .from("view_daily_reports")
@@ -449,6 +478,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         getHolidays,
         holidays,
         deleteHoliday,
+        getLiquidationReport,
+        liquidationReport,
       }}
     >
       {children}

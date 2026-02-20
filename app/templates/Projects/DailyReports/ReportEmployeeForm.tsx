@@ -13,7 +13,7 @@ import { updatesArrayFields } from "~/utils/updatesArraysFields";
 import { Badge } from "~/components/Specific/Badge";
 import { dailyReportsApi } from "~/backend/cruds";
 import { useData } from "~/context/DataContext";
-import { useTasksRealtime, useProjectRealtime } from "~/backend/realTime";
+import {  useProjectRealtime } from "~/backend/realTime";
 import EmployeesModal from "~/components/modals/customs/EmployeesModal";
 
 type ReportEmployeeFormProps = {
@@ -40,7 +40,7 @@ export function ReportEmployeeForm({
   const [report, setReport] = useState<DailyReportUI | null>(null);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const { selectedProject, getProjectById } = useData();
+  const { selectedProject, getProjectById, getReportsEmployees } = useData();
   const { openModal } = useUIModals();
   const employeeModal = useModalState<ContactsModalProps>();
   const { employees } = useContacts();
@@ -243,6 +243,7 @@ export function ReportEmployeeForm({
             });
           }
         }
+        
         onSuccess();
       }
     } catch (e) {

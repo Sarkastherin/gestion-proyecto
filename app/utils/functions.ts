@@ -245,6 +245,33 @@ export const transformToCSVRow =
         "users.user_name": escapeCSVValue(item.users?.user_name || ""),
       };
     }
+    if (type === "unidades") {
+      return {
+        id: item.id,
+        description: escapeCSVValue(item.description),
+        abbreviation: escapeCSVValue(item.abbreviation),
+      };
+    }
+    if (type === "familias") {
+      return {
+        id: item.id,
+        description: escapeCSVValue(item.description),
+      };
+    }
+    if (type === "rubros") {
+      return {
+        id: item.id,
+        description: escapeCSVValue(item.description),
+        id_family: item.id_family,
+      };
+    }
+    if (type === "subrubros") {
+      return {
+        id: item.id,
+        description: escapeCSVValue(item.description),
+        id_category: item.id_category,
+      };
+    }
     return {}; // fallback vacío si el tipo no coincide
   };
 

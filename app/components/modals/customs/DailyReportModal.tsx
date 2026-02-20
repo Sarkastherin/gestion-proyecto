@@ -47,7 +47,7 @@ export default function DailyReportModal({
     report?.id || null
   );
   const [idsEmployees, setIdsEmployees] = useState<number[] | null>(null);
-  const { selectedProject, refreshProject } = useData();
+  const { selectedProject, refreshProject, getReportsEmployees } = useData();
   const { phases_project } = selectedProject || {};
   const tasks = phases_project?.flatMap((phase) => phase.tasks) || [];
   const [steps, setSteps] = useState<typeof initialSteps>(() =>
@@ -308,6 +308,7 @@ export default function DailyReportModal({
                     onSuccess={() => {
                       handleNextStep();
                       refreshProject();
+                      getReportsEmployees();
                       onClose();
                     }}
                   />
