@@ -7,7 +7,7 @@ import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 import { formatDateUStoES } from "~/utils/functionsDays";
 import { ALLOWED_REPORTS_EMPLOYEES } from "~/components/auth/allowedRoles";
-import { Receipt } from "lucide-react";
+import { FileClock } from "lucide-react";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 import type { LiquidationReport } from "~/types/projectsType";
 export function meta({}: Route.MetaArgs) {
@@ -129,7 +129,7 @@ export default function LiquidationReport() {
         title={"Horas Equivalentes y viáticos"}
         width="w-full"
         back_path="/rrhh"
-        IconComponent={{ component: Receipt, color: "text-green-600" }}
+        IconComponent={{ component: FileClock, color: "text-green-600" }}
       >
         <EntityTable
           data={filtered}

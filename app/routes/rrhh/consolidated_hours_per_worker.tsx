@@ -7,7 +7,6 @@ import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 import { formatDateUStoES } from "~/utils/functionsDays";
 import { ALLOWED_REPORTS_EMPLOYEES } from "~/components/auth/allowedRoles";
-import { Receipt } from "lucide-react";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 import { useForm } from "react-hook-form";
 import type { LiquidationReport } from "~/types/projectsType";
@@ -17,6 +16,7 @@ import { Funnel } from "lucide-react";
 import { MdPictureAsPdf } from "react-icons/md";
 import { Subtitle } from "~/components/Generals/Containers";
 import { useNavigate } from "react-router";
+import { FaUserClock } from "react-icons/fa6";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Consolidado de horas por operario" },
@@ -280,7 +280,7 @@ export default function ConsolidatedHoursPerWorker() {
             <Subtitle
               title={"Consolidado de horas por operario"}
               back_path="/rrhh"
-              IconComponent={{ component: Receipt, color: "text-yellow-600" }}
+              IconComponent={{ component: FaUserClock, color: "text-yellow-600" }}
             />
           </div>
           <form

@@ -4,7 +4,9 @@ import { ALLOWED_RRHH } from "~/components/auth/allowedRoles";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { Permission } from "~/components/auth/Permission";
 import { NavLink } from "react-router";
-import { Receipt, FileUser, UsersRound } from "lucide-react";
+import { FileUser, UsersRound, FileClock } from "lucide-react";
+import { FaBusinessTime } from "react-icons/fa";
+import { FaUserClock } from "react-icons/fa6";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Recursos Humanos" },
@@ -30,21 +32,21 @@ const menu = [
     description: "Resumen de horas equivalentes y viáticos del periodo.",
     to: "/rrhh/liquidation_report",
     permission: ALLOWED_RRHH,
-    icon: <Receipt className="w-10 h-10 text-green-600" />,
+    icon: <FileClock className="w-10 h-10 text-green-600" />,
   },
   {
     title: "Consolidado de horas por operario",
     description: "Resumen de horas trabajadas por cada operario.",
     to: "/rrhh/consolidated_hours_per_worker",
     permission: ALLOWED_RRHH,
-    icon: <Receipt className="w-10 h-10 text-yellow-600" />,
+    icon: <FaUserClock className="w-10 h-10 text-yellow-600" />,
   },
   {
     title: "Consolidado de horas por proyecto",
     description: "Resumen de horas trabajadas por cada proyecto.",
     to: "/rrhh/consolidated_hours_per_project",
     permission: ALLOWED_RRHH,
-    icon: <Receipt className="w-10 h-10 text-purple-600" />,
+    icon: <FaBusinessTime className="w-10 h-10 text-purple-600" />,
   },
 ];
 export default function RRHH() {

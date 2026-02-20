@@ -54,7 +54,6 @@ export const ConfigTable = <T extends { id: number }>({
   };
   const actionColumn: TableColumn<T> = {
     name: "Eliminar",
-    button: true,
     cell: (row) => (
       <ButtonDeleteIcon
         onClick={(e) => {

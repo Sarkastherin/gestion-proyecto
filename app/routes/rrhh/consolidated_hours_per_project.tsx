@@ -17,7 +17,7 @@ import { Funnel } from "lucide-react";
 import { MdPictureAsPdf } from "react-icons/md";
 import { Subtitle } from "~/components/Generals/Containers";
 import { useNavigate } from "react-router";
-import { BriefcaseBusiness } from "lucide-react";
+import { FaBusinessTime } from "react-icons/fa";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Consolidado de horas por proyecto" },
@@ -292,7 +292,7 @@ export default function ConsolidatedHoursPerProject() {
               title={"Consolidado de horas por proyecto"}
               back_path="/rrhh"
               IconComponent={{
-                component: BriefcaseBusiness,
+                component: FaBusinessTime,
                 color: "text-purple-600",
               }}
             />
