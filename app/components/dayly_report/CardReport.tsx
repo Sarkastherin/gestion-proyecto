@@ -1,10 +1,9 @@
 import { Card } from "../Generals/Cards";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-import type { DailyReportUI, DailyReportsView } from "~/types/projectsType";
+import type { DailyReportsView } from "~/types/projectsType";
 import { Badge } from "../Specific/Badge";
 import { formatDateUStoES } from "~/utils/functionsDays";
 import { Button } from "../Forms/Buttons";
-import { useModalState } from "../modals/customs/useModalState";
 import { useMemo } from "react";
 import { useContacts } from "~/context/ContactsContext";
 export default function CardReport({ report, onOpenModal }: { report: DailyReportsView; onOpenModal: () => void }) {
