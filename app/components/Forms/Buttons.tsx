@@ -15,6 +15,7 @@ export const variants = {
     "text-stone-800 bg-white border border-stone-300 hover:bg-stone-100 focus:ring-stone-100 dark:bg-stone-800 dark:text-white dark:border-stone-600 dark:hover:bg-stone-700 dark:hover:border-stone-600 dark:focus:ring-stone-700",
   dark: "text-white bg-stone-800 hover:bg-stone-800 focus:ring-stone-300 dark:bg-stone-800 dark:hover:bg-stone-700 dark:focus:ring-stone-700 dark:border-stone-700",
   pink: "text-white bg-pink hover:bg-pink-hover focus:ring-pink-focus",
+  cyan: "text-white bg-cyan hover:bg-cyan-hover focus:ring-cyan-focus",
   outlinePrimary:
     "text-primary hover:text-white border border-primary hover:bg-primary-hover focus:ring-primary-focus",
   outlineBlue:

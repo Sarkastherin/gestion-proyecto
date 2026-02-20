@@ -47,6 +47,10 @@ dark:focus:ring-blue-800"
   --color-pink: var(--color-pink-600);
   --color-pink-hover: var(--color-pink-700);
   --color-pink-focus: var(--color-pink-300);
+  /* Cyan */
+  --color-cyan: var(--color-cyan-600);
+  --color-cyan-hover: var(--color-cyan-700);
+  --color-cyan-focus: var(--color-cyan-300);
 }
 
 @layer theme {
@@ -84,6 +88,10 @@ dark:focus:ring-blue-800"
       --color-pink: var(--color-pink-500);
       --color-pink-hover: var(--color-pink-600);
       --color-pink-focus: var(--color-pink-700);
+      /* Cyan */
+      --color-cyan: var(--color-cyan-500);
+      --color-cyan-hover: var(--color-cyan-600);
+      --color-cyan-focus: var(--color-cyan-700);
     }
   }
 }
