@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import { useUI } from "~/context/UIContext";
 import { SectionCreateQuote } from "~/components/Specific/SectionCreateQuote";
 import { useEffect } from "react";

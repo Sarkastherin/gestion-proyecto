@@ -1,4 +1,4 @@
-import type { Route } from "../projects/+types/home";
+import type { Route } from "../+types/home";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import OpportunityForm from "~/templates/OpportunityForm";
 import { useAuth } from "~/context/AuthContext";

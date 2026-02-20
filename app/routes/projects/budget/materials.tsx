@@ -19,7 +19,7 @@ import { useModalState } from "~/components/modals/customs/useModalState";
 import PriceModal from "~/components/modals/customs/PriceModal";
 import { useUIModals } from "~/context/ModalsContext";
 import { columnsMaterialsQuote } from "~/components/QuotesAndBudgets/QuotesAndBudgetLayout";
-import type { BudgetMaterialsDB, BudgetMaterialsUI, BudgetItemProps } from "~/types/projectsType";
+import type { BudgetMaterialsDB, BudgetMaterialsUI } from "~/types/projectsType";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Oportunidad [Cotización]" },

@@ -13,7 +13,7 @@ export default function CustomerRequirementModal({
   open: boolean;
   onClose: () => void;
   data: {
-    customer_requirement: boolean
+    customer_requirement?: boolean
   };
 }) {
   const { register, watch, handleSubmit } = useForm<{

@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import OpportunityForm from "~/templates/OpportunityForm";
 import { useData } from "~/context/DataContext";
 import { ContainerToForms } from "~/components/Generals/Containers";

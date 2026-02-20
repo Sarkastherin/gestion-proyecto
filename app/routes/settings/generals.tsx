@@ -1,4 +1,4 @@
-import type { Route } from "./+types/home";
+import type { Route } from "../+types/home";
 import { useState, useEffect } from "react";
 import { ConfigTable } from "~/components/Specific/ConfigTable";
 import { useUI } from "~/context/UIContext";

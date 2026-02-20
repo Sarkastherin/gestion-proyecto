@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import type { ConsolidatedDataPerProject } from "./consolidated_hours_per_project";
 import { useLocation } from "react-router";
 import type { GlobalBalance } from "./consolidated_hours_per_worker";
@@ -7,8 +7,8 @@ import PDFConsolidatedPerProjects from "~/PDF/PDFConsolidatedPerProjects";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Consolidados por Trabajador" },
-    { name: "description", content: "Consolidados por Trabajador [Informes]" },
+    { title: "Consolidados por Proyecto" },
+    { name: "description", content: "Consolidados por Proyecto [Informes]" },
   ];
 }
 

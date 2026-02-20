@@ -1,7 +1,6 @@
 import { useAuth } from "~/context/AuthContext";
 import { Navigate } from "react-router";
 import type { Roles } from "~/context/AuthContext";
-import { useEffect } from "react";
 
 type RequireRoleProps = {
   allowed: Roles[];

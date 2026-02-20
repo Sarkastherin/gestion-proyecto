@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { useData } from "~/context/DataContext";
 import { Card } from "~/components/Generals/Cards";

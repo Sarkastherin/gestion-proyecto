@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import { useOutletContext } from "react-router";
 import { Input, Select } from "~/components/Forms/Inputs";
 import { useState } from "react";

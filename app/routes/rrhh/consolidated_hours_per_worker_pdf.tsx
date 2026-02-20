@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import PDFConsolidatedPerWorker from "~/PDF/PDFConsolidatedPerWorker";
 import type { ConsolidatedData } from "../rrhh/consolidated_hours_per_worker";
 import { useLocation } from "react-router";

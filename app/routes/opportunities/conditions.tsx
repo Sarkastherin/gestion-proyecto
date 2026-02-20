@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import ConditionsForm from "~/templates/ConditionsForm";
 import { SectionCreateQuote } from "~/components/Specific/SectionCreateQuote";

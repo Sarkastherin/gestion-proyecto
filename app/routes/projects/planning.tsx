@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import { useData } from "~/context/DataContext";
 import { useContacts } from "~/context/ContactsContext";

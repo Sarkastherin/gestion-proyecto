@@ -2,9 +2,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useOutletContext } from "react-router";
 import type { FC } from "react";
-import type { Route } from "../../+types/root";
-
-import { useUI } from "~/context/UIContext";
+import type { Route } from "../+types/home";
 import { useData } from "~/context/DataContext";
 
 import { Card } from "~/components/Generals/Cards";

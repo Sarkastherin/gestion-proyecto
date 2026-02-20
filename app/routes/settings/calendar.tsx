@@ -19,7 +19,6 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import "~/styles/calendar.css";
 import { useUIModals } from "~/context/ModalsContext";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
-import FooterUITables from "~/components/Generals/FooterUITable";
 import { Button } from "~/components/Forms/Buttons";
 
 export function meta({}: Route.MetaArgs) {

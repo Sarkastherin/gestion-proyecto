@@ -1,4 +1,4 @@
-import type { Route } from "../+types/conditions";
+import type { Route } from "../../+types/home"
 import { useForm, useFieldArray } from "react-hook-form";
 import { useUI } from "~/context/UIContext";
 import FooterForms from "~/templates/FooterForms";

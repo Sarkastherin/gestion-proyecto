@@ -1,7 +1,6 @@
 import type { Route } from "../+types/home";
 import { EntityTable } from "~/components/Generals/EntityTable";
 import { useData } from "~/context/DataContext";
-import { useNavigate } from "react-router";
 import type { TableColumn } from "react-data-table-component";
 import { useEffect, useState } from "react";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
@@ -9,8 +8,6 @@ import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 import type { ReportsEmployeesUIView } from "~/types/projectsType";
 import { formatDateUStoES } from "~/utils/functionsDays";
 import { Badge } from "~/components/Specific/Badge";
-import FooterUITables from "~/components/Generals/FooterUITable";
-import { ButtonExport } from "~/components/Specific/Buttons";
 import { ALLOWED_REPORTS_EMPLOYEES } from "~/components/auth/allowedRoles";
 import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 import { UsersRound } from "lucide-react";

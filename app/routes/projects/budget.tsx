@@ -1,4 +1,4 @@
-import type { Route } from "../../+types/root";
+import type { Route } from "../+types/home";
 import { useData } from "~/context/DataContext";
 import { Outlet, useParams, useNavigate } from "react-router";
 import QuotesAndBudgetLayout from "~/components/QuotesAndBudgets/QuotesAndBudgetLayout";

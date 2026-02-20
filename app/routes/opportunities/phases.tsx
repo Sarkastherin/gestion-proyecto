@@ -1,5 +1,4 @@
-import type { Route } from "./+types/conditions";
-import { useUI } from "~/context/UIContext";
+import type { Route } from "../+types/home";
 import { ContainerToForms } from "~/components/Generals/Containers";
 import PhasesForm from "~/templates/PhasesForm";
 import { useOpportunityRealtime } from "~/backend/realTime";

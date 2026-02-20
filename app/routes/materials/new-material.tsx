@@ -1,5 +1,5 @@
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
-import type { Route } from "../materials/+types/home";
+import type { Route } from "../+types/home";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { MaterialForm } from "~/templates/MaterialForm";
 import { ALLOWED_NEW_MATERIAL } from "~/components/auth/allowedRoles";
