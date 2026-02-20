@@ -1,0 +1,1 @@
+import{w as t,j as o}from"./chunk-PVWAREVJ-Cl_c9Jt0.js";function s({}){return[{title:"Consolidados por Trabajador"},{name:"description",content:"Consolidados por Trabajador [Informes]"}]}const e=t(function(){return o.jsx("div",{className:"w-full mt-8 mx-auto flex gap-6 px-8",children:o.jsx("div",{className:"w-full"})})});export{e as default,s as meta};
