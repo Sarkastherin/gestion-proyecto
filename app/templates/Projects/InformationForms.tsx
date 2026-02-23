@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { CardToggle, Card } from "~/components/Generals/Cards";
+import { CardToggle } from "~/components/Generals/Cards";
 import { Input, Textarea, Select } from "~/components/Forms/Inputs";
 import FooterForms from "../FooterForms";
 import type { ProjectsDB, ProjectAndBudgetUI } from "~/types/projectsType";
@@ -8,11 +8,10 @@ import { useUI } from "~/context/UIContext";
 import { useModalState } from "~/components/modals/customs/useModalState";
 import type { ContactsDataType } from "~/context/ContactsContext";
 import { formaPago } from "../ConditionsForm";
-import { MarginsForm } from "../MarginsForm";
 import { useUIModals } from "~/context/ModalsContext";
 import { updateSingleRow } from "~/utils/updatesSingleRow";
 import { projectsApi } from "~/backend/cruds";
-import { workdayIntl, networkdaysIntl } from "~/utils/functionsDays";
+import { workdayIntl } from "~/utils/functionsDays";
 export function InformationForms({
   defaultValues,
 }: {

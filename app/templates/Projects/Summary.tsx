@@ -43,10 +43,6 @@ export default function ProjectSummary({
     () => new Map(employees?.map((e) => [e.id, e.contacto_nombre])),
     [employees],
   );
-  const phasesById = useMemo(
-    () => new Map(phases_project.map((phase) => [phase.id, phase])),
-    [phases_project],
-  );
   const supervisorsById = (id_phase: number): string => {
     const phase = phases_project.find((phase) => phase.id === id_phase);
     if (phase?.id_supervisor) {
@@ -73,6 +69,10 @@ export default function ProjectSummary({
       const end = new Date().toLocaleDateString("sv-SE");
       const mode = project.mode;
       if (!start || !mode) return;
+      if(start > end) {
+        setDaysUsed(0);
+        return;
+      }
       const daysCount = networkdaysIntl(start, end, mode);
       setDaysUsed(daysCount);
     }
