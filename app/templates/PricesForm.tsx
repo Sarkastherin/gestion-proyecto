@@ -185,6 +185,7 @@ export default function PricesForm({
                   <th className="px-1 py-2 whitespace-nowrap">Proveedor</th>
                   <th className="px-1 py-2 whitespace-nowrap">Precio</th>
                   <th className="px-1 py-2 whitespace-nowrap">Default</th>
+                  <th className="px-1 py-2 whitespace-nowrap">Estimado</th>
                   <th className="px-1 py-2 whitespace-nowrap">🗑️</th>
                   {onSelectPrice && (
                     <th className="px-1 py-2 whitespace-nowrap">Seleccionar</th>
@@ -255,6 +256,30 @@ export default function PricesForm({
                                 shouldDirty: true,
                               });
                             });
+                          }}
+                        />
+                        <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-gray-300 ring-[6px] ring-white transition-all ring-inset peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent dark:bg-gray-600 dark:ring-gray-900 dark:peer-checked:bg-gray-900"></span>
+                      </label>
+                    </td>
+                    <td className="px-1 py-2 whitespace-nowrap">
+                      <label
+                        htmlFor={`prices.${index}.estimated_price`}
+                        className="relative block h-8 w-14 rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:_transparent] has-checked:bg-blue-500 dark:bg-gray-600 dark:has-checked:bg-blue-600"
+                      >
+                        <input
+                          type="checkbox"
+                          id={`prices.${index}.estimated_price`}
+                          className="peer sr-only"
+                          checked={watch(`prices.${index}.estimated_price`)}
+                          onChange={() => {
+                            const currentValue = watch(`prices.${index}.estimated_price`) || false;
+                            setValue(
+                              `prices.${index}.estimated_price`,
+                              !currentValue,
+                              {
+                                shouldDirty: true,
+                              }
+                            );
                           }}
                         />
                         <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-gray-300 ring-[6px] ring-white transition-all ring-inset peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent dark:bg-gray-600 dark:ring-gray-900 dark:peer-checked:bg-gray-900"></span>

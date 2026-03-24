@@ -359,8 +359,8 @@ export function ReportEmployeeForm({
                             `reportEmployees.${index}.absent`,
                             !watch(`reportEmployees.${index}.absent`)
                           );
-                          setValue(`reportEmployees.${index}.hour_start`, "");
-                          setValue(`reportEmployees.${index}.hour_end`, "");
+                          setValue(`reportEmployees.${index}.hour_start`, null);
+                          setValue(`reportEmployees.${index}.hour_end`, null);
                         }}
                       />
                       <span className="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-gray-300 ring-[6px] ring-white transition-all ring-inset peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent dark:bg-gray-600 dark:ring-gray-900 dark:peer-checked:bg-gray-900"></span>

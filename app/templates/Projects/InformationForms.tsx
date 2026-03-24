@@ -78,9 +78,9 @@ export function InformationForms({
       return;
     }
     const endDate = workdayIntl(start, duration, mode).toLocaleDateString(
-      "sv-SE"
+      "sv-SE",
     );
-    setValue("plan_end_date", endDate);
+    setValue("plan_end_date", endDate, { shouldDirty: true });
   }, [watch("plan_start_date"), watch("plan_duration"), watch("mode")]);
 
   return (

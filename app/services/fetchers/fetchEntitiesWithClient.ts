@@ -1,7 +1,11 @@
 import { supabase } from "~/backend/supabaseClient";
-import type { ContactsDataType, EmployeesDataType } from "~/context/ContactsContext";
+import type {
+  ContactsDataType,
+  EmployeesDataType,
+} from "~/context/ContactsContext";
 type EntityWithClient<T> = T & { client: ContactsDataType };
 type EntityWithEmployee<T> = T & { employee: EmployeesDataType };
+type EntityWithSupplier<T> = T & { supplier: ContactsDataType };
 interface FetchEntitiesOptions<T> {
   table: string;
   select: string;
@@ -42,12 +46,16 @@ export async function setEntities<T>({
   id_name,
   employeeKey,
   employees,
+  suppliers,
+  suppliersKey,
 }: FetchEntitiesOptions<T> & {
   setData: (data: T[]) => void;
   clientKey?: keyof T;
   clients?: ContactsDataType[];
   employeeKey?: keyof T;
   employees?: EmployeesDataType[];
+  suppliers?: ContactsDataType[];
+  suppliersKey?: keyof T;
 }): Promise<T[]> {
   if (clients && clientKey) {
     const entities = await fetchEntitiesWithClient<T>({
@@ -58,8 +66,7 @@ export async function setEntities<T>({
     });
     setData(entities);
     return entities;
-  } 
-  else if (employees && employeeKey) {
+  } else if (employees && employeeKey) {
     const entities = await fetchEntitiesWithEmployees<T>({
       table,
       select,
@@ -68,9 +75,18 @@ export async function setEntities<T>({
     });
     setData(entities);
     return entities;
-  }
-  else {
-    if(table === "holidays") console.log("Fetching holidays without client enrichment");
+  } else if (suppliers && suppliersKey) {
+    const entities = await fetchEntitiesWithSuppliers<T>({
+      table,
+      select,
+      suppliers,
+      suppliersKey,
+    });
+    setData(entities);
+    return entities;
+  } else {
+    if (table === "holidays")
+      console.log("Fetching holidays without client enrichment");
     const entities = await fetchEntities<T>({ table, select, id_name });
     setData(entities);
     return entities;
@@ -96,6 +112,31 @@ export async function fetchEntitiesWithClient<T>({
         return { ...item, client };
       })
       .filter((item): item is EntityWithClient<T> => item !== null);
+    allData = enriched;
+  }
+
+  return allData;
+}
+export async function fetchEntitiesWithSuppliers<T>({
+  table,
+  select,
+  suppliersKey,
+  suppliers,
+}: FetchEntitiesOptions<T> & {
+  suppliersKey: keyof T;
+  suppliers: ContactsDataType[];
+}): Promise<T[]> {
+  let allData = await fetchEntities<T>({ table, select });
+
+  if (suppliers && suppliers.length > 0 && suppliersKey) {
+    const enriched = allData
+      .map((item) => {
+        const supplierId = item[suppliersKey];
+        const supplier = suppliers.find((c) => c.id === supplierId);
+        if (!supplier) return null;
+        return { ...item, supplier };
+      })
+      .filter((item): item is EntityWithSupplier<T> => item !== null);
     allData = enriched;
   }
 

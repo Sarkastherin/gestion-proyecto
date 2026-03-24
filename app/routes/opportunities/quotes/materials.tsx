@@ -4,7 +4,10 @@ import { details_materialsApi } from "~/backend/cruds";
 import { useUI } from "~/context/UIContext";
 import type { MaterialsUI } from "~/types/materialsType";
 import FooterForms from "~/templates/FooterForms";
-import { TableDetailsQuotes, Cell } from "~/components/QuotesAndBudgets/TableDetailsQuotes";
+import {
+  TableDetailsQuotes,
+  Cell,
+} from "~/components/QuotesAndBudgets/TableDetailsQuotes";
 import { Input } from "~/components/Forms/Inputs";
 import { ButtonDeleteIcon, ButtonAdd } from "~/components/Specific/Buttons";
 import { useEffect, useState } from "react";
@@ -69,8 +72,6 @@ export default function Materials() {
     name: "materials",
   });
 
-  
-
   const handleAdd = () => {
     if (propsQuoteAndBudget && propsQuoteAndBudget.selsectedPhase > 0) {
       append({
@@ -96,13 +97,11 @@ export default function Materials() {
   const { details_materials } = selectedOpportunity || {};
   useEffect(() => {
     const details = details_materials?.filter(
-      (q) => q.id_quote === selectedQuoteId
+      (q) => q.id_quote === selectedQuoteId,
     );
     //console.log({ details });
     if (details) reset({ materials: details });
   }, [details_materials, selectedQuoteId]);
-
-  
 
   useFieldsChange({ isSubmitSuccessful, isDirty });
   /* MODALES */
@@ -127,7 +126,7 @@ export default function Materials() {
     setValue(`materials.${index}.id_material`, propsMaterial.id);
     setValue(
       `materials.${index}.id_price`,
-      (defaultPrice as PricesDB)?.id || 0
+      (defaultPrice as PricesDB)?.id || 0,
     );
   };
   const handleSelectedPrice = ({
@@ -155,7 +154,7 @@ export default function Materials() {
     try {
       const { materials } = formData;
       const cleanedMaterials = materials.map(
-        ({ materials, prices, ...rest }) => rest
+        ({ materials, prices, ...rest }) => rest,
       );
       const newData = await updatesArrayFields({
         fieldName: "materials",
@@ -171,7 +170,7 @@ export default function Materials() {
       });
       const oldData = cleanedMaterials.filter(
         (item): item is DetailsMaterialsDB =>
-          "id" in item && typeof item.id === "number"
+          "id" in item && typeof item.id === "number",
       );
       reset({
         materials: [...oldData, ...(Array.isArray(newData) ? newData : [])],
@@ -213,7 +212,7 @@ export default function Materials() {
             {fields
               .map((field, index) => ({ ...field, index }))
               .filter(
-                (item) => item.id_phase === propsQuoteAndBudget.selsectedPhase
+                (item) => item.id_phase === propsQuoteAndBudget.selsectedPhase,
               )
               .map(({ index, id }) => (
                 <tr
@@ -254,7 +253,7 @@ export default function Materials() {
                   <Cell>
                     <SelectUnits
                       value={Number(
-                        watch(`materials.${index}.materials.id_unit`) ?? 0
+                        watch(`materials.${index}.materials.id_unit`) ?? 0,
                       )}
                       disabled
                     />
@@ -292,16 +291,27 @@ export default function Materials() {
                         },
                       })}
                     />
-                    <Input
-                      disabled={!editByStatus}
-                      readOnly
-                      value={Number(
-                        watch(`materials.${index}.prices.price`) ?? 0
+                    <div className="relative">
+                      <Input
+                      title={watch(`materials.${index}.prices.estimated_price`) ? "Precio estimado" : "Precio"}
+                        type="number"
+                        step={0.01}
+                        disabled={!editByStatus}
+                        readOnly
+                        value={Number(
+                          watch(`materials.${index}.prices.price`) ?? 0,
+                        )}
+                        placeholder="$ 0.00"
+                        onClick={() => handleOpenPrices(index)}
+                        error={errors.materials?.[index]?.id_price?.message}
+                        className={`${watch(`materials.${index}.prices.estimated_price`) ? "bg-yellow-200/80 dark:bg-yellow-500/70" : ""}`}
+                      />
+                      {watch(`materials.${index}.prices.estimated_price`) && (
+                        <span className="absolute right-2 top-2 text-xs font-semibold text-gray-500 dark:text-gray-300">
+                          ⚠️ Estimado
+                        </span>
                       )}
-                      placeholder="$ 0.00"
-                      onClick={() => handleOpenPrices(index)}
-                      error={errors.materials?.[index]?.id_price?.message}
-                    />
+                    </div>
                   </Cell>
 
                   {/* Total (calculado) */}
@@ -313,7 +323,7 @@ export default function Materials() {
                       value={roundToPrecision(
                         (watch(`materials.${index}.quantity`) ?? 0) *
                           (watch(`materials.${index}.prices.price`) ?? 0),
-                        2
+                        2,
                       )}
                     />
                   </Cell>

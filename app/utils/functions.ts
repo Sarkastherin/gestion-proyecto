@@ -162,7 +162,8 @@ export const transformToCSVRow =
             : "",
         weight: item.weight ?? "",
         application: escapeCSVValue(item.application ?? ""),
-        supplier: defaultPrice.id_supplier ?? "",
+        "supplier.nombre": escapeCSVValue(defaultPrice.supplier?.nombre || ""),
+        "id_supplier": defaultPrice.id_supplier ?? "",
       };
     }
     if (type === "resumen") {

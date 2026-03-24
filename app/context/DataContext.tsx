@@ -6,7 +6,7 @@ import type {
   DailyReportsView,
   DailyReportUI,
   HolidaysDB,
-  LiquidationReport
+  LiquidationReport,
 } from "~/types/projectsType";
 import type {
   DetailsItemsDB,
@@ -18,7 +18,10 @@ import type {
 } from "~/types/opportunitiesType";
 import { supabase } from "~/backend/supabaseClient";
 import { useContacts } from "./ContactsContext";
-import { setEntities } from "~/services/fetchers/fetchEntitiesWithClient";
+import {
+  setEntities,
+  fetchEntities,
+} from "~/services/fetchers/fetchEntitiesWithClient";
 import { holidaysApi } from "~/backend/cruds";
 import type {
   MaterialsUI,
@@ -42,7 +45,7 @@ type DataContextType = {
   getMaterials: () => Promise<MaterialsUI[]>;
   getOpportunityById: (
     id: number,
-    onlyReturn?: boolean
+    onlyReturn?: boolean,
   ) => Promise<OpportunityAndQuotesUI | null>;
   selectedOpportunity: OpportunityAndQuotesUI | null;
   refreshOpportunity: () => Promise<void>;
@@ -68,7 +71,7 @@ type DataContextType = {
     React.SetStateAction<ReportsEmployeesUIView[] | null>
   >;
   getReportsBySupervisor: (
-    id_supervisor: number
+    id_supervisor: number,
   ) => Promise<DailyReportsView[] | null>;
   dailyReportsView: DailyReportsView[] | null;
   getDailyReportById: (id: number) => Promise<DailyReportUI | null>;
@@ -81,7 +84,7 @@ type DataContextType = {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 export const DataProvider = ({ children }: { children: React.ReactNode }) => {
-  const { clients, employees } = useContacts();
+  const { clients, employees, suppliers } = useContacts();
   const [projects, setProjects] = useState<ProjectsUITable[] | null>(null);
   const [opportunities, setOpportunities] = useState<
     OpportunityUITable[] | null
@@ -90,7 +93,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [families, setFamilies] = useState<FamilyDB[] | null>(null);
   const [categories, setCategories] = useState<CategoryDB[] | null>(null);
   const [subcategories, setSubcategories] = useState<SubCategoryDB[] | null>(
-    null
+    null,
   );
   const [materials, setMaterials] = useState<MaterialsUI[] | null>(null);
   const [selectedOpportunity, setSelectedOpportunity] =
@@ -98,7 +101,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedProject, setSelectedProject] =
     useState<ProjectAndBudgetUI | null>(null);
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialsUI | null>(
-    null
+    null,
   );
   const [reportsEmployees, setReportsEmployees] = useState<
     ReportsEmployeesUIView[] | null
@@ -114,7 +117,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     if (clients) {
       setEntities<ProjectsUITable>({
         table: "projects",
-        select: "*, users(*), phases_project_supervisors:phases_project(id_supervisor)",
+        select:
+          "*, users(*), phases_project_supervisors:phases_project(id_supervisor)",
         clientKey: "id_client",
         clients,
         setData: setProjects,
@@ -133,11 +137,28 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
   const getMaterials = async (): Promise<MaterialsUI[]> => {
-    return setEntities<MaterialsUI>({
+    const materialsData = await fetchEntities<MaterialsUI>({
+      table: "materials",
+      select: "*, prices(*), view_categorizations(*), units(*)",
+    });
+    // mapear id_supplier a cada precio de material
+    if (materialsData && suppliers) {
+      materialsData.map((material) => {
+        material.prices?.map((price) => {
+          const supplier = suppliers?.find((s) => s.id === price.id_supplier);
+          if (supplier) {
+            price.supplier = supplier;
+          }
+        });
+      });
+    }
+    setMaterials(materialsData);
+    return materialsData;
+    /* return setEntities<MaterialsUI>({
       table: "materials",
       select: "*, prices(*), view_categorizations(*), units(*)",
       setData: setMaterials,
-    });
+    }); */
   };
   const getUnits = async (): Promise<UnitsDB[]> => {
     return setEntities<UnitsDB>({
@@ -169,7 +190,7 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const getOpportunityById = async (
     id: number,
-    onlyReturn?: boolean
+    onlyReturn?: boolean,
   ): Promise<OpportunityAndQuotesUI | null> => {
     try {
       const { data: opportunity, error } = await supabase
@@ -199,13 +220,13 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         const { data, error } = await supabase
           .from("quotes")
           .select(
-            "details_items(*), details_materials(*,materials:id_material(*),prices:id_price(*))"
+            "details_items(*), details_materials(*,materials:id_material(*),prices:id_price(*))",
           )
           .in("id", idsQuotes);
 
         if (error)
           throw new Error(
-            `Error al obtener detalles de quotes: ${error.message}`
+            `Error al obtener detalles de quotes: ${error.message}`,
           );
         if (data?.length) {
           const originalsQuotes: QuotesUI[] = opportunity.quotes;
@@ -221,28 +242,28 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
             const quoteTotals = getQuoteTotals(match);
             const t_mg_materials = roundToPrecision(
               quoteTotals.total_materials * ((q.materials ?? 0) / 100 + 1),
-              2
+              2,
             );
             const t_mg_labor = roundToPrecision(
               quoteTotals.total_labor * ((q.labor ?? 0) / 100 + 1),
-              2
+              2,
             );
             const t_mg_subcontracting = roundToPrecision(
               quoteTotals.total_subcontracting *
                 ((q.subcontracting ?? 0) / 100 + 1),
-              2
+              2,
             );
             const t_mg_others = roundToPrecision(
               quoteTotals.total_others * ((q.others ?? 0) / 100 + 1),
-              2
+              2,
             );
             const total = roundToPrecision(
               t_mg_materials + t_mg_labor + t_mg_subcontracting + t_mg_others,
-              2
+              2,
             );
             const t_mg_total = roundToPrecision(
               total * ((q.general ?? 0) / 100 + 1),
-              2
+              2,
             );
             return {
               ...q,
@@ -278,13 +299,13 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
   };
   const getProjectById = async (
     id: number,
-    onlyReturn?: boolean
+    onlyReturn?: boolean,
   ): Promise<ProjectAndBudgetUI | null> => {
     try {
       const { data: project, error } = await supabase
         .from("projects")
         .select(
-          "*, phases_project(*, tasks:view_task_and_progress(*, task_assignments(*)), daily_reports(*, report_tasks(*), report_employees(*))), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*))"
+          "*, phases_project(*, tasks:view_task_and_progress(*, task_assignments(*)), daily_reports(*, report_tasks(*), report_employees(*))), budget_details_items(*), budget_details_materials(*,materials:id_material(*),prices:id_price(*))",
         )
         .eq("id", id)
         .single();
@@ -296,28 +317,28 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
       const budgetTotals = getBudgetTotals(budget);
       const t_mg_materials = roundToPrecision(
         budgetTotals.total_materials * ((project.materials ?? 0) / 100 + 1),
-        2
+        2,
       );
       const t_mg_labor = roundToPrecision(
         budgetTotals.total_labor * ((project.labor ?? 0) / 100 + 1),
-        2
+        2,
       );
       const t_mg_subcontracting = roundToPrecision(
         budgetTotals.total_subcontracting *
           ((project.subcontracting ?? 0) / 100 + 1),
-        2
+        2,
       );
       const t_mg_others = roundToPrecision(
         budgetTotals.total_others * ((project.others ?? 0) / 100 + 1),
-        2
+        2,
       );
       const total = roundToPrecision(
         t_mg_materials + t_mg_labor + t_mg_subcontracting + t_mg_others,
-        2
+        2,
       );
       const t_mg_total = roundToPrecision(
         total * ((project.general ?? 0) / 100 + 1),
-        2
+        2,
       );
       const client = clients?.find((c) => c.id === project.id_client);
       if (!client) throw new Error("Cliente no encontrado");
@@ -352,8 +373,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     setOpportunities(
       (prev) =>
         prev?.map((opp) =>
-          opp.id === updatedOpportunity.id ? updatedOpportunity : opp
-        ) ?? []
+          opp.id === updatedOpportunity.id ? updatedOpportunity : opp,
+        ) ?? [],
     );
   };
   const refreshMaterial = async (id?: number) => {
@@ -372,8 +393,8 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
     setProjects(
       (prev) =>
         prev?.map((proj) =>
-          proj.id === updateProject.id ? updateProject : proj
-        ) ?? []
+          proj.id === updateProject.id ? updateProject : proj,
+        ) ?? [],
     );
   };
   const getReportsEmployees = async () => {
@@ -399,13 +420,17 @@ export const DataProvider = ({ children }: { children: React.ReactNode }) => {
         const hoursWorked = calculatePaidHours(
           report.hours_worked ?? 0,
           report.date_report,
-          dataHolidays || []
+          dataHolidays || [],
         );
-        return { ...report, equivalent_hours: hoursWorked.equivalentHours, day_type: hoursWorked.dayType };
+        return {
+          ...report,
+          equivalent_hours: hoursWorked.equivalentHours,
+          day_type: hoursWorked.dayType,
+        };
       });
       setLiquidationReport(updatedReports);
     }
-  }
+  };
   const getReportsBySupervisor = async (id_supervisor: number) => {
     const { data, error } = await supabase
       .from("view_daily_reports")

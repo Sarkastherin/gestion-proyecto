@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import type { OpportunityUITable } from "~/types/opportunitiesType";
 import { useData } from "~/context/DataContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
-import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
 import { ALLOWED_OPPORTUNITIES } from "~/components/auth/allowedRoles";

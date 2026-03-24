@@ -4,11 +4,8 @@ import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import { useData } from "~/context/DataContext";
 import { EntityTable } from "~/components/Generals/EntityTable";
-import { Button } from "~/components/Forms/Buttons";
 import type { MaterialsUI } from "~/types/materialsType";
-import { ButtonExport } from "~/components/Specific/Buttons";
 import { ImportCsvInput } from "~/utils/import";
-import FooterUITables from "~/components/Generals/FooterUITable";
 import { ContainerWithTitle } from "~/components/Generals/Containers";
 import ModalBase from "~/components/modals/ModalBase";
 import { ProtectedRoute } from "~/components/auth/ProtectedRoute";
@@ -39,25 +36,22 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
     selector: (row) => row.view_categorizations.description_subcategory,
     width: "220px",
     sortable: true,
-    grow: 1,
   },
   {
     name: "Rubro",
     selector: (row) => row.view_categorizations.description_category,
     width: "220px",
     sortable: true,
-    grow: 1,
   },
   {
     name: "Familia",
     selector: (row) => row.view_categorizations.description_family,
     width: "220px",
     sortable: true,
-    grow: 1,
   },
   {
     name: "Unidad",
-    selector: (row) => row.units?.description || "",
+    selector: (row) => row.units?.description || "-",
     sortable: true,
     width: "120px",
   },
@@ -66,9 +60,16 @@ export const columnsMaterials: TableColumn<MaterialsUI>[] = [
     selector: (row) =>
       row.prices?.find((price) => price.default)?.price
         ? `$${row.prices.find((price) => price.default)?.price?.toFixed(2)}`
-        : "",
+        : "$0.00",
     sortable: true,
     width: "120px",
+  },
+  {
+    name: "Proveedor",
+    selector: (row) =>
+      row.prices?.find((price) => price.default)?.supplier?.nombre || "-",
+    sortable: true,
+    width: "150px",
   },
 ];
 export default function Materials() {
@@ -79,13 +80,6 @@ export default function Materials() {
   useEffect(() => {
     if (!materials) getMaterials();
   }, []);
-  const [filtered, setFiltered] = useState(materials ?? []);
-  useEffect(() => {
-    setFiltered(materials ?? []);
-  }, [materials]);
-  const handleUploadFile = () => {
-    setOpen(true);
-  };
   const headers = [
     { label: "ID", key: "id" },
     { label: "DESCRIPCION", key: "description" },
@@ -98,9 +92,57 @@ export default function Materials() {
     { label: "UNIDAD", key: "units.description" },
     { label: "ID UNIDAD", key: "id_unit" },
     { label: "PRECIO", key: "defaultPrice" },
+    { label: "ID PROVEEDOR", key: "id_supplier" },
+    { label: "PROVEEDOR", key: "supplier.nombre" },
     { label: "PESO", key: "weight" },
     { label: "APLICACION", key: "application" },
   ];
+  const ExpandedComponent = ({ data }: { data: MaterialsUI }) => {
+    // mostrar precios y proveedores asociados al material expandido
+    return (
+      <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm">
+        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">
+          Precios y Proveedores
+        </h3>
+        {data.prices && data.prices.length > 0 ? (
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr>
+                <th className="border-b px-4 py-2 text-gray-700 dark:text-gray-300">
+                  Proveedor
+                </th>
+                <th className="border-b px-4 py-2 text-gray-700 dark:text-gray-300">
+                  Precio
+                </th>
+                <th className="border-b px-4 py-2 text-gray-700 dark:text-gray-300">
+                  Predeterminado
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.prices.map((price) => (
+                <tr key={price.id}>
+                  <td className={`border-b border-zinc-400 px-4 py-2 ${price.default ? "font-semibold text-blue-700 dark:text-blue-400": "text-gray-700 dark:text-gray-300" } `}>
+                    {price.supplier?.nombre || "N/A"}
+                  </td>
+                  <td className={`border-b border-zinc-400 px-4 py-2 ${price.default ? "font-semibold text-blue-700 dark:text-blue-400": "text-gray-700 dark:text-gray-300" } `}>
+                    ${price.price.toFixed(2)}
+                  </td>
+                  <td className={`border-b border-zinc-400 px-4 py-2 ${price.default ? "font-semibold text-blue-700 dark:text-blue-400": "text-gray-700 dark:text-gray-300" } `}>
+                    {price.default ? "Sí" : "No"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="text-gray-700 dark:text-gray-300">
+            No hay precios asociados a este material.
+          </p>
+        )}
+      </div>
+    );
+  };
   if (!materials) return <LoaderComponent />;
   return (
     <ProtectedRoute allowed={ALLOWED_MATERIALS}>
@@ -117,6 +159,7 @@ export default function Materials() {
           filterFields={[
             {
               key: "description",
+              type: "text",
               label: "Buscar por descripción",
               autoFilter: true,
             },
@@ -131,27 +174,10 @@ export default function Materials() {
             title: "+ Material",
             color: "yellow",
           }}
+          expandableRows
+          ExpandedComponent={ExpandedComponent}
         />
       </ContainerWithTitle>
-
-      {/* <FooterUITables
-        justify="justify-between"
-        buttonNavigate={{ title: "+ Material", route: "/materials/new-material", color: "yellow" }}
-      >
-        <div className="flex gap-4">
-          <div className="w-fit">
-            <Button variant="blue" type="button" onClick={handleUploadFile}>
-              Importar
-            </Button>
-          </div>
-          <ButtonExport
-            data={filtered}
-            headers={headers}
-            filename="Listado de materiales"
-            type="materials"
-          />
-        </div>
-      </FooterUITables> */}
       <ModalBase
         open={open}
         onClose={() => setOpen(false)}

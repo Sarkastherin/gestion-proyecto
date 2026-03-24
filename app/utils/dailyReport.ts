@@ -33,9 +33,10 @@ export function calculatePhaseProgress(
 }
 export function calculateGlobalProgress(tasks: TaskProgressGroup[]): number {
   if (tasks.length === 0) return 0;
+  const duracionSum = tasks.reduce((acc, t) => acc + (t.duration || 0), 0);
+  if (duracionSum === 0) return 0;
+  const calculatedProgress = tasks.map(t => (t.progress * t.duration)) // progreso ponderado por duración
+  const weightedAvg = calculatedProgress.reduce((acc, p) => acc + p, 0) / duracionSum; // promedio ponderado
 
-  const sum = tasks.reduce((acc, t) => acc + t.progress, 0);
-  const avg = sum / tasks.length;
-
-  return Math.round(avg); // redondeo para UI
+  return Math.round(weightedAvg); // redondeo para UI
 }

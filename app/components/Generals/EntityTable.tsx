@@ -83,6 +83,10 @@ type EntityTableProps<T extends object> = {
     icon?: { component: IconType; color: string };
   };
 };
+type CurrentSort = {
+  columnId: string | number | undefined;
+  direction: "asc" | "desc";
+};
 const options = {
   rowsPerPageText: "Filas por página",
   rangeSeparatorText: "de",
@@ -171,6 +175,15 @@ export function EntityTable<T extends object>({
     return savedPage ? parseInt(savedPage, 10) : 1;
   });
 
+  // Estado para el orden actual
+  const [currentSort, setCurrentSort] = useState<CurrentSort>(() => {
+    // Recupera el orden guardado
+    const savedSort = localStorage.getItem(`${storageKey}_sort`);
+    return savedSort
+      ? JSON.parse(savedSort)
+      : { columnId: null, direction: "asc" };
+  });
+
   // Función para determinar si una fila está inactiva
   const isRowInactive = (row: T): boolean => {
     if (!inactiveField) return false;
@@ -227,7 +240,16 @@ export function EntityTable<T extends object>({
           const itemValue = removeAccents(
             String(getNestedValue(item, key) ?? "").toLowerCase(),
           );
-          return itemValue.includes(value);
+          if (type === "text") {
+            // Split by spaces and check all words (ignore extra spaces)
+            const words = value.split(/\s+/).filter(Boolean);
+            // Only match if ALL words are present in itemValue
+            return words.length === 0
+              ? true
+              : words.every((word) => itemValue.includes(word));
+          } else {
+            return itemValue.includes(value);
+          }
         }
       }),
     );
@@ -256,6 +278,17 @@ export function EntityTable<T extends object>({
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     localStorage.setItem(`${storageKey}_page`, page.toString());
+  };
+
+  const handleSortChange = (
+    column: TableColumn<T>,
+    direction: "asc" | "desc",
+  ) => {
+    setCurrentSort({ columnId: column.id, direction });
+    localStorage.setItem(
+      `${storageKey}_sort`,
+      JSON.stringify({ columnId: column.id, direction }),
+    );
   };
 
   // useEffect consolidado para manejar cambios en data o filtros
@@ -293,12 +326,16 @@ export function EntityTable<T extends object>({
       });
     }
   }, []);
-  //const ExpandedComponent = ({ data }: { data: T[] }) => <pre>{JSON.stringify(data, null, 2)}</pre>;
   return (
     <div className="relative flex flex-col gap-4">
       {showFilterInfo && filterFields.length > 0 && (
-        <div className="mb-2 text-blue-600 dark:text-blue-400 font-semibold text-sm">
-          ℹ️ Filtros aplicados.
+        <div className="flex justify-between text-sm font-semibold">
+          <div className="text-blue-600 dark:text-blue-400 ">
+            ℹ️ Filtros aplicados.
+          </div>
+          <div className="bg-zinc-300/50 dark:bg-zinc-700/50 text-zinc-700 dark:text-zinc-300 px-2 rounded">
+            Registros encontrados: {filteredData.length}
+          </div>
         </div>
       )}
       {filterFields.length > 0 && (
@@ -380,6 +417,9 @@ export function EntityTable<T extends object>({
         paginationComponentOptions={options}
         expandableRows={expandableRows}
         expandableRowsComponent={ExpandedComponent}
+        onSort={handleSortChange}
+        defaultSortFieldId={currentSort.columnId}
+        defaultSortAsc={currentSort.direction === "asc"}
         noDataComponent={
           noDataComponent || (
             <div className="py-6 text-text-secondary">

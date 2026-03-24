@@ -23,6 +23,7 @@ export const Input = ({
   register,
   error,
   ref,
+  className,
   ...inputProps
 }: InputProps): JSX.Element => {
   return (
@@ -39,7 +40,7 @@ export const Input = ({
         ref={ref}
         id={id}
         className={`dark:[&::-webkit-calendar-picker-indicator]:invert
- ${basesClass(error ?? "")}`}
+ ${basesClass(error ?? "")} ${className ?? ""}`}
         {...inputProps}
         {...register}
       />

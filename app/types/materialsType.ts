@@ -1,5 +1,6 @@
 import type { Categorization } from "~/context/UIContext";
 import type { CommonPropsDB } from "./sharedTypes";
+import type { ContactsDataType } from "~/context/ContactsContext";
 export type MaterialsProps = {
   id_subcategory: number | null;
   description: string;
@@ -9,7 +10,7 @@ export type MaterialsProps = {
 };
 export type MaterialsDB = CommonPropsDB & MaterialsProps;
 export type MaterialsUI = MaterialsDB & {
-  prices: PricesDB[];
+  prices: (PricesDB & {supplier: ContactsDataType})[];
   view_categorizations: Categorization;
   units: UnitsDB;
 };
@@ -20,6 +21,7 @@ export type PricesProps = {
   price: number;
   default: boolean;
   date?: string;
+  estimated_price?: boolean;
 };
 export type PricesDB = CommonPropsDB & PricesProps;
 /* Settings */

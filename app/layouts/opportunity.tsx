@@ -10,6 +10,7 @@ import { quotesApi } from "~/backend/cruds";
 import { OpportunityHeader } from "~/components/Generals/OpportunityHeader";
 import { useData } from "~/context/DataContext";
 import { useUIModals } from "~/context/ModalsContext";
+import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 
 export default function OpportunityLayout() {
   useOpportunityRealtime();
@@ -45,7 +46,7 @@ export default function OpportunityLayout() {
       {selectedOpportunity ? (
         <Outlet context={{ selectedQuoteId }} />
       ) : (
-        <p className="text-center mt-10">Cargando Oportunidad...</p>
+        <LoaderComponent content="Cargando oportunidad..." />
       )}
       <div
         className={`fixed inset-0 z-50 grid place-content-center bg-white/10 p-4 ${
@@ -55,9 +56,7 @@ export default function OpportunityLayout() {
         aria-modal="true"
         aria-labelledby="modalTitle"
       >
-        <div
-          className="w-full max-w-lg min-w-sm rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900 text-primary-text"
-        >
+        <div className="w-full max-w-lg min-w-sm rounded-lg bg-white p-6 shadow-lg dark:bg-zinc-900 text-primary-text">
           <div className="flex items-start justify-between">
             <h2 id="modalTitle" className="text-xl font-bold sm:text-2xl">
               {"Cambiar de cotización"}

@@ -11,6 +11,7 @@ import { materialsApi } from "~/backend/cruds";
 import { useData } from "~/context/DataContext";
 import ItemsHeader from "~/components/Generals/ItemsHeader";
 import { useUIModals } from "~/context/ModalsContext";
+import { LoaderComponent } from "~/components/Generals/LoaderComponent";
 
 const menuItems = (id: number) => {
   return [
@@ -75,21 +76,20 @@ export default function MaterialLayout() {
                 size="sm"
                 variant="red"
                 onClick={handleDelete}
-                icon={{component: TrashIcon, color: "text-white"}}
+                icon={{ component: TrashIcon, color: "text-white" }}
                 className="md:hidden"
               />
               <Button
-              size="sm"
+                size="sm"
                 title="Eliminar material"
                 variant="red"
                 onClick={handleDelete}
                 className="md:inline-flex hidden"
-                icon={{component: TrashIcon, color: "text-white"}}
+                icon={{ component: TrashIcon, color: "text-white" }}
               >
                 Eliminar Material
               </Button>
             </div>
-            
           }
           back_path="/materials"
         />
@@ -97,7 +97,7 @@ export default function MaterialLayout() {
       {selectedMaterial ? (
         <Outlet />
       ) : (
-        <p className="text-center mt-10">Cargando Material...</p>
+        <LoaderComponent content="Cargando material..." />
       )}
     </>
   );

@@ -56,13 +56,16 @@ export function workdayIntl(
   return current;
 }
 export function networkdaysIntl(
-  startDate: string,
-  endDate: string,
+  startDate: string, // "yyyy-mm-dd"
+  endDate: string, // "yyyy-mm-dd"
   weekend: WeekendOption = 1,
   holidays: Holiday[] = []
 ): number {
-  let start = new Date(startDate);
-  let end = new Date(endDate);
+  const startSplit = startDate.split("-").join(",");
+  const endSplit = endDate.split("-").join(",");
+  
+  let start = new Date(startSplit);
+  let end = new Date(endSplit);
 
   // Asegurarse de trabajar con fecha sin horas
   start = new Date(start.getFullYear(), start.getMonth(), start.getDate());

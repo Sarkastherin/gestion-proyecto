@@ -14,6 +14,7 @@ import DailyReportModal from "~/components/modals/customs/DailyReportModal";
 import { ButtonNavigate } from "~/components/Specific/Buttons";
 import { networkdaysIntl } from "~/utils/functionsDays";
 import ProjectSummaryTable from "~/components/Specific/ProjectSummaryTable";
+import { formatDateUStoES } from "~/utils/functions";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Resumen" },
@@ -34,7 +35,7 @@ export default function ProjectSummary({
   }>();
   const [allProgress, setAllProgress] = useState<PhaseProgress[] | null>(null);
   const [globalProgress, setGlobalProgress] = useState<number | null>(null);
-  const [daysUsed, setDaysUsed] = useState<number | null>(null);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const { employees } = useContacts();
   const { phases_project } = project;
   if (!phases_project) return;
@@ -65,16 +66,11 @@ export default function ProjectSummary({
   );
   useEffect(() => {
     if (project.plan_duration && project.plan_duration > 0) {
-      const start = project.plan_start_date;
-      const end = new Date().toLocaleDateString("sv-SE");
-      const mode = project.mode;
-      if (!start || !mode) return;
-      if(start > end) {
-        setDaysUsed(0);
-        return;
-      }
-      const daysCount = networkdaysIntl(start, end, mode);
-      setDaysUsed(daysCount);
+      const today = new Date().toLocaleDateString("sv-SE"); // formato ISO sin hora
+      const deadline = project.plan_end_date;
+      // obtener los días faltantes desde hoy hasta el deadline, cosiderando día corridos
+      if (!deadline) return;
+      setDaysLeft(networkdaysIntl(today, deadline));
     }
   }, [project]);
 
@@ -121,20 +117,41 @@ export default function ProjectSummary({
             </div>
           </Card>
 
-          <Card title="Días consumidos">
-            <span className="text-2xl font-bold">
-              {daysUsed} d{" "}
-              <span className="text-sm text-zinc-500">
-                / {project.plan_duration} d
-              </span>
-            </span>
-            <div className="mt-2 w-full bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
-              <div
-                className="bg-lime-500 h-2 rounded-full"
-                style={{
-                  width: `${project.plan_duration ? Math.round(((daysUsed ?? 0) / project.plan_duration) * 100) : 0}%`,
-                }}
-              />
+          <Card>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 p-4">
+              <div className="flex-1 border-0 border-b md:border-b-0 md:border-r-2 pr-0 md:pr-4 border-zinc-200 dark:border-zinc-700 pb-2 md:pb-0">
+                <p className="text-xs uppercase tracking-[0.2em] text-zinc-400 mb-2 text-center md:text-left">
+                  Fecha de finalización planificada
+                </p>
+                <span className="text-xl text-zinc-600 dark:text-zinc-300 font-bold text-center md:text-left">
+                  {project.plan_end_date
+                    ? formatDateUStoES(project.plan_end_date)
+                    : "No definido"}
+                </span>
+              </div>
+              <div className="flex-1 flex flex-col items-center justify-center">
+                <span className={`text-lg font-semibold ${daysLeft !== null && daysLeft <= 0 ? 'text-red-500' : 'text-primary-text'} transition-colors duration-300`}>
+                  {daysLeft !== null
+                    ? daysLeft > 0
+                      ? `${daysLeft} días restantes`
+                      : daysLeft === 0
+                        ? "Último día"
+                        : `${Math.abs(daysLeft)} días de retraso`
+                    : "No se pudo calcular los días restantes"}
+                </span>
+                <div className="mt-2 w-full max-w-[120px]">
+                  <div className="bg-zinc-200 dark:bg-zinc-700 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full ${daysLeft !== null && daysLeft <= 0 ? 'bg-red-500' : 'bg-primary-text'}`}
+                      style={{ width: `${daysLeft !== null && project.plan_duration ? Math.min(100, ((project.plan_duration - daysLeft) / project.plan_duration) * 100) : 0}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-xs text-zinc-400 mt-1">
+                    <span>0</span>
+                    <span>{project.plan_duration ?? 'Duración'}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </Card>
         </div>

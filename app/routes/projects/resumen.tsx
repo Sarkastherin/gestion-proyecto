@@ -2,7 +2,6 @@ import ProjectSummary from "~/templates/Projects/Summary";
 import type { Route } from "../+types/home";
 import { useData } from "~/context/DataContext";
 import { ContainerToForms } from "~/components/Generals/Containers";
-import { useEffect } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
